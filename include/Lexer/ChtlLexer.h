@@ -1,7 +1,7 @@
 #ifndef CHTL_CHTL_LEXER_H
 #define CHTL_CHTL_LEXER_H
 
-#include "lexer/BasicLexer.h"
+#include "Lexer/BasicLexer.h"
 #include "state/StateFactory.h"
 #include "context/ChtlContext.h"
 

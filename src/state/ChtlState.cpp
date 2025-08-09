@@ -2,7 +2,7 @@
 #include "state/CssState.h"
 #include "state/JsState.h"
 #include "state/ChtlJsState.h"
-#include "lexer/BasicLexer.h"
+#include "Lexer/BasicLexer.h"
 #include <algorithm>
 
 namespace chtl {

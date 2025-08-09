@@ -25,7 +25,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 file(GLOB_RECURSE LIB_SOURCES 
     "${CMAKE_SOURCE_DIR}/src/Common/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/context/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/lexer/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Lexer/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/state/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/node/*.cpp"
 )

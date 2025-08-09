@@ -1,4 +1,4 @@
-#include "lexer/ChtlLexer.h"
+#include "Lexer/ChtlLexer.h"
 
 namespace chtl {
 

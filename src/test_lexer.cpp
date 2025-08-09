@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include "lexer/ChtlLexer.h"
+#include "Lexer/ChtlLexer.h"
 #include "Common/GlobalMap.h"
 
 using namespace chtl;

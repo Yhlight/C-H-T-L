@@ -1,7 +1,7 @@
 #ifndef CHTL_CONFIG_LEXER_H
 #define CHTL_CONFIG_LEXER_H
 
-#include "lexer/BasicLexer.h"
+#include "Lexer/BasicLexer.h"
 #include <unordered_map>
 #include <unordered_set>
 

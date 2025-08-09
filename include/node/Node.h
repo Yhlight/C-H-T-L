@@ -24,7 +24,15 @@ enum class NodeType {
     CDATA,
     DOCUMENT,
     DOCUMENT_TYPE,
-    FRAGMENT
+    FRAGMENT,
+    // CHTL特有节点类型
+    TEMPLATE,
+    CUSTOM,
+    STYLE,
+    CONFIG,
+    IMPORT,
+    NAMESPACE,
+    OPERATE
 };
 
 // 属性值类型

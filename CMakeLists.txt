@@ -57,6 +57,8 @@ add_executable(test_style_parsing ${LIB_SOURCES} src/test_style_parsing.cpp)
 add_executable(test_style_tokens ${LIB_SOURCES} src/test_style_tokens.cpp)
 add_executable(test_simple_style ${LIB_SOURCES} src/test_simple_style.cpp)
 add_executable(test_template_parsing ${LIB_SOURCES} src/test_template_parsing.cpp)
+add_executable(test_import_namespace ${LIB_SOURCES} src/test_import_namespace.cpp)
+add_executable(test_operate_origin ${LIB_SOURCES} src/test_operate_origin.cpp)
 
 # 启用测试
 enable_testing()

@@ -11,6 +11,8 @@
 /workspace/build/CMakeFiles/test_style_tokens.dir
 /workspace/build/CMakeFiles/test_simple_style.dir
 /workspace/build/CMakeFiles/test_template_parsing.dir
+/workspace/build/CMakeFiles/test_import_namespace.dir
+/workspace/build/CMakeFiles/test_operate_origin.dir
 /workspace/build/CMakeFiles/test.dir
 /workspace/build/CMakeFiles/edit_cache.dir
 /workspace/build/CMakeFiles/rebuild_cache.dir

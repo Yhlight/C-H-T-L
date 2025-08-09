@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/workspace/Js/HeuristicJsBackend.cpp" "Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o" "gcc" "Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o.d"
   "/workspace/Js/JsAnalyzer.cpp" "Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o" "gcc" "Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o.d"
   )
 

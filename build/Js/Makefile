@@ -130,6 +130,30 @@ chtl_js_analyzer/fast:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/build
 .PHONY : chtl_js_analyzer/fast
 
+HeuristicJsBackend.o: HeuristicJsBackend.cpp.o
+.PHONY : HeuristicJsBackend.o
+
+# target to build an object file
+HeuristicJsBackend.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o
+.PHONY : HeuristicJsBackend.cpp.o
+
+HeuristicJsBackend.i: HeuristicJsBackend.cpp.i
+.PHONY : HeuristicJsBackend.i
+
+# target to preprocess a source file
+HeuristicJsBackend.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.i
+.PHONY : HeuristicJsBackend.cpp.i
+
+HeuristicJsBackend.s: HeuristicJsBackend.cpp.s
+.PHONY : HeuristicJsBackend.s
+
+# target to generate assembly for a file
+HeuristicJsBackend.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.s
+.PHONY : HeuristicJsBackend.cpp.s
+
 JsAnalyzer.o: JsAnalyzer.cpp.o
 .PHONY : JsAnalyzer.o
 
@@ -163,6 +187,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... chtl_js_analyzer"
+	@echo "... HeuristicJsBackend.o"
+	@echo "... HeuristicJsBackend.i"
+	@echo "... HeuristicJsBackend.s"
 	@echo "... JsAnalyzer.o"
 	@echo "... JsAnalyzer.i"
 	@echo "... JsAnalyzer.s"

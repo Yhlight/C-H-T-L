@@ -2,6 +2,9 @@ add_library(chtl_js_analyzer STATIC
     JsAnalyzer.h
     JsAnalyzer.cpp
     JsFindings.h
+    JsBackend.h
+    HeuristicJsBackend.h
+    HeuristicJsBackend.cpp
 )
 
 target_include_directories(chtl_js_analyzer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

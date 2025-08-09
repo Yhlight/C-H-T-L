@@ -178,6 +178,30 @@ JsAnalyzer.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.s
 .PHONY : JsAnalyzer.cpp.s
 
+JsCompiler.o: JsCompiler.cpp.o
+.PHONY : JsCompiler.o
+
+# target to build an object file
+JsCompiler.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o
+.PHONY : JsCompiler.cpp.o
+
+JsCompiler.i: JsCompiler.cpp.i
+.PHONY : JsCompiler.i
+
+# target to preprocess a source file
+JsCompiler.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.i
+.PHONY : JsCompiler.cpp.i
+
+JsCompiler.s: JsCompiler.cpp.s
+.PHONY : JsCompiler.s
+
+# target to generate assembly for a file
+JsCompiler.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.s
+.PHONY : JsCompiler.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -193,6 +217,9 @@ help:
 	@echo "... JsAnalyzer.o"
 	@echo "... JsAnalyzer.i"
 	@echo "... JsAnalyzer.s"
+	@echo "... JsCompiler.o"
+	@echo "... JsCompiler.i"
+	@echo "... JsCompiler.s"
 .PHONY : help
 
 

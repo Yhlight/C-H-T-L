@@ -72,10 +72,24 @@ include Css/CMakeFiles/chtl_css_analyzer.dir/flags.make
 Css/CMakeFiles/chtl_css_analyzer.dir/codegen:
 .PHONY : Css/CMakeFiles/chtl_css_analyzer.dir/codegen
 
+Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/flags.make
+Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o: /workspace/Css/HeuristicCssBackend.cpp
+Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o -MF CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o.d -o CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o -c /workspace/Css/HeuristicCssBackend.cpp
+
+Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.i"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Css/HeuristicCssBackend.cpp > CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.i
+
+Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.s"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Css/HeuristicCssBackend.cpp -o CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.s
+
 Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/flags.make
 Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o: /workspace/Css/CssAnalyzer.cpp
 Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o"
 	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o -MF CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o.d -o CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o -c /workspace/Css/CssAnalyzer.cpp
 
 Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.i: cmake_force
@@ -86,17 +100,35 @@ Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.s"
 	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Css/CssAnalyzer.cpp -o CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.s
 
+Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/flags.make
+Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o: /workspace/Css/CssCompiler.cpp
+Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o: Css/CMakeFiles/chtl_css_analyzer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o -MF CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o.d -o CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o -c /workspace/Css/CssCompiler.cpp
+
+Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.i"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Css/CssCompiler.cpp > CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.i
+
+Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.s"
+	cd /workspace/build/Css && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Css/CssCompiler.cpp -o CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.s
+
 # Object files for target chtl_css_analyzer
 chtl_css_analyzer_OBJECTS = \
-"CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o"
+"CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o" \
+"CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o" \
+"CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o"
 
 # External object files for target chtl_css_analyzer
 chtl_css_analyzer_EXTERNAL_OBJECTS =
 
+Css/libchtl_css_analyzer.a: Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o
 Css/libchtl_css_analyzer.a: Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o
+Css/libchtl_css_analyzer.a: Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o
 Css/libchtl_css_analyzer.a: Css/CMakeFiles/chtl_css_analyzer.dir/build.make
 Css/libchtl_css_analyzer.a: Css/CMakeFiles/chtl_css_analyzer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libchtl_css_analyzer.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libchtl_css_analyzer.a"
 	cd /workspace/build/Css && $(CMAKE_COMMAND) -P CMakeFiles/chtl_css_analyzer.dir/cmake_clean_target.cmake
 	cd /workspace/build/Css && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_css_analyzer.dir/link.txt --verbose=$(VERBOSE)
 

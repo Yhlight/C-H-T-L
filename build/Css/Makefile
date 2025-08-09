@@ -154,6 +154,54 @@ CssAnalyzer.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.s
 .PHONY : CssAnalyzer.cpp.s
 
+CssCompiler.o: CssCompiler.cpp.o
+.PHONY : CssCompiler.o
+
+# target to build an object file
+CssCompiler.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o
+.PHONY : CssCompiler.cpp.o
+
+CssCompiler.i: CssCompiler.cpp.i
+.PHONY : CssCompiler.i
+
+# target to preprocess a source file
+CssCompiler.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.i
+.PHONY : CssCompiler.cpp.i
+
+CssCompiler.s: CssCompiler.cpp.s
+.PHONY : CssCompiler.s
+
+# target to generate assembly for a file
+CssCompiler.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.s
+.PHONY : CssCompiler.cpp.s
+
+HeuristicCssBackend.o: HeuristicCssBackend.cpp.o
+.PHONY : HeuristicCssBackend.o
+
+# target to build an object file
+HeuristicCssBackend.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o
+.PHONY : HeuristicCssBackend.cpp.o
+
+HeuristicCssBackend.i: HeuristicCssBackend.cpp.i
+.PHONY : HeuristicCssBackend.i
+
+# target to preprocess a source file
+HeuristicCssBackend.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.i
+.PHONY : HeuristicCssBackend.cpp.i
+
+HeuristicCssBackend.s: HeuristicCssBackend.cpp.s
+.PHONY : HeuristicCssBackend.s
+
+# target to generate assembly for a file
+HeuristicCssBackend.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.s
+.PHONY : HeuristicCssBackend.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -166,6 +214,12 @@ help:
 	@echo "... CssAnalyzer.o"
 	@echo "... CssAnalyzer.i"
 	@echo "... CssAnalyzer.s"
+	@echo "... CssCompiler.o"
+	@echo "... CssCompiler.i"
+	@echo "... CssCompiler.s"
+	@echo "... HeuristicCssBackend.o"
+	@echo "... HeuristicCssBackend.i"
+	@echo "... HeuristicCssBackend.s"
 .PHONY : help
 
 

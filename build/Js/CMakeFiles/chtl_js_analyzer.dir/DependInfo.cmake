@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/Js/HeuristicJsBackend.cpp" "Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o" "gcc" "Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o.d"
   "/workspace/Js/JsAnalyzer.cpp" "Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o" "gcc" "Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o.d"
+  "/workspace/Js/JsCompiler.cpp" "Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o" "gcc" "Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

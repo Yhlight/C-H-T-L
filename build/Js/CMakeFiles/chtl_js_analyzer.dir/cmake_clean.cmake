@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o.d"
   "CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o"
   "CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o.d"
   "libchtl_js_analyzer.a"
   "libchtl_js_analyzer.pdb"
 )

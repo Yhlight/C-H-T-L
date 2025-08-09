@@ -9,6 +9,7 @@ bin/test_bridge_scanner: \
   CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.o \
   CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.o \
   CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Generator/HtmlGenerator.cpp.o \
   CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.o \
@@ -76,6 +77,8 @@ CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.o:
 CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.o:
 
 CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Generator/HtmlGenerator.cpp.o:
 
 CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.o:
 

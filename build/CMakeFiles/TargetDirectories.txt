@@ -3,6 +3,7 @@
 /workspace/build/CMakeFiles/test_node.dir
 /workspace/build/CMakeFiles/test_chtl_nodes.dir
 /workspace/build/CMakeFiles/test_bridge_scanner.dir
+/workspace/build/CMakeFiles/test_comment.dir
 /workspace/build/CMakeFiles/test.dir
 /workspace/build/CMakeFiles/edit_cache.dir
 /workspace/build/CMakeFiles/rebuild_cache.dir

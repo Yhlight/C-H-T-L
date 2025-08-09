@@ -9,6 +9,7 @@ bin/test_node: \
   CMakeFiles/test_node.dir/src/Context/ContextFactory.cpp.o \
   CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.o \
   CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.o \
+  CMakeFiles/test_node.dir/src/Generator/HtmlGenerator.cpp.o \
   CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.o \
@@ -76,6 +77,8 @@ CMakeFiles/test_node.dir/src/Context/ContextFactory.cpp.o:
 CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.o:
 
 CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.o:
+
+CMakeFiles/test_node.dir/src/Generator/HtmlGenerator.cpp.o:
 
 CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.o:
 

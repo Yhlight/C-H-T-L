@@ -9,6 +9,7 @@ bin/chtl: \
   CMakeFiles/chtl.dir/src/Context/ContextFactory.cpp.o \
   CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o \
   CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o \
+  CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o \
   CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o \
@@ -76,6 +77,8 @@ CMakeFiles/chtl.dir/src/Context/ContextFactory.cpp.o:
 CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o:
 
 CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o:
+
+CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o:
 
 CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o:
 

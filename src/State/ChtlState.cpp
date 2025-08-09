@@ -303,7 +303,13 @@ std::shared_ptr<BasicState> ChtlState::handleCommentMulti(char ch) {
 }
 
 std::shared_ptr<BasicState> ChtlState::handleHtmlComment(char ch) {
-    buffer_ += ch;
+    if (ch == '\n') {
+        // CHTL的 -- 注释是单行注释，遇到换行符结束
+        emitTokenAndReset(TokenType::HTML_COMMENT);
+        subState_ = SubState::INITIAL;
+    } else {
+        buffer_ += ch;
+    }
     return nullptr;
 }
 

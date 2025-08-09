@@ -56,4 +56,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/test_node.dir/DependInfo.cmake"
   "CMakeFiles/test_chtl_nodes.dir/DependInfo.cmake"
   "CMakeFiles/test_bridge_scanner.dir/DependInfo.cmake"
+  "CMakeFiles/test_comment.dir/DependInfo.cmake"
   )

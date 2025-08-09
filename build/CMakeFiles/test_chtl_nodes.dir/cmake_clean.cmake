@@ -14,6 +14,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o"
   "CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o.d"
+  "CMakeFiles/test_chtl_nodes.dir/src/Generator/HtmlGenerator.cpp.o"
+  "CMakeFiles/test_chtl_nodes.dir/src/Generator/HtmlGenerator.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o"
   "CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.o"

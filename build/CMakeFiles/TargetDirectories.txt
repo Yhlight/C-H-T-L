@@ -34,3 +34,9 @@
 /workspace/build/App/CMakeFiles/chtlc.dir
 /workspace/build/App/CMakeFiles/edit_cache.dir
 /workspace/build/App/CMakeFiles/rebuild_cache.dir
+/workspace/build/Module/CMakeFiles/edit_cache.dir
+/workspace/build/Module/CMakeFiles/rebuild_cache.dir
+/workspace/build/Loader/CMakeFiles/edit_cache.dir
+/workspace/build/Loader/CMakeFiles/rebuild_cache.dir
+/workspace/build/CmodSystem/CMakeFiles/edit_cache.dir
+/workspace/build/CmodSystem/CMakeFiles/rebuild_cache.dir

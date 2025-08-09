@@ -75,6 +75,9 @@ all: Predefine/all
 all: Optimize/all
 all: Utils/all
 all: App/all
+all: Module/all
+all: Loader/all
+all: CmodSystem/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -90,6 +93,9 @@ codegen: Predefine/codegen
 codegen: Optimize/codegen
 codegen: Utils/codegen
 codegen: App/codegen
+codegen: Module/codegen
+codegen: Loader/codegen
+codegen: CmodSystem/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -105,6 +111,9 @@ preinstall: Predefine/preinstall
 preinstall: Optimize/preinstall
 preinstall: Utils/preinstall
 preinstall: App/preinstall
+preinstall: Module/preinstall
+preinstall: Loader/preinstall
+preinstall: CmodSystem/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
@@ -120,6 +129,9 @@ clean: Predefine/clean
 clean: Optimize/clean
 clean: Utils/clean
 clean: App/clean
+clean: Module/clean
+clean: Loader/clean
+clean: CmodSystem/clean
 .PHONY : clean
 
 #=============================================================================
@@ -140,6 +152,25 @@ App/preinstall:
 # Recursive "clean" directory target.
 App/clean: App/CMakeFiles/chtlc.dir/clean
 .PHONY : App/clean
+
+#=============================================================================
+# Directory level rules for directory CmodSystem
+
+# Recursive "all" directory target.
+CmodSystem/all:
+.PHONY : CmodSystem/all
+
+# Recursive "codegen" directory target.
+CmodSystem/codegen:
+.PHONY : CmodSystem/codegen
+
+# Recursive "preinstall" directory target.
+CmodSystem/preinstall:
+.PHONY : CmodSystem/preinstall
+
+# Recursive "clean" directory target.
+CmodSystem/clean:
+.PHONY : CmodSystem/clean
 
 #=============================================================================
 # Directory level rules for directory Common
@@ -216,6 +247,44 @@ Lexer/preinstall:
 # Recursive "clean" directory target.
 Lexer/clean: Lexer/CMakeFiles/chtl_lexer.dir/clean
 .PHONY : Lexer/clean
+
+#=============================================================================
+# Directory level rules for directory Loader
+
+# Recursive "all" directory target.
+Loader/all:
+.PHONY : Loader/all
+
+# Recursive "codegen" directory target.
+Loader/codegen:
+.PHONY : Loader/codegen
+
+# Recursive "preinstall" directory target.
+Loader/preinstall:
+.PHONY : Loader/preinstall
+
+# Recursive "clean" directory target.
+Loader/clean:
+.PHONY : Loader/clean
+
+#=============================================================================
+# Directory level rules for directory Module
+
+# Recursive "all" directory target.
+Module/all:
+.PHONY : Module/all
+
+# Recursive "codegen" directory target.
+Module/codegen:
+.PHONY : Module/codegen
+
+# Recursive "preinstall" directory target.
+Module/preinstall:
+.PHONY : Module/preinstall
+
+# Recursive "clean" directory target.
+Module/clean:
+.PHONY : Module/clean
 
 #=============================================================================
 # Directory level rules for directory Node

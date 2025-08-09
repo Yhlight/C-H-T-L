@@ -33,10 +33,13 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.31/Modules/Platform/UnixPaths.cmake"
   "/workspace/App/CMakeLists.txt"
   "/workspace/CMakeLists.txt"
+  "/workspace/CmodSystem/CMakeLists.txt"
   "/workspace/Common/CMakeLists.txt"
   "/workspace/Context/CMakeLists.txt"
   "/workspace/Generator/CMakeLists.txt"
   "/workspace/Lexer/CMakeLists.txt"
+  "/workspace/Loader/CMakeLists.txt"
+  "/workspace/Module/CMakeLists.txt"
   "/workspace/Node/CMakeLists.txt"
   "/workspace/Optimize/CMakeLists.txt"
   "/workspace/Parser/CMakeLists.txt"
@@ -69,6 +72,9 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "Optimize/CMakeFiles/CMakeDirectoryInformation.cmake"
   "Utils/CMakeFiles/CMakeDirectoryInformation.cmake"
   "App/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Module/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Loader/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CmodSystem/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:

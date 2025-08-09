@@ -6,6 +6,7 @@
 #include "Context/ChtlJsContext.h"
 #include <memory>
 #include <string>
+#include <vector> // Added for tokenBuffer_
 
 namespace chtl {
 
@@ -15,12 +16,21 @@ namespace chtl {
  */
 class ChtlJsLexer : public BasicLexer {
 private:
-    std::shared_ptr<ChtlJsState> chtlJsState_;
-    std::shared_ptr<ChtlJsContext> chtlJsContext_;
+    // CHTL-JS状态管理
+    std::shared_ptr<chtl_js::ChtlJsState> chtlJsState_;
+    std::shared_ptr<chtl_js::ChtlJsContext> chtlJsContext_;
     
-    // 缓冲区用于多字符token
-    std::string tokenBuffer_;
+    // Token缓冲
+    std::vector<Token> tokenBuffer_;
+    
+    // 状态标志
     bool inChtlSequence_;
+    
+    // 输入管理
+    std::string input_;
+    size_t position_;
+    int currentLine_;
+    int currentColumn_;
     
     // Token生成辅助
     Token createChtlToken(TokenType type, const std::string& value);
@@ -59,12 +69,19 @@ protected:
     Token recognizeJsString();
     Token recognizeJsOperator();
     
+    // 字符检查
+    bool isAlphaNumeric(char ch) const;
+    bool isWhitespace(char ch) const;
+    
+    // 位置管理
+    void advanceChar();
+    char currentChar() const;
+    char peekChar(int offset = 0) const;
+    std::string readWhile(std::function<bool(char)> predicate);
+    
     // 辅助方法
     bool checkChtlSequence(const std::string& sequence);
     void skipWhitespace();
-    char peekChar(int offset = 0);
-    std::string readUntil(const std::string& delimiter);
-    std::string readWhile(std::function<bool(char)> predicate);
 };
 
 } // namespace chtl

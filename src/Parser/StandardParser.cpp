@@ -16,16 +16,14 @@
 namespace chtl {
 
 StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context)
-    : BasicParser(lexer, context),
+    : BasicParser(),
       currentIndent_(0),
       expectIndent_(0),
       inAttribute_(false),
-      inStyleBlock_(false),
-      inTextBlock_(false),
-      inTemplateBlock_(false),
-      inCustomBlock_(false),
-      inConfigBlock_(false),
-      inOriginBlock_(false) {
+      currentToken_(TokenType::EOF_TOKEN, "", 1, 1),
+      previousToken_(TokenType::EOF_TOKEN, "", 1, 1) {
+    // 初始化lexer和context
+    initialize(lexer, context);
 }
 
 std::shared_ptr<Node> StandardParser::parse() {
@@ -275,7 +273,7 @@ std::shared_ptr<Node> StandardParser::parseStyleBlock() {
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
     auto styleNode = std::make_shared<Style>();
-    styleNode->setType(StyleType::LOCAL);
+    styleNode->setType(Style::StyleScope::LOCAL);
     
     parseStyleContent(styleNode);
     
@@ -353,7 +351,7 @@ void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
     
     // 创建一个全局样式节点
     auto globalStyle = std::make_shared<Style>();
-    globalStyle->setType(StyleType::GLOBAL);
+    globalStyle->setType(Style::StyleScope::GLOBAL);
     globalStyle->setSelector(selector);
     
     std::string cssContent;
@@ -388,7 +386,7 @@ void StandardParser::parseContextSelector(std::shared_ptr<Style> styleNode) {
     
     // 创建全局样式节点
     auto globalStyle = std::make_shared<Style>();
-    globalStyle->setType(StyleType::GLOBAL);
+    globalStyle->setType(Style::StyleScope::GLOBAL);
     globalStyle->setSelector(selector);
     
     std::string cssContent;
@@ -427,17 +425,17 @@ std::shared_ptr<Node> StandardParser::parseTemplate() {
     // [Template]已经被消费
     
     // 解析模板类型
-    TemplateType templateType;
+    Template::TemplateType templateType;
     std::string templateName;
     
     if (match(TokenType::AT_STYLE)) {
-        templateType = TemplateType::STYLE;
+        templateType = Template::TemplateType::STYLE;
         templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
     } else if (match(TokenType::AT_ELEMENT)) {
-        templateType = TemplateType::ELEMENT;
+        templateType = Template::TemplateType::ELEMENT;
         templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
     } else if (match(TokenType::AT_VAR)) {
-        templateType = TemplateType::VAR;
+        templateType = Template::TemplateType::VAR;
         templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
     } else {
         addError("Expected template type (@Style, @Element, or @Var)");
@@ -453,13 +451,13 @@ std::shared_ptr<Node> StandardParser::parseTemplate() {
     
     // 根据模板类型解析内容
     switch (templateType) {
-        case TemplateType::STYLE:
+        case Template::TemplateType::STYLE:
             parseStyleTemplateContent(templateNode);
             break;
-        case TemplateType::ELEMENT:
+        case Template::TemplateType::ELEMENT:
             parseElementTemplateContent(templateNode);
             break;
-        case TemplateType::VAR:
+        case Template::TemplateType::VAR:
             parseVarTemplateContent(templateNode);
             break;
     }
@@ -590,17 +588,17 @@ std::shared_ptr<Node> StandardParser::parseCustom() {
     // [Custom]已经被消费
     
     // 解析自定义类型
-    CustomType customType;
+    Custom::CustomType customType;
     std::string customName;
     
     if (match(TokenType::AT_STYLE)) {
-        customType = CustomType::STYLE;
+        customType = Custom::CustomType::STYLE;
         customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
     } else if (match(TokenType::AT_ELEMENT)) {
-        customType = CustomType::ELEMENT;
+        customType = Custom::CustomType::ELEMENT;
         customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
     } else if (match(TokenType::AT_VAR)) {
-        customType = CustomType::VAR;
+        customType = Custom::CustomType::VAR;
         customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
     } else {
         addError("Expected custom type (@Style, @Element, or @Var)");
@@ -608,21 +606,22 @@ std::shared_ptr<Node> StandardParser::parseCustom() {
         return nullptr;
     }
     
+    // 创建Custom节点
     auto customNode = std::make_shared<Custom>();
     customNode->setType(customType);
     customNode->setName(customName);
     
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    // 根据自定义类型解析内容
+    // 根据类型解析内容
     switch (customType) {
-        case CustomType::STYLE:
+        case Custom::CustomType::STYLE:
             parseCustomStyleContent(customNode);
             break;
-        case CustomType::ELEMENT:
+        case Custom::CustomType::ELEMENT:
             parseCustomElementContent(customNode);
             break;
-        case CustomType::VAR:
+        case Custom::CustomType::VAR:
             parseCustomVarContent(customNode);
             break;
     }
@@ -904,7 +903,7 @@ std::shared_ptr<Node> StandardParser::parseInsert() {
         }
     }
     
-    insertNode->setOperation(OperationType::INSERT);
+    insertNode->setOperation(Operate::OperationType::INSERT);
     insertNode->setPosition(position);
     insertNode->setTarget(target);
     
@@ -942,14 +941,14 @@ std::string StandardParser::parseInsertTarget() {
 std::shared_ptr<Node> StandardParser::parseOrigin() {
     // [Origin]已经被消费
     
-    OriginType originType;
+    Origin::OriginType originType;
     
     if (match(TokenType::AT_HTML)) {
-        originType = OriginType::HTML;
+        originType = Origin::OriginType::HTML;
     } else if (match(TokenType::AT_STYLE)) {
-        originType = OriginType::STYLE;
+        originType = Origin::OriginType::STYLE;
     } else if (match(TokenType::AT_JAVASCRIPT)) {
-        originType = OriginType::JAVASCRIPT;
+        originType = Origin::OriginType::JAVASCRIPT;
     } else {
         addError("Expected origin type (@Html, @Style, or @JavaScript)");
         skipToNextStatement();

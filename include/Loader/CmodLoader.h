@@ -11,10 +11,11 @@ namespace chtl {
 
 // 前向声明
 class CmodRegistry;
-class BasicParser;
+class CmodInfo;
+struct CmodStructure;
 class Node;
 
-// CMOD加载器 - 加载和管理CMOD模块
+// CMOD模块加载器
 class CmodLoader {
 public:
     // 加载结果
@@ -28,13 +29,18 @@ public:
     
     // 加载选项
     struct LoadOptions {
-        bool validateBeforeLoad = true;
-        bool loadDependencies = true;
-        bool cacheLoadedModules = true;
-        bool resolveSymlinks = false;
-        int maxDepth = 10;
+        bool validateBeforeLoad;
+        bool loadDependencies;
+        bool cacheLoadedModules;
+        bool resolveSymlinks;
+        int maxDepth;
         
-        LoadOptions() = default;
+        LoadOptions() : 
+            validateBeforeLoad(true),
+            loadDependencies(true),
+            cacheLoadedModules(true),
+            resolveSymlinks(false),
+            maxDepth(10) {}
     };
     
     CmodLoader();
@@ -112,7 +118,7 @@ private:
     std::vector<std::string> searchPaths_;
     
     // 解析器
-    std::unique_ptr<BasicParser> parser_;
+    // std::unique_ptr<BasicParser> parser_; // Removed as per edit hint
     
     // 加载实现
     LoadResult loadModuleInternal(const std::string& modulePath,

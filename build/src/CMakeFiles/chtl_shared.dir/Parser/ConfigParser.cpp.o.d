@@ -1,5 +1,6 @@
-src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: \
-  /workspace/src/Parser/BasicParser.cpp \
+src/CMakeFiles/chtl_shared.dir/Parser/ConfigParser.cpp.o: \
+  /workspace/src/Parser/ConfigParser.cpp \
+  /workspace/include/Parser/ConfigParser.h \
   /workspace/include/Parser/BasicParser.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/memory \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memoryfwd.h \
@@ -255,7 +256,7 @@ src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: \
   /workspace/include/Context/ContextFactory.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/utility \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_relops.h \
-  /workspace/include/Common/GlobalMap.h \
+  /workspace/include/Node/Config.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \

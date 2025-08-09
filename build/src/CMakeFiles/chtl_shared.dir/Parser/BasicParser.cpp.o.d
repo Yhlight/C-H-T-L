@@ -1,4 +1,4 @@
-src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: \
+src/CMakeFiles/chtl_shared.dir/Parser/BasicParser.cpp.o: \
   /workspace/src/Parser/BasicParser.cpp \
   /workspace/include/Parser/BasicParser.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/memory \

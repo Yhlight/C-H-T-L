@@ -3,7 +3,6 @@
 #include "Loader/CmodLoader.h"
 #include "CmodSystem/CmodRegistry.h"
 #include "Node/Node.h"
-#include "Node/Element.h"
 #include <filesystem>
 
 namespace chtl {

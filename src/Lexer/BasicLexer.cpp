@@ -316,12 +316,4 @@ void BasicLexer::autoTransitionState(const std::string& trigger) {
     }
 }
 
-void BasicLexer::notifyTokenReady(const Token& token) {
-    for (auto& callback : tokenCallbacks_) {
-        if (callback) {
-            callback(token);
-        }
-    }
-}
-
 } // namespace chtl

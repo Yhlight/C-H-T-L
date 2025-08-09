@@ -12,19 +12,18 @@ void ChtlJsLexer::initialize(std::shared_ptr<ChtlJsState> state,
                             std::shared_ptr<ChtlJsContext> context) {
     if (state) {
         chtlJsState_ = state;
-        state_ = state;
     } else {
         chtlJsState_ = std::make_shared<ChtlJsState>(this);
-        state_ = chtlJsState_;
     }
     
     if (context) {
         chtlJsContext_ = context;
-        context_ = context;
     } else {
         chtlJsContext_ = std::make_shared<ChtlJsContext>();
-        context_ = chtlJsContext_;
     }
+    
+    // 设置初始上下文
+    context_ = chtlJsContext_;
 }
 
 Token ChtlJsLexer::getNextToken() {
@@ -35,7 +34,7 @@ Token ChtlJsLexer::getNextToken() {
     skipWhitespace();
     
     if (position_ >= input_.size()) {
-        return Token(TokenType::END_OF_FILE, "", line_, column_);
+        return Token(TokenType::EOF_TOKEN, "", currentLine_, currentColumn_);
     }
     
     // 检查CHTL-JS特殊语法
@@ -53,20 +52,24 @@ Token ChtlJsLexer::getNextToken() {
 
 Token ChtlJsLexer::peekNextToken() {
     size_t savedPos = position_;
-    int savedLine = line_;
-    int savedCol = column_;
+    int savedLine = currentLine_;
+    int savedCol = currentColumn_;
     
     Token token = getNextToken();
     
     position_ = savedPos;
-    line_ = savedLine;
-    column_ = savedCol;
+    currentLine_ = savedLine;
+    currentColumn_ = savedCol;
     
     return token;
 }
 
 void ChtlJsLexer::reset() {
-    BasicLexer::reset();
+    // 重置状态
+    currentLine_ = 1;
+    currentColumn_ = 1;
+    position_ = 0;
+    
     tokenBuffer_.clear();
     inChtlSequence_ = false;
     if (chtlJsState_) {
@@ -106,8 +109,8 @@ Token ChtlJsLexer::recognizeToken() {
 
 Token ChtlJsLexer::recognizeChtlSelector() {
     // 跳过 {{
-    advance();
-    advance();
+    advanceChar();
+    advanceChar();
     
     std::string selector;
     int braceCount = 0;
@@ -115,16 +118,16 @@ Token ChtlJsLexer::recognizeChtlSelector() {
     while (position_ < input_.size()) {
         if (peekChar() == '}' && peekChar(1) == '}' && braceCount == 0) {
             // 找到结束的 }}
-            advance();
-            advance();
+            advanceChar();
+            advanceChar();
             break;
         }
         
-        if (peekChar() == '{') braceCount++;
-        else if (peekChar() == '}') braceCount--;
+        if (currentChar() == '{') braceCount++;
+        else if (currentChar() == '}') braceCount--;
         
         selector += currentChar();
-        advance();
+        advanceChar();
     }
     
     // 注册选择器到上下文
@@ -135,8 +138,8 @@ Token ChtlJsLexer::recognizeChtlSelector() {
 
 Token ChtlJsLexer::recognizeChtlArrow() {
     // 跳过 ->
-    advance();
-    advance();
+    advanceChar();
+    advanceChar();
     
     // 识别方法名
     std::string method = readWhile([](char c) {
@@ -184,7 +187,7 @@ Token ChtlJsLexer::recognizeJsNumber() {
 
 Token ChtlJsLexer::recognizeJsString() {
     char quote = currentChar();
-    advance();
+    advanceChar();
     
     std::string str;
     bool escaped = false;
@@ -199,11 +202,11 @@ Token ChtlJsLexer::recognizeJsString() {
         } else {
             str += currentChar();
         }
-        advance();
+        advanceChar();
     }
     
     if (position_ < input_.size()) {
-        advance(); // 跳过结束引号
+        advanceChar(); // 跳过结束引号
     }
     
     TokenType type = (quote == '`') ? TokenType::TEMPLATE_LITERAL : TokenType::STRING;
@@ -213,7 +216,7 @@ Token ChtlJsLexer::recognizeJsString() {
 Token ChtlJsLexer::recognizeJsOperator() {
     char ch = currentChar();
     std::string op(1, ch);
-    advance();
+    advanceChar();
     
     // 检查双字符操作符
     if (position_ < input_.size()) {
@@ -226,19 +229,19 @@ Token ChtlJsLexer::recognizeJsOperator() {
             doubleOp == "-=" || doubleOp == "*=" || doubleOp == "/=" ||
             doubleOp == "<<" || doubleOp == ">>" || doubleOp == "??" ||
             doubleOp == "?." || doubleOp == "**") {
-            advance();
+            advanceChar();
             op = doubleOp;
         }
         
         // 检查三字符操作符
         if (position_ < input_.size() && op == "==" && currentChar() == '=') {
-            advance();
+            advanceChar();
             op = "===";
         } else if (position_ < input_.size() && op == "!=" && currentChar() == '=') {
-            advance();
+            advanceChar();
             op = "!==";
         } else if (position_ < input_.size() && op == ">>" && currentChar() == '>') {
-            advance();
+            advanceChar();
             op = ">>>";
         }
     }
@@ -284,9 +287,39 @@ void ChtlJsLexer::skipWhitespace() {
     }
 }
 
-char ChtlJsLexer::peekChar(int offset) {
+bool ChtlJsLexer::isAlphaNumeric(char ch) const {
+    return (ch >= 'a' && ch <= 'z') ||
+           (ch >= 'A' && ch <= 'Z') ||
+           (ch >= '0' && ch <= '9') ||
+           ch == '_' || ch == '$';
+}
+
+bool ChtlJsLexer::isWhitespace(char ch) const {
+    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+}
+
+void ChtlJsLexer::advanceChar() {
+    if (position_ < input_.length()) {
+        if (input_[position_] == '\n') {
+            currentLine_++;
+            currentColumn_ = 1;
+        } else {
+            currentColumn_++;
+        }
+        position_++;
+    }
+}
+
+char ChtlJsLexer::currentChar() const {
+    if (position_ >= input_.length()) {
+        return '\0';
+    }
+    return input_[position_];
+}
+
+char ChtlJsLexer::peekChar(int offset) const {
     size_t pos = position_ + offset;
-    if (pos >= input_.size()) {
+    if (pos >= input_.length()) {
         return '\0';
     }
     return input_[pos];
@@ -300,7 +333,7 @@ std::string ChtlJsLexer::readUntil(const std::string& delimiter) {
             break;
         }
         result += currentChar();
-        advance();
+        advanceChar();
     }
     
     return result;
@@ -311,7 +344,7 @@ std::string ChtlJsLexer::readWhile(std::function<bool(char)> predicate) {
     
     while (position_ < input_.size() && predicate(currentChar())) {
         result += currentChar();
-        advance();
+        advanceChar();
     }
     
     return result;

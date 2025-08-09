@@ -1,24 +1,19 @@
-#ifndef CHTL_STATE_STANDARD_STATE_H
-#define CHTL_STATE_STANDARD_STATE_H
+#ifndef CHTL_STANDARD_STATE_H
+#define CHTL_STANDARD_STATE_H
 
 #include "State/ChtlState.h"
 
 namespace chtl {
 
-/**
- * @brief StandardState - 标准CHTL状态机
- * 
- * 这是BasicState的标准实现，基于ChtlState。
- * 提供了处理CHTL语法的完整状态机功能。
- */
+// StandardState - CHTL标准状态机的具体实现
+// 这是ChtlState的别名，用于更清晰的命名
 class StandardState : public ChtlState {
 public:
-    // 使用ChtlState的构造函数
-    using ChtlState::ChtlState;
+    StandardState(BasicLexer* lexer) : ChtlState(lexer) {}
     
-    virtual ~StandardState() = default;
+    // 可以在这里添加StandardState特有的方法
 };
 
 } // namespace chtl
 
-#endif // CHTL_STATE_STANDARD_STATE_H
+#endif // CHTL_STANDARD_STATE_H

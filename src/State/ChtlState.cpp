@@ -1,7 +1,7 @@
 #include "State/ChtlState.h"
 #include "State/CssState.h"
-// #include "State/JsState.h"
-// #include "State/ChtlJsState.h"
+#include "State/JsState.h"
+#include "State/ChtlJsState.h"
 #include "Lexer/BasicLexer.h"
 #include <algorithm>
 
@@ -258,8 +258,7 @@ std::shared_ptr<BasicState> ChtlState::handleOperator(char ch) {
         subState_ = SubState::INITIAL;
         // 可能需要切换到CHTL_JS状态
         if (inScriptBlock_) {
-            // TODO: return std::make_shared<ChtlJsState>(lexer_);
-            return nullptr;
+            return std::make_shared<ChtlJsState>(lexer_);
         }
         return nullptr;
     }
@@ -486,11 +485,9 @@ std::shared_ptr<BasicState> ChtlState::transitionToState(StateType newStateType)
         case StateType::CSS:
             return std::make_shared<CssState>(lexer_);
         case StateType::JS:
-            // TODO: return std::make_shared<JsState>(lexer_);
-            return nullptr;
+            return std::make_shared<JsState>(lexer_);
         case StateType::CHTL_JS:
-            // TODO: return std::make_shared<ChtlJsState>(lexer_);
-            return nullptr;
+            return std::make_shared<ChtlJsState>(lexer_);
         default:
             return nullptr;
     }

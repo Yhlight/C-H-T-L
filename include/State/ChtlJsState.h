@@ -1,5 +1,5 @@
-#ifndef CHTL_JS_STATE_H
-#define CHTL_JS_STATE_H
+#ifndef CHTL_CHTL_JS_STATE_H
+#define CHTL_CHTL_JS_STATE_H
 
 #include "State/BasicState.h"
 #include "Common/Token.h"
@@ -62,16 +62,20 @@ private:
     int templateDepth_;             // 模板字符串嵌套深度
     
 public:
-    ChtlJsState();
+    ChtlJsState(BasicLexer* lexer);
     virtual ~ChtlJsState() = default;
     
     // 实现BasicState接口
+    std::shared_ptr<BasicState> handleChar(char ch) override;
+    bool accepts(char ch) const override;
     void reset() override;
-    void processChar(char c) override;
-    bool isInStringLiteral() const override;
-    bool isInComment() const override;
-    bool isInPreprocessor() const override { return false; }
-    std::string getStateName() const override;
+    
+    // 辅助方法
+    void processChar(char c);
+    bool isInStringLiteral() const;
+    bool isInComment() const;
+    bool isInPreprocessor() const { return false; }
+    std::string getStateName() const;
     
     // CHTL-JS特有方法
     bool isInChtlSelector() const;
@@ -123,4 +127,4 @@ private:
 
 } // namespace chtl
 
-#endif // CHTL_JS_STATE_H
+#endif // CHTL_CHTL_JS_STATE_H

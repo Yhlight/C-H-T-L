@@ -241,6 +241,8 @@ src/CMakeFiles/chtl_core.dir/State/ChtlState.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
+  /workspace/include/State/JsState.h \
+  /workspace/include/State/ChtlJsState.h \
   /workspace/include/Lexer/BasicLexer.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/queue \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_heap.h \

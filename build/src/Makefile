@@ -402,6 +402,87 @@ Context/ContextFactory.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/ContextFactory.cpp.s
 .PHONY : Context/ContextFactory.cpp.s
 
+Context/CssContext.o: Context/CssContext.cpp.o
+.PHONY : Context/CssContext.o
+
+# target to build an object file
+Context/CssContext.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o
+.PHONY : Context/CssContext.cpp.o
+
+Context/CssContext.i: Context/CssContext.cpp.i
+.PHONY : Context/CssContext.i
+
+# target to preprocess a source file
+Context/CssContext.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.i
+.PHONY : Context/CssContext.cpp.i
+
+Context/CssContext.s: Context/CssContext.cpp.s
+.PHONY : Context/CssContext.s
+
+# target to generate assembly for a file
+Context/CssContext.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.s
+.PHONY : Context/CssContext.cpp.s
+
+Context/JsContext.o: Context/JsContext.cpp.o
+.PHONY : Context/JsContext.o
+
+# target to build an object file
+Context/JsContext.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o
+.PHONY : Context/JsContext.cpp.o
+
+Context/JsContext.i: Context/JsContext.cpp.i
+.PHONY : Context/JsContext.i
+
+# target to preprocess a source file
+Context/JsContext.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.i
+.PHONY : Context/JsContext.cpp.i
+
+Context/JsContext.s: Context/JsContext.cpp.s
+.PHONY : Context/JsContext.s
+
+# target to generate assembly for a file
+Context/JsContext.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.s
+.PHONY : Context/JsContext.cpp.s
+
+Context/StandardContext.o: Context/StandardContext.cpp.o
+.PHONY : Context/StandardContext.o
+
+# target to build an object file
+Context/StandardContext.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.o
+.PHONY : Context/StandardContext.cpp.o
+
+Context/StandardContext.i: Context/StandardContext.cpp.i
+.PHONY : Context/StandardContext.i
+
+# target to preprocess a source file
+Context/StandardContext.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.i
+.PHONY : Context/StandardContext.cpp.i
+
+Context/StandardContext.s: Context/StandardContext.cpp.s
+.PHONY : Context/StandardContext.s
+
+# target to generate assembly for a file
+Context/StandardContext.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.s
+.PHONY : Context/StandardContext.cpp.s
+
 Css/CssAnalyzer.o: Css/CssAnalyzer.cpp.o
 .PHONY : Css/CssAnalyzer.o
 
@@ -671,6 +752,33 @@ Lexer/BasicLexer.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Lexer/BasicLexer.cpp.s
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Lexer/BasicLexer.cpp.s
 .PHONY : Lexer/BasicLexer.cpp.s
+
+Lexer/ChtlJsLexer.o: Lexer/ChtlJsLexer.cpp.o
+.PHONY : Lexer/ChtlJsLexer.o
+
+# target to build an object file
+Lexer/ChtlJsLexer.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Lexer/ChtlJsLexer.cpp.o
+.PHONY : Lexer/ChtlJsLexer.cpp.o
+
+Lexer/ChtlJsLexer.i: Lexer/ChtlJsLexer.cpp.i
+.PHONY : Lexer/ChtlJsLexer.i
+
+# target to preprocess a source file
+Lexer/ChtlJsLexer.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Lexer/ChtlJsLexer.cpp.i
+.PHONY : Lexer/ChtlJsLexer.cpp.i
+
+Lexer/ChtlJsLexer.s: Lexer/ChtlJsLexer.cpp.s
+.PHONY : Lexer/ChtlJsLexer.s
+
+# target to generate assembly for a file
+Lexer/ChtlJsLexer.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Lexer/ChtlJsLexer.cpp.s
+.PHONY : Lexer/ChtlJsLexer.cpp.s
 
 Lexer/ConfigLexer.o: Lexer/ConfigLexer.cpp.o
 .PHONY : Lexer/ConfigLexer.o
@@ -1185,6 +1293,60 @@ State/CssState.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/CssState.cpp.s
 .PHONY : State/CssState.cpp.s
 
+State/JsState.o: State/JsState.cpp.o
+.PHONY : State/JsState.o
+
+# target to build an object file
+State/JsState.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/JsState.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/JsState.cpp.o
+.PHONY : State/JsState.cpp.o
+
+State/JsState.i: State/JsState.cpp.i
+.PHONY : State/JsState.i
+
+# target to preprocess a source file
+State/JsState.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/JsState.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/JsState.cpp.i
+.PHONY : State/JsState.cpp.i
+
+State/JsState.s: State/JsState.cpp.s
+.PHONY : State/JsState.s
+
+# target to generate assembly for a file
+State/JsState.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/JsState.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/JsState.cpp.s
+.PHONY : State/JsState.cpp.s
+
+State/StandardState.o: State/StandardState.cpp.o
+.PHONY : State/StandardState.o
+
+# target to build an object file
+State/StandardState.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/StandardState.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/StandardState.cpp.o
+.PHONY : State/StandardState.cpp.o
+
+State/StandardState.i: State/StandardState.cpp.i
+.PHONY : State/StandardState.i
+
+# target to preprocess a source file
+State/StandardState.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/StandardState.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/StandardState.cpp.i
+.PHONY : State/StandardState.cpp.i
+
+State/StandardState.s: State/StandardState.cpp.s
+.PHONY : State/StandardState.s
+
+# target to generate assembly for a file
+State/StandardState.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/StandardState.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/StandardState.cpp.s
+.PHONY : State/StandardState.cpp.s
+
 State/StateFactory.o: State/StateFactory.cpp.o
 .PHONY : State/StateFactory.o
 
@@ -1273,6 +1435,15 @@ help:
 	@echo "... Context/ContextFactory.o"
 	@echo "... Context/ContextFactory.i"
 	@echo "... Context/ContextFactory.s"
+	@echo "... Context/CssContext.o"
+	@echo "... Context/CssContext.i"
+	@echo "... Context/CssContext.s"
+	@echo "... Context/JsContext.o"
+	@echo "... Context/JsContext.i"
+	@echo "... Context/JsContext.s"
+	@echo "... Context/StandardContext.o"
+	@echo "... Context/StandardContext.i"
+	@echo "... Context/StandardContext.s"
 	@echo "... Css/CssAnalyzer.o"
 	@echo "... Css/CssAnalyzer.i"
 	@echo "... Css/CssAnalyzer.s"
@@ -1303,6 +1474,9 @@ help:
 	@echo "... Lexer/BasicLexer.o"
 	@echo "... Lexer/BasicLexer.i"
 	@echo "... Lexer/BasicLexer.s"
+	@echo "... Lexer/ChtlJsLexer.o"
+	@echo "... Lexer/ChtlJsLexer.i"
+	@echo "... Lexer/ChtlJsLexer.s"
 	@echo "... Lexer/ConfigLexer.o"
 	@echo "... Lexer/ConfigLexer.i"
 	@echo "... Lexer/ConfigLexer.s"
@@ -1360,6 +1534,12 @@ help:
 	@echo "... State/CssState.o"
 	@echo "... State/CssState.i"
 	@echo "... State/CssState.s"
+	@echo "... State/JsState.o"
+	@echo "... State/JsState.i"
+	@echo "... State/JsState.s"
+	@echo "... State/StandardState.o"
+	@echo "... State/StandardState.i"
+	@echo "... State/StandardState.s"
 	@echo "... State/StateFactory.o"
 	@echo "... State/StateFactory.i"
 	@echo "... State/StateFactory.s"

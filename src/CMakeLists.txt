@@ -6,18 +6,24 @@ set(CHTL_SOURCES
     
     # State
     State/ChtlState.cpp
+    State/StandardState.cpp
     State/CssState.cpp
+    State/JsState.cpp
     State/StateFactory.cpp
     
     # Context
     Context/BasicContext.cpp
     Context/ChtlContext.cpp
+    Context/StandardContext.cpp
+    Context/CssContext.cpp
+    Context/JsContext.cpp
     Context/ContextFactory.cpp
     
     # Lexer
     Lexer/BasicLexer.cpp
     Lexer/StandardLexer.cpp
     Lexer/ConfigLexer.cpp
+    Lexer/ChtlJsLexer.cpp
     
     # Parser
     Parser/BasicParser.cpp

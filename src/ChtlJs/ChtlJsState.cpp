@@ -3,8 +3,9 @@
 
 namespace chtl {
 
-ChtlJsState::ChtlJsState()
-    : currentState_(State::JS_NORMAL),
+ChtlJsState::ChtlJsState(BasicLexer* lexer)
+    : BasicState(StateType::CHTL_JS, "ChtlJsState", lexer),
+      currentState_(State::JS_NORMAL),
       previousState_(State::JS_NORMAL),
       braceCount_(0),
       expectingSecondBrace_(false),
@@ -28,6 +29,18 @@ void ChtlJsState::reset() {
     objectDepth_ = 0;
     stringDelimiter_ = '\0';
     templateDepth_ = 0;
+}
+
+std::shared_ptr<BasicState> ChtlJsState::handleChar(char ch) {
+    processChar(ch);
+    // CHTL-JS状态机通常不切换到其他状态
+    return nullptr;
+}
+
+bool ChtlJsState::accepts(char ch) const {
+    (void)ch;  // 避免未使用参数警告
+    // CHTL-JS状态接受所有字符
+    return true;
 }
 
 void ChtlJsState::processChar(char c) {

@@ -1,8 +1,8 @@
 #include "Context/ContextFactory.h"
 #include "Context/ChtlContext.h"
-// #include "Context/CssContext.h"
-// #include "Context/JsContext.h"
-// #include "Context/ChtlJsContext.h"
+#include "Context/CssContext.h"
+#include "Context/JsContext.h"
+#include "Context/ChtlJsContext.h"
 #include <algorithm>
 
 namespace chtl {
@@ -89,9 +89,9 @@ const std::vector<ContextMarker> ContextFactory::markers_ = {
 // 上下文创建器映射
 const std::unordered_map<ContextType, ContextFactory::ContextCreator> ContextFactory::contextCreators_ = {
     {ContextType::CHTL, []() { return std::make_shared<ChtlContext>(); }},
-    // TODO: {ContextType::CSS, []() { return std::make_shared<CssContext>(); }},
-    // TODO: {ContextType::JS, []() { return std::make_shared<JsContext>(); }},
-    // TODO: {ContextType::CHTL_JS, []() { return std::make_shared<ChtlJsContext>(); }},
+    {ContextType::CSS, []() { return std::make_shared<CssContext>(); }},
+    {ContextType::JS, []() { return std::make_shared<JsContext>(); }},
+    {ContextType::CHTL_JS, []() { return std::make_shared<ChtlJsContext>(); }},
     {ContextType::TEMPLATE, []() { return std::make_shared<ChtlContext>(); }}, // 使用ChtlContext
     {ContextType::CUSTOM, []() { return std::make_shared<ChtlContext>(); }},   // 使用ChtlContext
     {ContextType::NAMESPACE, []() { return std::make_shared<ChtlContext>(); }} // 使用ChtlContext

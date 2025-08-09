@@ -245,7 +245,8 @@ src/CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
-  /workspace/include/State/CssState.h \
+  /workspace/include/State/CssState.h /workspace/include/State/JsState.h \
+  /workspace/include/State/ChtlJsState.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/algorithm \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algo.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/algorithmfwd.h \

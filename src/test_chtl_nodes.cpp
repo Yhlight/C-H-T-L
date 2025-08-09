@@ -9,6 +9,7 @@
 #include "node/Import.h"
 #include "node/Namespace.h"
 #include "node/Operate.h"
+#include "node/Origin.h"
 
 using namespace chtl;
 using namespace std;
@@ -20,17 +21,12 @@ void printSeparator(const string& title) {
 void testCommentNode() {
     printSeparator("Testing Comment Node");
     
-    // 单行注释
-    auto singleLine = make_shared<Comment>(Comment::CommentType::SINGLE_LINE, " This is a single line comment");
-    cout << "Single line: " << singleLine->toString() << endl;
+    // CHTL注释
+    auto comment1 = make_shared<Comment>("This is a CHTL comment");
+    cout << "CHTL Comment: " << comment1->toString() << endl;
     
-    // 多行注释
-    auto multiLine = make_shared<Comment>(Comment::CommentType::MULTI_LINE, " This is a\nmulti-line comment ");
-    cout << "Multi line: " << multiLine->toString() << endl;
-    
-    // HTML注释
-    auto htmlComment = make_shared<Comment>(Comment::CommentType::HTML, " HTML style comment ");
-    cout << "HTML: " << htmlComment->toString() << endl;
+    auto comment2 = make_shared<Comment>("Another comment with more info");
+    cout << "Another Comment: " << comment2->toString() << endl;
 }
 
 void testTemplateNode() {
@@ -189,6 +185,30 @@ void testOperateNode() {
     cout << "\nReplace Operation:\n" << replaceOp->toString() << endl;
 }
 
+void testOriginNode() {
+    printSeparator("Testing Origin Node");
+    
+    // HTML原始嵌入
+    auto htmlOrigin = make_shared<Origin>(Origin::OriginType::HTML);
+    htmlOrigin->setContent("<div class=\"raw-html\">\n  <p>This is raw HTML content</p>\n</div>");
+    cout << "HTML Origin:\n" << htmlOrigin->toString() << endl;
+    
+    // 带名称的CSS原始嵌入
+    auto styleOrigin = make_shared<Origin>(Origin::OriginType::STYLE, "custom-styles");
+    styleOrigin->setContent(".raw-css {\n  color: red;\n  font-size: 16px;\n}");
+    cout << "\nStyle Origin:\n" << styleOrigin->toString() << endl;
+    
+    // JavaScript原始嵌入
+    auto jsOrigin = make_shared<Origin>(Origin::OriginType::JAVASCRIPT, "init-script");
+    jsOrigin->setContent("console.log('Raw JavaScript');\nconst x = 42;");
+    cout << "\nJavaScript Origin:\n" << jsOrigin->toString() << endl;
+    
+    // 内联形式
+    auto inlineOrigin = make_shared<Origin>(Origin::OriginType::HTML, "inline-element");
+    inlineOrigin->setInline(true);
+    cout << "\nInline Origin: " << inlineOrigin->toString() << endl;
+}
+
 int main() {
     cout << "CHTL Node System Test\n";
     cout << "====================\n";
@@ -202,6 +222,7 @@ int main() {
         testImportNode();
         testNamespaceNode();
         testOperateNode();
+        testOriginNode();
         
         cout << "\n\nAll tests completed successfully!\n";
     } catch (const exception& e) {

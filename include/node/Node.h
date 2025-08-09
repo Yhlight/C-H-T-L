@@ -32,7 +32,8 @@ enum class NodeType {
     CONFIG,
     IMPORT,
     NAMESPACE,
-    OPERATE
+    OPERATE,
+    ORIGIN
 };
 
 // 属性值类型

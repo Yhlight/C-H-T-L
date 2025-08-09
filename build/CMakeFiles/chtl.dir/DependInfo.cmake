@@ -24,6 +24,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/node/Namespace.cpp" "CMakeFiles/chtl.dir/src/node/Namespace.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Namespace.cpp.o.d"
   "/workspace/src/node/Node.cpp" "CMakeFiles/chtl.dir/src/node/Node.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Node.cpp.o.d"
   "/workspace/src/node/Operate.cpp" "CMakeFiles/chtl.dir/src/node/Operate.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Operate.cpp.o.d"
+  "/workspace/src/node/Origin.cpp" "CMakeFiles/chtl.dir/src/node/Origin.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Origin.cpp.o.d"
   "/workspace/src/node/Style.cpp" "CMakeFiles/chtl.dir/src/node/Style.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Style.cpp.o.d"
   "/workspace/src/node/Template.cpp" "CMakeFiles/chtl.dir/src/node/Template.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/node/Template.cpp.o.d"
   "/workspace/src/state/ChtlState.cpp" "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o.d"

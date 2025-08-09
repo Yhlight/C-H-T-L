@@ -5,24 +5,15 @@
 
 namespace chtl {
 
-// Comment节点 - 支持三种注释类型：单行注释(//)、多行注释(/**/)、HTML注释(<!---->)
+// Comment节点 - CHTL的 "--" 注释
 class Comment : public Node {
-public:
-    enum class CommentType {
-        SINGLE_LINE,    // //
-        MULTI_LINE,     // /* */
-        HTML            // <!-- -->
-    };
-    
 private:
-    CommentType commentType_;
     std::string content_;
     
 public:
-    Comment(CommentType type, const std::string& content = "")
-        : Node(NodeType::COMMENT, "#comment"), commentType_(type), content_(content) {}
+    Comment(const std::string& content = "")
+        : Node(NodeType::COMMENT, "#comment"), content_(content) {}
     
-    CommentType getCommentType() const { return commentType_; }
     const std::string& getContent() const { return content_; }
     void setContent(const std::string& content) { content_ = content; }
     

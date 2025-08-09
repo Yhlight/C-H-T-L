@@ -282,10 +282,24 @@ CMakeFiles/test_lexer.dir/src/node/Operate.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_lexer.dir/src/node/Operate.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/node/Operate.cpp -o CMakeFiles/test_lexer.dir/src/node/Operate.cpp.s
 
+CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o: CMakeFiles/test_lexer.dir/flags.make
+CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o: /workspace/src/node/Origin.cpp
+CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o -MF CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o.d -o CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o -c /workspace/src/node/Origin.cpp
+
+CMakeFiles/test_lexer.dir/src/node/Origin.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_lexer.dir/src/node/Origin.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/node/Origin.cpp > CMakeFiles/test_lexer.dir/src/node/Origin.cpp.i
+
+CMakeFiles/test_lexer.dir/src/node/Origin.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_lexer.dir/src/node/Origin.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/node/Origin.cpp -o CMakeFiles/test_lexer.dir/src/node/Origin.cpp.s
+
 CMakeFiles/test_lexer.dir/src/node/Style.cpp.o: CMakeFiles/test_lexer.dir/flags.make
 CMakeFiles/test_lexer.dir/src/node/Style.cpp.o: /workspace/src/node/Style.cpp
 CMakeFiles/test_lexer.dir/src/node/Style.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/test_lexer.dir/src/node/Style.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/test_lexer.dir/src/node/Style.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/node/Style.cpp.o -MF CMakeFiles/test_lexer.dir/src/node/Style.cpp.o.d -o CMakeFiles/test_lexer.dir/src/node/Style.cpp.o -c /workspace/src/node/Style.cpp
 
 CMakeFiles/test_lexer.dir/src/node/Style.cpp.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/test_lexer.dir/src/node/Style.cpp.s: cmake_force
 CMakeFiles/test_lexer.dir/src/node/Template.cpp.o: CMakeFiles/test_lexer.dir/flags.make
 CMakeFiles/test_lexer.dir/src/node/Template.cpp.o: /workspace/src/node/Template.cpp
 CMakeFiles/test_lexer.dir/src/node/Template.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/test_lexer.dir/src/node/Template.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/test_lexer.dir/src/node/Template.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/node/Template.cpp.o -MF CMakeFiles/test_lexer.dir/src/node/Template.cpp.o.d -o CMakeFiles/test_lexer.dir/src/node/Template.cpp.o -c /workspace/src/node/Template.cpp
 
 CMakeFiles/test_lexer.dir/src/node/Template.cpp.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/test_lexer.dir/src/node/Template.cpp.s: cmake_force
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o: CMakeFiles/test_lexer.dir/flags.make
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o: /workspace/src/state/ChtlState.cpp
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o -MF CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o.d -o CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o -c /workspace/src/state/ChtlState.cpp
 
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.i: cmake_force
@@ -327,7 +341,7 @@ CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.s: cmake_force
 CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o: CMakeFiles/test_lexer.dir/flags.make
 CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o: /workspace/src/state/StateFactory.cpp
 CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o -MF CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o.d -o CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o -c /workspace/src/state/StateFactory.cpp
 
 CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.i: cmake_force
@@ -341,7 +355,7 @@ CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.s: cmake_force
 CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o: CMakeFiles/test_lexer.dir/flags.make
 CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o: /workspace/src/test_lexer.cpp
 CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o: CMakeFiles/test_lexer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o -MF CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o.d -o CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o -c /workspace/src/test_lexer.cpp
 
 CMakeFiles/test_lexer.dir/src/test_lexer.cpp.i: cmake_force
@@ -369,6 +383,7 @@ test_lexer_OBJECTS = \
 "CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o" \
 "CMakeFiles/test_lexer.dir/src/node/Node.cpp.o" \
 "CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o" \
+"CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o" \
 "CMakeFiles/test_lexer.dir/src/node/Style.cpp.o" \
 "CMakeFiles/test_lexer.dir/src/node/Template.cpp.o" \
 "CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o" \
@@ -393,6 +408,7 @@ bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Import.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Node.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o
+bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Style.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/node/Template.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o
@@ -401,7 +417,7 @@ bin/test_lexer: CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o
 bin/test_lexer: CMakeFiles/test_lexer.dir/build.make
 bin/test_lexer: CMakeFiles/test_lexer.dir/compiler_depend.ts
 bin/test_lexer: CMakeFiles/test_lexer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX executable bin/test_lexer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX executable bin/test_lexer"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_lexer.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -32,6 +32,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/src/node/Node.cpp.o.d"
   "CMakeFiles/chtl.dir/src/node/Operate.cpp.o"
   "CMakeFiles/chtl.dir/src/node/Operate.cpp.o.d"
+  "CMakeFiles/chtl.dir/src/node/Origin.cpp.o"
+  "CMakeFiles/chtl.dir/src/node/Origin.cpp.o.d"
   "CMakeFiles/chtl.dir/src/node/Style.cpp.o"
   "CMakeFiles/chtl.dir/src/node/Style.cpp.o.d"
   "CMakeFiles/chtl.dir/src/node/Template.cpp.o"

@@ -697,6 +697,39 @@ src/node/Operate.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.s
 .PHONY : src/node/Operate.cpp.s
 
+src/node/Origin.o: src/node/Origin.cpp.o
+.PHONY : src/node/Origin.o
+
+# target to build an object file
+src/node/Origin.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o
+.PHONY : src/node/Origin.cpp.o
+
+src/node/Origin.i: src/node/Origin.cpp.i
+.PHONY : src/node/Origin.i
+
+# target to preprocess a source file
+src/node/Origin.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.i
+.PHONY : src/node/Origin.cpp.i
+
+src/node/Origin.s: src/node/Origin.cpp.s
+.PHONY : src/node/Origin.s
+
+# target to generate assembly for a file
+src/node/Origin.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.s
+.PHONY : src/node/Origin.cpp.s
+
 src/node/Style.o: src/node/Style.cpp.o
 .PHONY : src/node/Style.o
 
@@ -962,6 +995,9 @@ help:
 	@echo "... src/node/Operate.o"
 	@echo "... src/node/Operate.i"
 	@echo "... src/node/Operate.s"
+	@echo "... src/node/Origin.o"
+	@echo "... src/node/Origin.i"
+	@echo "... src/node/Origin.s"
 	@echo "... src/node/Style.o"
 	@echo "... src/node/Style.i"
 	@echo "... src/node/Style.s"

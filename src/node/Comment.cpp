@@ -4,20 +4,11 @@ namespace chtl {
 
 std::shared_ptr<Node> Comment::clone(bool deep) const {
     (void)deep; // 注释节点没有子节点
-    return std::make_shared<Comment>(commentType_, content_);
+    return std::make_shared<Comment>(content_);
 }
 
 std::string Comment::toString() const {
-    switch (commentType_) {
-        case CommentType::SINGLE_LINE:
-            return "//" + content_;
-        case CommentType::MULTI_LINE:
-            return "/*" + content_ + "*/";
-        case CommentType::HTML:
-            return "<!--" + content_ + "-->";
-        default:
-            return content_;
-    }
+    return "-- " + content_;
 }
 
 void Comment::accept(Visitor* visitor) {

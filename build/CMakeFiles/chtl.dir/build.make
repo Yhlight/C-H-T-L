@@ -282,10 +282,24 @@ CMakeFiles/chtl.dir/src/node/Operate.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/node/Operate.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/node/Operate.cpp -o CMakeFiles/chtl.dir/src/node/Operate.cpp.s
 
+CMakeFiles/chtl.dir/src/node/Origin.cpp.o: CMakeFiles/chtl.dir/flags.make
+CMakeFiles/chtl.dir/src/node/Origin.cpp.o: /workspace/src/node/Origin.cpp
+CMakeFiles/chtl.dir/src/node/Origin.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/chtl.dir/src/node/Origin.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/node/Origin.cpp.o -MF CMakeFiles/chtl.dir/src/node/Origin.cpp.o.d -o CMakeFiles/chtl.dir/src/node/Origin.cpp.o -c /workspace/src/node/Origin.cpp
+
+CMakeFiles/chtl.dir/src/node/Origin.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl.dir/src/node/Origin.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/node/Origin.cpp > CMakeFiles/chtl.dir/src/node/Origin.cpp.i
+
+CMakeFiles/chtl.dir/src/node/Origin.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/node/Origin.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/node/Origin.cpp -o CMakeFiles/chtl.dir/src/node/Origin.cpp.s
+
 CMakeFiles/chtl.dir/src/node/Style.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/node/Style.cpp.o: /workspace/src/node/Style.cpp
 CMakeFiles/chtl.dir/src/node/Style.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/chtl.dir/src/node/Style.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/chtl.dir/src/node/Style.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/node/Style.cpp.o -MF CMakeFiles/chtl.dir/src/node/Style.cpp.o.d -o CMakeFiles/chtl.dir/src/node/Style.cpp.o -c /workspace/src/node/Style.cpp
 
 CMakeFiles/chtl.dir/src/node/Style.cpp.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/chtl.dir/src/node/Style.cpp.s: cmake_force
 CMakeFiles/chtl.dir/src/node/Template.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/node/Template.cpp.o: /workspace/src/node/Template.cpp
 CMakeFiles/chtl.dir/src/node/Template.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/chtl.dir/src/node/Template.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/chtl.dir/src/node/Template.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/node/Template.cpp.o -MF CMakeFiles/chtl.dir/src/node/Template.cpp.o.d -o CMakeFiles/chtl.dir/src/node/Template.cpp.o -c /workspace/src/node/Template.cpp
 
 CMakeFiles/chtl.dir/src/node/Template.cpp.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/chtl.dir/src/node/Template.cpp.s: cmake_force
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o: /workspace/src/state/ChtlState.cpp
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o -MF CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o.d -o CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o -c /workspace/src/state/ChtlState.cpp
 
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.i: cmake_force
@@ -327,7 +341,7 @@ CMakeFiles/chtl.dir/src/state/ChtlState.cpp.s: cmake_force
 CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o: /workspace/src/state/StateFactory.cpp
 CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o -MF CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o.d -o CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o -c /workspace/src/state/StateFactory.cpp
 
 CMakeFiles/chtl.dir/src/state/StateFactory.cpp.i: cmake_force
@@ -341,7 +355,7 @@ CMakeFiles/chtl.dir/src/state/StateFactory.cpp.s: cmake_force
 CMakeFiles/chtl.dir/src/main.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/main.cpp.o: /workspace/src/main.cpp
 CMakeFiles/chtl.dir/src/main.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/chtl.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/chtl.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/main.cpp.o -MF CMakeFiles/chtl.dir/src/main.cpp.o.d -o CMakeFiles/chtl.dir/src/main.cpp.o -c /workspace/src/main.cpp
 
 CMakeFiles/chtl.dir/src/main.cpp.i: cmake_force
@@ -369,6 +383,7 @@ chtl_OBJECTS = \
 "CMakeFiles/chtl.dir/src/node/Namespace.cpp.o" \
 "CMakeFiles/chtl.dir/src/node/Node.cpp.o" \
 "CMakeFiles/chtl.dir/src/node/Operate.cpp.o" \
+"CMakeFiles/chtl.dir/src/node/Origin.cpp.o" \
 "CMakeFiles/chtl.dir/src/node/Style.cpp.o" \
 "CMakeFiles/chtl.dir/src/node/Template.cpp.o" \
 "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o" \
@@ -393,6 +408,7 @@ bin/chtl: CMakeFiles/chtl.dir/src/node/Import.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/node/Namespace.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/node/Node.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/node/Operate.cpp.o
+bin/chtl: CMakeFiles/chtl.dir/src/node/Origin.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/node/Style.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/node/Template.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o
@@ -401,7 +417,7 @@ bin/chtl: CMakeFiles/chtl.dir/src/main.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/build.make
 bin/chtl: CMakeFiles/chtl.dir/compiler_depend.ts
 bin/chtl: CMakeFiles/chtl.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX executable bin/chtl"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX executable bin/chtl"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

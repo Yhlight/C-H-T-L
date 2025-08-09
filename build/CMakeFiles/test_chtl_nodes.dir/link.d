@@ -17,6 +17,7 @@ bin/test_chtl_nodes: \
   CMakeFiles/test_chtl_nodes.dir/src/node/Namespace.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/node/Node.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/node/Template.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/state/ChtlState.cpp.o \
@@ -85,6 +86,8 @@ CMakeFiles/test_chtl_nodes.dir/src/node/Namespace.cpp.o:
 CMakeFiles/test_chtl_nodes.dir/src/node/Node.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o:
+
+CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o:
 

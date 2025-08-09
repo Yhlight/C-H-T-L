@@ -23,6 +23,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/node/Namespace.cpp" "CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o.d"
   "/workspace/src/node/Node.cpp" "CMakeFiles/test_lexer.dir/src/node/Node.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Node.cpp.o.d"
   "/workspace/src/node/Operate.cpp" "CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o.d"
+  "/workspace/src/node/Origin.cpp" "CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o.d"
   "/workspace/src/node/Style.cpp" "CMakeFiles/test_lexer.dir/src/node/Style.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Style.cpp.o.d"
   "/workspace/src/node/Template.cpp" "CMakeFiles/test_lexer.dir/src/node/Template.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/node/Template.cpp.o.d"
   "/workspace/src/state/ChtlState.cpp" "CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o.d"

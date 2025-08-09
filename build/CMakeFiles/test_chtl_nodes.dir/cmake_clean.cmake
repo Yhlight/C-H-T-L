@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_chtl_nodes.dir/src/node/Node.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o"
   "CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o.d"
+  "CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o"
+  "CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o"
   "CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o.d"
   "CMakeFiles/test_chtl_nodes.dir/src/node/Template.cpp.o"

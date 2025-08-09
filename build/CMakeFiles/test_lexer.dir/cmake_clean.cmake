@@ -30,6 +30,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_lexer.dir/src/node/Node.cpp.o.d"
   "CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o"
   "CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o.d"
+  "CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o"
+  "CMakeFiles/test_lexer.dir/src/node/Origin.cpp.o.d"
   "CMakeFiles/test_lexer.dir/src/node/Style.cpp.o"
   "CMakeFiles/test_lexer.dir/src/node/Style.cpp.o.d"
   "CMakeFiles/test_lexer.dir/src/node/Template.cpp.o"

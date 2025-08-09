@@ -129,6 +129,58 @@ chtl_common/fast:
 	$(MAKE) $(MAKESILENT) -f Common/CMakeFiles/chtl_common.dir/build.make Common/CMakeFiles/chtl_common.dir/build
 .PHONY : chtl_common/fast
 
+#=============================================================================
+# Target rules for targets named chtl_context
+
+# Build rule for target.
+chtl_context: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_context
+.PHONY : chtl_context
+
+# fast build rule for target.
+chtl_context/fast:
+	$(MAKE) $(MAKESILENT) -f Context/CMakeFiles/chtl_context.dir/build.make Context/CMakeFiles/chtl_context.dir/build
+.PHONY : chtl_context/fast
+
+#=============================================================================
+# Target rules for targets named chtl_state
+
+# Build rule for target.
+chtl_state: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_state
+.PHONY : chtl_state
+
+# fast build rule for target.
+chtl_state/fast:
+	$(MAKE) $(MAKESILENT) -f State/CMakeFiles/chtl_state.dir/build.make State/CMakeFiles/chtl_state.dir/build
+.PHONY : chtl_state/fast
+
+#=============================================================================
+# Target rules for targets named chtl_lexer
+
+# Build rule for target.
+chtl_lexer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_lexer
+.PHONY : chtl_lexer
+
+# fast build rule for target.
+chtl_lexer/fast:
+	$(MAKE) $(MAKESILENT) -f Lexer/CMakeFiles/chtl_lexer.dir/build.make Lexer/CMakeFiles/chtl_lexer.dir/build
+.PHONY : chtl_lexer/fast
+
+#=============================================================================
+# Target rules for targets named chtl_node
+
+# Build rule for target.
+chtl_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_node
+.PHONY : chtl_node
+
+# fast build rule for target.
+chtl_node/fast:
+	$(MAKE) $(MAKESILENT) -f Node/CMakeFiles/chtl_node.dir/build.make Node/CMakeFiles/chtl_node.dir/build
+.PHONY : chtl_node/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -138,6 +190,10 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... chtl_common"
+	@echo "... chtl_context"
+	@echo "... chtl_lexer"
+	@echo "... chtl_node"
+	@echo "... chtl_state"
 .PHONY : help
 
 

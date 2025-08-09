@@ -7,3 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(Common)
+add_subdirectory(Context)
+add_subdirectory(State)
+add_subdirectory(Lexer)
+add_subdirectory(Node)

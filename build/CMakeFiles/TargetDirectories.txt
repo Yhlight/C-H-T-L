@@ -3,3 +3,15 @@
 /workspace/build/Common/CMakeFiles/chtl_common.dir
 /workspace/build/Common/CMakeFiles/edit_cache.dir
 /workspace/build/Common/CMakeFiles/rebuild_cache.dir
+/workspace/build/Context/CMakeFiles/chtl_context.dir
+/workspace/build/Context/CMakeFiles/edit_cache.dir
+/workspace/build/Context/CMakeFiles/rebuild_cache.dir
+/workspace/build/State/CMakeFiles/chtl_state.dir
+/workspace/build/State/CMakeFiles/edit_cache.dir
+/workspace/build/State/CMakeFiles/rebuild_cache.dir
+/workspace/build/Lexer/CMakeFiles/chtl_lexer.dir
+/workspace/build/Lexer/CMakeFiles/edit_cache.dir
+/workspace/build/Lexer/CMakeFiles/rebuild_cache.dir
+/workspace/build/Node/CMakeFiles/chtl_node.dir
+/workspace/build/Node/CMakeFiles/edit_cache.dir
+/workspace/build/Node/CMakeFiles/rebuild_cache.dir

@@ -212,19 +212,19 @@ CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/ConfigLexer.cpp -o CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.s
 
-CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o: CMakeFiles/test_comment.dir/flags.make
-CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o: /workspace/src/Lexer/SimpleLexer.cpp
-CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o -MF CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o.d -o CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o -c /workspace/src/Lexer/SimpleLexer.cpp
+CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o: CMakeFiles/test_comment.dir/flags.make
+CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/StandardLexer.cpp
+CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o -MF CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o.d -o CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o -c /workspace/src/Lexer/StandardLexer.cpp
 
-CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Lexer/SimpleLexer.cpp > CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.i
+CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Lexer/StandardLexer.cpp > CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.i
 
-CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/SimpleLexer.cpp -o CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.s
+CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/StandardLexer.cpp -o CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.s
 
 CMakeFiles/test_comment.dir/src/Node/Comment.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
@@ -394,10 +394,24 @@ CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Parser/ConfigParser.cpp -o CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.s
 
+CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o: CMakeFiles/test_comment.dir/flags.make
+CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o: /workspace/src/Parser/StandardParser.cpp
+CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o -MF CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o.d -o CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o -c /workspace/src/Parser/StandardParser.cpp
+
+CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Parser/StandardParser.cpp > CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.i
+
+CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Parser/StandardParser.cpp -o CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.s
+
 CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o: /workspace/src/Scanner/BridgeScanner.cpp
 CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o -MF CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o.d -o CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o -c /workspace/src/Scanner/BridgeScanner.cpp
 
 CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.i: cmake_force
@@ -411,7 +425,7 @@ CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.s: cmake_force
 CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o: /workspace/src/Scanner/Segment.cpp
 CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o -MF CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o.d -o CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o -c /workspace/src/Scanner/Segment.cpp
 
 CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.i: cmake_force
@@ -425,7 +439,7 @@ CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.s: cmake_force
 CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o: /workspace/src/State/ChtlState.cpp
 CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o -MF CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o.d -o CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o -c /workspace/src/State/ChtlState.cpp
 
 CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.i: cmake_force
@@ -439,7 +453,7 @@ CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.s: cmake_force
 CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o: /workspace/src/State/StateFactory.cpp
 CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o -MF CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o.d -o CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.o -c /workspace/src/State/StateFactory.cpp
 
 CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.i: cmake_force
@@ -453,7 +467,7 @@ CMakeFiles/test_comment.dir/src/State/StateFactory.cpp.s: cmake_force
 CMakeFiles/test_comment.dir/src/test_comment.cpp.o: CMakeFiles/test_comment.dir/flags.make
 CMakeFiles/test_comment.dir/src/test_comment.cpp.o: /workspace/src/test_comment.cpp
 CMakeFiles/test_comment.dir/src/test_comment.cpp.o: CMakeFiles/test_comment.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/test_comment.dir/src/test_comment.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/test_comment.dir/src/test_comment.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_comment.dir/src/test_comment.cpp.o -MF CMakeFiles/test_comment.dir/src/test_comment.cpp.o.d -o CMakeFiles/test_comment.dir/src/test_comment.cpp.o -c /workspace/src/test_comment.cpp
 
 CMakeFiles/test_comment.dir/src/test_comment.cpp.i: cmake_force
@@ -476,7 +490,7 @@ test_comment_OBJECTS = \
 "CMakeFiles/test_comment.dir/src/Generator/HtmlGenerator.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Lexer/BasicLexer.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.o" \
-"CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o" \
+"CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Node/Comment.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Node/Config.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Node/Custom.cpp.o" \
@@ -489,6 +503,7 @@ test_comment_OBJECTS = \
 "CMakeFiles/test_comment.dir/src/Node/Template.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Parser/BasicParser.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.o" \
+"CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o" \
 "CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o" \
 "CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o" \
@@ -508,7 +523,7 @@ bin/test_comment: CMakeFiles/test_comment.dir/src/Generator/ConfigGenerator.cpp.
 bin/test_comment: CMakeFiles/test_comment.dir/src/Generator/HtmlGenerator.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Lexer/BasicLexer.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.o
-bin/test_comment: CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o
+bin/test_comment: CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Node/Comment.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Node/Config.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Node/Custom.cpp.o
@@ -521,6 +536,7 @@ bin/test_comment: CMakeFiles/test_comment.dir/src/Node/Style.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Node/Template.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Parser/BasicParser.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.o
+bin/test_comment: CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Scanner/BridgeScanner.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/Scanner/Segment.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/src/State/ChtlState.cpp.o
@@ -529,7 +545,7 @@ bin/test_comment: CMakeFiles/test_comment.dir/src/test_comment.cpp.o
 bin/test_comment: CMakeFiles/test_comment.dir/build.make
 bin/test_comment: CMakeFiles/test_comment.dir/compiler_depend.ts
 bin/test_comment: CMakeFiles/test_comment.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Linking CXX executable bin/test_comment"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Linking CXX executable bin/test_comment"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_comment.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

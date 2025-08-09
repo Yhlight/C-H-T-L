@@ -594,44 +594,44 @@ src/Lexer/ConfigLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/ConfigLexer.cpp.s
 .PHONY : src/Lexer/ConfigLexer.cpp.s
 
-src/Lexer/SimpleLexer.o: src/Lexer/SimpleLexer.cpp.o
-.PHONY : src/Lexer/SimpleLexer.o
+src/Lexer/StandardLexer.o: src/Lexer/StandardLexer.cpp.o
+.PHONY : src/Lexer/StandardLexer.o
 
 # target to build an object file
-src/Lexer/SimpleLexer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/SimpleLexer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/SimpleLexer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/SimpleLexer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/SimpleLexer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.o
-.PHONY : src/Lexer/SimpleLexer.cpp.o
+src/Lexer/StandardLexer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.o
+.PHONY : src/Lexer/StandardLexer.cpp.o
 
-src/Lexer/SimpleLexer.i: src/Lexer/SimpleLexer.cpp.i
-.PHONY : src/Lexer/SimpleLexer.i
+src/Lexer/StandardLexer.i: src/Lexer/StandardLexer.cpp.i
+.PHONY : src/Lexer/StandardLexer.i
 
 # target to preprocess a source file
-src/Lexer/SimpleLexer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/SimpleLexer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/SimpleLexer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/SimpleLexer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/SimpleLexer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.i
-.PHONY : src/Lexer/SimpleLexer.cpp.i
+src/Lexer/StandardLexer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.i
+.PHONY : src/Lexer/StandardLexer.cpp.i
 
-src/Lexer/SimpleLexer.s: src/Lexer/SimpleLexer.cpp.s
-.PHONY : src/Lexer/SimpleLexer.s
+src/Lexer/StandardLexer.s: src/Lexer/StandardLexer.cpp.s
+.PHONY : src/Lexer/StandardLexer.s
 
 # target to generate assembly for a file
-src/Lexer/SimpleLexer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/SimpleLexer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/SimpleLexer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/SimpleLexer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/SimpleLexer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/SimpleLexer.cpp.s
-.PHONY : src/Lexer/SimpleLexer.cpp.s
+src/Lexer/StandardLexer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Lexer/StandardLexer.cpp.s
+.PHONY : src/Lexer/StandardLexer.cpp.s
 
 src/Node/Comment.o: src/Node/Comment.cpp.o
 .PHONY : src/Node/Comment.o
@@ -1101,6 +1101,45 @@ src/Parser/ConfigParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Parser/ConfigParser.cpp.s
 .PHONY : src/Parser/ConfigParser.cpp.s
 
+src/Parser/StandardParser.o: src/Parser/StandardParser.cpp.o
+.PHONY : src/Parser/StandardParser.o
+
+# target to build an object file
+src/Parser/StandardParser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.o
+.PHONY : src/Parser/StandardParser.cpp.o
+
+src/Parser/StandardParser.i: src/Parser/StandardParser.cpp.i
+.PHONY : src/Parser/StandardParser.i
+
+# target to preprocess a source file
+src/Parser/StandardParser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.i
+.PHONY : src/Parser/StandardParser.cpp.i
+
+src/Parser/StandardParser.s: src/Parser/StandardParser.cpp.s
+.PHONY : src/Parser/StandardParser.s
+
+# target to generate assembly for a file
+src/Parser/StandardParser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_comment.dir/build.make CMakeFiles/test_comment.dir/src/Parser/StandardParser.cpp.s
+.PHONY : src/Parser/StandardParser.cpp.s
+
 src/Scanner/BridgeScanner.o: src/Scanner/BridgeScanner.cpp.o
 .PHONY : src/Scanner/BridgeScanner.o
 
@@ -1446,9 +1485,9 @@ help:
 	@echo "... src/Lexer/ConfigLexer.o"
 	@echo "... src/Lexer/ConfigLexer.i"
 	@echo "... src/Lexer/ConfigLexer.s"
-	@echo "... src/Lexer/SimpleLexer.o"
-	@echo "... src/Lexer/SimpleLexer.i"
-	@echo "... src/Lexer/SimpleLexer.s"
+	@echo "... src/Lexer/StandardLexer.o"
+	@echo "... src/Lexer/StandardLexer.i"
+	@echo "... src/Lexer/StandardLexer.s"
 	@echo "... src/Node/Comment.o"
 	@echo "... src/Node/Comment.i"
 	@echo "... src/Node/Comment.s"
@@ -1485,6 +1524,9 @@ help:
 	@echo "... src/Parser/ConfigParser.o"
 	@echo "... src/Parser/ConfigParser.i"
 	@echo "... src/Parser/ConfigParser.s"
+	@echo "... src/Parser/StandardParser.o"
+	@echo "... src/Parser/StandardParser.i"
+	@echo "... src/Parser/StandardParser.s"
 	@echo "... src/Scanner/BridgeScanner.o"
 	@echo "... src/Scanner/BridgeScanner.i"
 	@echo "... src/Scanner/BridgeScanner.s"

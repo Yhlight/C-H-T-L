@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include "Lexer/BasicLexer.h"
+#include "Lexer/StandardLexer.h"
 #include "Common/GlobalMap.h"
 
 using namespace chtl;
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     std::cout << "===============" << std::endl;
     
     // 创建词法分析器
-    BasicLexer lexer;
+    StandardLexer lexer;
     
     // 使用文件或测试字符串
     std::string filename;
@@ -99,7 +99,7 @@ div
     }
     
     // 打印上下文信息
-    auto context = lexer.getChtlContext();
+    auto context = lexer.getContext();
     if (context) {
         std::cout << "\n上下文信息:" << std::endl;
         if (context->hasErrors()) {

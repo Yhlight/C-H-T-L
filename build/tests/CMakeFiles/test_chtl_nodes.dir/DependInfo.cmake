@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/tests/test_chtl_nodes.cpp" "tests/CMakeFiles/test_chtl_nodes.dir/test_chtl_nodes.cpp.o" "gcc" "tests/CMakeFiles/test_chtl_nodes.dir/test_chtl_nodes.cpp.o.d"
-  "" "bin/test_chtl_nodes" "gcc" "tests/CMakeFiles/test_chtl_nodes.dir/link.d"
+  "" "tests/test_chtl_nodes" "gcc" "tests/CMakeFiles/test_chtl_nodes.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/tests/test_style_tokens.cpp" "tests/CMakeFiles/test_style_tokens.dir/test_style_tokens.cpp.o" "gcc" "tests/CMakeFiles/test_style_tokens.dir/test_style_tokens.cpp.o.d"
-  "" "bin/test_style_tokens" "gcc" "tests/CMakeFiles/test_style_tokens.dir/link.d"
+  "" "tests/test_style_tokens" "gcc" "tests/CMakeFiles/test_style_tokens.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

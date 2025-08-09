@@ -723,57 +723,57 @@ chtl_shared_OBJECTS = \
 # External object files for target chtl_shared
 chtl_shared_EXTERNAL_OBJECTS =
 
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Common/GlobalMap.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Common/Token.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/ChtlState.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/StandardState.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/CssState.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/JsState.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/BasicContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/ChtlContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/ContextFactory.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/BasicLexer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/ConfigLexer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/ChtlJsLexer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/BasicParser.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/StandardParser.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/ConfigParser.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Node.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Comment.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Template.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Custom.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Style.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Config.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Import.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Namespace.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Operate.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Origin.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/BasicGenerator.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/ConfigGenerator.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/HtmlGenerator.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Scanner/Segment.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Scanner/BridgeScanner.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssAnalyzer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssTokenizer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssBlockExtractor.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsAnalyzer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsTokenizer.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsBlockExtractor.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsState.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/build.make
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/compiler_depend.ts
-lib/libchtl.so: src/CMakeFiles/chtl_shared.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX shared library ../lib/libchtl.so"
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Common/GlobalMap.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Common/Token.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/ChtlState.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/StandardState.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/CssState.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/JsState.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/BasicContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/ChtlContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Context/ContextFactory.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/BasicLexer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/ConfigLexer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Lexer/ChtlJsLexer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/BasicParser.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/StandardParser.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Parser/ConfigParser.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Node.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Comment.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Template.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Custom.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Style.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Config.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Import.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Namespace.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Operate.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Node/Origin.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/BasicGenerator.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/ConfigGenerator.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Generator/HtmlGenerator.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Scanner/Segment.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Scanner/BridgeScanner.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssAnalyzer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssTokenizer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Css/CssBlockExtractor.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsAnalyzer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsTokenizer.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsBlockExtractor.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsState.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/build.make
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/compiler_depend.ts
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX shared library libchtl.so"
 	cd /workspace/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_shared.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-src/CMakeFiles/chtl_shared.dir/build: lib/libchtl.so
+src/CMakeFiles/chtl_shared.dir/build: src/libchtl.so
 .PHONY : src/CMakeFiles/chtl_shared.dir/build
 
 src/CMakeFiles/chtl_shared.dir/clean:

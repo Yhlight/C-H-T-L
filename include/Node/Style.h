@@ -13,6 +13,9 @@ public:
         GLOBAL      // 全局样式（独立的style块）
     };
     
+    // 添加StyleType别名以与代码一致
+    using StyleType = StyleScope;
+    
 private:
     StyleScope scope_;
     std::string cssContent_;                                    // 原始CSS内容
@@ -20,21 +23,31 @@ private:
     std::vector<std::string> selectors_;                       // CSS选择器
     bool isScoped_ = false;                                    // 是否为作用域样式
     std::string parentElement_;                                // 父元素（用于局部样式）
+    std::string selector_;                                     // 主选择器（用于全局样式）
     
 public:
     Style(StyleScope scope = StyleScope::LOCAL)
         : Node(NodeType::STYLE, "style"), scope_(scope) {}
     
+    // 默认构造函数
+    Style() : Node(NodeType::STYLE, "style"), scope_(StyleScope::LOCAL) {}
+    
     // 作用域管理
     StyleScope getScope() const { return scope_; }
     void setScope(StyleScope scope) { scope_ = scope; }
+    void setType(StyleType type) { scope_ = type; }
     bool isGlobal() const { return scope_ == StyleScope::GLOBAL; }
     bool isLocal() const { return scope_ == StyleScope::LOCAL; }
     
     // CSS内容管理
     const std::string& getCssContent() const { return cssContent_; }
     void setCssContent(const std::string& content) { cssContent_ = content; }
+    void setContent(const std::string& content) { cssContent_ = content; }
     void appendCssContent(const std::string& content) { cssContent_ += content; }
+    
+    // 主选择器管理（用于全局样式）
+    const std::string& getSelector() const { return selector_; }
+    void setSelector(const std::string& selector) { selector_ = selector; }
     
     // CSS规则管理
     void addRule(const std::string& property, const std::string& value) { rules_[property] = value; }

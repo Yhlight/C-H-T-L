@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/tests/test_chtl_js.cpp" "tests/CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.o" "gcc" "tests/CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.o.d"
-  "" "bin/test_chtl_js" "gcc" "tests/CMakeFiles/test_chtl_js.dir/link.d"
+  "" "tests/test_chtl_js" "gcc" "tests/CMakeFiles/test_chtl_js.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -1,4 +1,5 @@
 #include "Parser/StandardParser.h"
+#include "Common/Token.h"
 #include "Node/Node.h"
 #include "Node/Comment.h"
 #include "Node/Template.h"
@@ -9,51 +10,1310 @@
 #include "Node/Namespace.h"
 #include "Node/Operate.h"
 #include "Node/Origin.h"
-#include <stdexcept>
+#include <algorithm>
+#include <cctype>
 
 namespace chtl {
 
-StandardParser::StandardParser() : BasicParser() {
-    // 构造函数
+StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context)
+    : BasicParser(lexer, context),
+      currentIndent_(0),
+      expectIndent_(0),
+      inAttribute_(false),
+      inStyleBlock_(false),
+      inTextBlock_(false),
+      inTemplateBlock_(false),
+      inCustomBlock_(false),
+      inConfigBlock_(false),
+      inOriginBlock_(false) {
 }
 
 std::shared_ptr<Node> StandardParser::parse() {
-    if (!lexer_ || !context_) {
-        reportError("Parser not initialized");
+    auto root = std::make_shared<Node>(NodeType::DOCUMENT);
+    root->setTagName("document");
+    
+    // 初始化第一个token
+    currentToken_ = getNextToken();
+    
+    try {
+        while (!isAtEnd()) {
+            skipWhitespaceAndComments();
+            if (isAtEnd()) break;
+            
+            auto node = parseTopLevel();
+            if (node) {
+                root->addChild(node);
+            }
+        }
+    } catch (const std::exception& e) {
+        addError("Parse error: " + std::string(e.what()));
+    }
+    
+    return root;
+}
+
+std::shared_ptr<Node> StandardParser::parseTopLevel() {
+    // 检查特殊标记
+    if (currentToken_.type == TokenType::LEFT_BRACKET) {
+        return parseSpecialBlock();
+    }
+    
+    // 检查HTML元素
+    if (currentToken_.type == TokenType::IDENTIFIER) {
+        return parseElement();
+    }
+    
+    // 检查注释
+    if (currentToken_.type == TokenType::HTML_COMMENT) {
+        return parseComment();
+    }
+    
+    advance();
+    return nullptr;
+}
+
+std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
+    consume(TokenType::LEFT_BRACKET, "Expected '['");
+    
+    auto typeToken = consume(TokenType::IDENTIFIER, "Expected block type");
+    std::string blockType = typeToken.value;
+    
+    consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+    
+    if (blockType == "Template") {
+        return parseTemplate();
+    } else if (blockType == "Custom") {
+        return parseCustom();
+    } else if (blockType == "Origin") {
+        return parseOrigin();
+    } else if (blockType == "Configuration") {
+        return parseConfiguration();
+    } else if (blockType == "Import") {
+        return parseImport();
+    } else if (blockType == "Namespace") {
+        return parseNamespace();
+    } else if (blockType == "Info") {
+        return parseInfo();
+    } else if (blockType == "Export") {
+        return parseExport();
+    } else {
+        addError("Unknown block type: " + blockType);
+        skipToNextStatement();
+        return nullptr;
+    }
+}
+
+std::shared_ptr<Node> StandardParser::parseElement() {
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected element name");
+    
+    auto element = std::make_shared<Node>(NodeType::ELEMENT);
+    element->setTagName(nameToken.value);
+    
+    // 检查是否有索引访问 element[index]
+    if (match(TokenType::LEFT_BRACKET)) {
+        auto indexToken = consume(TokenType::NUMBER, "Expected index number");
+        element->setAttribute("_index", indexToken.value);
+        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+    }
+    
+    // 如果后面直接是分号，说明这是一个引用（如 @Element Box;）
+    if (match(TokenType::SEMICOLON)) {
+        return element;
+    }
+    
+    // 否则应该有内容块
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查属性
+        if (checkAttribute()) {
+            parseAttributes(element);
+        }
+        // 检查except约束
+        else if (check(TokenType::EXCEPT)) {
+            parseExcept(element);
+        }
+        // 检查特殊操作（delete, insert）
+        else if (check(TokenType::DELETE_KW) || check(TokenType::INSERT)) {
+            auto op = parseOperation();
+            if (op) {
+                element->addChild(op);
+            }
+        }
+        // 检查子元素
+        else {
+            auto child = parseNode();
+            if (child) {
+                element->addChild(child);
+            }
+        }
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return element;
+}
+
+std::shared_ptr<Node> StandardParser::parseNode() {
+    // text块
+    if (currentToken_.value == "text") {
+        return parseText();
+    }
+    
+    // style块
+    if (currentToken_.value == "style") {
+        return parseStyleBlock();
+    }
+    
+    // @Element, @Style, @Var引用
+    if (currentToken_.type == TokenType::AT_ELEMENT || 
+        currentToken_.type == TokenType::AT_STYLE || 
+        currentToken_.type == TokenType::AT_VAR) {
+        return parseReference();
+    }
+    
+    // 普通元素
+    if (currentToken_.type == TokenType::IDENTIFIER) {
+        return parseElement();
+    }
+    
+    // 特殊块
+    if (currentToken_.type == TokenType::LEFT_BRACKET) {
+        return parseSpecialBlock();
+    }
+    
+    advance();
+    return nullptr;
+}
+
+std::shared_ptr<Node> StandardParser::parseText() {
+    consume(TokenType::IDENTIFIER, "text");
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    auto textNode = std::make_shared<Node>(NodeType::TEXT);
+    std::string content;
+    
+    // 收集文本内容，支持字符串字面量和无引号字面量
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        auto token = advance();
+        
+        if (token.type == TokenType::STRING_LITERAL) {
+            content += token.value;
+        } else if (token.type == TokenType::UNQUOTED_LITERAL) {
+            content += token.value;
+        } else if (token.type == TokenType::IDENTIFIER) {
+            content += token.value;
+        }
+        
+        // 添加空格分隔
+        if (!check(TokenType::RIGHT_BRACE)) {
+            content += " ";
+        }
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    textNode->setText(content);
+    return textNode;
+}
+
+bool StandardParser::checkAttribute() {
+    if (!check(TokenType::IDENTIFIER)) return false;
+    
+    // 预读下一个token
+    Token savedCurrent = currentToken_;
+    Token savedPrevious = previousToken_;
+    advance();
+    bool isAttr = check(TokenType::COLON) || check(TokenType::EQUALS);
+    // 恢复状态
+    currentToken_ = savedCurrent;
+    previousToken_ = savedPrevious;
+    
+    return isAttr;
+}
+
+void StandardParser::parseAttributes(std::shared_ptr<Node> element) {
+    while (checkAttribute()) {
+        auto nameToken = consume(TokenType::IDENTIFIER, "Expected attribute name");
+        
+        // CE对等式：':'与'='完全等价
+        if (!match(TokenType::COLON) && !match(TokenType::EQUALS)) {
+            addError("Expected ':' or '=' after attribute name");
+            skipToNextStatement();
+            return;
+        }
+        
+        // 解析属性值
+        std::string value;
+        auto valueToken = advance();
+        
+        if (valueToken.type == TokenType::STRING_LITERAL) {
+            value = valueToken.value;
+        } else if (valueToken.type == TokenType::UNQUOTED_LITERAL) {
+            value = valueToken.value;
+        } else if (valueToken.type == TokenType::IDENTIFIER) {
+            value = valueToken.value;
+        } else if (valueToken.type == TokenType::NUMBER) {
+            value = valueToken.value;
+        } else {
+            addError("Invalid attribute value");
+            continue;
+        }
+        
+        element->setAttribute(nameToken.value, value);
+        
+        consume(TokenType::SEMICOLON, "Expected ';' after attribute");
+    }
+}
+
+std::shared_ptr<Node> StandardParser::parseStyleBlock() {
+    consume(TokenType::IDENTIFIER, "style");
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    auto styleNode = std::make_shared<Style>();
+    styleNode->setType(StyleType::LOCAL);
+    
+    parseStyleContent(styleNode);
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return styleNode;
+}
+
+void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
+    std::string cssContent;
+    
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        // 检查@Style, @Var引用
+        if (check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
+            auto ref = parseStyleReference();
+            if (ref) {
+                styleNode->addChild(ref);
+            }
+            continue;
+        }
+        
+        // 检查类选择器或ID选择器（自动化类名/ID功能）
+        if (check(TokenType::DOT) || currentToken_.value == "#") {
+            parseSelectorBlock(styleNode);
+            continue;
+        }
+        
+        // 检查&符号（上下文推导）
+        if (check(TokenType::AMPERSAND)) {
+            parseContextSelector(styleNode);
+            continue;
+        }
+        
+        // 普通CSS属性
+        if (checkAttribute()) {
+            parseCssProperty(cssContent);
+        } else {
+            advance();
+        }
+    }
+    
+    if (!cssContent.empty()) {
+        styleNode->setContent(cssContent);
+    }
+}
+
+void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
+    std::string selector;
+    
+    // 解析选择器
+    if (match(TokenType::DOT)) {
+        selector = ".";
+        auto className = consume(TokenType::IDENTIFIER, "Expected class name");
+        selector += className.value;
+        
+        // 自动添加类名到父元素
+        if (auto parent = styleNode->getParent()) {
+            parent->addClass(className.value);
+        }
+    } else if (currentToken_.value == "#") {
+        advance();
+        selector = "#";
+        auto idName = consume(TokenType::IDENTIFIER, "Expected id name");
+        selector += idName.value;
+        
+        // 自动添加ID到父元素
+        if (auto parent = styleNode->getParent()) {
+            parent->setAttribute("id", idName.value);
+        }
+    }
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 创建一个全局样式节点
+    auto globalStyle = std::make_shared<Style>();
+    globalStyle->setType(StyleType::GLOBAL);
+    globalStyle->setSelector(selector);
+    
+    std::string cssContent;
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        parseCssProperty(cssContent);
+    }
+    
+    globalStyle->setContent(cssContent);
+    styleNode->addChild(globalStyle);
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+}
+
+void StandardParser::parseContextSelector(std::shared_ptr<Style> styleNode) {
+    consume(TokenType::AMPERSAND, "&");
+    
+    std::string selector = "&";
+    
+    // 解析伪类或伪元素
+    if (match(TokenType::COLON)) {
+        selector += ":";
+        
+        if (match(TokenType::COLON)) {
+            selector += ":";  // 伪元素
+        }
+        
+        auto pseudo = consume(TokenType::IDENTIFIER, "Expected pseudo-class or pseudo-element");
+        selector += pseudo.value;
+    }
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 创建全局样式节点
+    auto globalStyle = std::make_shared<Style>();
+    globalStyle->setType(StyleType::GLOBAL);
+    globalStyle->setSelector(selector);
+    
+    std::string cssContent;
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        parseCssProperty(cssContent);
+    }
+    
+    globalStyle->setContent(cssContent);
+    styleNode->addChild(globalStyle);
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+}
+
+void StandardParser::parseCssProperty(std::string& cssContent) {
+    auto propertyName = consume(TokenType::IDENTIFIER, "Expected property name");
+    
+    if (!match(TokenType::COLON)) {
+        addError("Expected ':' after property name");
+        skipToNextStatement();
+        return;
+    }
+    
+    cssContent += propertyName.value + ": ";
+    
+    // 收集属性值直到分号
+    while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
+        auto token = advance();
+        cssContent += token.value + " ";
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    cssContent += ";\n";
+}
+
+std::shared_ptr<Node> StandardParser::parseTemplate() {
+    // [Template]已经被消费
+    
+    // 解析模板类型
+    TemplateType templateType;
+    std::string templateName;
+    
+    if (match(TokenType::AT_STYLE)) {
+        templateType = TemplateType::STYLE;
+        templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
+    } else if (match(TokenType::AT_ELEMENT)) {
+        templateType = TemplateType::ELEMENT;
+        templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
+    } else if (match(TokenType::AT_VAR)) {
+        templateType = TemplateType::VAR;
+        templateName = consume(TokenType::IDENTIFIER, "Expected template name").value;
+    } else {
+        addError("Expected template type (@Style, @Element, or @Var)");
+        skipToNextStatement();
         return nullptr;
     }
     
-    // 开始解析
-    // 不要调用getNextToken()，因为peekNextToken()已经会获取第一个token
-    return parseDocument();
+    auto templateNode = std::make_shared<Template>();
+    templateNode->setType(templateType);
+    templateNode->setName(templateName);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 根据模板类型解析内容
+    switch (templateType) {
+        case TemplateType::STYLE:
+            parseStyleTemplateContent(templateNode);
+            break;
+        case TemplateType::ELEMENT:
+            parseElementTemplateContent(templateNode);
+            break;
+        case TemplateType::VAR:
+            parseVarTemplateContent(templateNode);
+            break;
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    // 注册到上下文
+    context_->registerTemplate(templateName, templateNode);
+    
+    return templateNode;
 }
 
-// 辅助方法
-Token StandardParser::advance() {
-    consumeToken();
-    return previousToken_;
+void StandardParser::parseStyleTemplateContent(std::shared_ptr<Template> templateNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(templateNode);
+            continue;
+        }
+        
+        // 检查@Style引用（组合式继承）
+        if (check(TokenType::AT_STYLE)) {
+            auto ref = parseStyleReference();
+            if (ref) {
+                templateNode->addChild(ref);
+            }
+            continue;
+        }
+        
+        // CSS属性
+        if (checkAttribute()) {
+            parseTemplateProperty(templateNode);
+        } else {
+            advance();
+        }
+    }
 }
 
-Token StandardParser::currentToken() {
+void StandardParser::parseElementTemplateContent(std::shared_ptr<Template> templateNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(templateNode);
+            continue;
+        }
+        
+        // 检查@Element引用
+        if (check(TokenType::AT_ELEMENT)) {
+            auto ref = parseReference();
+            if (ref) {
+                templateNode->addChild(ref);
+            }
+            continue;
+        }
+        
+        // 普通元素
+        auto child = parseNode();
+        if (child) {
+            templateNode->addChild(child);
+        }
+    }
+}
+
+void StandardParser::parseVarTemplateContent(std::shared_ptr<Template> templateNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(templateNode);
+            continue;
+        }
+        
+        // 检查@Var引用
+        if (check(TokenType::AT_VAR)) {
+            auto ref = parseReference();
+            if (ref) {
+                templateNode->addChild(ref);
+            }
+            continue;
+        }
+        
+        // 变量定义
+        if (checkAttribute()) {
+            parseTemplateProperty(templateNode);
+        } else {
+            advance();
+        }
+    }
+}
+
+void StandardParser::parseTemplateProperty(std::shared_ptr<Template> templateNode) {
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected property name");
+    
+    if (!match(TokenType::COLON) && !match(TokenType::EQUALS)) {
+        addError("Expected ':' or '=' after property name");
+        skipToNextStatement();
+        return;
+    }
+    
+    // 属性值
+    std::string value;
+    auto valueToken = advance();
+    
+    if (valueToken.type == TokenType::STRING_LITERAL ||
+        valueToken.type == TokenType::UNQUOTED_LITERAL ||
+        valueToken.type == TokenType::IDENTIFIER ||
+        valueToken.type == TokenType::NUMBER) {
+        value = valueToken.value;
+    }
+    
+    templateNode->addProperty(nameToken.value, value);
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+}
+
+std::shared_ptr<Node> StandardParser::parseCustom() {
+    // [Custom]已经被消费
+    
+    // 解析自定义类型
+    CustomType customType;
+    std::string customName;
+    
+    if (match(TokenType::AT_STYLE)) {
+        customType = CustomType::STYLE;
+        customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
+    } else if (match(TokenType::AT_ELEMENT)) {
+        customType = CustomType::ELEMENT;
+        customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
+    } else if (match(TokenType::AT_VAR)) {
+        customType = CustomType::VAR;
+        customName = consume(TokenType::IDENTIFIER, "Expected custom name").value;
+    } else {
+        addError("Expected custom type (@Style, @Element, or @Var)");
+        skipToNextStatement();
+        return nullptr;
+    }
+    
+    auto customNode = std::make_shared<Custom>();
+    customNode->setType(customType);
+    customNode->setName(customName);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 根据自定义类型解析内容
+    switch (customType) {
+        case CustomType::STYLE:
+            parseCustomStyleContent(customNode);
+            break;
+        case CustomType::ELEMENT:
+            parseCustomElementContent(customNode);
+            break;
+        case CustomType::VAR:
+            parseCustomVarContent(customNode);
+            break;
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    // 注册到上下文
+    context_->registerCustom(customName, customNode);
+    
+    return customNode;
+}
+
+void StandardParser::parseCustomStyleContent(std::shared_ptr<Custom> customNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(customNode);
+            continue;
+        }
+        
+        // 检查@Style引用
+        if (check(TokenType::AT_STYLE)) {
+            auto ref = parseStyleReference();
+            if (ref) {
+                customNode->addChild(ref);
+            }
+            continue;
+        }
+        
+        // 属性（可能没有值）
+        auto nameToken = consume(TokenType::IDENTIFIER, "Expected property name");
+        
+        // 检查是否有值
+        if (match(TokenType::COLON) || match(TokenType::EQUALS)) {
+            std::string value;
+            auto valueToken = advance();
+            if (valueToken.type == TokenType::STRING_LITERAL ||
+                valueToken.type == TokenType::UNQUOTED_LITERAL ||
+                valueToken.type == TokenType::IDENTIFIER ||
+                valueToken.type == TokenType::NUMBER) {
+                value = valueToken.value;
+            }
+            customNode->addProperty(nameToken.value, value);
+        } else {
+            // 无值属性
+            customNode->addProperty(nameToken.value, "");
+        }
+        
+        if (check(TokenType::COMMA)) {
+            advance();
+        } else if (check(TokenType::SEMICOLON)) {
+            advance();
+        }
+    }
+}
+
+void StandardParser::parseCustomElementContent(std::shared_ptr<Custom> customNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(customNode);
+            continue;
+        }
+        
+        // 元素
+        auto child = parseNode();
+        if (child) {
+            customNode->addChild(child);
+        }
+    }
+}
+
+void StandardParser::parseCustomVarContent(std::shared_ptr<Custom> customNode) {
+    parseVarTemplateContent(std::static_pointer_cast<Template>(customNode));
+}
+
+void StandardParser::parseInherit(std::shared_ptr<Node> node) {
+    // inherit关键字已被消费
+    
+    // 解析继承的类型和名称
+    if (match(TokenType::AT_STYLE) || match(TokenType::AT_ELEMENT) || match(TokenType::AT_VAR)) {
+        auto name = consume(TokenType::IDENTIFIER, "Expected name to inherit").value;
+        node->addInheritance(previous().value + " " + name);
+    } else if (match(TokenType::CUSTOM) || match(TokenType::TEMPLATE)) {
+        // [Custom] 或 [Template]
+        auto type = previous().value;
+        if (match(TokenType::AT_STYLE) || match(TokenType::AT_ELEMENT) || match(TokenType::AT_VAR)) {
+            auto name = consume(TokenType::IDENTIFIER, "Expected name to inherit").value;
+            node->addInheritance(type + " " + previous().value + " " + name);
+        }
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+}
+
+std::shared_ptr<Node> StandardParser::parseReference() {
+    auto typeToken = advance(); // @Style, @Element, or @Var
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
+    
+    auto refNode = std::make_shared<Node>(NodeType::REFERENCE);
+    refNode->setTagName(typeToken.value + " " + nameToken.value);
+    
+    // 检查是否有特例化块
+    if (check(TokenType::LEFT_BRACE)) {
+        consume(TokenType::LEFT_BRACE, "Expected '{'");
+        parseSpecialization(refNode);
+        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    }
+    
+    // 检查是否有from子句（命名空间）
+    if (match(TokenType::FROM)) {
+        auto namespaceToken = consume(TokenType::IDENTIFIER, "Expected namespace");
+        refNode->setAttribute("from", namespaceToken.value);
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    return refNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseStyleReference() {
+    auto typeToken = advance(); // @Style or @Var
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
+    
+    auto refNode = std::make_shared<Node>(NodeType::REFERENCE);
+    refNode->setTagName(typeToken.value + " " + nameToken.value);
+    
+    // 变量组可能有参数
+    if (typeToken.type == TokenType::AT_VAR && match(TokenType::LEFT_PAREN)) {
+        parseVarArguments(refNode);
+        consume(TokenType::RIGHT_PAREN, "Expected ')'");
+    }
+    
+    // 检查是否有特例化
+    if (check(TokenType::LEFT_BRACE)) {
+        consume(TokenType::LEFT_BRACE, "Expected '{'");
+        parseSpecialization(refNode);
+        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    return refNode;
+}
+
+void StandardParser::parseVarArguments(std::shared_ptr<Node> refNode) {
+    // 解析变量参数，如 ThemeColor(tableColor = rgb(145, 155, 200))
+    while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+        auto varName = consume(TokenType::IDENTIFIER, "Expected variable name");
+        
+        if (match(TokenType::EQUALS)) {
+            std::string value;
+            // 收集值直到逗号或右括号
+            while (!check(TokenType::COMMA) && !check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+                value += advance().value + " ";
+            }
+            refNode->setAttribute(varName.value, value);
+        }
+        
+        if (match(TokenType::COMMA)) {
+            continue;
+        }
+    }
+}
+
+void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
+    // 解析特例化内容（delete, 属性覆盖等）
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // delete操作
+        if (match(TokenType::DELETE_KW)) {
+            parseDelete(refNode);
+            continue;
+        }
+        
+        // 其他内容根据引用类型处理
+        if (refNode->getTagName().find("@Style") != std::string::npos) {
+            // CSS属性
+            if (checkAttribute()) {
+                parseAttributes(refNode);
+            }
+        } else if (refNode->getTagName().find("@Element") != std::string::npos) {
+            // 元素特例化
+            auto child = parseNode();
+            if (child) {
+                refNode->addChild(child);
+            }
+        } else if (refNode->getTagName().find("@Var") != std::string::npos) {
+            // 变量特例化
+            if (checkAttribute()) {
+                parseAttributes(refNode);
+            }
+        }
+    }
+}
+
+void StandardParser::parseDelete(std::shared_ptr<Node> parent) {
+    // delete关键字已被消费
+    
+    // 收集要删除的项
+    std::vector<std::string> deleteItems;
+    
+    do {
+        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
+            auto type = advance();
+            auto name = consume(TokenType::IDENTIFIER, "Expected name").value;
+            deleteItems.push_back(type.value + " " + name);
+        } else if (check(TokenType::IDENTIFIER)) {
+            auto item = advance();
+            
+            // 检查是否有索引
+            if (match(TokenType::LEFT_BRACKET)) {
+                auto index = consume(TokenType::NUMBER, "Expected index").value;
+                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+                deleteItems.push_back(item.value + "[" + index + "]");
+            } else {
+                deleteItems.push_back(item.value);
+            }
+        }
+    } while (match(TokenType::COMMA));
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    // 创建删除节点
+    for (const auto& item : deleteItems) {
+        auto deleteNode = std::make_shared<Node>(NodeType::DELETE);
+        deleteNode->setTagName(item);
+        parent->addChild(deleteNode);
+    }
+}
+
+std::shared_ptr<Node> StandardParser::parseOperation() {
+    if (match(TokenType::DELETE_KW)) {
+        parseDelete(nullptr);
+        return nullptr;
+    }
+    
+    if (match(TokenType::INSERT)) {
+        return parseInsert();
+    }
+    
+    return nullptr;
+}
+
+std::shared_ptr<Node> StandardParser::parseInsert() {
+    // insert关键字已被消费
+    
+    auto insertNode = std::make_shared<Operate>();
+    
+    // 解析位置（after, before, replace, at top, at bottom）
+    Operate::Position position = Operate::Position::AFTER;
+    std::string target;
+    
+    if (match(TokenType::AFTER)) {
+        position = Operate::Position::AFTER;
+        target = parseInsertTarget();
+    } else if (match(TokenType::BEFORE)) {
+        position = Operate::Position::BEFORE;
+        target = parseInsertTarget();
+    } else if (match(TokenType::REPLACE)) {
+        position = Operate::Position::REPLACE;
+        target = parseInsertTarget();
+    } else if (match(TokenType::AT)) {
+        if (match(TokenType::TOP)) {
+            position = Operate::Position::AT_TOP;
+        } else if (match(TokenType::BOTTOM)) {
+            position = Operate::Position::AT_BOTTOM;
+        }
+    }
+    
+    insertNode->setOperation(OperationType::INSERT);
+    insertNode->setPosition(position);
+    insertNode->setTarget(target);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 解析要插入的内容
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        auto child = parseNode();
+        if (child) {
+            insertNode->addChild(child);
+        }
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return insertNode;
+}
+
+std::string StandardParser::parseInsertTarget() {
+    std::string target;
+    
+    auto token = consume(TokenType::IDENTIFIER, "Expected target element");
+    target = token.value;
+    
+    // 检查索引
+    if (match(TokenType::LEFT_BRACKET)) {
+        auto index = consume(TokenType::NUMBER, "Expected index").value;
+        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+        target += "[" + index + "]";
+    }
+    
+    return target;
+}
+
+std::shared_ptr<Node> StandardParser::parseOrigin() {
+    // [Origin]已经被消费
+    
+    OriginType originType;
+    
+    if (match(TokenType::AT_HTML)) {
+        originType = OriginType::HTML;
+    } else if (match(TokenType::AT_STYLE)) {
+        originType = OriginType::STYLE;
+    } else if (match(TokenType::AT_JAVASCRIPT)) {
+        originType = OriginType::JAVASCRIPT;
+    } else {
+        addError("Expected origin type (@Html, @Style, or @JavaScript)");
+        skipToNextStatement();
+        return nullptr;
+    }
+    
+    auto originNode = std::make_shared<Origin>();
+    originNode->setType(originType);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 收集原始内容
+    std::string content;
+    int braceCount = 1;
+    
+    while (braceCount > 0 && !isAtEnd()) {
+        auto token = advance();
+        
+        if (token.type == TokenType::LEFT_BRACE) {
+            braceCount++;
+        } else if (token.type == TokenType::RIGHT_BRACE) {
+            braceCount--;
+            if (braceCount == 0) break;
+        }
+        
+        content += token.value + " ";
+    }
+    
+    originNode->setContent(content);
+    
+    return originNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseConfiguration() {
+    // [Configuration]已经被消费
+    
+    auto configNode = std::make_shared<Config>();
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    parseConfigContent(configNode);
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return configNode;
+}
+
+void StandardParser::parseConfigContent(std::shared_ptr<Config> configNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查[Name]子配置块
+        if (check(TokenType::LEFT_BRACKET)) {
+            consume(TokenType::LEFT_BRACKET, "[");
+            auto blockName = consume(TokenType::IDENTIFIER, "Expected config block name").value;
+            consume(TokenType::RIGHT_BRACKET, "]");
+            
+            if (blockName == "Name") {
+                consume(TokenType::LEFT_BRACE, "Expected '{'");
+                parseNameConfig(configNode);
+                consume(TokenType::RIGHT_BRACE, "Expected '}'");
+            }
+            continue;
+        }
+        
+        // 普通配置项
+        parseConfigItem(configNode);
+    }
+}
+
+void StandardParser::parseConfigItem(std::shared_ptr<Config> configNode) {
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected config name");
+    
+    consume(TokenType::EQUALS, "Expected '='");
+    
+    // 配置值可能是单个值或数组
+    if (match(TokenType::LEFT_BRACKET)) {
+        // 数组值
+        std::vector<std::string> values;
+        
+        while (!check(TokenType::RIGHT_BRACKET) && !isAtEnd()) {
+            auto value = advance();
+            values.push_back(value.value);
+            
+            if (!match(TokenType::COMMA)) {
+                break;
+            }
+        }
+        
+        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+        
+        // 存储为逗号分隔的字符串
+        std::string valueStr;
+        for (size_t i = 0; i < values.size(); ++i) {
+            valueStr += values[i];
+            if (i < values.size() - 1) {
+                valueStr += ",";
+            }
+        }
+        configNode->setConfig(nameToken.value, valueStr);
+    } else {
+        // 单个值
+        auto value = advance();
+        configNode->setConfig(nameToken.value, value.value);
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+}
+
+void StandardParser::parseNameConfig(std::shared_ptr<Config> configNode) {
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        parseConfigItem(configNode);
+    }
+}
+
+std::shared_ptr<Node> StandardParser::parseImport() {
+    // [Import]已经被消费
+    
+    auto importNode = std::make_shared<Import>();
+    
+    // 解析导入类型
+    ImportType importType = ImportType::CHTL;
+    std::string importName;
+    
+    if (match(TokenType::WILDCARD)) {
+        // 通配导入
+        importType = ImportType::ALL;
+    } else if (match(TokenType::AT_HTML)) {
+        importType = ImportType::HTML;
+    } else if (match(TokenType::AT_STYLE)) {
+        importType = ImportType::CSS;
+    } else if (match(TokenType::AT_JAVASCRIPT)) {
+        importType = ImportType::JS;
+    } else if (match(TokenType::AT_CHTL)) {
+        importType = ImportType::CHTL;
+    } else if (match(TokenType::CUSTOM)) {
+        // [Custom] @Type Name
+        if (match(TokenType::AT_ELEMENT)) {
+            importType = ImportType::CUSTOM_ELEMENT;
+            importName = consume(TokenType::IDENTIFIER, "Expected custom element name").value;
+        } else if (match(TokenType::AT_STYLE)) {
+            importType = ImportType::CUSTOM_STYLE;
+            importName = consume(TokenType::IDENTIFIER, "Expected custom style name").value;
+        } else if (match(TokenType::AT_VAR)) {
+            importType = ImportType::CUSTOM_VAR;
+            importName = consume(TokenType::IDENTIFIER, "Expected custom var name").value;
+        }
+    } else if (match(TokenType::TEMPLATE)) {
+        // [Template] @Type Name
+        if (match(TokenType::AT_ELEMENT)) {
+            importType = ImportType::TEMPLATE_ELEMENT;
+            importName = consume(TokenType::IDENTIFIER, "Expected template element name").value;
+        } else if (match(TokenType::AT_STYLE)) {
+            importType = ImportType::TEMPLATE_STYLE;
+            importName = consume(TokenType::IDENTIFIER, "Expected template style name").value;
+        } else if (match(TokenType::AT_VAR)) {
+            importType = ImportType::TEMPLATE_VAR;
+            importName = consume(TokenType::IDENTIFIER, "Expected template var name").value;
+        }
+    }
+    
+    importNode->setType(importType);
+    if (!importName.empty()) {
+        importNode->setName(importName);
+    }
+    
+    // from子句
+    consume(TokenType::FROM, "Expected 'from'");
+    
+    // 路径（支持.代替/）
+    std::string path;
+    while (!check(TokenType::AS) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
+        auto token = advance();
+        if (token.type == TokenType::DOT) {
+            path += "/";
+        } else {
+            path += token.value;
+        }
+    }
+    importNode->setPath(path);
+    
+    // as子句（可选）
+    if (match(TokenType::AS)) {
+        auto alias = consume(TokenType::IDENTIFIER, "Expected alias").value;
+        importNode->setAlias(alias);
+    }
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    return importNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseNamespace() {
+    // [Namespace]已经被消费
+    
+    auto namespaceNode = std::make_shared<Namespace>();
+    
+    auto nameToken = consume(TokenType::IDENTIFIER, "Expected namespace name");
+    namespaceNode->setName(nameToken.value);
+    
+    // 检查是否有内容块
+    if (check(TokenType::LEFT_BRACE)) {
+        consume(TokenType::LEFT_BRACE, "Expected '{'");
+        
+        // 解析命名空间内容
+        while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+            skipWhitespaceAndComments();
+            
+            if (check(TokenType::RIGHT_BRACE)) break;
+            
+            // except约束
+            if (check(TokenType::EXCEPT)) {
+                parseExcept(namespaceNode);
+                continue;
+            }
+            
+            // 嵌套命名空间或其他内容
+            auto child = parseTopLevel();
+            if (child) {
+                namespaceNode->addChild(child);
+            }
+        }
+        
+        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    }
+    
+    return namespaceNode;
+}
+
+void StandardParser::parseExcept(std::shared_ptr<Node> parent) {
+    consume(TokenType::EXCEPT, "except");
+    
+    // 收集约束项
+    std::vector<std::string> exceptItems;
+    
+    do {
+        if (check(TokenType::AT_HTML)) {
+            advance();
+            exceptItems.push_back("@Html");
+        } else if (check(TokenType::CUSTOM)) {
+            advance();
+            
+            // 可能有具体类型
+            if (check(TokenType::AT_ELEMENT) || check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
+                auto type = advance();
+                auto name = consume(TokenType::IDENTIFIER, "Expected name").value;
+                exceptItems.push_back("[Custom] " + type.value + " " + name);
+            } else {
+                exceptItems.push_back("[Custom]");
+            }
+        } else if (check(TokenType::TEMPLATE)) {
+            advance();
+            
+            // 可能有具体类型
+            if (check(TokenType::AT_ELEMENT) || check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
+                auto type = advance();
+                exceptItems.push_back("[Template] " + type.value);
+            } else {
+                exceptItems.push_back("[Template]");
+            }
+        } else if (check(TokenType::IDENTIFIER)) {
+            // HTML元素
+            exceptItems.push_back(advance().value);
+        }
+    } while (match(TokenType::COMMA));
+    
+    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    // 添加约束到父节点
+    for (const auto& item : exceptItems) {
+        parent->addConstraint(item);
+    }
+}
+
+std::shared_ptr<Node> StandardParser::parseInfo() {
+    // [Info]已经被消费
+    
+    auto infoNode = std::make_shared<Node>(NodeType::INFO);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 解析信息项
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (checkAttribute()) {
+            parseAttributes(infoNode);
+        } else {
+            advance();
+        }
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return infoNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseExport() {
+    // [Export]已经被消费
+    
+    auto exportNode = std::make_shared<Node>(NodeType::EXPORT);
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 解析导出项
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
+            auto type = advance();
+            
+            // 收集名称列表
+            do {
+                auto name = consume(TokenType::IDENTIFIER, "Expected export name");
+                exportNode->addExport(type.value + " " + name.value);
+            } while (match(TokenType::COMMA));
+            
+            consume(TokenType::SEMICOLON, "Expected ';'");
+        } else {
+            advance();
+        }
+    }
+    
+    consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    return exportNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseComment() {
+    auto commentToken = consume(TokenType::HTML_COMMENT, "Expected comment");
+    
+    auto commentNode = std::make_shared<Comment>();
+    commentNode->setContent(commentToken.value);
+    
+    return commentNode;
+}
+
+// 辅助方法实现
+
+Token StandardParser::peek() {
+    // BasicParser的peekNextToken()会返回下一个token而不消费它
     return peekNextToken();
 }
 
-Token StandardParser::peek() {
-    // 保存当前状态
-    Token current = currentToken();
-    
-    // 前进一个token
-    advance();
-    Token next = currentToken();
-    
-    // 恢复状态 - 这里有个问题，BasicParser没有提供回退功能
-    // 暂时返回当前token作为下一个token的近似
-    return current;
+Token StandardParser::previous() {
+    return previousToken_;
+}
+
+Token StandardParser::advance() {
+    previousToken_ = currentToken_;
+    consumeToken();  // 消费当前token
+    currentToken_ = peekNextToken();  // 获取下一个token作为当前token
+    return previousToken_;
+}
+
+bool StandardParser::isAtEnd() {
+    return currentToken_.type == TokenType::EOF_TOKEN;
 }
 
 bool StandardParser::check(TokenType type) {
     if (isAtEnd()) return false;
-    return currentToken().getType() == type;
+    return currentToken_.type == type;
 }
 
 bool StandardParser::match(TokenType type) {
@@ -65,1608 +1325,39 @@ bool StandardParser::match(TokenType type) {
 }
 
 Token StandardParser::consume(TokenType type, const std::string& message) {
-    if (check(type)) {
-        return advance();
-    }
+    if (check(type)) return advance();
     
-    reportError(message);
-    return currentToken();
+    addError(message + " at line " + std::to_string(currentToken_.line));
+    throw std::runtime_error(message);
 }
 
-std::shared_ptr<Node> StandardParser::parseDocument() {
-    // 创建根文档节点
-    auto document = std::make_shared<Element>("document");
-    std::shared_ptr<Node> firstRootElement = nullptr;
-    
-    // 解析顶层元素
+void StandardParser::skipWhitespaceAndComments() {
     while (!isAtEnd()) {
         // 跳过注释
-        if (check(TokenType::HTML_COMMENT)) {
-            auto comment = parseComment();
-            if (comment) {
-                document->appendChild(comment);
-            }
-            continue;
-        }
-        
-        // 跳过其他注释（不会被生成）
-        if (check(TokenType::SINGLE_LINE_COMMENT) || check(TokenType::MULTI_LINE_COMMENT)) {
+        if (currentToken_.type == TokenType::SINGLE_LINE_COMMENT ||
+            currentToken_.type == TokenType::MULTI_LINE_COMMENT) {
             advance();
             continue;
         }
         
-        // 解析配置块
-        if (check(TokenType::CONFIGURATION)) {
-            auto config = parseConfig();
-            if (config) {
-                document->appendChild(config);
-            }
-            continue;
-        }
-        
-        // 解析导入
-        if (check(TokenType::IMPORT)) {
-            auto import = parseImport();
-            if (import) {
-                document->appendChild(import);
-            }
-            continue;
-        }
-        
-        // 解析命名空间
-        if (check(TokenType::NAMESPACE_KW)) {
-            auto ns = parseNamespace();
-            if (ns) {
-                document->appendChild(ns);
-            }
-            continue;
-        }
-        
-        // 解析模板
-        if (check(TokenType::TEMPLATE)) {
-            auto template_ = parseTemplate();
-            if (template_) {
-                document->appendChild(template_);
-            }
-            continue;
-        }
-        
-        // 解析自定义
-        if (check(TokenType::CUSTOM)) {
-            auto custom = parseCustom();
-            if (custom) {
-                document->appendChild(custom);
-            }
-            continue;
-        }
-        
-        // 解析原始嵌入
-        if (check(TokenType::ORIGIN)) {
-            auto origin = parseOrigin();
-            if (origin) {
-                document->appendChild(origin);
-            }
-            continue;
-        }
-        
-        // 解析元素
-        auto element = parseElement();
-        if (element) {
-            document->appendChild(element);
-            
-            // 如果是第一个根元素（通常是html），记录它
-            if (!firstRootElement && element->getType() == NodeType::ELEMENT) {
-                auto elem = std::dynamic_pointer_cast<Element>(element);
-                if (elem && elem->getTagName() == "html") {
-                    firstRootElement = element;
-                }
-            }
-        } else {
-            // 如果无法解析，跳过当前token
-            if (!isAtEnd()) {
-                reportError("Unexpected token: " + currentToken().getValue());
-                advance();
-            }
-        }
-    }
-    
-    // 如果只有一个html元素，直接返回它
-    if (firstRootElement && document->getChildren().size() == 1) {
-        return firstRootElement;
-    }
-    
-    // 如果document中有html元素，直接返回document
-    // 这样HtmlGenerator可以正确处理DOCTYPE的生成
-    
-    return document;
-}
-
-std::shared_ptr<Node> StandardParser::parseElement() {
-    // 检查是否是标识符（元素名）
-    if (!check(TokenType::IDENTIFIER)) {
-        return nullptr;
-    }
-    
-    // 获取元素名
-    std::string tagName = advance().getValue();
-    // std::cerr << "DEBUG: Parsing element: " << tagName << std::endl;
-    auto element = std::make_shared<Element>(tagName);
-    
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after element name '" + tagName + "'");
-        return element;
-    }
-    
-    // 解析元素内容
-    parseElementContent(element);
-    
-    // 期待右大括号
-    if (!match(TokenType::RIGHT_BRACE)) {
-        reportError("Expected '}' to close element '" + tagName + "'");
-    }
-    
-    return element;
-}
-
-void StandardParser::parseElementContent(std::shared_ptr<Element> element) {
-    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        // 跳过注释
-        if (check(TokenType::HTML_COMMENT)) {
-            auto comment = parseComment();
-            if (comment) {
-                element->appendChild(comment);
-            }
-            continue;
-        }
-        
-        // 跳过其他注释
-        if (check(TokenType::SINGLE_LINE_COMMENT) || check(TokenType::MULTI_LINE_COMMENT)) {
+        // 跳过空白（如果词法分析器产生了空白token）
+        if (currentToken_.value.empty() || 
+            std::all_of(currentToken_.value.begin(), currentToken_.value.end(), ::isspace)) {
             advance();
             continue;
         }
         
-        // 检查是否是属性（标识符后跟冒号或等号）
-        if (check(TokenType::IDENTIFIER)) {
-            // 解析属性
-            parseAttribute(element);
-            continue;
-        }
-        
-        // 检查是否是text节点
-        if (check(TokenType::TEXT)) {
-            advance(); // 跳过 text 关键字
-            auto textNode = parseText();
-            if (textNode) {
-                element->appendChild(textNode);
-            }
-            continue;
-        }
-        
-        // 检查是否是style块
-        if (check(TokenType::STYLE)) {
-            // std::cerr << "DEBUG: Found STYLE keyword" << std::endl;
-            advance(); // 跳过 style 关键字
-            auto styleNode = parseInlineStyle(element);
-            if (styleNode) {
-                element->appendChild(styleNode);
-            }
-            // std::cerr << "DEBUG: After parseInlineStyle, current token: " << currentToken().getValue() << std::endl;
-            continue;
-        }
-        
-        // 检查是否是模板使用 (@Style, @Element, @Var)
-        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
-            parseTemplateUsage(element);
-            continue;
-        }
-        
-        // 检查是否是操作语句 (insert, delete, replace)
-        if (check(TokenType::INSERT) || check(TokenType::DELETE_KW) || check(TokenType::REPLACE)) {
-            auto operate = parseOperate();
-            if (operate) {
-                element->appendChild(operate);
-            }
-            continue;
-        }
-        
-        // 检查是否是原始嵌入 ([Origin])
-        if (check(TokenType::ORIGIN)) {
-            auto origin = parseOrigin();
-            if (origin) {
-                element->appendChild(origin);
-            }
-            continue;
-        }
-        
-        // 解析嵌套元素
-        auto child = parseElement();
-        if (child) {
-            element->appendChild(child);
-        } else {
-            // 无法识别的内容
-            std::string tokenValue = currentToken().getValue();
-            if (tokenValue.empty()) {
-                tokenValue = "<empty>";
-            }
-            reportError("Unexpected token in element: '" + tokenValue + "' (type: " + std::to_string(static_cast<int>(currentToken().getType())) + ")");
-            advance();
-        }
+        break;
     }
 }
 
-std::shared_ptr<Node> StandardParser::parseText() {
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after 'text'");
-        return nullptr;
-    }
-    
-    std::string content;
-    
-    // 收集文本内容，直到遇到右大括号
-    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        Token token = advance();
-        
-        // 处理字符串字面量
-        if (token.getType() == TokenType::STRING_LITERAL) {
-            // 去除引号
-            std::string value = token.getValue();
-            if (value.size() >= 2 && 
-                ((value.front() == '"' && value.back() == '"') ||
-                 (value.front() == '\'' && value.back() == '\''))) {
-                value = value.substr(1, value.size() - 2);
-            }
-            content += value;
-        }
-        // 处理无引号字面量
-        else if (token.getType() == TokenType::UNQUOTED_LITERAL ||
-                 token.getType() == TokenType::IDENTIFIER) {
-            content += token.getValue();
-        }
-        // 处理数字
-        else if (token.getType() == TokenType::NUMBER) {
-            content += token.getValue();
-        }
-        else {
-            reportError("Unexpected token in text block: " + token.getValue());
-        }
-        
-        // 如果有多个值，添加空格
-        if (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-            content += " ";
-        }
-    }
-    
-    // 期待右大括号
-    if (!match(TokenType::RIGHT_BRACE)) {
-        reportError("Expected '}' to close text block");
-    }
-    
-    return std::make_shared<Text>(content);
-}
-
-std::shared_ptr<Node> StandardParser::parseComment() {
-    if (!check(TokenType::HTML_COMMENT)) {
-        return nullptr;
-    }
-    
-    Token commentToken = advance();
-    std::string content = commentToken.getValue();
-    
-    // 移除 -- 前缀（如果存在）
-    if (content.size() >= 2 && content.substr(0, 2) == "--") {
-        content = content.substr(2);
-    }
-    
-    // 去除首尾空格
-    size_t start = content.find_first_not_of(" \t");
-    size_t end = content.find_last_not_of(" \t");
-    if (start != std::string::npos && end != std::string::npos) {
-        content = content.substr(start, end - start + 1);
-    }
-    
-    return std::make_shared<Comment>(content);
-}
-
-std::shared_ptr<Node> StandardParser::parseTemplate() {
-    // 跳过 [Template]
-    if (!match(TokenType::TEMPLATE)) {
-        return nullptr;
-    }
-    
-    // 期待 @Style, @Element, 或 @Var
-    Token typeToken = currentToken();
-    Template::TemplateType templateType;
-    
-    if (check(TokenType::AT_STYLE)) {
-        advance();
-        templateType = Template::TemplateType::STYLE;
-    } else if (check(TokenType::AT_ELEMENT)) {
-        advance();
-        templateType = Template::TemplateType::ELEMENT;
-    } else if (check(TokenType::AT_VAR)) {
-        advance();
-        templateType = Template::TemplateType::VAR;
-    } else {
-        reportError("Expected @Style, @Element, or @Var after [Template]");
-        return nullptr;
-    }
-    
-    // 期待模板名称
-    if (!check(TokenType::IDENTIFIER)) {
-        reportError("Expected template name");
-        return nullptr;
-    }
-    
-    std::string templateName = advance().getValue();
-    auto templateNode = std::make_shared<Template>(templateType, templateName);
-    
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after template name");
-        return templateNode;
-    }
-    
-    // 解析模板内容
-    parseTemplateContent(templateNode);
-    
-    // 期待右大括号
-    if (!match(TokenType::RIGHT_BRACE)) {
-        reportError("Expected '}' to close template");
-    }
-    
-    return templateNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseCustom() {
-    // 跳过 [Custom]
-    if (!match(TokenType::CUSTOM)) {
-        return nullptr;
-    }
-    
-    // 期待 @Style, @Element, 或 @Var
-    Custom::CustomType customType;
-    
-    if (check(TokenType::AT_STYLE)) {
-        advance();
-        customType = Custom::CustomType::STYLE;
-    } else if (check(TokenType::AT_ELEMENT)) {
-        advance();
-        customType = Custom::CustomType::ELEMENT;
-    } else if (check(TokenType::AT_VAR)) {
-        advance();
-        customType = Custom::CustomType::VAR;
-    } else {
-        reportError("Expected @Style, @Element, or @Var after [Custom]");
-        return nullptr;
-    }
-    
-    // 期待自定义名称
-    if (!check(TokenType::IDENTIFIER)) {
-        reportError("Expected custom name");
-        return nullptr;
-    }
-    
-    std::string customName = advance().getValue();
-    auto customNode = std::make_shared<Custom>(customType, customName);
-    
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after custom name");
-        return customNode;
-    }
-    
-    // 解析自定义内容
-    parseCustomContent(customNode);
-    
-    // 期待右大括号
-    if (!match(TokenType::RIGHT_BRACE)) {
-        reportError("Expected '}' to close custom");
-    }
-    
-    return customNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseStyle() {
-    // TODO: 实现样式解析
-    reportError("Style parsing not yet implemented");
-    return nullptr;
-}
-
-std::shared_ptr<Node> StandardParser::parseConfig() {
-    // 跳过 [Configuration]
-    if (!match(TokenType::CONFIGURATION)) {
-        return nullptr;
-    }
-    
-    auto configNode = std::make_shared<Config>();
-    
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after [Configuration]");
-        return configNode;
-    }
-    
-    // 解析配置内容
-    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        // 跳过注释
-        if (check(TokenType::HTML_COMMENT) || check(TokenType::SINGLE_LINE_COMMENT)) {
-            advance();
-            continue;
-        }
-        
-        // 检查是否是嵌套的[Name]或其他配置组
-        if (check(TokenType::LEFT_BRACKET)) {
-            advance(); // 跳过 [
-            if (check(TokenType::IDENTIFIER)) {
-                std::string groupName = advance().getValue();
-                if (!match(TokenType::RIGHT_BRACKET)) {
-                    reportError("Expected ']' after group name");
-                }
-                
-                if (match(TokenType::LEFT_BRACE)) {
-                    // 解析嵌套配置组
-                    parseConfigGroup(configNode, groupName);
-                    match(TokenType::RIGHT_BRACE);
-                }
-            }
-            continue;
-        }
-        
-        // 解析配置项
-        if (check(TokenType::IDENTIFIER)) {
-            std::string key = advance().getValue();
-            
-            if (match(TokenType::EQUALS)) {
-                // 解析值
-                if (check(TokenType::LEFT_BRACKET)) {
-                    // 数组值
-                    advance(); // 跳过 [
-                    std::vector<std::string> values;
-                    
-                    while (!check(TokenType::RIGHT_BRACKET) && !isAtEnd()) {
-                        std::string value;
-                        
-                        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
-                            check(TokenType::AT_VAR) || check(TokenType::AT_HTML) || 
-                            check(TokenType::AT_JAVASCRIPT)) {
-                            // @ 符号开头的值
-                            value = advance().getValue();
-                        } else if (check(TokenType::IDENTIFIER)) {
-                            value = advance().getValue();
-                        } else if (check(TokenType::STRING_LITERAL)) {
-                            value = advance().getValue();
-                            // 去除引号
-                            if (value.size() >= 2) {
-                                value = value.substr(1, value.size() - 2);
-                            }
-                        } else if (check(TokenType::NUMBER)) {
-                            value = advance().getValue();
-                        } else {
-                            advance(); // 跳过无法识别的token
-                            continue;
-                        }
-                        
-                        values.push_back(value);
-                        
-                        // 跳过逗号
-                        if (check(TokenType::COMMA)) {
-                            advance();
-                        }
-                    }
-                    
-                    if (!match(TokenType::RIGHT_BRACKET)) {
-                        reportError("Expected ']' to close array value");
-                    }
-                    
-                    configNode->setArrayConfig(key, values);
-                    
-                } else {
-                    // 单个值
-                    std::string value;
-                    
-                    if (check(TokenType::STRING_LITERAL)) {
-                        value = advance().getValue();
-                        // 去除引号
-                        if (value.size() >= 2) {
-                            value = value.substr(1, value.size() - 2);
-                        }
-                    } else if (check(TokenType::IDENTIFIER)) {
-                        value = advance().getValue();
-                    } else if (check(TokenType::NUMBER)) {
-                        value = advance().getValue();
-                    } else if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
-                               check(TokenType::AT_VAR) || check(TokenType::AT_HTML)) {
-                        value = advance().getValue();
-                    } else {
-                        reportError("Expected configuration value");
-                    }
-                    
-                    configNode->setConfig(key, value);
-                }
-                
-                // 跳过分号（可选）
-                match(TokenType::SEMICOLON);
-            }
-        } else {
-            // 跳过无法识别的内容
-            advance();
-        }
-    }
-    
-    // 期待右大括号
-    if (!match(TokenType::RIGHT_BRACE)) {
-        reportError("Expected '}' to close [Configuration]");
-    }
-    
-    return configNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseImport() {
-    // 跳过 [Import]
-    if (!match(TokenType::IMPORT)) {
-        return nullptr;
-    }
-    
-    auto importNode = std::make_shared<Import>();
-    
-    // 解析导入类型
-    std::string importType;
-    std::string itemName;
-    bool isSpecificImport = false;
-    
-    // 检查是否是 [Custom] 或 [Template] 开头
-    if (check(TokenType::CUSTOM)) {
-        advance();
-        isSpecificImport = true;
-        importType = "[Custom]";
-    } else if (check(TokenType::TEMPLATE)) {
-        advance();
-        isSpecificImport = true;
-        importType = "[Template]";
-    }
-    
-    // 解析导入的类型 (@Html, @Style, @JavaScript, @Element, @Var, @Chtl, 或 *)
-    if (check(TokenType::AT_HTML)) {
-        advance();
-        importType += "@Html";
-    } else if (check(TokenType::AT_STYLE)) {
-        advance();
-        importType += "@Style";
-    } else if (check(TokenType::AT_JAVASCRIPT)) {
-        advance();
-        importType += "@JavaScript";
-    } else if (check(TokenType::AT_ELEMENT)) {
-        advance();
-        importType += "@Element";
-    } else if (check(TokenType::AT_VAR)) {
-        advance();
-        importType += "@Var";
-    } else if (check(TokenType::AT_CHTL)) {
-        advance();
-        importType += "@Chtl";
-    } else if (check(TokenType::WILDCARD)) {
-        advance();
-        importType = "*";
-        importNode->addImportItem("*");
-    } else {
-        reportError("Expected import type after [Import]");
-        return importNode;
-    }
-    
-    // 如果是具体的导入项，获取名称
-    std::string importItemKey;
-    if (isSpecificImport && importType != "*") {
-        if (check(TokenType::IDENTIFIER)) {
-            itemName = advance().getValue();
-            importItemKey = importType + " " + itemName;
-        } else {
-            reportError("Expected item name after " + importType);
-        }
-    } else if (importType != "*") {
-        importItemKey = importType;
-    }
-    
-    // 期待 'from'
-    if (!check(TokenType::FROM)) {
-        reportError("Expected 'from' in import statement");
-        return importNode;
-    }
-    advance();
-    
-    // 获取文件路径
-    std::string filePath;
-    if (check(TokenType::STRING_LITERAL)) {
-        filePath = advance().getValue();
-        // 去除引号
-        if (filePath.size() >= 2) {
-            filePath = filePath.substr(1, filePath.size() - 2);
-        }
-    } else if (check(TokenType::IDENTIFIER)) {
-        // 处理点分路径 (e.g., path.to.file)
-        filePath = advance().getValue();
-        while (check(TokenType::DOT)) {
-            advance(); // 跳过点
-            if (check(TokenType::IDENTIFIER)) {
-                filePath += "/" + advance().getValue();
-            }
-        }
-    } else {
-        reportError("Expected file path after 'from'");
-        return importNode;
-    }
-    
-    importNode->setFilePath(filePath);
-    
-    // 检查是否有 'as' 别名
-    std::string alias;
-    if (check(TokenType::AS)) {
-        advance();
-        if (check(TokenType::IDENTIFIER)) {
-            alias = advance().getValue();
-        } else {
-            reportError("Expected alias name after 'as'");
-        }
-    }
-    
-    // 添加导入项（带或不带别名）
-    if (!importItemKey.empty()) {
-        importNode->addImportItem(importItemKey, alias);
-    }
-    
-    // 跳过分号（可选）
-    match(TokenType::SEMICOLON);
-    
-    return importNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseNamespace() {
-    // 跳过 [Namespace]
-    if (!match(TokenType::NAMESPACE_KW)) {
-        return nullptr;
-    }
-    
-    // 获取命名空间名称
-    if (!check(TokenType::IDENTIFIER)) {
-        reportError("Expected namespace name after [Namespace]");
-        return nullptr;
-    }
-    
-    std::string namespaceName = advance().getValue();
-    auto namespaceNode = std::make_shared<Namespace>(namespaceName);
-    
-    // 检查是否有左大括号（嵌套命名空间）
-    if (match(TokenType::LEFT_BRACE)) {
-        // 解析命名空间内容
-        parseNamespaceContent(namespaceNode);
-        
-        // 期待右大括号
-        if (!match(TokenType::RIGHT_BRACE)) {
-            reportError("Expected '}' to close namespace");
-        }
-    } else {
-        // 单行命名空间声明，后续内容都属于这个命名空间
-        // 在实际编译时需要处理作用域
-    }
-    
-    return namespaceNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseOperate() {
-    // 这个方法用于解析独立的操作语句
-    // 在元素内部的操作（如delete、insert）会在parseElementContent中处理
-    
-    Operate::OperationType opType;
-    
-    // 检查操作类型
-    if (check(TokenType::INSERT)) {
-        advance();
-        opType = Operate::OperationType::INSERT;
-    } else if (check(TokenType::DELETE_KW)) {
-        advance();
-        opType = Operate::OperationType::DELETE;
-    } else if (check(TokenType::REPLACE)) {
-        advance();
-        opType = Operate::OperationType::REPLACE;
-    } else {
-        return nullptr;
-    }
-    
-    auto operateNode = std::make_shared<Operate>(opType);
-    
-    // 解析位置（对于insert和replace）
-    if (opType == Operate::OperationType::INSERT || opType == Operate::OperationType::REPLACE) {
-        if (check(TokenType::BEFORE)) {
-            advance();
-            operateNode->setPosition(Operate::Position::BEFORE);
-        } else if (check(TokenType::AFTER)) {
-            advance();
-            operateNode->setPosition(Operate::Position::AFTER);
-        } else if (check(TokenType::AT)) {
-            advance();
-            if (check(TokenType::TOP)) {
-                advance();
-                operateNode->setPosition(Operate::Position::TOP);
-            } else if (check(TokenType::BOTTOM)) {
-                advance();
-                operateNode->setPosition(Operate::Position::BOTTOM);
-            } else {
-                operateNode->setPosition(Operate::Position::AT);
-            }
-        }
-    }
-    
-    // 解析选择器或目标
-    if (check(TokenType::IDENTIFIER)) {
-        std::string selector = advance().getValue();
-        
-        // 检查是否有索引 (e.g., div[0])
-        if (check(TokenType::LEFT_BRACKET)) {
-            advance();
-            if (check(TokenType::NUMBER)) {
-                selector += "[" + advance().getValue() + "]";
-            }
-            if (!match(TokenType::RIGHT_BRACKET)) {
-                reportError("Expected ']' after index");
-            }
-        }
-        
-        operateNode->setSelector(selector);
-    }
-    
-    // 对于delete操作，可能有多个目标
-    if (opType == Operate::OperationType::DELETE) {
-        while (check(TokenType::COMMA)) {
-            advance(); // 跳过逗号
-            if (check(TokenType::IDENTIFIER)) {
-                std::string additionalTarget = advance().getValue();
-                // TODO: 支持多个删除目标
-                // 目前简单地添加到constraints中
-                operateNode->addConstraint(additionalTarget);
-            }
-        }
-    }
-    
-    // 对于insert和replace，解析内容块
-    if ((opType == Operate::OperationType::INSERT || opType == Operate::OperationType::REPLACE) 
-        && check(TokenType::LEFT_BRACE)) {
-        advance(); // 跳过 {
-        
-        // 解析内容
-        auto content = parseElement();
-        if (content) {
-            operateNode->setContent(content);
-        }
-        
-        if (!match(TokenType::RIGHT_BRACE)) {
-            reportError("Expected '}' to close operation content");
-        }
-    }
-    
-    // 跳过分号（可选）
-    match(TokenType::SEMICOLON);
-    
-    return operateNode;
-}
-
-std::shared_ptr<Node> StandardParser::parseOrigin() {
-    // 跳过 [Origin]
-    if (!match(TokenType::ORIGIN)) {
-        return nullptr;
-    }
-    
-    // 检查类型 (@Html, @Style, @JavaScript)
-    Origin::OriginType originType;
-    
-    if (check(TokenType::AT_HTML)) {
-        advance();
-        originType = Origin::OriginType::HTML;
-    } else if (check(TokenType::AT_STYLE)) {
-        advance();
-        originType = Origin::OriginType::STYLE;
-    } else if (check(TokenType::AT_JAVASCRIPT)) {
-        advance();
-        originType = Origin::OriginType::JAVASCRIPT;
-    } else {
-        reportError("Expected @Html, @Style, or @JavaScript after [Origin]");
-        return nullptr;
-    }
-    
-    // 可选的名称
-    std::string originName;
-    if (check(TokenType::IDENTIFIER)) {
-        originName = advance().getValue();
-    }
-    
-    auto originNode = std::make_shared<Origin>(originType, originName);
-    
-    // 检查是内联形式还是块形式
-    if (check(TokenType::LEFT_BRACE)) {
-        // 块形式
-        advance(); // 跳过 {
-        
-        // 收集原始内容直到找到匹配的右大括号
-        std::string content;
-        int braceCount = 1;
-        bool inString = false;
-        
-        while (braceCount > 0 && !isAtEnd()) {
-            Token token = currentToken();
-            std::string tokenValue = token.getValue();
-            
-            // 处理字符串，避免错误计算大括号
-            if (token.getType() == TokenType::STRING_LITERAL) {
-                content += tokenValue;
-                advance();
-                continue;
-            }
-            
-            // 处理大括号计数
-            if (!inString) {
-                if (token.getType() == TokenType::LEFT_BRACE) {
-                    braceCount++;
-                } else if (token.getType() == TokenType::RIGHT_BRACE) {
-                    braceCount--;
-                    if (braceCount == 0) {
-                        advance(); // 消耗最后的右大括号
-                        break;
-                    }
-                }
-            }
-            
-            // 添加token内容
-            content += tokenValue;
-            
-            // 添加适当的空格
-            advance();
-            if (!isAtEnd() && braceCount > 0) {
-                Token nextToken = currentToken();
-                
-                // 决定是否需要空格
-                bool needSpace = true;
-                
-                // 特殊情况：不需要空格
-                if (token.getType() == TokenType::DOT || 
-                    nextToken.getType() == TokenType::DOT ||
-                    token.getType() == TokenType::LEFT_PAREN ||
-                    nextToken.getType() == TokenType::RIGHT_PAREN ||
-                    token.getType() == TokenType::LEFT_BRACKET ||
-                    nextToken.getType() == TokenType::RIGHT_BRACKET ||
-                    nextToken.getType() == TokenType::SEMICOLON ||
-                    nextToken.getType() == TokenType::COMMA) {
-                    needSpace = false;
-                }
-                
-                // 在行尾添加换行而不是空格
-                if (token.getLine() < nextToken.getLine()) {
-                    content += "\n";
-                    // 添加适当的缩进
-                    for (int i = 1; i < nextToken.getColumn(); i++) {
-                        content += " ";
-                    }
-                } else if (needSpace) {
-                    content += " ";
-                }
-            }
-        }
-        
-        originNode->setContent(content);
-        
-    } else {
-        // 内联形式（简单收集到分号）
-        originNode->setInline(true);
-        
-        std::string content;
-        while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-            content += currentToken().getValue();
-            advance();
-            if (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-                content += " ";
-            }
-        }
-        
-        originNode->setContent(content);
-        match(TokenType::SEMICOLON);
-    }
-    
-    return originNode;
-}
-
-
-
-void StandardParser::parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName) {
-    // 解析嵌套的配置组，例如 [Name] 块
-    // 将组内的配置项添加到配置节点，使用 groupName.key 格式
-    
-    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        // 跳过注释
-        if (check(TokenType::HTML_COMMENT) || check(TokenType::SINGLE_LINE_COMMENT)) {
-            advance();
-            continue;
-        }
-        
-        // 解析配置项
-        if (check(TokenType::IDENTIFIER)) {
-            std::string key = advance().getValue();
-            
-            if (match(TokenType::EQUALS)) {
-                // 构造完整的键名
-                std::string fullKey = groupName + "." + key;
-                
-                // 解析值（与parseConfig中相同的逻辑）
-                if (check(TokenType::LEFT_BRACKET)) {
-                    // 数组值
-                    advance(); // 跳过 [
-                    std::vector<std::string> values;
-                    
-                    while (!check(TokenType::RIGHT_BRACKET) && !isAtEnd()) {
-                        std::string value;
-                        
-                        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
-                            check(TokenType::AT_VAR) || check(TokenType::AT_HTML) || 
-                            check(TokenType::AT_JAVASCRIPT)) {
-                            value = advance().getValue();
-                        } else if (check(TokenType::IDENTIFIER)) {
-                            value = advance().getValue();
-                        } else if (check(TokenType::STRING_LITERAL)) {
-                            value = advance().getValue();
-                            if (value.size() >= 2) {
-                                value = value.substr(1, value.size() - 2);
-                            }
-                        } else if (check(TokenType::NUMBER)) {
-                            value = advance().getValue();
-                        } else {
-                            advance();
-                            continue;
-                        }
-                        
-                        values.push_back(value);
-                        
-                        if (check(TokenType::COMMA)) {
-                            advance();
-                        }
-                    }
-                    
-                    if (!match(TokenType::RIGHT_BRACKET)) {
-                        reportError("Expected ']' to close array value");
-                    }
-                    
-                    configNode->setArrayConfig(fullKey, values);
-                    
-                } else {
-                    // 单个值
-                    std::string value;
-                    
-                    if (check(TokenType::STRING_LITERAL)) {
-                        value = advance().getValue();
-                        if (value.size() >= 2) {
-                            value = value.substr(1, value.size() - 2);
-                        }
-                    } else if (check(TokenType::IDENTIFIER)) {
-                        value = advance().getValue();
-                    } else if (check(TokenType::NUMBER)) {
-                        value = advance().getValue();
-                    } else if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
-                               check(TokenType::AT_VAR) || check(TokenType::AT_HTML)) {
-                        value = advance().getValue();
-                    } else {
-                        reportError("Expected configuration value");
-                    }
-                    
-                    configNode->setConfig(fullKey, value);
-                }
-                
-                match(TokenType::SEMICOLON);
-            }
-        } else {
-            advance();
-        }
-    }
-}
-
-void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceNode) {
-    // 解析命名空间内容
-    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        // 检查是否是嵌套的命名空间
-        if (check(TokenType::NAMESPACE_KW)) {
-            auto nestedNs = parseNamespace();
-            if (nestedNs) {
-                namespaceNode->appendChild(nestedNs);
-            }
-            continue;
-        }
-        
-        // 检查是否是模板定义
-        if (check(TokenType::TEMPLATE)) {
-            auto tmpl = parseTemplate();
-            if (tmpl) {
-                namespaceNode->appendChild(tmpl);
-            }
-            continue;
-        }
-        
-        // 检查是否是自定义定义
-        if (check(TokenType::CUSTOM)) {
-            auto custom = parseCustom();
-            if (custom) {
-                namespaceNode->appendChild(custom);
-            }
-            continue;
-        }
-        
-        // 检查是否是元素
-        auto element = parseElement();
-        if (element) {
-            namespaceNode->appendChild(element);
-        } else {
-            // 无法识别的内容
-            reportError("Unexpected token in namespace: " + currentToken().getValue());
-            advance();
-        }
-    }
-}
-
-void StandardParser::parseTemplateUsage(std::shared_ptr<Element> element) {
-    // 这里简单地将模板使用作为元素的属性记录
-    // 在实际的编译过程中，需要展开模板
-    
-    std::string templateType;
-    if (check(TokenType::AT_STYLE)) {
-        advance();
-        templateType = "@Style";
-    } else if (check(TokenType::AT_ELEMENT)) {
-        advance();
-        templateType = "@Element";
-    } else if (check(TokenType::AT_VAR)) {
-        advance();
-        templateType = "@Var";
-    } else {
-        return;
-    }
-    
-    if (check(TokenType::IDENTIFIER)) {
-        std::string templateName = advance().getValue();
-        
-        // 检查是否有 'from' 命名空间
-        std::string fromNamespace;
-        if (check(TokenType::FROM)) {
-            advance(); // 跳过 from
-            
-            // 获取命名空间路径 (e.g., space.room)
-            if (check(TokenType::IDENTIFIER)) {
-                fromNamespace = advance().getValue();
-                while (check(TokenType::DOT)) {
-                    advance(); // 跳过点
-                    if (check(TokenType::IDENTIFIER)) {
-                        fromNamespace += "." + advance().getValue();
-                    }
-                }
-            }
-        }
-        
-        // 记录模板使用
-        if (!fromNamespace.empty()) {
-            element->setAttribute("chtl-template-" + templateType, templateName + " from " + fromNamespace);
-        } else {
-            element->setAttribute("chtl-template-" + templateType, templateName);
-        }
-        
-        // 检查是否有参数块
-        if (check(TokenType::LEFT_BRACE)) {
-            advance(); // 跳过 {
-            
-            // TODO: 解析模板参数/特例化
-            // 目前简单跳过内容
-            int braceCount = 1;
-            while (braceCount > 0 && !isAtEnd()) {
-                if (check(TokenType::LEFT_BRACE)) {
-                    braceCount++;
-                } else if (check(TokenType::RIGHT_BRACE)) {
-                    braceCount--;
-                }
-                advance();
-            }
-        } else {
-            // 简单使用，期待分号
-            match(TokenType::SEMICOLON);
-        }
-    }
-}
-
-bool StandardParser::isStartOfElement() {
-    // TODO: 实现元素开始检查
-    return false;
-}
-
-bool StandardParser::isStartOfTemplate() {
-    // TODO: 实现模板开始检查
-    return false;
-}
-
-bool StandardParser::isStartOfCustom() {
-    // TODO: 实现自定义元素开始检查
-    return false;
-}
-
-bool StandardParser::isStartOfSpecialNode() {
-    // TODO: 实现特殊节点开始检查
-    return false;
-}
-
-void StandardParser::skipToNextElement() {
-    // TODO: 实现跳转到下一个元素
-}
-
-void StandardParser::skipToClosingTag(const std::string& tagName) {
-    // TODO: 实现跳转到关闭标签
-    (void)tagName; // 抑制未使用参数警告
-}
-
-void StandardParser::parseAttribute(std::shared_ptr<Element> element) {
-    // 获取属性名
-    if (!check(TokenType::IDENTIFIER)) {
-        reportError("Expected attribute name");
-        return;
-    }
-    
-    std::string attrName = advance().getValue();
-    
-    // 检查是否有冒号或等号
-    if (!check(TokenType::COLON) && !check(TokenType::EQUALS)) {
-        // 不是属性，可能是嵌套元素
-        // 创建一个新的元素节点
-        auto childElement = std::make_shared<Element>(attrName);
-        
-        // 期待左大括号
-        if (match(TokenType::LEFT_BRACE)) {
-            // 递归解析这个元素的内容
-            parseElementContent(childElement);
-            
-            // 期待右大括号
-            if (!match(TokenType::RIGHT_BRACE)) {
-                reportError("Expected '}' to close element '" + attrName + "'");
-            }
-        }
-        
-        element->appendChild(childElement);
-        return;
-    }
-    
-    // 跳过冒号或等号
-    if (!match(TokenType::COLON) && !match(TokenType::EQUALS)) {
-        reportError("Expected ':' or '=' after attribute name");
-        return;
-    }
-    
-    // 获取属性值
-    std::string attrValue;
-    
-    if (check(TokenType::STRING_LITERAL)) {
-        attrValue = advance().getValue();
-        // 去除引号
-        if (attrValue.size() >= 2 && 
-            ((attrValue.front() == '"' && attrValue.back() == '"') ||
-             (attrValue.front() == '\'' && attrValue.back() == '\''))) {
-            attrValue = attrValue.substr(1, attrValue.size() - 2);
-        }
-    }
-    else if (check(TokenType::UNQUOTED_LITERAL) || 
-             check(TokenType::IDENTIFIER) ||
-             check(TokenType::NUMBER)) {
-        attrValue = advance().getValue();
-    }
-    else {
-        reportError("Expected attribute value");
-        return;
-    }
-    
-    // 设置属性
-    element->setAttribute(attrName, attrValue);
-    
-    // 期待分号
-    if (!match(TokenType::SEMICOLON)) {
-        reportError("Expected ';' after attribute");
-    }
-}
-
-std::shared_ptr<Node> StandardParser::parseInlineStyle(std::shared_ptr<Element> element) {
-    // 期待左大括号
-    if (!match(TokenType::LEFT_BRACE)) {
-        reportError("Expected '{' after 'style'");
-        return nullptr;
-    }
-    
-    // 创建一个Style节点
-    auto styleNode = std::make_shared<Style>(Style::StyleScope::LOCAL);
-    
-    // 解析样式内容
-    std::string styleContent;
-    int braceCount = 1;
-    int indentLevel = 0;
-    bool needSpace = false;
-    
-    // std::cerr << "DEBUG: parseInlineStyle started, next token: " << currentToken().getValue() << " type: " << static_cast<int>(currentToken().getType()) << std::endl;
-    
-    while (braceCount > 0 && !isAtEnd()) {
-        Token token = currentToken();
-        TokenType tokenType = token.getType();
-        std::string tokenValue = token.getValue();
-        
-        advance(); // 在获取token信息后前进
-        
-        // std::cerr << "DEBUG: style token type=" << static_cast<int>(tokenType) << " value=\"" << tokenValue << "\" braceCount=" << braceCount << std::endl;
-        
-        // 跳过C风格注释
-        if (tokenType == TokenType::SINGLE_LINE_COMMENT || 
-            tokenType == TokenType::MULTI_LINE_COMMENT) {
-            continue;
-        }
-        
-        // 处理大括号
-        if (tokenType == TokenType::LEFT_BRACE) {
-            braceCount++;
-            indentLevel++;
-            styleContent += " {\n" + std::string(indentLevel * 2, ' ');
-            needSpace = false;
-        } 
-        else if (tokenType == TokenType::RIGHT_BRACE) {
-            braceCount--;
-            if (braceCount == 0) {
-                // 不要将最后的右大括号添加到内容中
-                break;
-            }
-            
-            indentLevel--;
-            // 去除尾部空格
-            while (!styleContent.empty() && std::isspace(styleContent.back())) {
-                styleContent.pop_back();
-            }
-            styleContent += "\n" + std::string(indentLevel * 2, ' ') + "}";
-            
-            // 如果还有内容，添加换行
-            if (braceCount > 0 && !isAtEnd() && currentToken().getType() != TokenType::RIGHT_BRACE) {
-                styleContent += "\n" + std::string(indentLevel * 2, ' ');
-            }
-            needSpace = false;
-        }
-        // 处理分号
-        else if (tokenType == TokenType::SEMICOLON) {
-            styleContent += ";";
-            if (braceCount == 1 && !isAtEnd() && currentToken().getType() != TokenType::RIGHT_BRACE) {
-                styleContent += "\n" + std::string(indentLevel * 2, ' ');
-            }
-            needSpace = false;
-        }
-        // 处理冒号
-        else if (tokenType == TokenType::COLON) {
-            styleContent += ": ";
-            needSpace = false;
-        }
-        // 处理逗号
-        else if (tokenType == TokenType::COMMA) {
-            styleContent += ", ";
-            needSpace = false;
-        }
-        // 处理点（类选择器）
-        else if (tokenType == TokenType::DOT) {
-            styleContent += ".";
-            needSpace = false;
-        }
-        // 处理与符号（CHTL特殊语法）
-        else if (tokenType == TokenType::AMPERSAND) {
-            styleContent += "&";
-            needSpace = false;
-        }
-        // 处理其他token
-        else {
-            if (needSpace && !styleContent.empty() && !std::isspace(styleContent.back())) {
-                styleContent += " ";
-            }
-            styleContent += tokenValue;
-            needSpace = true;
-            
-            // 特殊处理：数值和单位之间不需要空格
-            if (tokenType == TokenType::NUMBER) {
-                needSpace = false;
-            }
-        }
-    }
-    
-    styleNode->setCssContent(styleContent);
-    
-    // 解析内联样式并应用到元素
-    parseInlineStyleContent(element, styleContent);
-    
-    return styleNode;
-}
-
-void StandardParser::parseTemplateContent(std::shared_ptr<Template> templateNode) {
-    Template::TemplateType type = templateNode->getTemplateType();
-    
-    switch (type) {
-        case Template::TemplateType::STYLE:
-            // 解析样式模板内容：CSS属性和继承
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                // 检查是否是继承语句
-                if (check(TokenType::AT_STYLE)) {
-                    advance(); // 跳过 @Style
-                    if (check(TokenType::IDENTIFIER)) {
-                        std::string inheritName = advance().getValue();
-                        templateNode->addInheritance(inheritName);
-                        match(TokenType::SEMICOLON);
-                    }
-                    continue;
-                }
-                
-                // 检查inherit关键字
-                if (check(TokenType::INHERIT)) {
-                    advance(); // 跳过 inherit
-                    if (check(TokenType::AT_STYLE)) {
-                        advance(); // 跳过 @Style
-                        if (check(TokenType::IDENTIFIER)) {
-                            std::string inheritName = advance().getValue();
-                            templateNode->addInheritance(inheritName);
-                            templateNode->setExplicitInherit(true);
-                            match(TokenType::SEMICOLON);
-                        }
-                    }
-                    continue;
-                }
-                
-                // 解析CSS属性
-                if (check(TokenType::IDENTIFIER)) {
-                    std::string propertyName = advance().getValue();
-                    if (match(TokenType::COLON)) {
-                        // 收集属性值直到分号
-                        std::string value;
-                        while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-                            value += currentToken().getValue();
-                            if (!isAtEnd()) {
-                                advance();
-                                if (!check(TokenType::SEMICOLON)) {
-                                    value += " ";
-                                }
-                            }
-                        }
-                        // 去除尾部空格
-                        while (!value.empty() && std::isspace(value.back())) {
-                            value.pop_back();
-                        }
-                        templateNode->setParameter(propertyName, value);
-                        match(TokenType::SEMICOLON);
-                    }
-                } else {
-                    // 跳过无法识别的token
-                    advance();
-                }
-            }
+void StandardParser::skipToNextStatement() {
+    while (!isAtEnd()) {
+        if (match(TokenType::SEMICOLON) || 
+            match(TokenType::RIGHT_BRACE)) {
             break;
-            
-        case Template::TemplateType::ELEMENT:
-            // 解析元素模板内容：嵌套元素
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                // 检查是否是继承语句
-                if (check(TokenType::AT_ELEMENT)) {
-                    advance(); // 跳过 @Element
-                    if (check(TokenType::IDENTIFIER)) {
-                        std::string inheritName = advance().getValue();
-                        templateNode->addInheritance(inheritName);
-                        match(TokenType::SEMICOLON);
-                    }
-                    continue;
-                }
-                
-                // 解析子元素
-                auto element = parseElement();
-                if (element) {
-                    templateNode->appendChild(element);
-                } else {
-                    // 无法识别的内容
-                    advance();
-                }
-            }
-            break;
-            
-        case Template::TemplateType::VAR:
-            // 解析变量模板内容：变量定义
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                if (check(TokenType::IDENTIFIER)) {
-                    std::string varName = advance().getValue();
-                    if (match(TokenType::COLON)) {
-                        std::string value;
-                        // 获取值（可能是字符串或其他）
-                        if (check(TokenType::STRING_LITERAL)) {
-                            value = advance().getValue();
-                            // 去除引号
-                            if (value.size() >= 2 && 
-                                ((value.front() == '"' && value.back() == '"') ||
-                                 (value.front() == '\'' && value.back() == '\''))) {
-                                value = value.substr(1, value.size() - 2);
-                            }
-                        } else {
-                            // 收集直到分号
-                            while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-                                value += currentToken().getValue();
-                                advance();
-                                if (!check(TokenType::SEMICOLON)) {
-                                    value += " ";
-                                }
-                            }
-                        }
-                        templateNode->setParameter(varName, value);
-                        match(TokenType::SEMICOLON);
-                    }
-                } else {
-                    advance();
-                }
-            }
-            break;
-    }
-}
-
-void StandardParser::parseCustomContent(std::shared_ptr<Custom> customNode) {
-    Custom::CustomType type = customNode->getCustomType();
-    
-    switch (type) {
-        case Custom::CustomType::STYLE:
-            // 解析自定义样式内容：属性列表（可能没有值）
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                if (check(TokenType::IDENTIFIER)) {
-                    std::string propertyName = advance().getValue();
-                    
-                    // 检查是否有值
-                    if (check(TokenType::COLON)) {
-                        advance(); // 跳过冒号
-                        // 收集值
-                        std::string value;
-                        while (!check(TokenType::SEMICOLON) && !check(TokenType::COMMA) && !isAtEnd()) {
-                            value += currentToken().getValue();
-                            advance();
-                            if (!check(TokenType::SEMICOLON) && !check(TokenType::COMMA)) {
-                                value += " ";
-                            }
-                        }
-                        // 去除尾部空格
-                        while (!value.empty() && std::isspace(value.back())) {
-                            value.pop_back();
-                        }
-                        customNode->setProperty(propertyName, value);
-                    } else {
-                        // 没有值的属性
-                        customNode->setProperty(propertyName, "");
-                    }
-                    
-                    // 跳过分号或逗号
-                    if (check(TokenType::SEMICOLON) || check(TokenType::COMMA)) {
-                        advance();
-                    }
-                } else {
-                    advance();
-                }
-            }
-            break;
-            
-        case Custom::CustomType::ELEMENT:
-            // 解析自定义元素内容：嵌套元素
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                auto element = parseElement();
-                if (element) {
-                    customNode->appendChild(element);
-                } else {
-                    advance();
-                }
-            }
-            break;
-            
-        case Custom::CustomType::VAR:
-            // 解析自定义变量内容：变量定义
-            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-                if (check(TokenType::IDENTIFIER)) {
-                    std::string varName = advance().getValue();
-                    
-                    if (check(TokenType::COLON)) {
-                        advance(); // 跳过冒号
-                        std::string value;
-                        
-                        if (check(TokenType::STRING_LITERAL)) {
-                            value = advance().getValue();
-                            // 去除引号
-                            if (value.size() >= 2) {
-                                value = value.substr(1, value.size() - 2);
-                            }
-                        } else {
-                            // 收集直到分号
-                            while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-                                value += currentToken().getValue();
-                                advance();
-                                if (!check(TokenType::SEMICOLON)) {
-                                    value += " ";
-                                }
-                            }
-                        }
-                        customNode->setProperty(varName, value);
-                    } else {
-                        // 没有值的变量
-                        customNode->setProperty(varName, "");
-                    }
-                    
-                    match(TokenType::SEMICOLON);
-                } else {
-                    advance();
-                }
-            }
-            break;
-    }
-}
-
-void StandardParser::parseInlineStyleContent(std::shared_ptr<Element> element, const std::string& content) {
-    // 简单的CSS解析：提取直接的属性-值对
-    // TODO: 实现更完整的CSS解析，包括类选择器、伪类等
-    
-    // 这是一个简化的实现，只处理直接的属性
-    size_t pos = 0;
-    while (pos < content.length()) {
-        // 跳过空白
-        while (pos < content.length() && std::isspace(content[pos])) {
-            pos++;
         }
-        
-        // 查找属性名
-        size_t nameStart = pos;
-        while (pos < content.length() && content[pos] != ':' && content[pos] != '{') {
-            pos++;
-        }
-        
-        if (pos >= content.length()) break;
-        
-        if (content[pos] == '{') {
-            // 这是一个选择器，跳过整个块
-            int braceCount = 1;
-            pos++; // 跳过 '{'
-            while (pos < content.length() && braceCount > 0) {
-                if (content[pos] == '{') braceCount++;
-                else if (content[pos] == '}') braceCount--;
-                pos++;
-            }
-            continue;
-        }
-        
-        std::string propName = content.substr(nameStart, pos - nameStart);
-        // 去除空白
-        propName.erase(0, propName.find_first_not_of(" \t\n\r"));
-        propName.erase(propName.find_last_not_of(" \t\n\r") + 1);
-        
-        pos++; // 跳过 ':'
-        
-        // 查找属性值
-        size_t valueStart = pos;
-        while (pos < content.length() && content[pos] != ';' && content[pos] != '}') {
-            pos++;
-        }
-        
-        std::string propValue = content.substr(valueStart, pos - valueStart);
-        // 去除空白
-        propValue.erase(0, propValue.find_first_not_of(" \t\n\r"));
-        propValue.erase(propValue.find_last_not_of(" \t\n\r") + 1);
-        
-        // 应用内联样式
-        if (!propName.empty() && !propValue.empty()) {
-            AttributeValue styleValue = element->getAttribute("style");
-            std::string currentStyle;
-            if (std::holds_alternative<std::string>(styleValue)) {
-                currentStyle = std::get<std::string>(styleValue);
-            }
-            if (!currentStyle.empty()) {
-                currentStyle += " ";
-            }
-            currentStyle += propName + ": " + propValue + ";";
-            element->setAttribute("style", currentStyle);
-        }
-        
-        if (pos < content.length() && content[pos] == ';') {
-            pos++;
-        }
+        advance();
     }
 }
 

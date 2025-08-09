@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/tests/test_operate_origin.cpp" "tests/CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o" "gcc" "tests/CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o.d"
-  "" "bin/test_operate_origin" "gcc" "tests/CMakeFiles/test_operate_origin.dir/link.d"
+  "" "tests/test_operate_origin" "gcc" "tests/CMakeFiles/test_operate_origin.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

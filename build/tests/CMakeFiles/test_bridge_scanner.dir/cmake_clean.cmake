@@ -1,9 +1,9 @@
 file(REMOVE_RECURSE
-  "../bin/test_bridge_scanner"
-  "../bin/test_bridge_scanner.pdb"
   "CMakeFiles/test_bridge_scanner.dir/link.d"
   "CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.o"
   "CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.o.d"
+  "test_bridge_scanner"
+  "test_bridge_scanner.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

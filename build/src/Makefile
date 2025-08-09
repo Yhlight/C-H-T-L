@@ -65,16 +65,6 @@ CMAKE_BINARY_DIR = /workspace/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-.PHONY : test/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
@@ -198,20 +188,6 @@ chtl_shared: src/CMakeFiles/chtl_shared.dir/rule
 chtl_shared/fast:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/build
 .PHONY : chtl_shared/fast
-
-# Convenience name for target.
-src/CMakeFiles/chtl.dir/rule:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/chtl.dir/rule
-.PHONY : src/CMakeFiles/chtl.dir/rule
-
-# Convenience name for target.
-chtl: src/CMakeFiles/chtl.dir/rule
-.PHONY : chtl
-
-# fast build rule for target.
-chtl/fast:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl.dir/build.make src/CMakeFiles/chtl.dir/build
-.PHONY : chtl/fast
 
 ChtlJs/ChtlJsContext.o: ChtlJs/ChtlJsContext.cpp.o
 .PHONY : ChtlJs/ChtlJsContext.o
@@ -1374,30 +1350,6 @@ State/StateFactory.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.s
 .PHONY : State/StateFactory.cpp.s
 
-main.o: main.cpp.o
-.PHONY : main.o
-
-# target to build an object file
-main.cpp.o:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl.dir/build.make src/CMakeFiles/chtl.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-.PHONY : main.i
-
-# target to preprocess a source file
-main.cpp.i:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl.dir/build.make src/CMakeFiles/chtl.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.cpp.s:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl.dir/build.make src/CMakeFiles/chtl.dir/main.cpp.s
-.PHONY : main.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1410,8 +1362,6 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... test"
-	@echo "... chtl"
 	@echo "... chtl_core"
 	@echo "... chtl_shared"
 	@echo "... ChtlJs/ChtlJsContext.o"
@@ -1543,9 +1493,6 @@ help:
 	@echo "... State/StateFactory.o"
 	@echo "... State/StateFactory.i"
 	@echo "... State/StateFactory.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
 .PHONY : help
 
 

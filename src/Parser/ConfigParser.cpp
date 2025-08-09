@@ -1,368 +1,421 @@
 #include "Parser/ConfigParser.h"
-#include "Lexer/ConfigLexer.h"
-#include "Context/ChtlContext.h"
-#include <iostream>
+#include "Node/Config.h"
+#include "Common/Token.h"
 #include <sstream>
 
 namespace chtl {
 
-// 定义有效的配置键
-const std::unordered_set<std::string> ConfigParser::VALID_CONFIG_KEYS = {
-    "output_dir", "input_dir", "target", "version", "debug", "optimize",
-    "encoding", "strict_mode", "max_errors", "max_warnings",
-    "include_paths", "library_paths", "defines", "features",
-    "keyword_aliases", "import_aliases", "extensions", "plugins",
-    "license", "author", "description", "homepage"
-};
-
-const std::unordered_set<std::string> ConfigParser::ARRAY_CONFIG_KEYS = {
-    "include_paths", "library_paths", "defines", "features",
-    "keyword_aliases", "import_aliases", "extensions", "plugins"
-};
-
-ConfigParser::ConfigParser()
-    : BasicParser(), configState_(ConfigParseState::INITIAL) {
-}
-
-void ConfigParser::initializeParser() {
-    configState_ = ConfigParseState::INITIAL;
-    currentConfig_ = nullptr;
-    currentKey_.clear();
-    currentArray_.clear();
-}
-
-void ConfigParser::finalizeParser() {
-    if (currentConfig_) {
-        applySpecialConfigurations();
-    }
+ConfigParser::ConfigParser() : BasicParser() {
 }
 
 std::shared_ptr<Node> ConfigParser::parse() {
-    auto config = parseConfiguration();
-    if (config) {
-        rootNode_ = config;
-        state_ = ParseState::SUCCESS;
+    if (!lexer_ || !context_) {
+        reportError("ConfigParser not initialized");
+        return nullptr;
     }
-    return rootNode_;
+    
+    // 开始解析配置
+    return parseConfiguration();
 }
 
 std::shared_ptr<Config> ConfigParser::parseConfiguration() {
-    initializeParser();
-    configState_ = ConfigParseState::EXPECT_CONFIGURATION;
+    auto configNode = std::make_shared<Config>();
     
-    // 查找[Configuration]标记
-    while (!isAtEnd()) {
-        Token token = peekNextToken();
-        
-        if (token.getType() == TokenType::CONFIGURATION) {
-            consumeToken();
-            configState_ = ConfigParseState::EXPECT_NAME_OR_BRACE;
-            break;
-        } else if (token.getType() == TokenType::EOF_TOKEN) {
-            reportError("No [Configuration] block found");
-            return nullptr;
-        } else {
-            // 跳过非配置token
-            consumeToken();
-        }
-    }
-    
-    if (configState_ != ConfigParseState::EXPECT_NAME_OR_BRACE) {
+    // 期望当前是 [Configuration]
+    if (!expectToken(TokenType::CONFIGURATION)) {
+        reportError("Expected [Configuration]");
         return nullptr;
     }
     
-    // 创建配置节点
-    currentConfig_ = std::make_shared<Config>();
+    // 消费 [Configuration]
+    consumeToken();
     
-    // 解析可选的配置名称
-    Token nextToken = peekNextToken();
-    if (nextToken.getType() == TokenType::IDENTIFIER) {
-        currentConfig_->setConfigName(nextToken.getValue());
+    // 期望 {
+    if (!expectToken(TokenType::LEFT_BRACE)) {
+        reportError("Expected '{' after [Configuration]");
+        return configNode;
+    }
+    consumeToken();
+    
+    // 解析配置内容
+    parseConfigContent(configNode);
+    
+    // 期望 }
+    if (!expectToken(TokenType::RIGHT_BRACE)) {
+        reportError("Expected '}' to close [Configuration]");
+    } else {
         consumeToken();
     }
     
-    // 期望左大括号
-    if (!expectToken(TokenType::LEFT_BRACE, "Expected '{' after [Configuration]")) {
-        return nullptr;
-    }
-    
-    configState_ = ConfigParseState::IN_CONFIG_BLOCK;
-    
-    // 解析配置块
-    if (!parseConfigurationBlock()) {
-        return nullptr;
-    }
-    
-    // 期望右大括号
-    if (!expectToken(TokenType::RIGHT_BRACE, "Expected '}' to close [Configuration] block")) {
-        return nullptr;
-    }
-    
-    configState_ = ConfigParseState::COMPLETE;
-    finalizeParser();
-    
-    return currentConfig_;
+    return configNode;
 }
 
-std::shared_ptr<Config> ConfigParser::parseConfigurationFromFile(const std::string& filename) {
-    // 创建专门的ConfigLexer
-    auto lexer = std::make_shared<ConfigLexer>();
-    auto context = std::make_shared<ChtlContext>();
-    
-    if (!initialize(lexer, context)) {
-        return nullptr;
-    }
-    
-    if (!lexer_->initialize(filename)) {
-        reportError("Failed to open configuration file: " + filename);
-        return nullptr;
-    }
-    
-    return parseConfiguration();
-}
-
-std::shared_ptr<Config> ConfigParser::parseConfigurationFromString(const std::string& content) {
-    // 创建专门的ConfigLexer
-    auto lexer = std::make_shared<ConfigLexer>();
-    auto context = std::make_shared<ChtlContext>();
-    
-    if (!initialize(lexer, context)) {
-        return nullptr;
-    }
-    
-    auto stream = std::make_unique<std::istringstream>(content);
-    if (!lexer_->initialize(std::move(stream), "<config-string>")) {
-        reportError("Failed to initialize configuration parser");
-        return nullptr;
-    }
-    
-    return parseConfiguration();
-}
-
-bool ConfigParser::parseConfigurationBlock() {
-    while (configState_ == ConfigParseState::IN_CONFIG_BLOCK && !isAtEnd()) {
-        Token token = peekNextToken();
+void ConfigParser::parseConfigContent(std::shared_ptr<Config> configNode) {
+    while (!isAtEnd() && peekNextToken().getType() != TokenType::RIGHT_BRACE) {
+        Token currentToken = peekNextToken();
         
-        if (token.getType() == TokenType::RIGHT_BRACE) {
-            // 配置块结束
-            return true;
-        }
-        
-        if (token.getType() == TokenType::IDENTIFIER) {
-            currentKey_ = token.getValue();
+        // 跳过注释和空白
+        if (currentToken.getType() == TokenType::SINGLE_LINE_COMMENT ||
+            currentToken.getType() == TokenType::MULTI_LINE_COMMENT ||
+            currentToken.getType() == TokenType::HTML_COMMENT) {
             consumeToken();
+            continue;
+        }
+        
+        // 检查是否是嵌套配置块 [Name]
+        if (currentToken.getType() == TokenType::LEFT_BRACKET) {
+            consumeToken(); // 消费 [
             
-            if (!isValidConfigKey(currentKey_)) {
-                reportWarning("Unknown configuration key: " + currentKey_);
-            }
-            
-            if (!expectToken(TokenType::COLON, "Expected ':' after configuration key")) {
-                synchronize();
-                continue;
-            }
-            
-            if (isArrayConfigKey(currentKey_)) {
-                if (!parseConfigArray()) {
-                    synchronize();
+            Token nameToken = peekNextToken();
+            if (nameToken.getType() == TokenType::IDENTIFIER) {
+                std::string blockName = nameToken.getValue();
+                consumeToken(); // 消费标识符
+                
+                if (!expectToken(TokenType::RIGHT_BRACKET)) {
+                    reportError("Expected ']' after block name");
+                    skipToNextStatement();
                     continue;
                 }
-            } else {
-                if (!parseConfigValue()) {
-                    synchronize();
+                consumeToken(); // 消费 ]
+                
+                if (!expectToken(TokenType::LEFT_BRACE)) {
+                    reportError("Expected '{' after [" + blockName + "]");
+                    skipToNextStatement();
                     continue;
                 }
+                consumeToken(); // 消费 {
+                
+                // 解析嵌套配置块
+                parseConfigGroup(configNode, blockName);
+                
+                if (!expectToken(TokenType::RIGHT_BRACE)) {
+                    reportError("Expected '}' to close [" + blockName + "]");
+                } else {
+                    consumeToken();
+                }
             }
-            
-            if (!expectToken(TokenType::SEMICOLON, "Expected ';' after configuration value")) {
-                synchronize();
-                continue;
-            }
+            continue;
+        }
+        
+        // 解析配置项
+        if (currentToken.getType() == TokenType::IDENTIFIER) {
+            parseConfigItem(configNode, "");
         } else {
-            reportError("Expected configuration key", token);
-            synchronize();
+            // 跳过未知token
+            consumeToken();
         }
     }
-    
-    return !hasErrors();
 }
 
-bool ConfigParser::parseConfigValue() {
+void ConfigParser::parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName) {
+    while (!isAtEnd() && peekNextToken().getType() != TokenType::RIGHT_BRACE) {
+        Token currentToken = peekNextToken();
+        
+        // 跳过注释
+        if (currentToken.getType() == TokenType::SINGLE_LINE_COMMENT ||
+            currentToken.getType() == TokenType::MULTI_LINE_COMMENT ||
+            currentToken.getType() == TokenType::HTML_COMMENT) {
+            consumeToken();
+            continue;
+        }
+        
+        // 解析配置项
+        if (currentToken.getType() == TokenType::IDENTIFIER) {
+            parseConfigItem(configNode, groupName);
+        } else {
+            consumeToken();
+        }
+    }
+}
+
+void ConfigParser::parseConfigItem(std::shared_ptr<Config> configNode, const std::string& prefix) {
+    // 获取配置键名
+    Token keyToken = peekNextToken();
+    if (keyToken.getType() != TokenType::IDENTIFIER) {
+        reportError("Expected configuration key");
+        skipToNextStatement();
+        return;
+    }
+    std::string key = keyToken.getValue();
+    consumeToken();
+    
+    // 构造完整键名
+    if (!prefix.empty()) {
+        key = prefix + "." + key;
+    }
+    
+    // 期望 =
+    if (!expectToken(TokenType::EQUALS)) {
+        reportError("Expected '=' after configuration key");
+        skipToNextStatement();
+        return;
+    }
+    consumeToken();
+    
+    // 解析值
+    Token valueToken = peekNextToken();
+    
+    // 检查是否是数组
+    if (valueToken.getType() == TokenType::LEFT_BRACKET) {
+        consumeToken(); // 消费 [
+        
+        std::vector<std::string> values;
+        
+        while (!isAtEnd() && peekNextToken().getType() != TokenType::RIGHT_BRACKET) {
+            Token token = peekNextToken();
+            
+            if (token.getType() == TokenType::COMMA) {
+                consumeToken();
+                continue;
+            }
+            
+            std::string value = parseConfigValue();
+            if (!value.empty()) {
+                values.push_back(value);
+            }
+        }
+        
+        if (!expectToken(TokenType::RIGHT_BRACKET)) {
+            reportError("Expected ']' to close array value");
+        } else {
+            consumeToken();
+        }
+        
+        configNode->setArrayConfig(key, values);
+        
+    } else {
+        // 单个值
+        std::string value = parseConfigValue();
+        configNode->setConfig(key, value);
+    }
+    
+    // 可选的分号
+    if (peekNextToken().getType() == TokenType::SEMICOLON) {
+        consumeToken();
+    }
+}
+
+std::string ConfigParser::parseConfigValue() {
+    Token token = peekNextToken();
     std::string value;
     
-    Token token = peekNextToken();
     switch (token.getType()) {
         case TokenType::STRING_LITERAL:
-            consumeToken();
             value = token.getValue();
+            // 去除引号
+            if (value.size() >= 2 && 
+                ((value.front() == '"' && value.back() == '"') ||
+                 (value.front() == '\'' && value.back() == '\''))) {
+                value = value.substr(1, value.size() - 2);
+            }
+            consumeToken();
             break;
             
         case TokenType::NUMBER:
-            consumeToken();
             value = token.getValue();
+            consumeToken();
             break;
             
         case TokenType::IDENTIFIER:
-            consumeToken();
             value = token.getValue();
+            consumeToken();
+            
+            // 处理布尔值
+            if (value == "true" || value == "false") {
+                // 保持原样
+            }
             break;
             
-
+        case TokenType::AT_STYLE:
+        case TokenType::AT_ELEMENT:
+        case TokenType::AT_VAR:
+        case TokenType::AT_HTML:
+        case TokenType::AT_JAVASCRIPT:
+        case TokenType::AT_CHTL:
+            value = token.getValue();
+            consumeToken();
+            break;
+            
+        case TokenType::LEFT_BRACKET:
+            // 处理嵌套的特殊值如 [Custom]
+            consumeToken(); // 消费 [
+            if (peekNextToken().getType() == TokenType::IDENTIFIER) {
+                value = "[" + peekNextToken().getValue() + "]";
+                consumeToken();
+                if (peekNextToken().getType() == TokenType::RIGHT_BRACKET) {
+                    consumeToken();
+                }
+            }
+            break;
             
         default:
-            reportError("Invalid configuration value", token);
-            return false;
-    }
-    
-    if (validateConfigValue(currentKey_, value)) {
-        currentConfig_->setConfig(currentKey_, value);
-        return true;
-    }
-    
-    return false;
-}
-
-bool ConfigParser::parseConfigArray() {
-    currentArray_.clear();
-    
-    if (!expectToken(TokenType::LEFT_BRACKET, "Expected '[' to start array")) {
-        return false;
-    }
-    
-    // 解析数组元素
-    bool first = true;
-    while (!isAtEnd()) {
-        Token token = peekNextToken();
-        
-        if (token.getType() == TokenType::RIGHT_BRACKET) {
+            reportError("Unexpected token in configuration value: " + token.getValue());
             consumeToken();
             break;
-        }
-        
-        if (!first) {
-            if (!expectToken(TokenType::COMMA, "Expected ',' between array elements")) {
-                return false;
-            }
-        }
+    }
+    
+    return value;
+}
+
+void ConfigParser::exportConfig(std::shared_ptr<Config> configNode, ConfigFormat format, const std::string& filename) {
+    std::string content;
+    
+    switch (format) {
+        case ConfigFormat::JSON:
+            content = exportToJSON(configNode);
+            break;
+        case ConfigFormat::YAML:
+            content = exportToYAML(configNode);
+            break;
+        case ConfigFormat::INI:
+            content = exportToINI(configNode);
+            break;
+        case ConfigFormat::TOML:
+            content = exportToTOML(configNode);
+            break;
+        case ConfigFormat::XML:
+            content = exportToXML(configNode);
+            break;
+        case ConfigFormat::CHTL:
+            content = exportToCHTL(configNode);
+            break;
+    }
+    
+    // TODO: 写入文件
+    (void)filename; // 暂时消除未使用警告
+}
+
+std::string ConfigParser::exportToJSON(std::shared_ptr<Config> configNode) {
+    std::stringstream ss;
+    ss << "{\n";
+    
+    bool first = true;
+    
+    // 导出普通配置项
+    for (const auto& [key, value] : configNode->getConfigs()) {
+        if (!first) ss << ",\n";
         first = false;
         
-        std::string element;
-        if (!parseArrayElement(element)) {
-            return false;
+        ss << "  \"" << key << "\": ";
+        
+        // 检查是否是数字或布尔值
+        if (value == "true" || value == "false" ||
+            std::all_of(value.begin(), value.end(), [](char c) { 
+                return std::isdigit(c) || c == '.' || c == '-'; 
+            })) {
+            ss << value;
+        } else {
+            ss << "\"" << value << "\"";
         }
-        currentArray_.push_back(element);
     }
     
-    if (validateArrayValues(currentKey_, currentArray_)) {
-        currentConfig_->setArrayConfig(currentKey_, currentArray_);
-        return true;
-    }
+    // TODO: 导出数组配置项
     
-    return false;
+    ss << "\n}";
+    return ss.str();
 }
 
-bool ConfigParser::parseArrayElement(std::string& result) {
-    Token token = peekNextToken();
+std::string ConfigParser::exportToYAML(std::shared_ptr<Config> configNode) {
+    std::stringstream ss;
     
-    switch (token.getType()) {
-        case TokenType::STRING_LITERAL:
-        case TokenType::IDENTIFIER:
-        case TokenType::NUMBER:
-            consumeToken();
-            result = token.getValue();
-            return true;
-            
-        default:
-            reportError("Invalid array element", token);
-            return false;
-    }
-}
-
-bool ConfigParser::isValidConfigKey(const std::string& key) const {
-    return VALID_CONFIG_KEYS.find(key) != VALID_CONFIG_KEYS.end();
-}
-
-bool ConfigParser::isArrayConfigKey(const std::string& key) const {
-    return ARRAY_CONFIG_KEYS.find(key) != ARRAY_CONFIG_KEYS.end();
-}
-
-bool ConfigParser::validateConfigValue(const std::string& key, const std::string& value) {
-    // 基本验证
-    if (key == "debug" || key == "optimize" || key == "strict_mode") {
-        if (value != "true" && value != "false") {
-            reportError("Configuration key '" + key + "' must be true or false");
-            return false;
+    // 导出普通配置项
+    for (const auto& [key, value] : configNode->getConfigs()) {
+        // 处理嵌套键（如 Name.CUSTOM_STYLE）
+        size_t dotPos = key.find('.');
+        if (dotPos != std::string::npos) {
+            std::string group = key.substr(0, dotPos);
+            std::string subkey = key.substr(dotPos + 1);
+            ss << group << ":\n";
+            ss << "  " << subkey << ": " << value << "\n";
+        } else {
+            ss << key << ": " << value << "\n";
         }
-    } else if (key == "max_errors" || key == "max_warnings") {
-        try {
-            int num = std::stoi(value);
-            if (num < 0) {
-                reportError("Configuration key '" + key + "' must be non-negative");
-                return false;
+    }
+    
+    return ss.str();
+}
+
+std::string ConfigParser::exportToINI(std::shared_ptr<Config> configNode) {
+    std::stringstream ss;
+    std::map<std::string, std::vector<std::pair<std::string, std::string>>> groups;
+    
+    // 按组分类配置项
+    for (const auto& [key, value] : configNode->getConfigs()) {
+        size_t dotPos = key.find('.');
+        if (dotPos != std::string::npos) {
+            std::string group = key.substr(0, dotPos);
+            std::string subkey = key.substr(dotPos + 1);
+            groups[group].push_back({subkey, value});
+        } else {
+            groups[""].push_back({key, value});
+        }
+    }
+    
+    // 输出INI格式
+    for (const auto& [group, items] : groups) {
+        if (!group.empty()) {
+            ss << "[" << group << "]\n";
+        }
+        for (const auto& [key, value] : items) {
+            ss << key << " = " << value << "\n";
+        }
+        ss << "\n";
+    }
+    
+    return ss.str();
+}
+
+std::string ConfigParser::exportToTOML(std::shared_ptr<Config> configNode) {
+    // TODO: 实现TOML导出
+    return "# TOML export not implemented yet\n";
+}
+
+std::string ConfigParser::exportToXML(std::shared_ptr<Config> configNode) {
+    std::stringstream ss;
+    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    ss << "<configuration>\n";
+    
+    for (const auto& [key, value] : configNode->getConfigs()) {
+        ss << "  <" << key << ">" << value << "</" << key << ">\n";
+    }
+    
+    ss << "</configuration>\n";
+    return ss.str();
+}
+
+std::string ConfigParser::exportToCHTL(std::shared_ptr<Config> configNode) {
+    std::stringstream ss;
+    ss << "[Configuration]\n{\n";
+    
+    for (const auto& [key, value] : configNode->getConfigs()) {
+        ss << "    " << key << " = ";
+        
+        // 检查是否需要引号
+        if (value.find(' ') != std::string::npos ||
+            value.find(',') != std::string::npos) {
+            ss << "\"" << value << "\"";
+        } else {
+            ss << value;
+        }
+        
+        ss << ";\n";
+    }
+    
+    ss << "}\n";
+    return ss.str();
+}
+
+void ConfigParser::skipToNextStatement() {
+    while (!isAtEnd()) {
+        Token token = peekNextToken();
+        if (token.getType() == TokenType::SEMICOLON ||
+            token.getType() == TokenType::RIGHT_BRACE) {
+            if (token.getType() == TokenType::SEMICOLON) {
+                consumeToken();
             }
-        } catch (...) {
-            reportError("Configuration key '" + key + "' must be a number");
-            return false;
+            break;
         }
-    }
-    
-    return true;
-}
-
-bool ConfigParser::validateArrayValues(const std::string& key, const std::vector<std::string>& values) {
-    if (key == "keyword_aliases") {
-        // 关键字别名必须成对出现
-        if (values.size() % 2 != 0) {
-            reportError("keyword_aliases must contain pairs of (keyword, alias)");
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-void ConfigParser::applySpecialConfigurations() {
-    if (!currentConfig_ || !context_) {
-        return;
-    }
-    
-    applyKeywordAliases();
-    applyImportPaths();
-    
-    // 应用其他特殊配置
-    if (currentConfig_->hasConfig("debug")) {
-        bool debug = currentConfig_->getConfig("debug") == "true";
-        context_->setConfig("debug_mode", debug ? "true" : "false");
-    }
-    
-    if (currentConfig_->hasConfig("strict_mode")) {
-        bool strict = currentConfig_->getConfig("strict_mode") == "true";
-        context_->setConfig("strict_mode", strict ? "true" : "false");
-    }
-}
-
-void ConfigParser::applyKeywordAliases() {
-    if (!currentConfig_->hasArrayConfig("keyword_aliases")) {
-        return;
-    }
-    
-    auto aliases = currentConfig_->getArrayConfig("keyword_aliases");
-    auto chtlContext = std::dynamic_pointer_cast<ChtlContext>(context_);
-    
-    if (chtlContext) {
-        for (size_t i = 0; i + 1 < aliases.size(); i += 2) {
-            chtlContext->addKeywordAlias(aliases[i], aliases[i + 1]);
-        }
-    }
-}
-
-void ConfigParser::applyImportPaths() {
-    if (!currentConfig_->hasArrayConfig("include_paths")) {
-        return;
-    }
-    
-    auto paths = currentConfig_->getArrayConfig("include_paths");
-    for (const auto& path : paths) {
-        context_->setConfig("include_path", path);
+        consumeToken();
     }
 }
 

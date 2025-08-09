@@ -25,13 +25,19 @@ public:
     Template(TemplateType type, const std::string& name)
         : Node(NodeType::TEMPLATE, "[Template]"), templateType_(type), templateName_(name) {}
     
+    // 默认构造函数
+    Template() : Node(NodeType::TEMPLATE, "[Template]"), templateType_(TemplateType::STYLE) {}
+    
     // 模板类型和名称
     TemplateType getTemplateType() const { return templateType_; }
+    void setType(TemplateType type) { templateType_ = type; }
     const std::string& getTemplateName() const { return templateName_; }
+    void setName(const std::string& name) { templateName_ = name; }
     void setTemplateName(const std::string& name) { templateName_ = name; }
     
     // 参数管理
     void setParameter(const std::string& name, const std::string& value) { parameters_[name] = value; }
+    void addProperty(const std::string& name, const std::string& value) { parameters_[name] = value; }
     std::string getParameter(const std::string& name) const;
     bool hasParameter(const std::string& name) const { return parameters_.find(name) != parameters_.end(); }
     const std::unordered_map<std::string, std::string>& getParameters() const { return parameters_; }

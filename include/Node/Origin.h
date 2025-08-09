@@ -24,8 +24,13 @@ public:
     Origin(OriginType type, const std::string& name = "")
         : Node(NodeType::ORIGIN, "[Origin]"), originType_(type), originName_(name) {}
     
+    // 默认构造函数
+    Origin() : Node(NodeType::ORIGIN, "[Origin]"), originType_(OriginType::HTML) {}
+    
     // 类型和名称管理
     OriginType getOriginType() const { return originType_; }
+    OriginType getType() const { return originType_; }
+    void setType(OriginType type) { originType_ = type; }
     const std::string& getOriginName() const { return originName_; }
     void setOriginName(const std::string& name) { originName_ = name; }
     

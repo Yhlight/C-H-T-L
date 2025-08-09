@@ -1,6 +1,4 @@
 file(REMOVE_RECURSE
-  "../lib/libchtl.pdb"
-  "../lib/libchtl.so"
   "CMakeFiles/chtl_shared.dir/link.d"
   "CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o"
   "CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o.d"
@@ -88,6 +86,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl_shared.dir/State/StandardState.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.o"
   "CMakeFiles/chtl_shared.dir/State/StateFactory.cpp.o.d"
+  "libchtl.pdb"
+  "libchtl.so"
 )
 
 # Per-language clean rules from dependency scanning.

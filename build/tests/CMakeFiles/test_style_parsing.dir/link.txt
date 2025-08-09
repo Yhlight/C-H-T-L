@@ -1,1 +1,1 @@
-/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_style_parsing.dir/link.d CMakeFiles/test_style_parsing.dir/test_style_parsing.cpp.o -o ../bin/test_style_parsing  ../lib/libchtl_core.a
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_style_parsing.dir/link.d CMakeFiles/test_style_parsing.dir/test_style_parsing.cpp.o -o test_style_parsing  ../src/libchtl_core.a

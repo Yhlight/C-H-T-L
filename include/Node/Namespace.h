@@ -16,7 +16,12 @@ public:
     Namespace(const std::string& name)
         : Node(NodeType::NAMESPACE, "[Namespace]"), namespaceName_(name) {}
     
+    // 默认构造函数
+    Namespace() : Node(NodeType::NAMESPACE, "[Namespace]") {}
+    
     // 命名空间名称
+    const std::string& getName() const { return namespaceName_; }
+    void setName(const std::string& name) { namespaceName_ = name; }
     const std::string& getNamespaceName() const { return namespaceName_; }
     void setNamespaceName(const std::string& name) { namespaceName_ = name; }
     

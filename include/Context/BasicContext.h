@@ -10,27 +10,29 @@
 
 namespace chtl {
 
+// 前向声明
+class Node;
+
 // 上下文类型枚举
 enum class ContextType {
     CHTL,       // CHTL主上下文
     CSS,        // CSS上下文
     JS,         // JavaScript上下文
-    CHTL_JS,    // CHTL扩展的JavaScript上下文
-    TEMPLATE,   // 模板上下文
-    CUSTOM,     // 自定义上下文
-    NAMESPACE   // 命名空间上下文
+    CHTL_JS,    // CHTL-JS上下文
+    CONFIG      // 配置上下文
 };
 
 // 作用域类型
 enum class ScopeType {
     GLOBAL,     // 全局作用域
-    ELEMENT,    // 元素作用域
-    STYLE,      // style块作用域
-    SCRIPT,     // script块作用域
-    TEMPLATE,   // 模板定义作用域
-    CUSTOM,     // 自定义定义作用域
     NAMESPACE,  // 命名空间作用域
-    BLOCK       // 一般块作用域
+    ELEMENT,    // 元素作用域
+    BLOCK,      // 块作用域
+    TEMPLATE,   // 模板作用域
+    CUSTOM,     // 自定义作用域
+    CONFIG,     // 配置作用域
+    FUNCTION,   // 函数作用域（JS/CSS）
+    CLASS       // 类作用域（JS）
 };
 
 // 符号信息
@@ -132,6 +134,34 @@ public:
     
     // 打印调试信息
     virtual void printDebugInfo() const;
+    
+    // 模板和自定义注册（CHTL特有）
+    virtual void registerTemplate(const std::string& name, std::shared_ptr<Node> templateNode) {
+        // 默认实现：添加到符号表
+        SymbolInfo info{name, "template", "", getCurrentLine(), getCurrentColumn()};
+        addSymbol(name, info);
+        (void)templateNode; // 避免未使用警告
+    }
+    virtual void registerCustom(const std::string& name, std::shared_ptr<Node> customNode) {
+        // 默认实现：添加到符号表
+        SymbolInfo info{name, "custom", "", getCurrentLine(), getCurrentColumn()};
+        addSymbol(name, info);
+        (void)customNode; // 避免未使用警告
+    }
+    virtual std::shared_ptr<Node> getTemplate(const std::string& name) const {
+        // 子类应该实现具体的获取逻辑
+        (void)name; // 避免未使用警告
+        return nullptr;
+    }
+    virtual std::shared_ptr<Node> getCustom(const std::string& name) const {
+        // 子类应该实现具体的获取逻辑
+        (void)name; // 避免未使用警告
+        return nullptr;
+    }
+    
+    // 上下文管理
+    virtual void pushContext(const std::string& name);
+    virtual void popContext();
     
 protected:
     // 辅助方法

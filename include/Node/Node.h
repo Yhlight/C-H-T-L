@@ -33,7 +33,11 @@ enum class NodeType {
     IMPORT,
     NAMESPACE,
     OPERATE,
-    ORIGIN
+    ORIGIN,
+    REFERENCE,  // 引用节点（@Style, @Element, @Var的使用）
+    DELETE,     // 删除操作节点
+    INFO,       // [Info]块节点
+    EXPORT      // [Export]块节点
 };
 
 // 属性值类型
@@ -46,6 +50,14 @@ protected:
     std::weak_ptr<Node> parent_;
     std::vector<std::shared_ptr<Node>> children_;
     std::string nodeName_;
+    
+    // CHTL特有的成员
+    std::string tagName_;  // 用于元素标签名或特殊节点类型名
+    std::unordered_map<std::string, AttributeValue> attributes_;  // 通用属性存储
+    std::vector<std::string> constraints_;  // except约束
+    std::vector<std::string> inheritances_;  // 继承列表
+    std::vector<std::string> exports_;  // 导出列表
+    std::string text_;  // 文本内容（用于文本节点）
     
 public:
     Node(NodeType type, const std::string& name = "")
@@ -60,13 +72,75 @@ public:
     const std::string& getNodeName() const { return nodeName_; }
     void setNodeName(const std::string& name) { nodeName_ = name; }
     
+    // 标签名（用于元素和特殊节点）
+    const std::string& getTagName() const { return tagName_; }
+    void setTagName(const std::string& tagName) { tagName_ = tagName; }
+    
+    // 属性管理（通用接口）
+    void setAttribute(const std::string& name, const AttributeValue& value) {
+        attributes_[name] = value;
+    }
+    AttributeValue getAttribute(const std::string& name) const {
+        auto it = attributes_.find(name);
+        return it != attributes_.end() ? it->second : AttributeValue("");
+    }
+    bool hasAttribute(const std::string& name) const {
+        return attributes_.find(name) != attributes_.end();
+    }
+    
+    // 文本内容（用于文本节点和其他需要存储文本的节点）
+    const std::string& getText() const { return text_; }
+    void setText(const std::string& text) { text_ = text; }
+    
+    // Class管理（通用接口）
+    void addClass(const std::string& className) {
+        // 简单实现，后续可以优化
+        std::string current = "";
+        if (auto classAttr = getAttribute("class"); std::holds_alternative<std::string>(classAttr)) {
+            current = std::get<std::string>(classAttr);
+        }
+        if (!current.empty()) current += " ";
+        current += className;
+        setAttribute("class", current);
+    }
+    
+    // 约束管理（CHTL except）
+    void addConstraint(const std::string& constraint) {
+        constraints_.push_back(constraint);
+    }
+    const std::vector<std::string>& getConstraints() const {
+        return constraints_;
+    }
+    
+    // 继承管理（CHTL inherit）
+    void addInheritance(const std::string& inheritance) {
+        inheritances_.push_back(inheritance);
+    }
+    const std::vector<std::string>& getInheritances() const {
+        return inheritances_;
+    }
+    
+    // 导出管理（CHTL export）
+    void addExport(const std::string& exportItem) {
+        exports_.push_back(exportItem);
+    }
+    const std::vector<std::string>& getExports() const {
+        return exports_;
+    }
+    
     // 父节点管理
     std::shared_ptr<Node> getParent() const { return parent_.lock(); }
     void setParent(const std::shared_ptr<Node>& parent) { parent_ = parent; }
     
     // 子节点管理
     const std::vector<std::shared_ptr<Node>>& getChildren() const { return children_; }
-    void appendChild(const std::shared_ptr<Node>& child);
+    void appendChild(const std::shared_ptr<Node>& child) {
+        children_.push_back(child);
+        child->setParent(shared_from_this());
+    }
+    void addChild(const std::shared_ptr<Node>& child) {
+        appendChild(child);
+    }
     void insertBefore(const std::shared_ptr<Node>& child, const std::shared_ptr<Node>& ref);
     void removeChild(const std::shared_ptr<Node>& child);
     void replaceChild(const std::shared_ptr<Node>& newChild, const std::shared_ptr<Node>& oldChild);

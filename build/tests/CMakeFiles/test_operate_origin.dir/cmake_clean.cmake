@@ -1,9 +1,9 @@
 file(REMOVE_RECURSE
-  "../bin/test_operate_origin"
-  "../bin/test_operate_origin.pdb"
   "CMakeFiles/test_operate_origin.dir/link.d"
   "CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o"
   "CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o.d"
+  "test_operate_origin"
+  "test_operate_origin.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

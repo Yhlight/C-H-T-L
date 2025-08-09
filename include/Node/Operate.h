@@ -22,6 +22,9 @@ public:
         AT,         // at
         TOP,        // top
         BOTTOM,     // bottom
+        AT_TOP,     // at top
+        AT_BOTTOM,  // at bottom
+        REPLACE,    // replace
         DEFAULT     // 默认位置
     };
     
@@ -37,9 +40,14 @@ public:
     Operate(OperationType type)
         : Node(NodeType::OPERATE, "operate"), operationType_(type) {}
     
+    // 默认构造函数
+    Operate() : Node(NodeType::OPERATE, "operate"), operationType_(OperationType::INSERT) {}
+    
     // 操作类型
     OperationType getOperationType() const { return operationType_; }
+    OperationType getOperation() const { return operationType_; }
     void setOperationType(OperationType type) { operationType_ = type; }
+    void setOperation(OperationType type) { operationType_ = type; }
     
     // 位置管理
     Position getPosition() const { return position_; }

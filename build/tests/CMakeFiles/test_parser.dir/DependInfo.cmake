@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/tests/test_parser.cpp" "tests/CMakeFiles/test_parser.dir/test_parser.cpp.o" "gcc" "tests/CMakeFiles/test_parser.dir/test_parser.cpp.o.d"
-  "" "bin/test_parser" "gcc" "tests/CMakeFiles/test_parser.dir/link.d"
+  "" "tests/test_parser" "gcc" "tests/CMakeFiles/test_parser.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

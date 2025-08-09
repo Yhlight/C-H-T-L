@@ -4,7 +4,7 @@
 namespace chtl {
 
 std::string Token::getTypeString() const {
-    return GlobalMap::tokenTypeToString(type_);
+    return GlobalMap::tokenTypeToString(type);
 }
 
 } // namespace chtl

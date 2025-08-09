@@ -24,13 +24,19 @@ public:
     Custom(CustomType type, const std::string& name)
         : Node(NodeType::CUSTOM, "[Custom]"), customType_(type), customName_(name) {}
     
+    // 默认构造函数
+    Custom() : Node(NodeType::CUSTOM, "[Custom]"), customType_(CustomType::STYLE) {}
+    
     // 自定义类型和名称
     CustomType getCustomType() const { return customType_; }
+    void setType(CustomType type) { customType_ = type; }
     const std::string& getCustomName() const { return customName_; }
+    void setName(const std::string& name) { customName_ = name; }
     void setCustomName(const std::string& name) { customName_ = name; }
     
     // 属性管理
     void setProperty(const std::string& name, const std::string& value) { properties_[name] = value; }
+    void addProperty(const std::string& name, const std::string& value) { properties_[name] = value; }
     std::string getProperty(const std::string& name) const;
     bool hasProperty(const std::string& name) const { return properties_.find(name) != properties_.end(); }
     const std::unordered_map<std::string, std::string>& getProperties() const { return properties_; }

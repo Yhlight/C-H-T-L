@@ -1,1 +1,1 @@
-/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_import_namespace.dir/link.d CMakeFiles/test_import_namespace.dir/test_import_namespace.cpp.o -o ../bin/test_import_namespace  ../lib/libchtl_core.a
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_import_namespace.dir/link.d CMakeFiles/test_import_namespace.dir/test_import_namespace.cpp.o -o test_import_namespace  ../src/libchtl_core.a

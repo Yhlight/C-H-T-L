@@ -723,57 +723,57 @@ chtl_core_OBJECTS = \
 # External object files for target chtl_core
 chtl_core_EXTERNAL_OBJECTS =
 
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Common/GlobalMap.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Common/Token.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/ChtlState.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/StandardState.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/CssState.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/JsState.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/StateFactory.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/BasicContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/ChtlContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/BasicLexer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/StandardParser.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Node.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Import.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Namespace.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Operate.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Origin.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/BasicGenerator.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/ConfigGenerator.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/HtmlGenerator.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Scanner/Segment.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Scanner/BridgeScanner.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssAnalyzer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssTokenizer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssBlockExtractor.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsAnalyzer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsTokenizer.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsBlockExtractor.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/build.make
-lib/libchtl_core.a: src/CMakeFiles/chtl_core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX static library ../lib/libchtl_core.a"
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Common/GlobalMap.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Common/Token.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/ChtlState.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/StandardState.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/CssState.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/JsState.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/State/StateFactory.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/BasicContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/ChtlContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/BasicLexer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/StandardParser.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Node.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Import.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Namespace.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Operate.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Node/Origin.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/BasicGenerator.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/ConfigGenerator.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Generator/HtmlGenerator.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Scanner/Segment.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Scanner/BridgeScanner.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssAnalyzer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssTokenizer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Css/CssBlockExtractor.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsAnalyzer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsTokenizer.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsBlockExtractor.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/build.make
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX static library libchtl_core.a"
 	cd /workspace/build/src && $(CMAKE_COMMAND) -P CMakeFiles/chtl_core.dir/cmake_clean_target.cmake
 	cd /workspace/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_core.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-src/CMakeFiles/chtl_core.dir/build: lib/libchtl_core.a
+src/CMakeFiles/chtl_core.dir/build: src/libchtl_core.a
 .PHONY : src/CMakeFiles/chtl_core.dir/build
 
 src/CMakeFiles/chtl_core.dir/clean:

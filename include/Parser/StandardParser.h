@@ -2,77 +2,132 @@
 #define CHTL_PARSER_STANDARD_PARSER_H
 
 #include "Parser/BasicParser.h"
-#include <stack>
+#include "State/StateFactory.h"
+#include "Context/ContextFactory.h"
+#include "Common/Token.h"
+#include <memory>
+#include <vector>
+#include <string>
 
 namespace chtl {
 
 // 前向声明
+class Node;
+class Style;
 class Template;
 class Custom;
 class Config;
-class Namespace;
 
-/**
- * @brief StandardParser - 标准CHTL解析器
- * 
- * 这是BasicParser的标准实现，用于解析常规的CHTL代码。
- * 实现了完整的CHTL语法解析功能。
- */
 class StandardParser : public BasicParser {
 public:
-    StandardParser();
-    virtual ~StandardParser() = default;
+    StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context);
+    ~StandardParser() override = default;
 
-    // 实现纯虚函数
-    virtual std::shared_ptr<Node> parse() override;
+    // 主解析方法
+    std::shared_ptr<Node> parse() override;
 
-protected:
-    // CHTL特定的解析方法
-    std::shared_ptr<Node> parseDocument();
+private:
+    // 解析状态
+    Token currentToken_;
+    Token previousToken_;
+    int currentIndent_;
+    int expectIndent_;
+    
+    // 解析标志
+    bool inAttribute_;
+    bool inStyleBlock_;
+    bool inTextBlock_;
+    bool inTemplateBlock_;
+    bool inCustomBlock_;
+    bool inConfigBlock_;
+    bool inOriginBlock_;
+    
+    // 顶层解析
+    std::shared_ptr<Node> parseTopLevel();
+    std::shared_ptr<Node> parseSpecialBlock();
+    
+    // 基础元素解析
     std::shared_ptr<Node> parseElement();
+    std::shared_ptr<Node> parseNode();
     std::shared_ptr<Node> parseText();
     std::shared_ptr<Node> parseComment();
+    
+    // 属性解析
+    bool checkAttribute();
+    void parseAttributes(std::shared_ptr<Node> element);
+    
+    // 样式解析
+    std::shared_ptr<Node> parseStyleBlock();
+    void parseStyleContent(std::shared_ptr<Style> styleNode);
+    void parseSelectorBlock(std::shared_ptr<Style> styleNode);
+    void parseContextSelector(std::shared_ptr<Style> styleNode);
+    void parseCssProperty(std::string& cssContent);
+    
+    // 模板解析
     std::shared_ptr<Node> parseTemplate();
+    void parseStyleTemplateContent(std::shared_ptr<Template> templateNode);
+    void parseElementTemplateContent(std::shared_ptr<Template> templateNode);
+    void parseVarTemplateContent(std::shared_ptr<Template> templateNode);
+    void parseTemplateProperty(std::shared_ptr<Template> templateNode);
+    
+    // 自定义解析
     std::shared_ptr<Node> parseCustom();
-    std::shared_ptr<Node> parseStyle();
-    std::shared_ptr<Node> parseConfig();
-    std::shared_ptr<Node> parseImport();
-    std::shared_ptr<Node> parseNamespace();
-    std::shared_ptr<Node> parseOperate();
+    void parseCustomStyleContent(std::shared_ptr<Custom> customNode);
+    void parseCustomElementContent(std::shared_ptr<Custom> customNode);
+    void parseCustomVarContent(std::shared_ptr<Custom> customNode);
+    
+    // 继承和引用
+    void parseInherit(std::shared_ptr<Node> node);
+    std::shared_ptr<Node> parseReference();
+    std::shared_ptr<Node> parseStyleReference();
+    void parseVarArguments(std::shared_ptr<Node> refNode);
+    void parseSpecialization(std::shared_ptr<Node> refNode);
+    
+    // 操作解析
+    void parseDelete(std::shared_ptr<Node> parent);
+    std::shared_ptr<Node> parseOperation();
+    std::shared_ptr<Node> parseInsert();
+    std::string parseInsertTarget();
+    
+    // 原始嵌入
     std::shared_ptr<Node> parseOrigin();
     
-    // 辅助方法
-    Token advance();
-    Token currentToken();
+    // 配置解析
+    std::shared_ptr<Node> parseConfiguration();
+    void parseConfigContent(std::shared_ptr<Config> configNode);
+    void parseConfigItem(std::shared_ptr<Config> configNode);
+    void parseNameConfig(std::shared_ptr<Config> configNode);
+    
+    // 导入解析
+    std::shared_ptr<Node> parseImport();
+    
+    // 命名空间解析
+    std::shared_ptr<Node> parseNamespace();
+    void parseExcept(std::shared_ptr<Node> parent);
+    
+    // 信息和导出
+    std::shared_ptr<Node> parseInfo();
+    std::shared_ptr<Node> parseExport();
+    
+    // Token操作辅助方法
     Token peek();
+    Token previous();
+    Token advance();
+    bool isAtEnd();
     bool check(TokenType type);
     bool match(TokenType type);
     Token consume(TokenType type, const std::string& message);
     
-    void parseAttribute(std::shared_ptr<Element> element);
-    void parseElementContent(std::shared_ptr<Element> element);
-    std::shared_ptr<Node> parseInlineStyle(std::shared_ptr<Element> element);
-    void parseInlineStyleContent(std::shared_ptr<Element> element, const std::string& content);
-    void parseTemplateContent(std::shared_ptr<Template> templateNode);
-    void parseCustomContent(std::shared_ptr<Custom> customNode);
-    void parseTemplateUsage(std::shared_ptr<Element> element);
-    void parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName);
-    void parseNamespaceContent(std::shared_ptr<Namespace> namespaceNode);
-    bool isStartOfElement();
-    bool isStartOfTemplate();
-    bool isStartOfCustom();
-    bool isStartOfSpecialNode();
+    // 工具方法
+    void skipWhitespaceAndComments();
+    void skipToNextStatement();
     
-    // 错误恢复
-    void skipToNextElement();
-    void skipToClosingTag(const std::string& tagName);
-    
-private:
-    // 解析状态
-    std::stack<std::string> elementStack_;  // 跟踪打开的元素
-    // TODO: 实现时使用这些标志
-    // bool inTemplateMode_ = false;
-    // bool inConfigMode_ = false;
+    // 错误处理
+    void addError(const std::string& message) {
+        if (context_) {
+            context_->addError(message);
+        }
+    }
 };
 
 } // namespace chtl

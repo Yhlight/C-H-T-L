@@ -65,16 +65,6 @@ CMAKE_BINARY_DIR = /workspace/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-.PHONY : test/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
@@ -172,6 +162,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named uninstall
+
+# Build rule for target.
+uninstall: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uninstall
+.PHONY : uninstall
+
+# fast build rule for target.
+uninstall/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/build
+.PHONY : uninstall/fast
+
+#=============================================================================
 # Target rules for targets named chtl_core
 
 # Build rule for target.
@@ -196,19 +199,6 @@ chtl_shared: cmake_check_build_system
 chtl_shared/fast:
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/build
 .PHONY : chtl_shared/fast
-
-#=============================================================================
-# Target rules for targets named chtl
-
-# Build rule for target.
-chtl: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl
-.PHONY : chtl
-
-# fast build rule for target.
-chtl/fast:
-	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl.dir/build.make src/CMakeFiles/chtl.dir/build
-.PHONY : chtl/fast
 
 #=============================================================================
 # Target rules for targets named test_lexer
@@ -430,9 +420,8 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... test"
 	@echo "... check"
-	@echo "... chtl"
+	@echo "... uninstall"
 	@echo "... chtl_core"
 	@echo "... chtl_shared"
 	@echo "... test_bridge_scanner"

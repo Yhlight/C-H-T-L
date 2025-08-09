@@ -1,9 +1,9 @@
 file(REMOVE_RECURSE
-  "../bin/test_simple_parser"
-  "../bin/test_simple_parser.pdb"
   "CMakeFiles/test_simple_parser.dir/link.d"
   "CMakeFiles/test_simple_parser.dir/test_simple_parser.cpp.o"
   "CMakeFiles/test_simple_parser.dir/test_simple_parser.cpp.o.d"
+  "test_simple_parser"
+  "test_simple_parser.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

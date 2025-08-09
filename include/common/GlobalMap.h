@@ -5,79 +5,58 @@
 #include <unordered_set>
 #include <string>
 #include <vector>
-#include <memory>
-#include "Token.h"
+#include "TokenType.h"
 
 namespace chtl {
 
-// 全局静态映射表
+// 全局静态映射表类
 class GlobalMap {
 private:
-    // 单例模式
-    GlobalMap();
-    static std::unique_ptr<GlobalMap> instance;
-    
-    // 关键字映射表
-    std::unordered_map<std::string, TokenType> keywordMap;
-    
-    // 特殊标记映射表（如[Custom]）
-    std::unordered_map<std::string, TokenType> specialMarkerMap;
-    
-    // AT前缀映射表（如@Style）
-    std::unordered_map<std::string, TokenType> atPrefixMap;
-    
-    // HTML标签集合
-    std::unordered_set<std::string> htmlTags;
-    
-    // HTML单标签集合
-    std::unordered_set<std::string> htmlSingleTags;
-    
-    // CSS属性集合
-    std::unordered_set<std::string> cssProperties;
-    
-    // JavaScript保留字集合
-    std::unordered_set<std::string> jsReservedWords;
-    
-    // 配置组关键字映射（可动态修改）
-    std::unordered_map<std::string, std::vector<std::string>> configKeywordAliases;
+    // 私有构造函数，防止实例化
+    GlobalMap() = delete;
     
 public:
-    // 获取单例实例
-    static GlobalMap& getInstance();
+    // 关键字映射表
+    static const std::unordered_map<std::string, TokenType> KEYWORD_MAP;
     
-    // 删除拷贝构造和赋值操作符
-    GlobalMap(const GlobalMap&) = delete;
-    GlobalMap& operator=(const GlobalMap&) = delete;
+    // 特殊标记映射表（如[Custom]）
+    static const std::unordered_map<std::string, TokenType> SPECIAL_MARKER_MAP;
     
-    // 初始化方法
-    void initialize();
+    // AT前缀映射表（如@Style）
+    static const std::unordered_map<std::string, TokenType> AT_PREFIX_MAP;
+    
+    // HTML标签集合
+    static const std::unordered_set<std::string> HTML_TAGS;
+    
+    // HTML单标签集合
+    static const std::unordered_set<std::string> HTML_SINGLE_TAGS;
+    
+    // CSS属性集合
+    static const std::unordered_set<std::string> CSS_PROPERTIES;
+    
+    // JavaScript保留字集合
+    static const std::unordered_set<std::string> JS_RESERVED_WORDS;
+    
+    // TokenType到字符串的映射
+    static const std::unordered_map<TokenType, std::string> TOKEN_TYPE_STRINGS;
     
     // 查询方法
-    TokenType getKeywordType(const std::string& keyword) const;
-    TokenType getSpecialMarkerType(const std::string& marker) const;
-    TokenType getAtPrefixType(const std::string& prefix) const;
+    static TokenType getKeywordType(const std::string& keyword);
+    static TokenType getSpecialMarkerType(const std::string& marker);
+    static TokenType getAtPrefixType(const std::string& prefix);
     
-    bool isHtmlTag(const std::string& tag) const;
-    bool isHtmlSingleTag(const std::string& tag) const;
-    bool isCssProperty(const std::string& property) const;
-    bool isJsReservedWord(const std::string& word) const;
+    static bool isHtmlTag(const std::string& tag);
+    static bool isHtmlSingleTag(const std::string& tag);
+    static bool isCssProperty(const std::string& property);
+    static bool isJsReservedWord(const std::string& word);
     
-    // 配置组支持
-    void addKeywordAlias(const std::string& keyword, const std::string& alias);
-    void setKeywordAliases(const std::string& keyword, const std::vector<std::string>& aliases);
-    std::vector<std::string> getKeywordAliases(const std::string& keyword) const;
+    // Token类型转字符串
+    static std::string tokenTypeToString(TokenType type);
     
     // 用于调试
-    void printKeywords() const;
-    void printHtmlTags() const;
-    
-private:
-    void initializeKeywords();
-    void initializeSpecialMarkers();
-    void initializeAtPrefixes();
-    void initializeHtmlTags();
-    void initializeCssProperties();
-    void initializeJsReservedWords();
+    static void printKeywords();
+    static void printHtmlTags();
+    static void printTokenTypes();
 };
 
 } // namespace chtl

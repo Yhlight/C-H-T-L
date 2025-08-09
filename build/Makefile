@@ -163,6 +163,30 @@ src/common/GlobalMap.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.s
 .PHONY : src/common/GlobalMap.cpp.s
 
+src/common/Token.o: src/common/Token.cpp.o
+.PHONY : src/common/Token.o
+
+# target to build an object file
+src/common/Token.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.o
+.PHONY : src/common/Token.cpp.o
+
+src/common/Token.i: src/common/Token.cpp.i
+.PHONY : src/common/Token.i
+
+# target to preprocess a source file
+src/common/Token.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.i
+.PHONY : src/common/Token.cpp.i
+
+src/common/Token.s: src/common/Token.cpp.s
+.PHONY : src/common/Token.s
+
+# target to generate assembly for a file
+src/common/Token.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.s
+.PHONY : src/common/Token.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -200,6 +224,9 @@ help:
 	@echo "... src/common/GlobalMap.o"
 	@echo "... src/common/GlobalMap.i"
 	@echo "... src/common/GlobalMap.s"
+	@echo "... src/common/Token.o"
+	@echo "... src/common/Token.i"
+	@echo "... src/common/Token.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

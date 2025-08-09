@@ -1,7 +1,6 @@
-CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
-  /workspace/src/common/GlobalMap.cpp \
-  /workspace/include/common/GlobalMap.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_map \
+CMakeFiles/chtl.dir/src/common/Token.cpp.o: \
+  /workspace/src/common/Token.cpp /workspace/include/common/Token.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/string \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/requires_hosted.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++config.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
@@ -14,68 +13,8 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/pstl_config.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/initializer_list \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_map.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable_policy.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/tuple \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_pair.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/type_traits \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/version.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/move.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/utility.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/invoke.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/functional_hash.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hash_bytes.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algobase.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/functexcept.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/exception_defines.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/cpp_type_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/type_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/numeric_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator_base_types.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator_base_funcs.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/concept_check.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/debug/assertions.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ptr_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/debug/debug.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/predefined_ops.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bit \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/concepts \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/aligned_buffer.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/alloc_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/alloc_traits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_construct.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/new \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/exception.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memoryfwd.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/allocator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/new_allocator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/enable_special_members.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_function.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward/binders.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/node_handle.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/range_access.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memory_resource.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstddef \
-  /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_header_macro.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_ptrdiff_t.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_size_t.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_wchar_t.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_null.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_nullptr_t.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_max_align_t.h \
-  /usr/lib/llvm-20/lib/clang/20/include/__stddef_offsetof.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator_args.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/string \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stringfwd.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memoryfwd.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/char_traits.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/postypes.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cwchar \
@@ -83,6 +22,10 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_size_t.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_wchar_t.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_null.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/__stdarg___gnuc_va_list.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
@@ -93,6 +36,17 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/type_traits \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/version.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/allocator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/new_allocator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/new \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/exception.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/functexcept.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/exception_defines.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/move.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/cpp_type_traits.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/localefwd.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/clocale \
@@ -106,9 +60,34 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/include/x86_64-linux-gnu/bits/endianness.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream_insert.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/cxxabi_forced.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator_base_funcs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/concept_check.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/debug/assertions.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_iterator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/type_traits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ptr_traits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_function.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward/binders.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/numeric_traits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algobase.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_pair.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/utility.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/debug/debug.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/predefined_ops.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bit \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/concepts \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/refwrap.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/invoke.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/range_access.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/initializer_list \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_string.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/alloc_traits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/alloc_traits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_construct.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/string_view \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/functional_hash.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hash_bytes.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/string_view.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/string_conversions.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstdlib \
@@ -151,12 +130,16 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/charconv.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_string.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/vector \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_uninitialized.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_bvector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/vector.tcc \
-  /workspace/include/common/TokenType.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memory_resource.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstddef \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_header_macro.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_ptrdiff_t.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_nullptr_t.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_max_align_t.h \
+  /usr/lib/llvm-20/lib/clang/20/include/__stddef_offsetof.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator_args.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/tuple \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iostream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ostream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ios \
@@ -210,4 +193,21 @@ CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_ios.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/istream \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
+  /workspace/include/common/TokenType.h \
+  /workspace/include/common/GlobalMap.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_map \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_map.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable_policy.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ext/aligned_buffer.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/enable_special_members.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/node_handle.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/vector \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_uninitialized.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_vector.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_bvector.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/vector.tcc

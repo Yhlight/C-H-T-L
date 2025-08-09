@@ -3,6 +3,7 @@ bin/chtl: \
   /lib/x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o \
+  CMakeFiles/chtl.dir/src/common/Token.cpp.o \
   CMakeFiles/chtl.dir/src/main.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
   /lib/x86_64-linux-gnu/libm.so \
@@ -39,6 +40,8 @@ bin/chtl: \
 /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o:
 
 CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o:
+
+CMakeFiles/chtl.dir/src/common/Token.cpp.o:
 
 CMakeFiles/chtl.dir/src/main.cpp.o:
 

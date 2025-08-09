@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/link.d"
   "CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o"
   "CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o.d"
+  "CMakeFiles/chtl.dir/src/common/Token.cpp.o"
+  "CMakeFiles/chtl.dir/src/common/Token.cpp.o.d"
   "CMakeFiles/chtl.dir/src/main.cpp.o"
   "CMakeFiles/chtl.dir/src/main.cpp.o.d"
   "bin/chtl"

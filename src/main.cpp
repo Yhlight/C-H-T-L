@@ -9,15 +9,12 @@ int main(int argc, char* argv[]) {
     std::cout << "CHTL Compiler v1.0.0" << std::endl;
     std::cout << "=====================" << std::endl;
     
-    // 初始化全局映射表
-    GlobalMap& globalMap = GlobalMap::getInstance();
-    
     // 测试Token和GlobalMap
     std::cout << "\n测试Token和GlobalMap功能：" << std::endl;
     
     // 测试关键字识别
     std::string testKeyword = "style";
-    TokenType type = globalMap.getKeywordType(testKeyword);
+    TokenType type = GlobalMap::getKeywordType(testKeyword);
     if (type != TokenType::UNKNOWN) {
         Token token(type, testKeyword, 1, 1);
         std::cout << "识别到关键字: ";
@@ -26,16 +23,16 @@ int main(int argc, char* argv[]) {
     
     // 测试HTML标签识别
     std::string testTag = "div";
-    if (globalMap.isHtmlTag(testTag)) {
+    if (GlobalMap::isHtmlTag(testTag)) {
         std::cout << "'" << testTag << "' 是有效的HTML标签" << std::endl;
-        if (globalMap.isHtmlSingleTag(testTag)) {
+        if (GlobalMap::isHtmlSingleTag(testTag)) {
             std::cout << "  (自闭合标签)" << std::endl;
         }
     }
     
     // 测试特殊标记
     std::string testMarker = "[Template]";
-    TokenType markerType = globalMap.getSpecialMarkerType(testMarker);
+    TokenType markerType = GlobalMap::getSpecialMarkerType(testMarker);
     if (markerType != TokenType::UNKNOWN) {
         Token markerToken(markerType, testMarker, 1, 1);
         std::cout << "识别到特殊标记: ";
@@ -44,12 +41,18 @@ int main(int argc, char* argv[]) {
     
     // 测试AT前缀
     std::string testPrefix = "@Style";
-    TokenType prefixType = globalMap.getAtPrefixType(testPrefix);
+    TokenType prefixType = GlobalMap::getAtPrefixType(testPrefix);
     if (prefixType != TokenType::UNKNOWN) {
         Token prefixToken(prefixType, testPrefix, 1, 1);
         std::cout << "识别到AT前缀: ";
         prefixToken.print();
     }
+    
+    // 测试Token类的方法
+    std::cout << "\n测试Token类方法：" << std::endl;
+    Token keywordToken(TokenType::STYLE, "style", 2, 5);
+    std::cout << "Token是否为关键字: " << (keywordToken.isKeyword() ? "是" : "否") << std::endl;
+    std::cout << "Token是否为特殊标记: " << (keywordToken.isSpecialMarker() ? "是" : "否") << std::endl;
     
     if (argc > 1) {
         std::cout << "\n输入文件: " << argv[1] << std::endl;

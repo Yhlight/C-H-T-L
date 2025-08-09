@@ -71,6 +71,9 @@ all: Node/all
 all: Parser/all
 all: Generator/all
 all: Scanner/all
+all: Predefine/all
+all: Optimize/all
+all: Utils/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -82,6 +85,9 @@ codegen: Node/codegen
 codegen: Parser/codegen
 codegen: Generator/codegen
 codegen: Scanner/codegen
+codegen: Predefine/codegen
+codegen: Optimize/codegen
+codegen: Utils/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -93,6 +99,9 @@ preinstall: Node/preinstall
 preinstall: Parser/preinstall
 preinstall: Generator/preinstall
 preinstall: Scanner/preinstall
+preinstall: Predefine/preinstall
+preinstall: Optimize/preinstall
+preinstall: Utils/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
@@ -104,6 +113,9 @@ clean: Node/clean
 clean: Parser/clean
 clean: Generator/clean
 clean: Scanner/clean
+clean: Predefine/clean
+clean: Optimize/clean
+clean: Utils/clean
 .PHONY : clean
 
 #=============================================================================
@@ -202,6 +214,25 @@ Node/clean: Node/CMakeFiles/chtl_node.dir/clean
 .PHONY : Node/clean
 
 #=============================================================================
+# Directory level rules for directory Optimize
+
+# Recursive "all" directory target.
+Optimize/all:
+.PHONY : Optimize/all
+
+# Recursive "codegen" directory target.
+Optimize/codegen:
+.PHONY : Optimize/codegen
+
+# Recursive "preinstall" directory target.
+Optimize/preinstall:
+.PHONY : Optimize/preinstall
+
+# Recursive "clean" directory target.
+Optimize/clean:
+.PHONY : Optimize/clean
+
+#=============================================================================
 # Directory level rules for directory Parser
 
 # Recursive "all" directory target.
@@ -219,6 +250,25 @@ Parser/preinstall:
 # Recursive "clean" directory target.
 Parser/clean: Parser/CMakeFiles/chtl_parser.dir/clean
 .PHONY : Parser/clean
+
+#=============================================================================
+# Directory level rules for directory Predefine
+
+# Recursive "all" directory target.
+Predefine/all: Predefine/CMakeFiles/chtl_predefine.dir/all
+.PHONY : Predefine/all
+
+# Recursive "codegen" directory target.
+Predefine/codegen: Predefine/CMakeFiles/chtl_predefine.dir/codegen
+.PHONY : Predefine/codegen
+
+# Recursive "preinstall" directory target.
+Predefine/preinstall:
+.PHONY : Predefine/preinstall
+
+# Recursive "clean" directory target.
+Predefine/clean: Predefine/CMakeFiles/chtl_predefine.dir/clean
+.PHONY : Predefine/clean
 
 #=============================================================================
 # Directory level rules for directory Scanner
@@ -257,6 +307,25 @@ State/preinstall:
 # Recursive "clean" directory target.
 State/clean: State/CMakeFiles/chtl_state.dir/clean
 .PHONY : State/clean
+
+#=============================================================================
+# Directory level rules for directory Utils
+
+# Recursive "all" directory target.
+Utils/all:
+.PHONY : Utils/all
+
+# Recursive "codegen" directory target.
+Utils/codegen:
+.PHONY : Utils/codegen
+
+# Recursive "preinstall" directory target.
+Utils/preinstall:
+.PHONY : Utils/preinstall
+
+# Recursive "clean" directory target.
+Utils/clean:
+.PHONY : Utils/clean
 
 #=============================================================================
 # Target rules for target Common/CMakeFiles/chtl_common.dir
@@ -330,7 +399,7 @@ State/CMakeFiles/chtl_state.dir/all: Common/CMakeFiles/chtl_common.dir/all
 State/CMakeFiles/chtl_state.dir/all: Context/CMakeFiles/chtl_context.dir/all
 	$(MAKE) $(MAKESILENT) -f State/CMakeFiles/chtl_state.dir/build.make State/CMakeFiles/chtl_state.dir/depend
 	$(MAKE) $(MAKESILENT) -f State/CMakeFiles/chtl_state.dir/build.make State/CMakeFiles/chtl_state.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=16,17,18 "Built target chtl_state"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=17,18,19 "Built target chtl_state"
 .PHONY : State/CMakeFiles/chtl_state.dir/all
 
 # Build rule for subdir invocation for target.
@@ -347,7 +416,7 @@ chtl_state: State/CMakeFiles/chtl_state.dir/rule
 # codegen rule for target.
 State/CMakeFiles/chtl_state.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f State/CMakeFiles/chtl_state.dir/build.make State/CMakeFiles/chtl_state.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=16,17,18 "Finished codegen for target chtl_state"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=17,18,19 "Finished codegen for target chtl_state"
 .PHONY : State/CMakeFiles/chtl_state.dir/codegen
 
 # clean rule for target.
@@ -494,7 +563,7 @@ Generator/CMakeFiles/chtl_generator.dir/clean:
 Scanner/CMakeFiles/chtl_scanner.dir/all: Common/CMakeFiles/chtl_common.dir/all
 	$(MAKE) $(MAKESILENT) -f Scanner/CMakeFiles/chtl_scanner.dir/build.make Scanner/CMakeFiles/chtl_scanner.dir/depend
 	$(MAKE) $(MAKESILENT) -f Scanner/CMakeFiles/chtl_scanner.dir/build.make Scanner/CMakeFiles/chtl_scanner.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=14,15 "Built target chtl_scanner"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=15,16 "Built target chtl_scanner"
 .PHONY : Scanner/CMakeFiles/chtl_scanner.dir/all
 
 # Build rule for subdir invocation for target.
@@ -511,13 +580,45 @@ chtl_scanner: Scanner/CMakeFiles/chtl_scanner.dir/rule
 # codegen rule for target.
 Scanner/CMakeFiles/chtl_scanner.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f Scanner/CMakeFiles/chtl_scanner.dir/build.make Scanner/CMakeFiles/chtl_scanner.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=14,15 "Finished codegen for target chtl_scanner"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=15,16 "Finished codegen for target chtl_scanner"
 .PHONY : Scanner/CMakeFiles/chtl_scanner.dir/codegen
 
 # clean rule for target.
 Scanner/CMakeFiles/chtl_scanner.dir/clean:
 	$(MAKE) $(MAKESILENT) -f Scanner/CMakeFiles/chtl_scanner.dir/build.make Scanner/CMakeFiles/chtl_scanner.dir/clean
 .PHONY : Scanner/CMakeFiles/chtl_scanner.dir/clean
+
+#=============================================================================
+# Target rules for target Predefine/CMakeFiles/chtl_predefine.dir
+
+# All Build rule for target.
+Predefine/CMakeFiles/chtl_predefine.dir/all: Common/CMakeFiles/chtl_common.dir/all
+	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/depend
+	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=14 "Built target chtl_predefine"
+.PHONY : Predefine/CMakeFiles/chtl_predefine.dir/all
+
+# Build rule for subdir invocation for target.
+Predefine/CMakeFiles/chtl_predefine.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/build/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Predefine/CMakeFiles/chtl_predefine.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/build/CMakeFiles 0
+.PHONY : Predefine/CMakeFiles/chtl_predefine.dir/rule
+
+# Convenience name for target.
+chtl_predefine: Predefine/CMakeFiles/chtl_predefine.dir/rule
+.PHONY : chtl_predefine
+
+# codegen rule for target.
+Predefine/CMakeFiles/chtl_predefine.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/build/CMakeFiles --progress-num=14 "Finished codegen for target chtl_predefine"
+.PHONY : Predefine/CMakeFiles/chtl_predefine.dir/codegen
+
+# clean rule for target.
+Predefine/CMakeFiles/chtl_predefine.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/clean
+.PHONY : Predefine/CMakeFiles/chtl_predefine.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

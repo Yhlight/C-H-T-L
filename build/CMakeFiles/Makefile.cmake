@@ -60,4 +60,8 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/test_parser.dir/DependInfo.cmake"
   "CMakeFiles/test_simple_parser.dir/DependInfo.cmake"
   "CMakeFiles/test_html_parsing.dir/DependInfo.cmake"
+  "CMakeFiles/test_style_parsing.dir/DependInfo.cmake"
+  "CMakeFiles/test_style_tokens.dir/DependInfo.cmake"
+  "CMakeFiles/test_simple_style.dir/DependInfo.cmake"
+  "CMakeFiles/test_template_parsing.dir/DependInfo.cmake"
   )

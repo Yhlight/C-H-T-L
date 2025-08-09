@@ -53,6 +53,10 @@ add_executable(test_comment ${LIB_SOURCES} src/test_comment.cpp)
 add_executable(test_parser ${LIB_SOURCES} src/test_parser.cpp)
 add_executable(test_simple_parser ${LIB_SOURCES} src/test_simple_parser.cpp)
 add_executable(test_html_parsing ${LIB_SOURCES} src/test_html_parsing.cpp)
+add_executable(test_style_parsing ${LIB_SOURCES} src/test_style_parsing.cpp)
+add_executable(test_style_tokens ${LIB_SOURCES} src/test_style_tokens.cpp)
+add_executable(test_simple_style ${LIB_SOURCES} src/test_simple_style.cpp)
+add_executable(test_template_parsing ${LIB_SOURCES} src/test_template_parsing.cpp)
 
 # 启用测试
 enable_testing()

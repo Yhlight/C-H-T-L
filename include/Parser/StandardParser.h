@@ -6,6 +6,11 @@
 
 namespace chtl {
 
+// 前向声明
+class Template;
+class Custom;
+class Config;
+
 /**
  * @brief StandardParser - 标准CHTL解析器
  * 
@@ -47,6 +52,10 @@ protected:
     void parseElementContent(std::shared_ptr<Element> element);
     std::shared_ptr<Node> parseInlineStyle(std::shared_ptr<Element> element);
     void parseInlineStyleContent(std::shared_ptr<Element> element, const std::string& content);
+    void parseTemplateContent(std::shared_ptr<Template> templateNode);
+    void parseCustomContent(std::shared_ptr<Custom> customNode);
+    void parseTemplateUsage(std::shared_ptr<Element> element);
+    void parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName);
     bool isStartOfElement();
     bool isStartOfTemplate();
     bool isStartOfCustom();

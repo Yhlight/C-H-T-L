@@ -243,6 +243,58 @@ test_html_parsing/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/build
 .PHONY : test_html_parsing/fast
 
+#=============================================================================
+# Target rules for targets named test_style_parsing
+
+# Build rule for target.
+test_style_parsing: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_style_parsing
+.PHONY : test_style_parsing
+
+# fast build rule for target.
+test_style_parsing/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/build
+.PHONY : test_style_parsing/fast
+
+#=============================================================================
+# Target rules for targets named test_style_tokens
+
+# Build rule for target.
+test_style_tokens: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_style_tokens
+.PHONY : test_style_tokens
+
+# fast build rule for target.
+test_style_tokens/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/build
+.PHONY : test_style_tokens/fast
+
+#=============================================================================
+# Target rules for targets named test_simple_style
+
+# Build rule for target.
+test_simple_style: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_simple_style
+.PHONY : test_simple_style
+
+# fast build rule for target.
+test_simple_style/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/build
+.PHONY : test_simple_style/fast
+
+#=============================================================================
+# Target rules for targets named test_template_parsing
+
+# Build rule for target.
+test_template_parsing: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_template_parsing
+.PHONY : test_template_parsing
+
+# fast build rule for target.
+test_template_parsing/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/build
+.PHONY : test_template_parsing/fast
+
 src/Common/GlobalMap.o: src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.o
 
@@ -257,6 +309,10 @@ src/Common/GlobalMap.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/GlobalMap.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/GlobalMap.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.cpp.o
 
 src/Common/GlobalMap.i: src/Common/GlobalMap.cpp.i
@@ -273,6 +329,10 @@ src/Common/GlobalMap.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/GlobalMap.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/GlobalMap.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/GlobalMap.cpp.i
 .PHONY : src/Common/GlobalMap.cpp.i
 
 src/Common/GlobalMap.s: src/Common/GlobalMap.cpp.s
@@ -289,6 +349,10 @@ src/Common/GlobalMap.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/GlobalMap.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/GlobalMap.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/GlobalMap.cpp.s
 .PHONY : src/Common/GlobalMap.cpp.s
 
 src/Common/Token.o: src/Common/Token.cpp.o
@@ -305,6 +369,10 @@ src/Common/Token.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/Token.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/Token.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/Token.cpp.o
 .PHONY : src/Common/Token.cpp.o
 
 src/Common/Token.i: src/Common/Token.cpp.i
@@ -321,6 +389,10 @@ src/Common/Token.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/Token.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/Token.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/Token.cpp.i
 .PHONY : src/Common/Token.cpp.i
 
 src/Common/Token.s: src/Common/Token.cpp.s
@@ -337,6 +409,10 @@ src/Common/Token.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Common/Token.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Common/Token.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Common/Token.cpp.s
 .PHONY : src/Common/Token.cpp.s
 
 src/Context/BasicContext.o: src/Context/BasicContext.cpp.o
@@ -353,6 +429,10 @@ src/Context/BasicContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/BasicContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/BasicContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/BasicContext.cpp.o
 .PHONY : src/Context/BasicContext.cpp.o
 
 src/Context/BasicContext.i: src/Context/BasicContext.cpp.i
@@ -369,6 +449,10 @@ src/Context/BasicContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/BasicContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/BasicContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/BasicContext.cpp.i
 .PHONY : src/Context/BasicContext.cpp.i
 
 src/Context/BasicContext.s: src/Context/BasicContext.cpp.s
@@ -385,6 +469,10 @@ src/Context/BasicContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/BasicContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/BasicContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/BasicContext.cpp.s
 .PHONY : src/Context/BasicContext.cpp.s
 
 src/Context/ChtlContext.o: src/Context/ChtlContext.cpp.o
@@ -401,6 +489,10 @@ src/Context/ChtlContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ChtlContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ChtlContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ChtlContext.cpp.o
 .PHONY : src/Context/ChtlContext.cpp.o
 
 src/Context/ChtlContext.i: src/Context/ChtlContext.cpp.i
@@ -417,6 +509,10 @@ src/Context/ChtlContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ChtlContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ChtlContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ChtlContext.cpp.i
 .PHONY : src/Context/ChtlContext.cpp.i
 
 src/Context/ChtlContext.s: src/Context/ChtlContext.cpp.s
@@ -433,6 +529,10 @@ src/Context/ChtlContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ChtlContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ChtlContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ChtlContext.cpp.s
 .PHONY : src/Context/ChtlContext.cpp.s
 
 src/Context/ContextFactory.o: src/Context/ContextFactory.cpp.o
@@ -449,6 +549,10 @@ src/Context/ContextFactory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ContextFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ContextFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ContextFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ContextFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ContextFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ContextFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ContextFactory.cpp.o
 .PHONY : src/Context/ContextFactory.cpp.o
 
 src/Context/ContextFactory.i: src/Context/ContextFactory.cpp.i
@@ -465,6 +569,10 @@ src/Context/ContextFactory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ContextFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ContextFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ContextFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ContextFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ContextFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ContextFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ContextFactory.cpp.i
 .PHONY : src/Context/ContextFactory.cpp.i
 
 src/Context/ContextFactory.s: src/Context/ContextFactory.cpp.s
@@ -481,6 +589,10 @@ src/Context/ContextFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Context/ContextFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Context/ContextFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Context/ContextFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Context/ContextFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Context/ContextFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Context/ContextFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Context/ContextFactory.cpp.s
 .PHONY : src/Context/ContextFactory.cpp.s
 
 src/Generator/BasicGenerator.o: src/Generator/BasicGenerator.cpp.o
@@ -497,6 +609,10 @@ src/Generator/BasicGenerator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/BasicGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/BasicGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/BasicGenerator.cpp.o
 .PHONY : src/Generator/BasicGenerator.cpp.o
 
 src/Generator/BasicGenerator.i: src/Generator/BasicGenerator.cpp.i
@@ -513,6 +629,10 @@ src/Generator/BasicGenerator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/BasicGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/BasicGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/BasicGenerator.cpp.i
 .PHONY : src/Generator/BasicGenerator.cpp.i
 
 src/Generator/BasicGenerator.s: src/Generator/BasicGenerator.cpp.s
@@ -529,6 +649,10 @@ src/Generator/BasicGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/BasicGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/BasicGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/BasicGenerator.cpp.s
 .PHONY : src/Generator/BasicGenerator.cpp.s
 
 src/Generator/ConfigGenerator.o: src/Generator/ConfigGenerator.cpp.o
@@ -545,6 +669,10 @@ src/Generator/ConfigGenerator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/ConfigGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/ConfigGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/ConfigGenerator.cpp.o
 .PHONY : src/Generator/ConfigGenerator.cpp.o
 
 src/Generator/ConfigGenerator.i: src/Generator/ConfigGenerator.cpp.i
@@ -561,6 +689,10 @@ src/Generator/ConfigGenerator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/ConfigGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/ConfigGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/ConfigGenerator.cpp.i
 .PHONY : src/Generator/ConfigGenerator.cpp.i
 
 src/Generator/ConfigGenerator.s: src/Generator/ConfigGenerator.cpp.s
@@ -577,6 +709,10 @@ src/Generator/ConfigGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/ConfigGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/ConfigGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/ConfigGenerator.cpp.s
 .PHONY : src/Generator/ConfigGenerator.cpp.s
 
 src/Generator/HtmlGenerator.o: src/Generator/HtmlGenerator.cpp.o
@@ -593,6 +729,10 @@ src/Generator/HtmlGenerator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/HtmlGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/HtmlGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/HtmlGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/HtmlGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/HtmlGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/HtmlGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/HtmlGenerator.cpp.o
 .PHONY : src/Generator/HtmlGenerator.cpp.o
 
 src/Generator/HtmlGenerator.i: src/Generator/HtmlGenerator.cpp.i
@@ -609,6 +749,10 @@ src/Generator/HtmlGenerator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/HtmlGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/HtmlGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/HtmlGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/HtmlGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/HtmlGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/HtmlGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/HtmlGenerator.cpp.i
 .PHONY : src/Generator/HtmlGenerator.cpp.i
 
 src/Generator/HtmlGenerator.s: src/Generator/HtmlGenerator.cpp.s
@@ -625,6 +769,10 @@ src/Generator/HtmlGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Generator/HtmlGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Generator/HtmlGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Generator/HtmlGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Generator/HtmlGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Generator/HtmlGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Generator/HtmlGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Generator/HtmlGenerator.cpp.s
 .PHONY : src/Generator/HtmlGenerator.cpp.s
 
 src/Lexer/BasicLexer.o: src/Lexer/BasicLexer.cpp.o
@@ -641,6 +789,10 @@ src/Lexer/BasicLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/BasicLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/BasicLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/BasicLexer.cpp.o
 .PHONY : src/Lexer/BasicLexer.cpp.o
 
 src/Lexer/BasicLexer.i: src/Lexer/BasicLexer.cpp.i
@@ -657,6 +809,10 @@ src/Lexer/BasicLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/BasicLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/BasicLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/BasicLexer.cpp.i
 .PHONY : src/Lexer/BasicLexer.cpp.i
 
 src/Lexer/BasicLexer.s: src/Lexer/BasicLexer.cpp.s
@@ -673,6 +829,10 @@ src/Lexer/BasicLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/BasicLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/BasicLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/BasicLexer.cpp.s
 .PHONY : src/Lexer/BasicLexer.cpp.s
 
 src/Lexer/ConfigLexer.o: src/Lexer/ConfigLexer.cpp.o
@@ -689,6 +849,10 @@ src/Lexer/ConfigLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/ConfigLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/ConfigLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/ConfigLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/ConfigLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/ConfigLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/ConfigLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/ConfigLexer.cpp.o
 .PHONY : src/Lexer/ConfigLexer.cpp.o
 
 src/Lexer/ConfigLexer.i: src/Lexer/ConfigLexer.cpp.i
@@ -705,6 +869,10 @@ src/Lexer/ConfigLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/ConfigLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/ConfigLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/ConfigLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/ConfigLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/ConfigLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/ConfigLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/ConfigLexer.cpp.i
 .PHONY : src/Lexer/ConfigLexer.cpp.i
 
 src/Lexer/ConfigLexer.s: src/Lexer/ConfigLexer.cpp.s
@@ -721,6 +889,10 @@ src/Lexer/ConfigLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/ConfigLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/ConfigLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/ConfigLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/ConfigLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/ConfigLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/ConfigLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/ConfigLexer.cpp.s
 .PHONY : src/Lexer/ConfigLexer.cpp.s
 
 src/Lexer/StandardLexer.o: src/Lexer/StandardLexer.cpp.o
@@ -737,6 +909,10 @@ src/Lexer/StandardLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/StandardLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/StandardLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/StandardLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/StandardLexer.cpp.o
 .PHONY : src/Lexer/StandardLexer.cpp.o
 
 src/Lexer/StandardLexer.i: src/Lexer/StandardLexer.cpp.i
@@ -753,6 +929,10 @@ src/Lexer/StandardLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/StandardLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/StandardLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/StandardLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/StandardLexer.cpp.i
 .PHONY : src/Lexer/StandardLexer.cpp.i
 
 src/Lexer/StandardLexer.s: src/Lexer/StandardLexer.cpp.s
@@ -769,6 +949,10 @@ src/Lexer/StandardLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Lexer/StandardLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Lexer/StandardLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Lexer/StandardLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Lexer/StandardLexer.cpp.s
 .PHONY : src/Lexer/StandardLexer.cpp.s
 
 src/Node/Comment.o: src/Node/Comment.cpp.o
@@ -785,6 +969,10 @@ src/Node/Comment.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Comment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Comment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Comment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Comment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Comment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Comment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Comment.cpp.o
 .PHONY : src/Node/Comment.cpp.o
 
 src/Node/Comment.i: src/Node/Comment.cpp.i
@@ -801,6 +989,10 @@ src/Node/Comment.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Comment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Comment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Comment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Comment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Comment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Comment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Comment.cpp.i
 .PHONY : src/Node/Comment.cpp.i
 
 src/Node/Comment.s: src/Node/Comment.cpp.s
@@ -817,6 +1009,10 @@ src/Node/Comment.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Comment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Comment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Comment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Comment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Comment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Comment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Comment.cpp.s
 .PHONY : src/Node/Comment.cpp.s
 
 src/Node/Config.o: src/Node/Config.cpp.o
@@ -833,6 +1029,10 @@ src/Node/Config.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Config.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Config.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Config.cpp.o
 .PHONY : src/Node/Config.cpp.o
 
 src/Node/Config.i: src/Node/Config.cpp.i
@@ -849,6 +1049,10 @@ src/Node/Config.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Config.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Config.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Config.cpp.i
 .PHONY : src/Node/Config.cpp.i
 
 src/Node/Config.s: src/Node/Config.cpp.s
@@ -865,6 +1069,10 @@ src/Node/Config.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Config.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Config.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Config.cpp.s
 .PHONY : src/Node/Config.cpp.s
 
 src/Node/Custom.o: src/Node/Custom.cpp.o
@@ -881,6 +1089,10 @@ src/Node/Custom.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Custom.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Custom.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Custom.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Custom.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Custom.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Custom.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Custom.cpp.o
 .PHONY : src/Node/Custom.cpp.o
 
 src/Node/Custom.i: src/Node/Custom.cpp.i
@@ -897,6 +1109,10 @@ src/Node/Custom.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Custom.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Custom.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Custom.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Custom.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Custom.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Custom.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Custom.cpp.i
 .PHONY : src/Node/Custom.cpp.i
 
 src/Node/Custom.s: src/Node/Custom.cpp.s
@@ -913,6 +1129,10 @@ src/Node/Custom.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Custom.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Custom.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Custom.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Custom.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Custom.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Custom.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Custom.cpp.s
 .PHONY : src/Node/Custom.cpp.s
 
 src/Node/Import.o: src/Node/Import.cpp.o
@@ -929,6 +1149,10 @@ src/Node/Import.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Import.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Import.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Import.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Import.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Import.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Import.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Import.cpp.o
 .PHONY : src/Node/Import.cpp.o
 
 src/Node/Import.i: src/Node/Import.cpp.i
@@ -945,6 +1169,10 @@ src/Node/Import.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Import.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Import.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Import.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Import.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Import.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Import.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Import.cpp.i
 .PHONY : src/Node/Import.cpp.i
 
 src/Node/Import.s: src/Node/Import.cpp.s
@@ -961,6 +1189,10 @@ src/Node/Import.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Import.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Import.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Import.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Import.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Import.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Import.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Import.cpp.s
 .PHONY : src/Node/Import.cpp.s
 
 src/Node/Namespace.o: src/Node/Namespace.cpp.o
@@ -977,6 +1209,10 @@ src/Node/Namespace.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Namespace.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Namespace.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Namespace.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Namespace.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Namespace.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Namespace.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Namespace.cpp.o
 .PHONY : src/Node/Namespace.cpp.o
 
 src/Node/Namespace.i: src/Node/Namespace.cpp.i
@@ -993,6 +1229,10 @@ src/Node/Namespace.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Namespace.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Namespace.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Namespace.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Namespace.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Namespace.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Namespace.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Namespace.cpp.i
 .PHONY : src/Node/Namespace.cpp.i
 
 src/Node/Namespace.s: src/Node/Namespace.cpp.s
@@ -1009,6 +1249,10 @@ src/Node/Namespace.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Namespace.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Namespace.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Namespace.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Namespace.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Namespace.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Namespace.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Namespace.cpp.s
 .PHONY : src/Node/Namespace.cpp.s
 
 src/Node/Node.o: src/Node/Node.cpp.o
@@ -1025,6 +1269,10 @@ src/Node/Node.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Node.cpp.o
 .PHONY : src/Node/Node.cpp.o
 
 src/Node/Node.i: src/Node/Node.cpp.i
@@ -1041,6 +1289,10 @@ src/Node/Node.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Node.cpp.i
 .PHONY : src/Node/Node.cpp.i
 
 src/Node/Node.s: src/Node/Node.cpp.s
@@ -1057,6 +1309,10 @@ src/Node/Node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Node.cpp.s
 .PHONY : src/Node/Node.cpp.s
 
 src/Node/Operate.o: src/Node/Operate.cpp.o
@@ -1073,6 +1329,10 @@ src/Node/Operate.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Operate.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Operate.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Operate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Operate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Operate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Operate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Operate.cpp.o
 .PHONY : src/Node/Operate.cpp.o
 
 src/Node/Operate.i: src/Node/Operate.cpp.i
@@ -1089,6 +1349,10 @@ src/Node/Operate.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Operate.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Operate.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Operate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Operate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Operate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Operate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Operate.cpp.i
 .PHONY : src/Node/Operate.cpp.i
 
 src/Node/Operate.s: src/Node/Operate.cpp.s
@@ -1105,6 +1369,10 @@ src/Node/Operate.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Operate.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Operate.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Operate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Operate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Operate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Operate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Operate.cpp.s
 .PHONY : src/Node/Operate.cpp.s
 
 src/Node/Origin.o: src/Node/Origin.cpp.o
@@ -1121,6 +1389,10 @@ src/Node/Origin.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Origin.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Origin.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Origin.cpp.o
 .PHONY : src/Node/Origin.cpp.o
 
 src/Node/Origin.i: src/Node/Origin.cpp.i
@@ -1137,6 +1409,10 @@ src/Node/Origin.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Origin.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Origin.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Origin.cpp.i
 .PHONY : src/Node/Origin.cpp.i
 
 src/Node/Origin.s: src/Node/Origin.cpp.s
@@ -1153,6 +1429,10 @@ src/Node/Origin.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Origin.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Origin.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Origin.cpp.s
 .PHONY : src/Node/Origin.cpp.s
 
 src/Node/Style.o: src/Node/Style.cpp.o
@@ -1169,6 +1449,10 @@ src/Node/Style.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Style.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Style.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Style.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Style.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Style.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Style.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Style.cpp.o
 .PHONY : src/Node/Style.cpp.o
 
 src/Node/Style.i: src/Node/Style.cpp.i
@@ -1185,6 +1469,10 @@ src/Node/Style.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Style.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Style.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Style.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Style.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Style.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Style.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Style.cpp.i
 .PHONY : src/Node/Style.cpp.i
 
 src/Node/Style.s: src/Node/Style.cpp.s
@@ -1201,6 +1489,10 @@ src/Node/Style.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Style.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Style.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Style.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Style.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Style.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Style.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Style.cpp.s
 .PHONY : src/Node/Style.cpp.s
 
 src/Node/Template.o: src/Node/Template.cpp.o
@@ -1217,6 +1509,10 @@ src/Node/Template.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Template.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Template.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Template.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Template.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Template.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Template.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Template.cpp.o
 .PHONY : src/Node/Template.cpp.o
 
 src/Node/Template.i: src/Node/Template.cpp.i
@@ -1233,6 +1529,10 @@ src/Node/Template.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Template.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Template.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Template.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Template.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Template.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Template.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Template.cpp.i
 .PHONY : src/Node/Template.cpp.i
 
 src/Node/Template.s: src/Node/Template.cpp.s
@@ -1249,6 +1549,10 @@ src/Node/Template.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Node/Template.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Node/Template.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Node/Template.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Node/Template.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Node/Template.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Node/Template.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Node/Template.cpp.s
 .PHONY : src/Node/Template.cpp.s
 
 src/Parser/BasicParser.o: src/Parser/BasicParser.cpp.o
@@ -1265,6 +1569,10 @@ src/Parser/BasicParser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/BasicParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/BasicParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/BasicParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/BasicParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/BasicParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/BasicParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/BasicParser.cpp.o
 .PHONY : src/Parser/BasicParser.cpp.o
 
 src/Parser/BasicParser.i: src/Parser/BasicParser.cpp.i
@@ -1281,6 +1589,10 @@ src/Parser/BasicParser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/BasicParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/BasicParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/BasicParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/BasicParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/BasicParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/BasicParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/BasicParser.cpp.i
 .PHONY : src/Parser/BasicParser.cpp.i
 
 src/Parser/BasicParser.s: src/Parser/BasicParser.cpp.s
@@ -1297,6 +1609,10 @@ src/Parser/BasicParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/BasicParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/BasicParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/BasicParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/BasicParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/BasicParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/BasicParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/BasicParser.cpp.s
 .PHONY : src/Parser/BasicParser.cpp.s
 
 src/Parser/ConfigParser.o: src/Parser/ConfigParser.cpp.o
@@ -1313,6 +1629,10 @@ src/Parser/ConfigParser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/ConfigParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/ConfigParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/ConfigParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/ConfigParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/ConfigParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/ConfigParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/ConfigParser.cpp.o
 .PHONY : src/Parser/ConfigParser.cpp.o
 
 src/Parser/ConfigParser.i: src/Parser/ConfigParser.cpp.i
@@ -1329,6 +1649,10 @@ src/Parser/ConfigParser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/ConfigParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/ConfigParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/ConfigParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/ConfigParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/ConfigParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/ConfigParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/ConfigParser.cpp.i
 .PHONY : src/Parser/ConfigParser.cpp.i
 
 src/Parser/ConfigParser.s: src/Parser/ConfigParser.cpp.s
@@ -1345,6 +1669,10 @@ src/Parser/ConfigParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/ConfigParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/ConfigParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/ConfigParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/ConfigParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/ConfigParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/ConfigParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/ConfigParser.cpp.s
 .PHONY : src/Parser/ConfigParser.cpp.s
 
 src/Parser/StandardParser.o: src/Parser/StandardParser.cpp.o
@@ -1361,6 +1689,10 @@ src/Parser/StandardParser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/StandardParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/StandardParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/StandardParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/StandardParser.cpp.o
 .PHONY : src/Parser/StandardParser.cpp.o
 
 src/Parser/StandardParser.i: src/Parser/StandardParser.cpp.i
@@ -1377,6 +1709,10 @@ src/Parser/StandardParser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/StandardParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/StandardParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/StandardParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/StandardParser.cpp.i
 .PHONY : src/Parser/StandardParser.cpp.i
 
 src/Parser/StandardParser.s: src/Parser/StandardParser.cpp.s
@@ -1393,6 +1729,10 @@ src/Parser/StandardParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Parser/StandardParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Parser/StandardParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Parser/StandardParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Parser/StandardParser.cpp.s
 .PHONY : src/Parser/StandardParser.cpp.s
 
 src/Scanner/BridgeScanner.o: src/Scanner/BridgeScanner.cpp.o
@@ -1409,6 +1749,10 @@ src/Scanner/BridgeScanner.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/BridgeScanner.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/BridgeScanner.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/BridgeScanner.cpp.o
 .PHONY : src/Scanner/BridgeScanner.cpp.o
 
 src/Scanner/BridgeScanner.i: src/Scanner/BridgeScanner.cpp.i
@@ -1425,6 +1769,10 @@ src/Scanner/BridgeScanner.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/BridgeScanner.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/BridgeScanner.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/BridgeScanner.cpp.i
 .PHONY : src/Scanner/BridgeScanner.cpp.i
 
 src/Scanner/BridgeScanner.s: src/Scanner/BridgeScanner.cpp.s
@@ -1441,6 +1789,10 @@ src/Scanner/BridgeScanner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/BridgeScanner.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/BridgeScanner.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/BridgeScanner.cpp.s
 .PHONY : src/Scanner/BridgeScanner.cpp.s
 
 src/Scanner/Segment.o: src/Scanner/Segment.cpp.o
@@ -1457,6 +1809,10 @@ src/Scanner/Segment.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/Segment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/Segment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/Segment.cpp.o
 .PHONY : src/Scanner/Segment.cpp.o
 
 src/Scanner/Segment.i: src/Scanner/Segment.cpp.i
@@ -1473,6 +1829,10 @@ src/Scanner/Segment.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/Segment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/Segment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/Segment.cpp.i
 .PHONY : src/Scanner/Segment.cpp.i
 
 src/Scanner/Segment.s: src/Scanner/Segment.cpp.s
@@ -1489,6 +1849,10 @@ src/Scanner/Segment.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/Scanner/Segment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/Scanner/Segment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/Scanner/Segment.cpp.s
 .PHONY : src/Scanner/Segment.cpp.s
 
 src/State/ChtlState.o: src/State/ChtlState.cpp.o
@@ -1505,6 +1869,10 @@ src/State/ChtlState.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/ChtlState.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/ChtlState.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/ChtlState.cpp.o
 .PHONY : src/State/ChtlState.cpp.o
 
 src/State/ChtlState.i: src/State/ChtlState.cpp.i
@@ -1521,6 +1889,10 @@ src/State/ChtlState.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/ChtlState.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/ChtlState.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/ChtlState.cpp.i
 .PHONY : src/State/ChtlState.cpp.i
 
 src/State/ChtlState.s: src/State/ChtlState.cpp.s
@@ -1537,6 +1909,10 @@ src/State/ChtlState.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/ChtlState.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/ChtlState.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/ChtlState.cpp.s
 .PHONY : src/State/ChtlState.cpp.s
 
 src/State/StateFactory.o: src/State/StateFactory.cpp.o
@@ -1553,6 +1929,10 @@ src/State/StateFactory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/StateFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/StateFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/StateFactory.cpp.o
 .PHONY : src/State/StateFactory.cpp.o
 
 src/State/StateFactory.i: src/State/StateFactory.cpp.i
@@ -1569,6 +1949,10 @@ src/State/StateFactory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/StateFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/StateFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/StateFactory.cpp.i
 .PHONY : src/State/StateFactory.cpp.i
 
 src/State/StateFactory.s: src/State/StateFactory.cpp.s
@@ -1585,6 +1969,10 @@ src/State/StateFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_parser.dir/build.make CMakeFiles/test_parser.dir/src/State/StateFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/State/StateFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_html_parsing.dir/build.make CMakeFiles/test_html_parsing.dir/src/State/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/State/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/State/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/State/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/State/StateFactory.cpp.s
 .PHONY : src/State/StateFactory.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -1803,6 +2191,102 @@ src/test_simple_parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_parser.dir/build.make CMakeFiles/test_simple_parser.dir/src/test_simple_parser.cpp.s
 .PHONY : src/test_simple_parser.cpp.s
 
+src/test_simple_style.o: src/test_simple_style.cpp.o
+.PHONY : src/test_simple_style.o
+
+# target to build an object file
+src/test_simple_style.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/test_simple_style.cpp.o
+.PHONY : src/test_simple_style.cpp.o
+
+src/test_simple_style.i: src/test_simple_style.cpp.i
+.PHONY : src/test_simple_style.i
+
+# target to preprocess a source file
+src/test_simple_style.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/test_simple_style.cpp.i
+.PHONY : src/test_simple_style.cpp.i
+
+src/test_simple_style.s: src/test_simple_style.cpp.s
+.PHONY : src/test_simple_style.s
+
+# target to generate assembly for a file
+src/test_simple_style.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simple_style.dir/build.make CMakeFiles/test_simple_style.dir/src/test_simple_style.cpp.s
+.PHONY : src/test_simple_style.cpp.s
+
+src/test_style_parsing.o: src/test_style_parsing.cpp.o
+.PHONY : src/test_style_parsing.o
+
+# target to build an object file
+src/test_style_parsing.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/test_style_parsing.cpp.o
+.PHONY : src/test_style_parsing.cpp.o
+
+src/test_style_parsing.i: src/test_style_parsing.cpp.i
+.PHONY : src/test_style_parsing.i
+
+# target to preprocess a source file
+src/test_style_parsing.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/test_style_parsing.cpp.i
+.PHONY : src/test_style_parsing.cpp.i
+
+src/test_style_parsing.s: src/test_style_parsing.cpp.s
+.PHONY : src/test_style_parsing.s
+
+# target to generate assembly for a file
+src/test_style_parsing.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_parsing.dir/build.make CMakeFiles/test_style_parsing.dir/src/test_style_parsing.cpp.s
+.PHONY : src/test_style_parsing.cpp.s
+
+src/test_style_tokens.o: src/test_style_tokens.cpp.o
+.PHONY : src/test_style_tokens.o
+
+# target to build an object file
+src/test_style_tokens.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/test_style_tokens.cpp.o
+.PHONY : src/test_style_tokens.cpp.o
+
+src/test_style_tokens.i: src/test_style_tokens.cpp.i
+.PHONY : src/test_style_tokens.i
+
+# target to preprocess a source file
+src/test_style_tokens.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/test_style_tokens.cpp.i
+.PHONY : src/test_style_tokens.cpp.i
+
+src/test_style_tokens.s: src/test_style_tokens.cpp.s
+.PHONY : src/test_style_tokens.s
+
+# target to generate assembly for a file
+src/test_style_tokens.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_style_tokens.dir/build.make CMakeFiles/test_style_tokens.dir/src/test_style_tokens.cpp.s
+.PHONY : src/test_style_tokens.cpp.s
+
+src/test_template_parsing.o: src/test_template_parsing.cpp.o
+.PHONY : src/test_template_parsing.o
+
+# target to build an object file
+src/test_template_parsing.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/test_template_parsing.cpp.o
+.PHONY : src/test_template_parsing.cpp.o
+
+src/test_template_parsing.i: src/test_template_parsing.cpp.i
+.PHONY : src/test_template_parsing.i
+
+# target to preprocess a source file
+src/test_template_parsing.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/test_template_parsing.cpp.i
+.PHONY : src/test_template_parsing.cpp.i
+
+src/test_template_parsing.s: src/test_template_parsing.cpp.s
+.PHONY : src/test_template_parsing.s
+
+# target to generate assembly for a file
+src/test_template_parsing.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_template_parsing.dir/build.make CMakeFiles/test_template_parsing.dir/src/test_template_parsing.cpp.s
+.PHONY : src/test_template_parsing.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1821,6 +2305,10 @@ help:
 	@echo "... test_node"
 	@echo "... test_parser"
 	@echo "... test_simple_parser"
+	@echo "... test_simple_style"
+	@echo "... test_style_parsing"
+	@echo "... test_style_tokens"
+	@echo "... test_template_parsing"
 	@echo "... src/Common/GlobalMap.o"
 	@echo "... src/Common/GlobalMap.i"
 	@echo "... src/Common/GlobalMap.s"
@@ -1932,6 +2420,18 @@ help:
 	@echo "... src/test_simple_parser.o"
 	@echo "... src/test_simple_parser.i"
 	@echo "... src/test_simple_parser.s"
+	@echo "... src/test_simple_style.o"
+	@echo "... src/test_simple_style.i"
+	@echo "... src/test_simple_style.s"
+	@echo "... src/test_style_parsing.o"
+	@echo "... src/test_style_parsing.i"
+	@echo "... src/test_style_parsing.s"
+	@echo "... src/test_style_tokens.o"
+	@echo "... src/test_style_tokens.i"
+	@echo "... src/test_style_tokens.s"
+	@echo "... src/test_template_parsing.o"
+	@echo "... src/test_template_parsing.i"
+	@echo "... src/test_template_parsing.s"
 .PHONY : help
 
 

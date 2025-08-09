@@ -8,7 +8,7 @@
 
 using namespace chtl;
 
-void printAST(std::shared_ptr<Node> node, int depth = 0) {
+void printNode(std::shared_ptr<Node> node, int depth = 0) {
     for (int i = 0; i < depth; i++) {
         std::cout << "  ";
     }
@@ -25,7 +25,6 @@ void printAST(std::shared_ptr<Node> node, int depth = 0) {
             for (const auto& [key, value] : attrs) {
                 if (!first) std::cout << ", ";
                 std::cout << key << "=";
-                
                 if (std::holds_alternative<std::string>(value)) {
                     std::cout << "\"" << std::get<std::string>(value) << "\"";
                 }
@@ -37,7 +36,7 @@ void printAST(std::shared_ptr<Node> node, int depth = 0) {
         
         // 递归打印子节点
         for (const auto& child : element->getChildren()) {
-            printAST(child, depth + 1);
+            printNode(child, depth + 1);
         }
     } else if (node->getType() == NodeType::TEXT) {
         auto text = std::dynamic_pointer_cast<Text>(node);
@@ -45,16 +44,16 @@ void printAST(std::shared_ptr<Node> node, int depth = 0) {
     } else if (node->getType() == NodeType::STYLE) {
         auto style = std::dynamic_pointer_cast<Style>(node);
         std::cout << "[STYLE] " << (style->isLocal() ? "LOCAL" : "GLOBAL") 
-                  << " content: \"" << style->getCssContent() << "\"" << std::endl;
+                  << " \"" << style->getCssContent() << "\"" << std::endl;
     }
 }
 
 int main() {
-    // 测试内联样式
+    // 测试不同的style用法
     std::string test1 = R"(div {
     style {
-        width: 500px;
-        height: 300px;
+        width: 300px;
+        height: 200px;
         background-color: #f0f0f0;
         margin: 0 auto;
     }
@@ -62,100 +61,135 @@ int main() {
     text { "Styled div" }
 })";
 
-    // 测试带类选择器的样式
     std::string test2 = R"(div {
+    id: myDiv;
+    class: container;
+    
     style {
-        .container {
-            width: 800px;
-            margin: 0 auto;
+        // 内联样式
+        padding: 20px;
+        border: 1px solid #ccc;
+        
+        // 自动添加类名的样式
+        .box {
+            width: 100%;
+            height: 100%;
         }
         
+        // 使用&表示当前元素
         &:hover {
             background-color: #e0e0e0;
         }
     }
     
-    text { "Container div" }
+    p {
+        text { "Content" }
+    }
 })";
 
-    // 测试全局样式
+    // 全局style块
     std::string test3 = R"(html {
     head {
         style {
             body {
-                font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
+                font-family: Arial, sans-serif;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
             }
         }
     }
     
     body {
         div {
-            style {
-                padding: 20px;
-            }
+            class: container;
+            text { "Hello" }
         }
     }
 })";
 
-    std::vector<std::string> tests = {test1, test2, test3};
+    std::cout << "=== Test 1: Basic inline style ===" << std::endl;
+    std::cout << "Input:\n" << test1 << "\n---" << std::endl;
     
-    for (size_t i = 0; i < tests.size(); i++) {
-        std::cout << "\n=== Test " << (i + 1) << " ===" << std::endl;
-        std::cout << "Input:\n" << tests[i] << std::endl;
-        std::cout << "---" << std::endl;
-        
-        // 创建词法分析器
-        auto lexer = std::make_shared<StandardLexer>();
-        auto stream = std::make_unique<std::istringstream>(tests[i]);
-        
-        if (!lexer->initialize(std::move(stream), "test.chtl")) {
-            std::cerr << "Failed to initialize lexer" << std::endl;
-            continue;
-        }
-        
-        // 创建解析器
-        StandardParser parser;
-        if (!parser.initialize(lexer, lexer->getContext())) {
-            std::cerr << "Failed to initialize parser" << std::endl;
-            continue;
-        }
-        
-        // 解析
-        auto ast = parser.parse();
-        
-        // 检查错误
-        if (parser.hasErrors()) {
-            std::cout << "\nParse errors:" << std::endl;
-            for (const auto& error : parser.getErrors()) {
-                std::cout << "  " << error.filename << ":" << error.line << ":" 
-                         << error.column << ": " << error.message << std::endl;
-            }
-        }
-        
-        // 打印AST
-        if (ast) {
-            std::cout << "\nAST structure:" << std::endl;
-            printAST(ast);
-            
-            // 生成HTML
-            HtmlGenerator generator;
-            generator.initialize(lexer->getContext());
-            generator.setGenerateDoctype(false);
-            
-            BasicGenerator::GeneratorConfig config;
-            config.prettyPrint = true;
-            config.indentSize = 2;
-            generator.setConfig(config);
-            
-            std::string html;
-            if (generator.generateToString(ast, html)) {
-                std::cout << "\nGenerated HTML:" << std::endl;
-                std::cout << html << std::endl;
-            }
+    // 创建词法分析器
+    auto lexer1 = std::make_shared<StandardLexer>();
+    auto stream1 = std::make_unique<std::istringstream>(test1);
+    lexer1->initialize(std::move(stream1), "test1.chtl");
+    
+    // 创建解析器
+    StandardParser parser1;
+    parser1.initialize(lexer1, lexer1->getContext());
+    
+    // 解析
+    auto ast1 = parser1.parse();
+    
+    if (parser1.hasErrors()) {
+        std::cout << "Parse errors:" << std::endl;
+        for (const auto& error : parser1.getErrors()) {
+            std::cout << "  " << error.message << std::endl;
         }
     }
+    
+    std::cout << "\nAST:" << std::endl;
+    if (ast1) printNode(ast1);
+    
+    // 生成HTML
+    if (ast1 && !parser1.hasErrors()) {
+        HtmlGenerator generator;
+        generator.initialize(lexer1->getContext());
+        generator.setGenerateDoctype(false);
+        
+        std::string html;
+        if (generator.generateToString(ast1, html)) {
+            std::cout << "\nGenerated HTML:\n" << html << std::endl;
+        }
+    }
+    
+    std::cout << "\n=== Test 2: Advanced inline style ===" << std::endl;
+    std::cout << "Input:\n" << test2 << "\n---" << std::endl;
+    
+    auto lexer2 = std::make_shared<StandardLexer>();
+    auto stream2 = std::make_unique<std::istringstream>(test2);
+    lexer2->initialize(std::move(stream2), "test2.chtl");
+    
+    StandardParser parser2;
+    parser2.initialize(lexer2, lexer2->getContext());
+    auto ast2 = parser2.parse();
+    
+    if (parser2.hasErrors()) {
+        std::cout << "Parse errors:" << std::endl;
+        for (const auto& error : parser2.getErrors()) {
+            std::cout << "  " << error.message << std::endl;
+        }
+    }
+    
+    std::cout << "\nAST:" << std::endl;
+    if (ast2) printNode(ast2);
+    
+    std::cout << "\n=== Test 3: Global style block ===" << std::endl;
+    std::cout << "Input:\n" << test3 << "\n---" << std::endl;
+    
+    auto lexer3 = std::make_shared<StandardLexer>();
+    auto stream3 = std::make_unique<std::istringstream>(test3);
+    lexer3->initialize(std::move(stream3), "test3.chtl");
+    
+    StandardParser parser3;
+    parser3.initialize(lexer3, lexer3->getContext());
+    auto ast3 = parser3.parse();
+    
+    if (parser3.hasErrors()) {
+        std::cout << "Parse errors:" << std::endl;
+        for (const auto& error : parser3.getErrors()) {
+            std::cout << "  " << error.message << std::endl;
+        }
+    }
+    
+    std::cout << "\nAST:" << std::endl;
+    if (ast3) printNode(ast3);
     
     return 0;
 }

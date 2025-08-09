@@ -54,4 +54,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/chtl.dir/DependInfo.cmake"
   "CMakeFiles/test_lexer.dir/DependInfo.cmake"
   "CMakeFiles/test_node.dir/DependInfo.cmake"
+  "CMakeFiles/test_chtl_nodes.dir/DependInfo.cmake"
   )

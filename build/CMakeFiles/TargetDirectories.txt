@@ -1,6 +1,7 @@
 /workspace/build/CMakeFiles/chtl.dir
 /workspace/build/CMakeFiles/test_lexer.dir
 /workspace/build/CMakeFiles/test_node.dir
+/workspace/build/CMakeFiles/test_chtl_nodes.dir
 /workspace/build/CMakeFiles/test.dir
 /workspace/build/CMakeFiles/edit_cache.dir
 /workspace/build/CMakeFiles/rebuild_cache.dir

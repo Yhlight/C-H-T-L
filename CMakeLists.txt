@@ -36,6 +36,7 @@ add_executable(chtl ${LIB_SOURCES} src/main.cpp)
 # 创建测试程序
 add_executable(test_lexer ${LIB_SOURCES} src/test_lexer.cpp)
 add_executable(test_node ${LIB_SOURCES} src/test_node.cpp)
+add_executable(test_chtl_nodes ${LIB_SOURCES} src/test_chtl_nodes.cpp)
 
 # 启用测试
 enable_testing()

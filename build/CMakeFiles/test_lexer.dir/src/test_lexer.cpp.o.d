@@ -207,8 +207,8 @@ CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/quoted_string.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
-  /workspace/include/lexer/ChtlLexer.h \
-  /workspace/include/lexer/BasicLexer.h \
+  /workspace/include/Lexer/ChtlLexer.h \
+  /workspace/include/Lexer/BasicLexer.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/memory \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_tempbuf.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_uninitialized.h \

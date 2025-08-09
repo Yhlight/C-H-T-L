@@ -4,12 +4,21 @@ bin/test_lexer: \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.o \
   CMakeFiles/test_lexer.dir/src/Common/Token.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.o \
   CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.o \
   CMakeFiles/test_lexer.dir/src/context/ContextFactory.cpp.o \
-  CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.o \
-  CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Comment.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Config.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Custom.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Import.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o \
   CMakeFiles/test_lexer.dir/src/node/Node.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Style.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Template.cpp.o \
   CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o \
   CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o \
@@ -51,17 +60,35 @@ CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/Common/Token.cpp.o:
 
+CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.o:
+
 CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/context/ContextFactory.cpp.o:
 
-CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.o:
+CMakeFiles/test_lexer.dir/src/node/Comment.cpp.o:
 
-CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.o:
+CMakeFiles/test_lexer.dir/src/node/Config.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Custom.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Import.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Namespace.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/node/Node.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Operate.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Style.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Template.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o:
 

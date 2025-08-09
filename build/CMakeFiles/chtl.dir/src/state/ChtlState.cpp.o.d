@@ -237,7 +237,7 @@ CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
   /workspace/include/state/CssState.h /workspace/include/state/JsState.h \
   /workspace/include/state/ChtlJsState.h \
-  /workspace/include/lexer/BasicLexer.h \
+  /workspace/include/Lexer/BasicLexer.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/queue \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \

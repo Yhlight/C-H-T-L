@@ -4,12 +4,21 @@ bin/test_node: \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/test_node.dir/src/Common/GlobalMap.cpp.o \
   CMakeFiles/test_node.dir/src/Common/Token.cpp.o \
+  CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.o \
+  CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.o \
   CMakeFiles/test_node.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/test_node.dir/src/context/ChtlContext.cpp.o \
   CMakeFiles/test_node.dir/src/context/ContextFactory.cpp.o \
-  CMakeFiles/test_node.dir/src/lexer/BasicLexer.cpp.o \
-  CMakeFiles/test_node.dir/src/lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Comment.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Config.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Custom.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Import.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Namespace.cpp.o \
   CMakeFiles/test_node.dir/src/node/Node.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Operate.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Style.cpp.o \
+  CMakeFiles/test_node.dir/src/node/Template.cpp.o \
   CMakeFiles/test_node.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/test_node.dir/src/state/StateFactory.cpp.o \
   CMakeFiles/test_node.dir/src/test_node.cpp.o \
@@ -51,17 +60,35 @@ CMakeFiles/test_node.dir/src/Common/GlobalMap.cpp.o:
 
 CMakeFiles/test_node.dir/src/Common/Token.cpp.o:
 
+CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.o:
+
+CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.o:
+
+CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.o:
+
 CMakeFiles/test_node.dir/src/context/BasicContext.cpp.o:
 
 CMakeFiles/test_node.dir/src/context/ChtlContext.cpp.o:
 
 CMakeFiles/test_node.dir/src/context/ContextFactory.cpp.o:
 
-CMakeFiles/test_node.dir/src/lexer/BasicLexer.cpp.o:
+CMakeFiles/test_node.dir/src/node/Comment.cpp.o:
 
-CMakeFiles/test_node.dir/src/lexer/ChtlLexer.cpp.o:
+CMakeFiles/test_node.dir/src/node/Config.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Custom.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Import.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Namespace.cpp.o:
 
 CMakeFiles/test_node.dir/src/node/Node.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Operate.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Style.cpp.o:
+
+CMakeFiles/test_node.dir/src/node/Template.cpp.o:
 
 CMakeFiles/test_node.dir/src/state/ChtlState.cpp.o:
 

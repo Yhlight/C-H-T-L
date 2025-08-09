@@ -4,12 +4,21 @@ bin/chtl: \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o \
   CMakeFiles/chtl.dir/src/Common/Token.cpp.o \
+  CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o \
+  CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o \
+  CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o \
   CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o \
   CMakeFiles/chtl.dir/src/context/ContextFactory.cpp.o \
-  CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o \
-  CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Comment.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Config.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Custom.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Import.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Namespace.cpp.o \
   CMakeFiles/chtl.dir/src/node/Node.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Operate.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Style.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Template.cpp.o \
   CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o \
   CMakeFiles/chtl.dir/src/main.cpp.o \
@@ -51,17 +60,35 @@ CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o:
 
 CMakeFiles/chtl.dir/src/Common/Token.cpp.o:
 
+CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o:
+
+CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o:
+
+CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o:
+
 CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o:
 
 CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o:
 
 CMakeFiles/chtl.dir/src/context/ContextFactory.cpp.o:
 
-CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o:
+CMakeFiles/chtl.dir/src/node/Comment.cpp.o:
 
-CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o:
+CMakeFiles/chtl.dir/src/node/Config.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Custom.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Import.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Namespace.cpp.o:
 
 CMakeFiles/chtl.dir/src/node/Node.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Operate.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Style.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Template.cpp.o:
 
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o:
 

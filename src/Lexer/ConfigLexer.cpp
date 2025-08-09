@@ -1,6 +1,7 @@
 #include "Lexer/ConfigLexer.h"
 #include "state/StateFactory.h"
 #include "context/ContextFactory.h"
+#include "context/ChtlContext.h"
 #include <sstream>
 #include <algorithm>
 
@@ -27,34 +28,22 @@ bool ConfigLexer::parseConfiguration(const std::string& text) {
         return false;
     }
     
-    return parseConfigurationBlock();
-}
-
-bool ConfigLexer::parseConfigurationFromFile(const std::string& filename) {
-    if (!initialize(filename)) {
-        return false;
-    }
-    
-    return parseConfigurationBlock();
-}
-
-bool ConfigLexer::parseConfigurationBlock() {
     configItems_.clear();
     arrayConfigItems_.clear();
-    parseState_ = ParseState::LOOKING_FOR_CONFIG;
+    parseState_ = ParseState::INITIAL;
     
     Token token;
     while (hasMoreTokens()) {
         token = getNextToken();
         
         switch (parseState_) {
-            case ParseState::LOOKING_FOR_CONFIG:
+            case ParseState::INITIAL:
                 if (token.getType() == TokenType::CONFIGURATION) {
-                    parseState_ = ParseState::IN_CONFIG_BLOCK;
+                    parseState_ = ParseState::IN_CONFIGURATION;
                 }
                 break;
                 
-            case ParseState::IN_CONFIG_BLOCK:
+            case ParseState::IN_CONFIGURATION:
                 if (token.getType() == TokenType::LEFT_BRACE) {
                     parseState_ = ParseState::PARSING_KEY;
                 } else if (token.getType() == TokenType::RIGHT_BRACE) {
@@ -67,7 +56,14 @@ bool ConfigLexer::parseConfigurationBlock() {
                 if (token.getType() == TokenType::IDENTIFIER) {
                     currentKey_ = token.getValue();
                     if (VALID_CONFIG_KEYS.find(currentKey_) != VALID_CONFIG_KEYS.end()) {
-                        parseState_ = ParseState::EXPECTING_COLON;
+                        if (token.getType() == TokenType::COLON) {
+                            if (ARRAY_CONFIG_KEYS.find(currentKey_) != ARRAY_CONFIG_KEYS.end()) {
+                                parseState_ = ParseState::PARSING_ARRAY;
+                                currentArray_.clear();
+                            } else {
+                                parseState_ = ParseState::PARSING_VALUE;
+                            }
+                        }
                     } else {
                         reportError("Invalid configuration key: " + currentKey_, 
                                   token.getLine(), token.getColumn());
@@ -79,23 +75,13 @@ bool ConfigLexer::parseConfigurationBlock() {
                 }
                 break;
                 
-            case ParseState::EXPECTING_COLON:
-                if (token.getType() == TokenType::COLON) {
-                    if (ARRAY_CONFIG_KEYS.find(currentKey_) != ARRAY_CONFIG_KEYS.end()) {
-                        parseState_ = ParseState::PARSING_ARRAY;
-                        currentArray_.clear();
-                    } else {
-                        parseState_ = ParseState::PARSING_VALUE;
-                    }
-                }
-                break;
-                
             case ParseState::PARSING_VALUE:
                 if (token.getType() == TokenType::STRING_LITERAL ||
                     token.getType() == TokenType::IDENTIFIER ||
                     token.getType() == TokenType::NUMBER) {
                     currentValue_ = token.getValue();
-                    parseState_ = ParseState::EXPECTING_SEMICOLON;
+                    configItems_[currentKey_] = currentValue_;
+                    parseState_ = ParseState::PARSING_KEY;
                 }
                 break;
                 
@@ -105,7 +91,7 @@ bool ConfigLexer::parseConfigurationBlock() {
                 } else if (token.getType() == TokenType::RIGHT_BRACKET) {
                     // 数组结束
                     arrayConfigItems_[currentKey_] = currentArray_;
-                    parseState_ = ParseState::EXPECTING_SEMICOLON;
+                    parseState_ = ParseState::PARSING_KEY;
                 } else if (token.getType() == TokenType::STRING_LITERAL ||
                          token.getType() == TokenType::IDENTIFIER) {
                     currentArray_.push_back(token.getValue());
@@ -114,16 +100,7 @@ bool ConfigLexer::parseConfigurationBlock() {
                 }
                 break;
                 
-            case ParseState::EXPECTING_SEMICOLON:
-                if (token.getType() == TokenType::SEMICOLON) {
-                    if (!currentArray_.empty()) {
-                        // 已在PARSING_ARRAY中处理
-                        currentArray_.clear();
-                    } else {
-                        configItems_[currentKey_] = currentValue_;
-                    }
-                    parseState_ = ParseState::PARSING_KEY;
-                }
+            default:
                 break;
         }
     }
@@ -131,9 +108,17 @@ bool ConfigLexer::parseConfigurationBlock() {
     return true;
 }
 
-std::string ConfigLexer::getConfigValue(const std::string& key) const {
+bool ConfigLexer::parseConfigurationFile(const std::string& filename) {
+    if (!initialize(filename)) {
+        return false;
+    }
+    
+    return parseConfiguration("");
+}
+
+std::string ConfigLexer::getConfigValue(const std::string& key, const std::string& defaultValue) const {
     auto it = configItems_.find(key);
-    return it != configItems_.end() ? it->second : "";
+    return it != configItems_.end() ? it->second : defaultValue;
 }
 
 std::vector<std::string> ConfigLexer::getConfigArray(const std::string& key) const {
@@ -148,39 +133,30 @@ bool ConfigLexer::hasConfig(const std::string& key) const {
 
 void ConfigLexer::applyKeywordAliases() {
     // 获取关键字别名配置
-    std::unordered_map<std::string, std::string> aliases;
+    std::unordered_map<std::string, std::vector<std::string>> keywordAliasMap;
     
     // 处理单个别名
     for (const auto& [key, value] : configItems_) {
         if (key.find("keyword_") == 0) {
             std::string keyword = key.substr(8); // 移除 "keyword_" 前缀
-            aliases[value] = keyword;
+            keywordAliasMap[keyword].push_back(value);
         }
     }
     
     // 处理数组别名
     auto keywordAliases = getConfigArray("keyword_aliases");
     for (size_t i = 0; i + 1 < keywordAliases.size(); i += 2) {
-        aliases[keywordAliases[i]] = keywordAliases[i + 1];
+        keywordAliasMap[keywordAliases[i]].push_back(keywordAliases[i + 1]);
     }
     
     // 应用到上下文
     if (auto chtlContext = std::dynamic_pointer_cast<ChtlContext>(context_)) {
-        chtlContext->setKeywordAliases(aliases);
+        for (const auto& [keyword, aliases] : keywordAliasMap) {
+            chtlContext->setKeywordAliases(keyword, aliases);
+        }
     }
 }
 
-// 验证助手方法
-bool ConfigLexer::validateConfigKey(const std::string& key) const {
-    return VALID_CONFIG_KEYS.find(key) != VALID_CONFIG_KEYS.end();
-}
 
-bool ConfigLexer::validateArrayValue(const std::string& key, const std::vector<std::string>& values) const {
-    if (key == "keyword_aliases") {
-        // 关键字别名必须成对出现
-        return values.size() % 2 == 0;
-    }
-    return true;
-}
 
 } // namespace chtl

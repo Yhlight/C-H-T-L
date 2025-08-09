@@ -98,14 +98,21 @@ const std::unordered_map<ContextType, ContextFactory::ContextCreator> ContextFac
 };
 
 std::shared_ptr<BasicContext> ContextFactory::createContext(ContextType type) {
-    auto it = contextCreators_.find(type);
-    if (it != contextCreators_.end()) {
-        auto context = it->second();
-        context->setConfig("context_type", std::to_string(static_cast<int>(type)));
-        return context;
+    switch (type) {
+        case ContextType::CHTL:
+            return std::make_shared<ChtlContext>();
+        case ContextType::CSS:
+            return std::make_shared<CssContext>();
+        case ContextType::JS:
+            return std::make_shared<JsContext>();
+        case ContextType::CHTL_JS:
+            return std::make_shared<chtl_js::ChtlJsContext>();
+        case ContextType::CONFIG:
+            // 配置上下文使用CHTL上下文
+            return std::make_shared<ChtlContext>();
+        default:
+            return nullptr;
     }
-    // 默认返回CHTL上下文
-    return std::make_shared<ChtlContext>();
 }
 
 std::shared_ptr<BasicContext> ContextFactory::createInitialContext() {

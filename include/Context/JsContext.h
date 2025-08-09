@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
+#include <set>
 
 namespace chtl {
 
@@ -39,37 +41,57 @@ private:
         int line;
     };
     
-    // 符号表
-    std::unordered_map<std::string, std::vector<FunctionInfo>> functions_;
-    std::unordered_map<std::string, ClassInfo> classes_;
-    std::unordered_map<std::string, std::vector<VariableInfo>> variables_;
-    
     // 导入导出信息
-    std::vector<std::string> imports_;
-    std::vector<std::string> exports_;
-    std::unordered_set<std::string> dependencies_;
+    struct ImportInfo {
+        std::string path;
+        int line;
+    };
+
+    struct ExportInfo {
+        std::string name;
+        int line;
+    };
+    
+    // 符号表
+    std::map<std::string, FunctionInfo> functions_;
+    std::map<std::string, ClassInfo> classes_;  
+    std::map<std::string, VariableInfo> variables_;
+    std::vector<ImportInfo> imports_;
+    std::vector<ExportInfo> exports_;
+    
+    // 特定符号集合
+    std::set<std::string> asyncFunctions_;
+    std::set<std::string> generatorFunctions_;
+    std::set<std::string> hoistedVars_;
+    
+    // 状态标志
+    bool inStrictMode_;
+    bool inAsyncFunction_;
+    bool inGeneratorFunction_;
+    int currentFunctionDepth_;
+    int currentBlockDepth_;
     
     // 当前解析状态
     std::string currentFunction_;
     std::string currentClass_;
     int currentScopeLevel_;
-    
-    // 标识符集合
-    std::unordered_set<std::string> identifiers_;
-    
-    // 统计信息
     int functionCount_;
     int classCount_;
     int variableCount_;
+    
+    // 标识符集合
+    std::unordered_set<std::string> identifiers_;
+    std::unordered_set<std::string> dependencies_;
 
 public:
     JsContext();
     virtual ~JsContext() = default;
     
     // BasicContext接口实现
-    void enterScope() override;
+    void enterScope(ScopeType scopeType, const std::string& scopeName = "") override;
     void exitScope() override;
     void reset() override;
+    bool validate() override { return true; } // Placeholder implementation
     
     // 函数管理
     void addFunction(const std::string& name, const std::vector<std::string>& params,
@@ -92,6 +114,15 @@ public:
     void addImport(const std::string& import);
     void addExport(const std::string& exp);
     void addDependency(const std::string& dep);
+    
+    // 变量提升
+    void addHoistedVar(const std::string& name);
+    bool isHoistedVar(const std::string& name) const;
+    
+    // 获取符号信息
+    const FunctionInfo* getFunctionInfo(const std::string& name) const;
+    const ClassInfo* getClassInfo(const std::string& name) const;
+    const VariableInfo* getVariableInfo(const std::string& name) const;
     
     // 标识符管理
     void addIdentifier(const std::string& id);

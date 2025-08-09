@@ -1,39 +1,43 @@
-# Loader 加载器模块
+# Loader sources
 set(LOADER_SOURCES
-    FileLoader.cpp
-    ModuleLoader.cpp
-    CmodLoader.cpp
+    ${CMAKE_SOURCE_DIR}/src/Loader/FileLoader.cpp
+    ${CMAKE_SOURCE_DIR}/src/Loader/ModuleLoader.cpp
+    ${CMAKE_SOURCE_DIR}/src/Loader/CmodLoader.cpp
 )
 
+# Loader headers
 set(LOADER_HEADERS
-    FileLoader.h
-    ModuleLoader.h
-    CmodLoader.h
+    ${CMAKE_SOURCE_DIR}/include/Loader/FileLoader.h
+    ${CMAKE_SOURCE_DIR}/include/Loader/ModuleLoader.h
+    ${CMAKE_SOURCE_DIR}/include/Loader/CmodLoader.h
 )
 
-# 创建静态库
+# Create static library
 add_library(chtl_loader STATIC ${LOADER_SOURCES})
 
-# 包含目录
+# Set include directories
 target_include_directories(chtl_loader
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/chtl>
 )
 
-# 链接依赖
+# Link dependencies
 target_link_libraries(chtl_loader
     PUBLIC
         chtl_parser
         chtl_cmod_system
 )
 
-# 安装规则
+# Install library
 install(TARGETS chtl_loader
-    ARCHIVE DESTINATION lib
+    EXPORT ChtlTargets
     LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
+# Install headers
 install(FILES ${LOADER_HEADERS}
     DESTINATION include/chtl/Loader
 )

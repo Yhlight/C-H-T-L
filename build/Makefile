@@ -409,6 +409,32 @@ check/fast:
 .PHONY : check/fast
 
 #=============================================================================
+# Target rules for targets named chtl_predefine
+
+# Build rule for target.
+chtl_predefine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_predefine
+.PHONY : chtl_predefine
+
+# fast build rule for target.
+chtl_predefine/fast:
+	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/build
+.PHONY : chtl_predefine/fast
+
+#=============================================================================
+# Target rules for targets named chtl_loader
+
+# Build rule for target.
+chtl_loader: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_loader
+.PHONY : chtl_loader
+
+# fast build rule for target.
+chtl_loader/fast:
+	$(MAKE) $(MAKESILENT) -f Loader/CMakeFiles/chtl_loader.dir/build.make Loader/CMakeFiles/chtl_loader.dir/build
+.PHONY : chtl_loader/fast
+
+#=============================================================================
 # Target rules for targets named chtl_cmod_system
 
 # Build rule for target.
@@ -437,6 +463,8 @@ help:
 	@echo "... uninstall"
 	@echo "... chtl_cmod_system"
 	@echo "... chtl_core"
+	@echo "... chtl_loader"
+	@echo "... chtl_predefine"
 	@echo "... chtl_shared"
 	@echo "... test_bridge_scanner"
 	@echo "... test_chtl_js"

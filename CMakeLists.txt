@@ -33,8 +33,8 @@ add_subdirectory(src)
 add_subdirectory(tests)
 # TODO: 以下模块待实现
 # add_subdirectory(App)
-# add_subdirectory(Predefine)
-# add_subdirectory(Loader)
+add_subdirectory(Predefine)
+add_subdirectory(Loader)
 add_subdirectory(CmodSystem)
 # add_subdirectory(Module)
 

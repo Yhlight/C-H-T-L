@@ -6,8 +6,10 @@ bin/test_lexer: \
   CMakeFiles/test_lexer.dir/src/Common/Token.cpp.o \
   CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.o \
+  CMakeFiles/test_lexer.dir/src/context/ContextFactory.cpp.o \
   CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.o \
   CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_lexer.dir/src/node/Node.cpp.o \
   CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o \
   CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o \
@@ -53,9 +55,13 @@ CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.o:
 
+CMakeFiles/test_lexer.dir/src/context/ContextFactory.cpp.o:
+
 CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/node/Node.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o:
 

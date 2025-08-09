@@ -9,6 +9,8 @@
 #include "Common/Token.h"
 #include "state/BasicState.h"
 #include "context/BasicContext.h"
+#include "state/StateFactory.h"
+#include "context/ContextFactory.h"
 
 namespace chtl {
 
@@ -107,6 +109,10 @@ protected:
     void skipWhitespace();
     std::string readUntil(const std::string& delimiters);
     std::string readWhile(const std::string& allowedChars);
+    
+    // 自动化状态和上下文管理
+    void autoTransitionState(const std::string& trigger);
+    void autoMarkContext(const std::string& token);
     
 private:
     // 内部辅助方法

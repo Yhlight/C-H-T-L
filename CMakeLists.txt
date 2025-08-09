@@ -27,6 +27,7 @@ file(GLOB_RECURSE LIB_SOURCES
     "${CMAKE_SOURCE_DIR}/src/context/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/lexer/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/state/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/node/*.cpp"
 )
 
 # 创建主可执行文件
@@ -34,6 +35,7 @@ add_executable(chtl ${LIB_SOURCES} src/main.cpp)
 
 # 创建测试程序
 add_executable(test_lexer ${LIB_SOURCES} src/test_lexer.cpp)
+add_executable(test_node ${LIB_SOURCES} src/test_node.cpp)
 
 # 启用测试
 enable_testing()

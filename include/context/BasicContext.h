@@ -119,6 +119,10 @@ public:
     void setConfig(const std::string& key, const std::string& value) { config_[key] = value; }
     std::string getConfig(const std::string& key, const std::string& defaultValue = "") const;
     bool hasConfig(const std::string& key) const { return config_.find(key) != config_.end(); }
+    const std::unordered_map<std::string, std::string>& getConfiguration() const { return config_; }
+    
+    // 获取全局符号表
+    const std::unordered_map<std::string, SymbolInfo>& getGlobalSymbols() const { return globalSymbols_; }
     
     // 上下文验证
     virtual bool validate() = 0;

@@ -302,4 +302,28 @@ void BasicLexer::finalizeTokens() {
     }
 }
 
+void BasicLexer::autoTransitionState(const std::string& trigger) {
+    if (!currentState_) {
+        return;
+    }
+    
+    // 尝试自动状态转换
+    auto newState = StateFactory::autoTransition(this, currentState_, trigger);
+    if (newState && newState != currentState_) {
+        setState(newState);
+    }
+}
+
+void BasicLexer::autoMarkContext(const std::string& token) {
+    if (!context_) {
+        return;
+    }
+    
+    // 尝试自动上下文标记
+    ContextFactory::autoMark(token, context_);
+    
+    // 同步ContextFactory的当前上下文
+    ContextFactory::setCurrentContext(context_);
+}
+
 } // namespace chtl

@@ -16,6 +16,9 @@ ChtlState::ChtlState(BasicLexer* lexer)
       inScriptBlock_(false),
       braceDepth_(0),
       inTextBlock_(false) {
+    // 暂时使用这些成员变量避免编译警告
+    (void)braceDepth_;
+    (void)inTextBlock_;
 }
 
 std::shared_ptr<BasicState> ChtlState::handleChar(char ch) {
@@ -50,6 +53,9 @@ std::shared_ptr<BasicState> ChtlState::handleChar(char ch) {
                 return handleChar(ch);
             }
             return nullptr;
+        case SubState::IN_TEXT_BLOCK:
+            // 暂时处理为普通标识符
+            return handleIdentifier(ch);
     }
     return nullptr;
 }

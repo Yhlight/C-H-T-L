@@ -6,8 +6,10 @@ bin/chtl: \
   CMakeFiles/chtl.dir/src/Common/Token.cpp.o \
   CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o \
+  CMakeFiles/chtl.dir/src/context/ContextFactory.cpp.o \
   CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o \
   CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o \
+  CMakeFiles/chtl.dir/src/node/Node.cpp.o \
   CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o \
   CMakeFiles/chtl.dir/src/main.cpp.o \
@@ -53,9 +55,13 @@ CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o:
 
 CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o:
 
+CMakeFiles/chtl.dir/src/context/ContextFactory.cpp.o:
+
 CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o:
 
 CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o:
+
+CMakeFiles/chtl.dir/src/node/Node.cpp.o:
 
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o:
 

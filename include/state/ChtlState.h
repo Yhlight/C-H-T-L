@@ -25,7 +25,8 @@ private:
         HTML_COMMENT,       // HTML注释
         AT_PREFIX,          // @前缀
         SPECIAL_MARKER,     // 特殊标记 [xxx]
-        WHITESPACE          // 空白符
+        WHITESPACE,         // 空白符
+        IN_TEXT_BLOCK       // 在text块内
     };
     
     SubState subState_;
@@ -34,9 +35,11 @@ private:
     int startColumn_;
     bool inStyleBlock_;     // 是否在style块内
     bool inScriptBlock_;    // 是否在script块内
+    int braceDepth_;        // 大括号深度
+    bool inTextBlock_;      // 是否在text块内
     
 public:
-    ChtlState(Lexer* lexer);
+    ChtlState(BasicLexer* lexer);
     
     // 重写基类方法
     std::shared_ptr<BasicState> handleChar(char ch) override;

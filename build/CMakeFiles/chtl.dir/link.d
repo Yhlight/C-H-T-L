@@ -7,9 +7,10 @@ bin/chtl: \
   CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o \
   CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o \
   CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o \
-  CMakeFiles/chtl.dir/src/main.cpp.o \
+  CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o \
   CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o \
+  CMakeFiles/chtl.dir/src/main.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
   /lib/x86_64-linux-gnu/libm.so \
   /lib/x86_64-linux-gnu/libm.so \
@@ -54,11 +55,13 @@ CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o:
 
 CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o:
 
-CMakeFiles/chtl.dir/src/main.cpp.o:
+CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o:
 
 CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o:
 
 CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o:
+
+CMakeFiles/chtl.dir/src/main.cpp.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so:
 

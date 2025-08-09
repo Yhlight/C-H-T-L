@@ -9,7 +9,7 @@
 namespace chtl {
 
 // 前向声明
-class Lexer;
+class BasicLexer;
 
 // 状态类型枚举
 enum class StateType {
@@ -27,11 +27,11 @@ class BasicState {
 protected:
     StateType type_;
     std::string name_;
-    Lexer* lexer_;  // 指向词法分析器的指针
+    BasicLexer* lexer_;  // 指向词法分析器的指针
     
 public:
     // 构造函数
-    BasicState(StateType type, const std::string& name, Lexer* lexer)
+    BasicState(StateType type, const std::string& name, BasicLexer* lexer)
         : type_(type), name_(name), lexer_(lexer) {}
     
     // 虚析构函数

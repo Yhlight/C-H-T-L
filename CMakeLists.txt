@@ -21,14 +21,19 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # 包含目录
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# 收集源文件
-file(GLOB_RECURSE SOURCES 
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/*.cc"
+# 收集库源文件（不包含main文件）
+file(GLOB_RECURSE LIB_SOURCES 
+    "${CMAKE_SOURCE_DIR}/src/Common/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/context/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/lexer/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/state/*.cpp"
 )
 
-# 创建可执行文件
-add_executable(chtl ${SOURCES})
+# 创建主可执行文件
+add_executable(chtl ${LIB_SOURCES} src/main.cpp)
+
+# 创建测试程序
+add_executable(test_lexer ${LIB_SOURCES} src/test_lexer.cpp)
 
 # 启用测试
 enable_testing()

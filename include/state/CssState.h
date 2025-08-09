@@ -8,7 +8,7 @@ namespace chtl {
 // CSS状态机（用于处理style块内的CSS代码）
 class CssState : public BasicState {
 public:
-    CssState(Lexer* lexer) : BasicState(StateType::CSS, "CssState", lexer) {}
+    CssState(BasicLexer* lexer) : BasicState(StateType::CSS, "CssState", lexer) {}
     
     // TODO: 实现CSS状态机
     std::shared_ptr<BasicState> handleChar(char ch) override {

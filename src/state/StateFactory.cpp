@@ -6,7 +6,7 @@
 
 namespace chtl {
 
-std::shared_ptr<BasicState> StateFactory::createState(StateType type, Lexer* lexer) {
+std::shared_ptr<BasicState> StateFactory::createState(StateType type, BasicLexer* lexer) {
     switch (type) {
         case StateType::CHTL:
             return std::make_shared<ChtlState>(lexer);
@@ -21,7 +21,7 @@ std::shared_ptr<BasicState> StateFactory::createState(StateType type, Lexer* lex
     }
 }
 
-std::shared_ptr<BasicState> StateFactory::createInitialState(Lexer* lexer) {
+std::shared_ptr<BasicState> StateFactory::createInitialState(BasicLexer* lexer) {
     return createState(StateType::CHTL, lexer);
 }
 

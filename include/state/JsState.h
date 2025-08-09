@@ -8,7 +8,7 @@ namespace chtl {
 // JavaScript状态机（用于处理script块内的JS代码）
 class JsState : public BasicState {
 public:
-    JsState(Lexer* lexer) : BasicState(StateType::JS, "JsState", lexer) {}
+    JsState(BasicLexer* lexer) : BasicState(StateType::JS, "JsState", lexer) {}
     
     // TODO: 实现JavaScript状态机
     std::shared_ptr<BasicState> handleChar(char ch) override {

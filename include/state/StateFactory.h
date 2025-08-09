@@ -7,16 +7,16 @@
 namespace chtl {
 
 // 前向声明
-class Lexer;
+class BasicLexer;
 
 // 状态工厂类
 class StateFactory {
 public:
     // 创建指定类型的状态
-    static std::shared_ptr<BasicState> createState(StateType type, Lexer* lexer);
+    static std::shared_ptr<BasicState> createState(StateType type, BasicLexer* lexer);
     
     // 创建初始状态（CHTL状态）
-    static std::shared_ptr<BasicState> createInitialState(Lexer* lexer);
+    static std::shared_ptr<BasicState> createInitialState(BasicLexer* lexer);
 };
 
 } // namespace chtl

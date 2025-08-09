@@ -8,7 +8,7 @@ namespace chtl {
 // CHTL扩展的JavaScript状态机（用于处理CHTL的JS增强语法）
 class ChtlJsState : public BasicState {
 public:
-    ChtlJsState(Lexer* lexer) : BasicState(StateType::CHTL_JS, "ChtlJsState", lexer) {}
+    ChtlJsState(BasicLexer* lexer) : BasicState(StateType::CHTL_JS, "ChtlJsState", lexer) {}
     
     // TODO: 实现CHTL扩展的JavaScript状态机
     // 需要处理：

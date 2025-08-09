@@ -10,6 +10,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o.d"
   "CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o"
   "CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o.d"
+  "CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o"
+  "CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o.d"
   "CMakeFiles/chtl.dir/src/main.cpp.o"
   "CMakeFiles/chtl.dir/src/main.cpp.o.d"
   "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o"

@@ -139,12 +139,26 @@ chtl/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/build
 .PHONY : chtl/fast
 
+#=============================================================================
+# Target rules for targets named test_lexer
+
+# Build rule for target.
+test_lexer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_lexer
+.PHONY : test_lexer
+
+# fast build rule for target.
+test_lexer/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/build
+.PHONY : test_lexer/fast
+
 src/Common/GlobalMap.o: src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.o
 
 # target to build an object file
 src/Common/GlobalMap.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.cpp.o
 
 src/Common/GlobalMap.i: src/Common/GlobalMap.cpp.i
@@ -153,6 +167,7 @@ src/Common/GlobalMap.i: src/Common/GlobalMap.cpp.i
 # target to preprocess a source file
 src/Common/GlobalMap.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.i
 .PHONY : src/Common/GlobalMap.cpp.i
 
 src/Common/GlobalMap.s: src/Common/GlobalMap.cpp.s
@@ -161,6 +176,7 @@ src/Common/GlobalMap.s: src/Common/GlobalMap.cpp.s
 # target to generate assembly for a file
 src/Common/GlobalMap.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.s
 .PHONY : src/Common/GlobalMap.cpp.s
 
 src/Common/Token.o: src/Common/Token.cpp.o
@@ -169,6 +185,7 @@ src/Common/Token.o: src/Common/Token.cpp.o
 # target to build an object file
 src/Common/Token.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.o
 .PHONY : src/Common/Token.cpp.o
 
 src/Common/Token.i: src/Common/Token.cpp.i
@@ -177,6 +194,7 @@ src/Common/Token.i: src/Common/Token.cpp.i
 # target to preprocess a source file
 src/Common/Token.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.i
 .PHONY : src/Common/Token.cpp.i
 
 src/Common/Token.s: src/Common/Token.cpp.s
@@ -185,6 +203,7 @@ src/Common/Token.s: src/Common/Token.cpp.s
 # target to generate assembly for a file
 src/Common/Token.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.s
 .PHONY : src/Common/Token.cpp.s
 
 src/context/BasicContext.o: src/context/BasicContext.cpp.o
@@ -193,6 +212,7 @@ src/context/BasicContext.o: src/context/BasicContext.cpp.o
 # target to build an object file
 src/context/BasicContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.o
 .PHONY : src/context/BasicContext.cpp.o
 
 src/context/BasicContext.i: src/context/BasicContext.cpp.i
@@ -201,6 +221,7 @@ src/context/BasicContext.i: src/context/BasicContext.cpp.i
 # target to preprocess a source file
 src/context/BasicContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.i
 .PHONY : src/context/BasicContext.cpp.i
 
 src/context/BasicContext.s: src/context/BasicContext.cpp.s
@@ -209,6 +230,7 @@ src/context/BasicContext.s: src/context/BasicContext.cpp.s
 # target to generate assembly for a file
 src/context/BasicContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/BasicContext.cpp.s
 .PHONY : src/context/BasicContext.cpp.s
 
 src/context/ChtlContext.o: src/context/ChtlContext.cpp.o
@@ -217,6 +239,7 @@ src/context/ChtlContext.o: src/context/ChtlContext.cpp.o
 # target to build an object file
 src/context/ChtlContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.o
 .PHONY : src/context/ChtlContext.cpp.o
 
 src/context/ChtlContext.i: src/context/ChtlContext.cpp.i
@@ -225,6 +248,7 @@ src/context/ChtlContext.i: src/context/ChtlContext.cpp.i
 # target to preprocess a source file
 src/context/ChtlContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.i
 .PHONY : src/context/ChtlContext.cpp.i
 
 src/context/ChtlContext.s: src/context/ChtlContext.cpp.s
@@ -233,6 +257,7 @@ src/context/ChtlContext.s: src/context/ChtlContext.cpp.s
 # target to generate assembly for a file
 src/context/ChtlContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/context/ChtlContext.cpp.s
 .PHONY : src/context/ChtlContext.cpp.s
 
 src/lexer/BasicLexer.o: src/lexer/BasicLexer.cpp.o
@@ -241,6 +266,7 @@ src/lexer/BasicLexer.o: src/lexer/BasicLexer.cpp.o
 # target to build an object file
 src/lexer/BasicLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.o
 .PHONY : src/lexer/BasicLexer.cpp.o
 
 src/lexer/BasicLexer.i: src/lexer/BasicLexer.cpp.i
@@ -249,6 +275,7 @@ src/lexer/BasicLexer.i: src/lexer/BasicLexer.cpp.i
 # target to preprocess a source file
 src/lexer/BasicLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.i
 .PHONY : src/lexer/BasicLexer.cpp.i
 
 src/lexer/BasicLexer.s: src/lexer/BasicLexer.cpp.s
@@ -257,7 +284,35 @@ src/lexer/BasicLexer.s: src/lexer/BasicLexer.cpp.s
 # target to generate assembly for a file
 src/lexer/BasicLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/BasicLexer.cpp.s
 .PHONY : src/lexer/BasicLexer.cpp.s
+
+src/lexer/ChtlLexer.o: src/lexer/ChtlLexer.cpp.o
+.PHONY : src/lexer/ChtlLexer.o
+
+# target to build an object file
+src/lexer/ChtlLexer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.o
+.PHONY : src/lexer/ChtlLexer.cpp.o
+
+src/lexer/ChtlLexer.i: src/lexer/ChtlLexer.cpp.i
+.PHONY : src/lexer/ChtlLexer.i
+
+# target to preprocess a source file
+src/lexer/ChtlLexer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.i
+.PHONY : src/lexer/ChtlLexer.cpp.i
+
+src/lexer/ChtlLexer.s: src/lexer/ChtlLexer.cpp.s
+.PHONY : src/lexer/ChtlLexer.s
+
+# target to generate assembly for a file
+src/lexer/ChtlLexer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/ChtlLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/lexer/ChtlLexer.cpp.s
+.PHONY : src/lexer/ChtlLexer.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -289,6 +344,7 @@ src/state/ChtlState.o: src/state/ChtlState.cpp.o
 # target to build an object file
 src/state/ChtlState.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.o
 .PHONY : src/state/ChtlState.cpp.o
 
 src/state/ChtlState.i: src/state/ChtlState.cpp.i
@@ -297,6 +353,7 @@ src/state/ChtlState.i: src/state/ChtlState.cpp.i
 # target to preprocess a source file
 src/state/ChtlState.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.i
 .PHONY : src/state/ChtlState.cpp.i
 
 src/state/ChtlState.s: src/state/ChtlState.cpp.s
@@ -305,6 +362,7 @@ src/state/ChtlState.s: src/state/ChtlState.cpp.s
 # target to generate assembly for a file
 src/state/ChtlState.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/ChtlState.cpp.s
 .PHONY : src/state/ChtlState.cpp.s
 
 src/state/StateFactory.o: src/state/StateFactory.cpp.o
@@ -313,6 +371,7 @@ src/state/StateFactory.o: src/state/StateFactory.cpp.o
 # target to build an object file
 src/state/StateFactory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.o
 .PHONY : src/state/StateFactory.cpp.o
 
 src/state/StateFactory.i: src/state/StateFactory.cpp.i
@@ -321,6 +380,7 @@ src/state/StateFactory.i: src/state/StateFactory.cpp.i
 # target to preprocess a source file
 src/state/StateFactory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.i
 .PHONY : src/state/StateFactory.cpp.i
 
 src/state/StateFactory.s: src/state/StateFactory.cpp.s
@@ -329,7 +389,32 @@ src/state/StateFactory.s: src/state/StateFactory.cpp.s
 # target to generate assembly for a file
 src/state/StateFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/state/StateFactory.cpp.s
 .PHONY : src/state/StateFactory.cpp.s
+
+src/test_lexer.o: src/test_lexer.cpp.o
+.PHONY : src/test_lexer.o
+
+# target to build an object file
+src/test_lexer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o
+.PHONY : src/test_lexer.cpp.o
+
+src/test_lexer.i: src/test_lexer.cpp.i
+.PHONY : src/test_lexer.i
+
+# target to preprocess a source file
+src/test_lexer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/test_lexer.cpp.i
+.PHONY : src/test_lexer.cpp.i
+
+src/test_lexer.s: src/test_lexer.cpp.s
+.PHONY : src/test_lexer.s
+
+# target to generate assembly for a file
+src/test_lexer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/test_lexer.cpp.s
+.PHONY : src/test_lexer.cpp.s
 
 # Help Target
 help:
@@ -341,6 +426,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... chtl"
+	@echo "... test_lexer"
 	@echo "... src/Common/GlobalMap.o"
 	@echo "... src/Common/GlobalMap.i"
 	@echo "... src/Common/GlobalMap.s"
@@ -356,6 +442,9 @@ help:
 	@echo "... src/lexer/BasicLexer.o"
 	@echo "... src/lexer/BasicLexer.i"
 	@echo "... src/lexer/BasicLexer.s"
+	@echo "... src/lexer/ChtlLexer.o"
+	@echo "... src/lexer/ChtlLexer.i"
+	@echo "... src/lexer/ChtlLexer.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -365,6 +454,9 @@ help:
 	@echo "... src/state/StateFactory.o"
 	@echo "... src/state/StateFactory.i"
 	@echo "... src/state/StateFactory.s"
+	@echo "... src/test_lexer.o"
+	@echo "... src/test_lexer.i"
+	@echo "... src/test_lexer.s"
 .PHONY : help
 
 

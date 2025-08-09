@@ -2,17 +2,20 @@
 #include "state/CssState.h"
 #include "state/JsState.h"
 #include "state/ChtlJsState.h"
+#include "lexer/BasicLexer.h"
 #include <algorithm>
 
 namespace chtl {
 
-ChtlState::ChtlState(Lexer* lexer) 
+ChtlState::ChtlState(BasicLexer* lexer) 
     : BasicState(StateType::CHTL, "ChtlState", lexer),
       subState_(SubState::INITIAL),
       startLine_(1),
       startColumn_(1),
       inStyleBlock_(false),
-      inScriptBlock_(false) {
+      inScriptBlock_(false),
+      braceDepth_(0),
+      inTextBlock_(false) {
 }
 
 std::shared_ptr<BasicState> ChtlState::handleChar(char ch) {
@@ -53,8 +56,10 @@ std::shared_ptr<BasicState> ChtlState::handleChar(char ch) {
 
 std::shared_ptr<BasicState> ChtlState::handleInitial(char ch) {
     // 记录起始位置
-    startLine_ = 1;  // TODO: 从lexer获取实际行号
-    startColumn_ = 1; // TODO: 从lexer获取实际列号
+    if (lexer_) {
+        startLine_ = lexer_->getCurrentLine();
+        startColumn_ = lexer_->getCurrentColumn();
+    }
     
     // 空白符
     if (isWhitespace(ch)) {
@@ -136,16 +141,22 @@ std::shared_ptr<BasicState> ChtlState::handleIdentifier(char ch) {
     
     // 标识符结束
     TokenType type = determineIdentifierType();
+    
+    // 检查是否在text块内，且后面是左大括号
+    if (type == TokenType::TEXT && ch == '{') {
+        emitToken(type);
+        subState_ = SubState::INITIAL;
+        return nullptr;  // 让下一次处理'{'
+    }
+    
     emitToken(type);
     
     // 特殊处理：如果是style或script，可能需要切换状态
-    if (type == TokenType::STYLE && inStyleBlock_) {
-        // 切换到CSS状态
-        return std::make_shared<CssState>(lexer_);
+    if (type == TokenType::STYLE && ch == '{') {
+        inStyleBlock_ = true;
     }
-    if (type == TokenType::IDENTIFIER && buffer_ == "script" && inScriptBlock_) {
-        // 切换到JavaScript状态
-        return std::make_shared<JsState>(lexer_);
+    if (type == TokenType::IDENTIFIER && buffer_ == "script" && ch == '{') {
+        inScriptBlock_ = true;
     }
     
     subState_ = SubState::INITIAL;
@@ -402,12 +413,9 @@ void ChtlState::completeToken() {
 }
 
 void ChtlState::emitToken(TokenType type) {
-    // TODO: 实际发送token到lexer
-    (void)type; // 避免未使用参数警告
-    // 需要将BasicState中的lexer_转换为BasicLexer类型
-    // if (auto* basicLexer = dynamic_cast<BasicLexer*>(lexer_)) {
-    //     basicLexer->emitToken(createToken(type, buffer_, startLine_, startColumn_));
-    // }
+    if (lexer_) {
+        lexer_->emitToken(type, buffer_, startLine_, startColumn_);
+    }
 }
 
 void ChtlState::emitTokenAndReset(TokenType type) {

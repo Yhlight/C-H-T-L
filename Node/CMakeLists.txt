@@ -8,6 +8,7 @@ add_library(chtl_node STATIC
     Import.h
     Namespace.h
     Operate.h
+    Origin.h
 )
 
 target_include_directories(chtl_node PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

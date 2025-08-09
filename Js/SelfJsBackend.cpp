@@ -10,6 +10,8 @@ namespace CHTL
         auto ast = parser.parse(tokens);
         JsFindings out;
         for (const auto& f : ast.functions) out.functionNames.insert(f.name);
+        for (const auto& c : ast.classes) out.classNames.insert(c.name);
+        for (const auto& im : ast.imports) out.importSources.insert(im.source);
         for (const auto& e : ast.events) out.eventNames.insert(e.event);
         for (const auto& s : ast.selectors) out.selectors.insert(s.selector);
         return out;

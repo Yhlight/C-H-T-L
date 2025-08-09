@@ -26,7 +26,6 @@ namespace CHTL
             // import ... from "src"
             if (t.type == JsTokenType::Keyword && t.lexeme == "import")
             {
-                // scan ahead for 'from' then string
                 for (std::size_t k = i + 1; k < n; ++k)
                 {
                     if (tokens[k].type == JsTokenType::Keyword && tokens[k].lexeme == "from")
@@ -49,7 +48,6 @@ namespace CHTL
             {
                 if (i > 0 && tokens[i-1].type == JsTokenType::Punctuator && tokens[i-1].lexeme == ".")
                 {
-                    // look ahead for string
                     for (std::size_t k = i + 1; k < n; ++k)
                     {
                         if (tokens[k].type == JsTokenType::String)
@@ -62,10 +60,9 @@ namespace CHTL
                 }
                 continue;
             }
-            // querySelector('...')
-            if (t.type == JsTokenType::Identifier && t.lexeme == "querySelector")
+            // querySelector('...') / querySelectorAll('...')
+            if (t.type == JsTokenType::Identifier && (t.lexeme == "querySelector" || t.lexeme == "querySelectorAll"))
             {
-                // next string
                 for (std::size_t k = i + 1; k < n; ++k)
                 {
                     if (tokens[k].type == JsTokenType::String)

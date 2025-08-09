@@ -1,7 +1,7 @@
 #include "Scanner/BridgeScanner.h"
 #include "State/StateFactory.h"
 #include "Context/ContextFactory.h"
-#include "Lexer/SimpleLexer.h"
+#include "Lexer/BasicLexer.h"
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -15,9 +15,9 @@ BridgeScanner::BridgeScanner()
 
 bool BridgeScanner::initialize(std::shared_ptr<BasicLexer> lexer,
                               std::shared_ptr<BasicContext> context) {
-    // 如果没有提供lexer，创建一个SimpleLexer
+    // 如果没有提供lexer，创建一个BasicLexer
     if (!lexer) {
-        lexer_ = std::make_shared<SimpleLexer>();
+        lexer_ = std::make_shared<BasicLexer>();
     } else {
         lexer_ = lexer;
     }

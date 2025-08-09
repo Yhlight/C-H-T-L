@@ -2,6 +2,7 @@
 #include "Parser/StandardParser.h"
 #include "Lexer/StandardLexer.h"
 #include "Context/StandardContext.h"
+#include "Node/Element.h"
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -136,7 +137,7 @@ bool FileLoader::parseFile(const std::string& filePath) {
     // TODO: 设置lexer输入并解析
     // 暂时标记为已解析
     info.isParsed = true;
-    info.ast = std::make_shared<Node>(NodeType::DOCUMENT);
+    info.ast = std::make_shared<Element>("document");
     
     return true;
 }

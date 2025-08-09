@@ -86,7 +86,7 @@ private:
     LoadType detectLoadType(const std::string& target) const;
     
     // 合并AST
-    std::shared_ptr<Node> mergeASTs(const std::vector<std::shared_ptr<Node>>& asts);
+    std::shared_ptr<Node> mergeASTs(const std::vector<std::shared_ptr<Node>>& asts) const;
     
     // 加载器
     std::unique_ptr<FileLoader> fileLoader_;

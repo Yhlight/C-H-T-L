@@ -1239,7 +1239,6 @@ src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: /workspace/src/Contex
   /workspace/include/Common/TokenType.h \
   /workspace/include/Context/BasicContext.h \
   /workspace/include/Context/ChtlContext.h \
-  /workspace/include/Context/ChtlJsContext.h \
   /workspace/include/Context/ContextFactory.h \
   /workspace/include/Context/CssContext.h \
   /workspace/include/Context/JsContext.h
@@ -2907,6 +2906,7 @@ src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o: /workspace/src/Lexer/Confi
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/Common/GlobalMap.h \
   /workspace/include/Common/Token.h \
   /workspace/include/Common/TokenType.h \
   /workspace/include/Context/BasicContext.h \
@@ -2915,6 +2915,7 @@ src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o: /workspace/src/Lexer/Confi
   /workspace/include/Lexer/BasicLexer.h \
   /workspace/include/Lexer/ConfigLexer.h \
   /workspace/include/State/BasicState.h \
+  /workspace/include/State/ChtlState.h \
   /workspace/include/State/StateFactory.h
 
 src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/StandardLexer.cpp \
@@ -3075,6 +3076,7 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/include/c++/14/bits/shared_ptr.h \
   /usr/include/c++/14/bits/shared_ptr_atomic.h \
   /usr/include/c++/14/bits/shared_ptr_base.h \
+  /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
   /usr/include/c++/14/bits/stl_algobase.h \
@@ -3086,12 +3088,15 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_queue.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_relops.h \
+  /usr/include/c++/14/bits/stl_set.h \
   /usr/include/c++/14/bits/stl_stack.h \
   /usr/include/c++/14/bits/stl_tempbuf.h \
+  /usr/include/c++/14/bits/stl_tree.h \
   /usr/include/c++/14/bits/stl_uninitialized.h \
   /usr/include/c++/14/bits/stl_vector.h \
   /usr/include/c++/14/bits/streambuf.tcc \
@@ -3100,6 +3105,7 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/include/c++/14/bits/stringfwd.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
+  /usr/include/c++/14/bits/unordered_set.h \
   /usr/include/c++/14/bits/uses_allocator.h \
   /usr/include/c++/14/bits/uses_allocator_args.h \
   /usr/include/c++/14/bits/utility.h \
@@ -3140,6 +3146,8 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/queue \
+  /usr/include/c++/14/set \
+  /usr/include/c++/14/sstream \
   /usr/include/c++/14/stack \
   /usr/include/c++/14/stdexcept \
   /usr/include/c++/14/streambuf \
@@ -3150,6 +3158,7 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/include/c++/14/type_traits \
   /usr/include/c++/14/typeinfo \
   /usr/include/c++/14/unordered_map \
+  /usr/include/c++/14/unordered_set \
   /usr/include/c++/14/utility \
   /usr/include/c++/14/vector \
   /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
@@ -3178,13 +3187,18 @@ src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o: /workspace/src/Lexer/Sta
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/Common/GlobalMap.h \
   /workspace/include/Common/Token.h \
   /workspace/include/Common/TokenType.h \
   /workspace/include/Context/BasicContext.h \
+  /workspace/include/Context/ChtlContext.h \
   /workspace/include/Context/ContextFactory.h \
+  /workspace/include/Context/StandardContext.h \
   /workspace/include/Lexer/BasicLexer.h \
   /workspace/include/Lexer/StandardLexer.h \
   /workspace/include/State/BasicState.h \
+  /workspace/include/State/ChtlState.h \
+  /workspace/include/State/StandardState.h \
   /workspace/include/State/StateFactory.h
 
 src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: /workspace/src/Parser/BasicParser.cpp \
@@ -4787,6 +4801,8 @@ src/CMakeFiles/chtl_core.dir/State/StateFactory.cpp.o: /workspace/src/State/Stat
 
 /workspace/include/Lexer/ConfigLexer.h:
 
+/workspace/include/Context/ChtlJsContext.h:
+
 /workspace/src/Lexer/ChtlJsLexer.cpp:
 
 /workspace/include/State/StateFactory.h:
@@ -4846,8 +4862,6 @@ src/CMakeFiles/chtl_core.dir/State/StateFactory.cpp.o: /workspace/src/State/Stat
 /workspace/src/Context/CssContext.cpp:
 
 /workspace/include/Context/CssContext.h:
-
-/workspace/include/Context/ChtlJsContext.h:
 
 /usr/include/c++/14/bits/stl_map.h:
 

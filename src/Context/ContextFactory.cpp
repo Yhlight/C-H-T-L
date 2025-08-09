@@ -2,7 +2,7 @@
 #include "Context/ChtlContext.h"
 #include "Context/CssContext.h"
 #include "Context/JsContext.h"
-#include "ChtlJs/ChtlJsContext.h"
+// #include "Context/ChtlJsContext.h" // TODO: 完整实现后再启用
 
 namespace chtl {
 
@@ -15,7 +15,9 @@ std::shared_ptr<BasicContext> ContextFactory::createContext(ContextType type) {
         case ContextType::JS:
             return std::make_shared<JsContext>();
         case ContextType::CHTL_JS:
-            return std::make_shared<chtl_js::ChtlJsContext>();
+            // TODO: 完整实现ChtlJsContext后再启用
+            // return std::make_shared<ChtlJsContext>();
+            return std::make_shared<JsContext>(); // 暂时使用JsContext
         case ContextType::CONFIG:
             // 配置上下文使用CHTL上下文
             return std::make_shared<ChtlContext>();
@@ -120,11 +122,8 @@ std::shared_ptr<JsContext> ContextFactory::asJsContext() const {
     return nullptr;
 }
 
-std::shared_ptr<chtl_js::ChtlJsContext> ContextFactory::asChtlJsContext() const {
-    auto context = getCurrentContext();
-    if (context && getCurrentType() == ContextType::CHTL_JS) {
-        return std::dynamic_pointer_cast<chtl_js::ChtlJsContext>(context);
-    }
+std::shared_ptr<void> ContextFactory::asChtlJsContext() const {
+    // TODO: 完整实现ChtlJsContext后再启用
     return nullptr;
 }
 

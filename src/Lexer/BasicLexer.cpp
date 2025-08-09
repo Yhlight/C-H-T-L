@@ -316,15 +316,11 @@ void BasicLexer::autoTransitionState(const std::string& trigger) {
     }
 }
 
-void BasicLexer::updateState(char ch) {
-    if (!currentState_) {
-        return;
-    }
-    
-    // 尝试状态转换
-    auto newState = StateFactory::transition(currentState_->getType(), ch);
-    if (newState && newState != currentState_) {
-        setState(newState);
+void BasicLexer::notifyTokenReady(const Token& token) {
+    for (auto& callback : tokenCallbacks_) {
+        if (callback) {
+            callback(token);
+        }
     }
 }
 

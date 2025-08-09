@@ -28,10 +28,13 @@ public:
     
     // 加载选项
     struct LoadOptions {
-        bool loadDependencies = true;       // 是否加载依赖
-        bool validateBeforeLoad = true;     // 加载前是否验证
-        bool cacheLoadedModules = true;     // 是否缓存已加载的模块
-        std::vector<std::string> searchPaths; // 额外的搜索路径
+        bool validateBeforeLoad = true;
+        bool loadDependencies = true;
+        bool cacheLoadedModules = true;
+        bool resolveSymlinks = false;
+        int maxDepth = 10;
+        
+        LoadOptions() = default;
     };
     
     CmodLoader();
@@ -140,8 +143,11 @@ private:
     // 验证模块
     bool validateModule(const CmodInfo& info) const;
     
-    // 默认搜索路径
+    // 从配置的默认路径获取
     static std::vector<std::string> getDefaultSearchPaths();
+    
+    // 解析依赖字符串
+    std::vector<std::string> parseDependencies(const std::string& depStr) const;
 };
 
 } // namespace chtl

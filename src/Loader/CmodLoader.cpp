@@ -3,7 +3,11 @@
 #include "CmodSystem/CmodExtractor.h"
 #include "CmodSystem/CmodValidator.h"
 #include "Node/Node.h"
+#include "Node/Element.h"
 #include <filesystem>
+#include <cstdlib>
+#include <algorithm>
+#include <sstream>
 
 namespace chtl {
 
@@ -70,7 +74,7 @@ CmodLoader::LoadResult CmodLoader::loadFromPath(const std::string& modulePath,
     result.info = std::move(info);
     
     // TODO: 实际解析模块文件并创建AST
-    result.rootNode = std::make_shared<Node>(NodeType::DOCUMENT);
+    result.rootNode = std::make_shared<Element>("module");
     
     // 缓存已加载的模块
     if (options.cacheLoadedModules) {
@@ -213,11 +217,11 @@ bool CmodLoader::loadDependencies(const std::string& dependencies,
 
 std::shared_ptr<Node> CmodLoader::parseModuleFile(const std::string& filePath) {
     // TODO: 实际解析模块文件
-    return std::make_shared<Node>(NodeType::DOCUMENT);
+    return std::make_shared<Element>("module-file");
 }
 
 std::shared_ptr<Node> CmodLoader::mergeModuleFiles(const std::vector<std::string>& filePaths) {
-    auto merged = std::make_shared<Node>(NodeType::DOCUMENT);
+    auto merged = std::make_shared<Element>("module");
     
     for (const auto& path : filePaths) {
         auto node = parseModuleFile(path);

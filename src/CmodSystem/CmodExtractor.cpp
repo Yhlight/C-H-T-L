@@ -63,7 +63,7 @@ std::unique_ptr<CmodInfo> CmodExtractor::extractFromDirectory(const std::string&
     return info;
 }
 
-// 从info文件提取模块信息
+// 从info文件提取信息  
 std::unique_ptr<CmodInfo> CmodExtractor::extractFromInfoFile(const std::string& infoFilePath) {
     auto rootNode = parseInfoFile(infoFilePath);
     if (!rootNode) {
@@ -71,20 +71,23 @@ std::unique_ptr<CmodInfo> CmodExtractor::extractFromInfoFile(const std::string& 
     }
     
     auto info = std::make_unique<CmodInfo>();
-    info->infoFilePath = infoFilePath;
     
-    // 查找[Info]和[Export]块
+    // 遍历根节点的子节点，寻找[Info]和[Export]块
     for (const auto& child : rootNode->getChildren()) {
         if (child->getType() == NodeType::INFO) {
-            // 提取Info块的配置信息
-            auto configNode = std::dynamic_pointer_cast<Config>(child);
-            if (configNode) {
-                info = extractFromConfig(configNode);
-                info->infoFilePath = infoFilePath;
+            // 处理[Info]块 - 应该包含一个Config节点
+            for (const auto& infoChild : child->getChildren()) {
+                if (infoChild->getType() == NodeType::CONFIG) {
+                    auto configInfo = extractFromConfig(std::dynamic_pointer_cast<Config>(infoChild));
+                    if (configInfo) {
+                        *info = *configInfo;
+                    }
+                    break;
+                }
             }
         } else if (child->getType() == NodeType::EXPORT) {
             // 提取Export块的导出信息
-            extractExports(*info, child);
+            scanExports(child, info->exportedStyles, info->exportedElements, info->exportedVars);
         }
     }
     
@@ -149,27 +152,13 @@ std::unique_ptr<CmodInfo> CmodExtractor::extractFromConfig(std::shared_ptr<Confi
 }
 
 // 提取导出信息
-void CmodExtractor::extractExports(CmodInfo& info, std::shared_ptr<Node> exportNode) {
-    if (!exportNode || exportNode->getType() != NodeType::EXPORT) {
-        return;
-    }
+CmodExtractor::ExportInfo CmodExtractor::extractExports(const std::string& modulePath) {
+    ExportInfo exports;
     
-    // 遍历Export节点的子节点
-    for (const auto& child : exportNode->getChildren()) {
-        if (child->getType() == NodeType::REFERENCE) {
-            // 提取引用信息
-            std::string refType = child->getAttribute("type");
-            std::string refName = child->getAttribute("name");
-            
-            if (refType == "Style") {
-                info.exportedStyles.push_back(refName);
-            } else if (refType == "Element") {
-                info.exportedElements.push_back(refName);
-            } else if (refType == "Var") {
-                info.exportedVars.push_back(refName);
-            }
-        }
-    }
+    std::string srcPath = modulePath + "/src";
+    scanDirectory(srcPath, exports.styles, exports.elements, exports.vars);
+    
+    return exports;
 }
 
 // 扫描导出信息  

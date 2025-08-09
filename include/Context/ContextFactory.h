@@ -12,9 +12,7 @@ namespace chtl {
 class ChtlContext;
 class CssContext;
 class JsContext;
-namespace chtl_js {
-    class ChtlJsContext;
-}
+// class ChtlJsContext; // TODO: 完整实现后再启用
 
 // 上下文工厂类 - 提供上下文管理
 class ContextFactory {
@@ -45,7 +43,8 @@ public:
     std::shared_ptr<ChtlContext> asChtlContext() const;
     std::shared_ptr<CssContext> asCssContext() const;
     std::shared_ptr<JsContext> asJsContext() const;
-    std::shared_ptr<chtl_js::ChtlJsContext> asChtlJsContext() const;
+    // std::shared_ptr<ChtlJsContext> asChtlJsContext() const; // TODO: 完整实现后再启用
+    std::shared_ptr<void> asChtlJsContext() const; // 临时返回void
     
     // 上下文检查
     bool isInContext(ContextType type) const;

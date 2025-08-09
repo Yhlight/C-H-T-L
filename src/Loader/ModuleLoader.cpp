@@ -3,6 +3,7 @@
 #include "Loader/CmodLoader.h"
 #include "CmodSystem/CmodRegistry.h"
 #include "Node/Node.h"
+#include "Node/Element.h"
 #include <filesystem>
 
 namespace chtl {
@@ -84,7 +85,7 @@ ModuleLoader::LoadResult ModuleLoader::load(const std::string& target) {
                 }
                 fileLoader_->parseAllFiles();
                 // TODO: 合并所有文件的AST
-                result.rootNode = std::make_shared<Node>(NodeType::DOCUMENT);
+                result.rootNode = std::make_shared<Element>("document");
             } else {
                 result.success = false;
                 result.error = "Failed to load directory: " + target;
@@ -206,7 +207,8 @@ std::shared_ptr<Node> ModuleLoader::getMergedAST() const {
     std::vector<std::shared_ptr<Node>> asts;
     
     // 收集所有文件的AST
-    for (const auto& file : fileLoader_->getLoadedFiles()) {
+    std::vector<std::string> loadedFiles = getLoadedFiles();
+    for (const auto& file : loadedFiles) {
         auto ast = fileLoader_->getAST(file);
         if (ast) {
             asts.push_back(ast);
@@ -259,6 +261,7 @@ bool ModuleLoader::hasFile(const std::string& filePath) const {
 std::vector<std::string> ModuleLoader::getLoadedFiles() const {
     std::vector<std::string> files;
     // TODO: FileLoader需要提供获取所有已加载文件的方法
+    // 暂时返回空列表
     return files;
 }
 
@@ -326,7 +329,7 @@ ModuleLoader::LoadType ModuleLoader::detectLoadType(const std::string& target) c
     return LoadType::UNKNOWN;
 }
 
-std::shared_ptr<Node> ModuleLoader::mergeASTs(const std::vector<std::shared_ptr<Node>>& asts) {
+std::shared_ptr<Node> ModuleLoader::mergeASTs(const std::vector<std::shared_ptr<Node>>& asts) const {
     if (asts.empty()) {
         return nullptr;
     }
@@ -336,7 +339,7 @@ std::shared_ptr<Node> ModuleLoader::mergeASTs(const std::vector<std::shared_ptr<
     }
     
     // 创建合并的文档节点
-    auto mergedDoc = std::make_shared<Node>(NodeType::DOCUMENT);
+    auto mergedDoc = std::make_shared<Element>("document");
     
     for (const auto& ast : asts) {
         if (ast) {

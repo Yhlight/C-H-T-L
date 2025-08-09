@@ -1,24 +1,23 @@
 #include "Lexer/ConfigLexer.h"
-#include "State/StateFactory.h"
-#include "Context/ContextFactory.h"
+#include "State/ChtlState.h"
 #include "Context/ChtlContext.h"
 #include <sstream>
 #include <algorithm>
 
 namespace chtl {
 
-ConfigLexer::ConfigLexer()
-    : BasicLexer() {
+ConfigLexer::ConfigLexer() : BasicLexer() {
+    // 基类构造函数已经处理了初始化
 }
 
 std::shared_ptr<BasicState> ConfigLexer::createInitialState() {
-    // ConfigLexer使用特殊的配置状态
-    return StateFactory::createState(StateType::CHTL, this);
+    // 配置词法分析器使用CHTL状态
+    return std::make_shared<ChtlState>(this);
 }
 
 std::shared_ptr<BasicContext> ConfigLexer::createInitialContext() {
     // 使用标准的CHTL上下文
-    return ContextFactory::createContext(ContextType::CHTL);
+    return std::make_shared<ChtlContext>();
 }
 
 bool ConfigLexer::parseConfiguration(const std::string& text) {

@@ -24,7 +24,7 @@ std::shared_ptr<Node> StandardParser::parse() {
     }
     
     // 开始解析
-    getNextToken(); // 读取第一个token
+    // 不要调用getNextToken()，因为peekNextToken()已经会获取第一个token
     return parseDocument();
 }
 

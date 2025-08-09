@@ -56,8 +56,7 @@ void printAST(std::shared_ptr<Node> node, int depth) {
 
 int main() {
     // 简单的CHTL代码（没有style块）
-    std::string chtlCode = R"(
-html {
+    std::string chtlCode = R"(html {
     head {
         title {
             text { "Test Page" }

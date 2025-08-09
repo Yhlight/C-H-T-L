@@ -22,6 +22,14 @@ bool HtmlGenerator::generate(std::shared_ptr<Node> node) {
     
     beginGeneration();
     
+    // 检查是否需要生成DOCTYPE
+    if (htmlState_.hasDoctype && node->getType() == NodeType::ELEMENT) {
+        auto element = std::dynamic_pointer_cast<Element>(node);
+        if (element && element->getTagName() == "html") {
+            generateDoctype();
+        }
+    }
+    
     // 生成节点
     generateNode(node);
     

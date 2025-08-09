@@ -72,10 +72,38 @@ include Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
 Js/CMakeFiles/chtl_js_analyzer.dir/codegen:
 .PHONY : Js/CMakeFiles/chtl_js_analyzer.dir/codegen
 
+Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
+Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o: /workspace/Js/Lexer.cpp
+Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o -c /workspace/Js/Lexer.cpp
+
+Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.i"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Js/Lexer.cpp > CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.i
+
+Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.s"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Js/Lexer.cpp -o CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.s
+
+Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
+Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o: /workspace/Js/Parser.cpp
+Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o -c /workspace/Js/Parser.cpp
+
+Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.i"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Js/Parser.cpp > CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.i
+
+Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.s"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Js/Parser.cpp -o CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.s
+
 Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
 Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o: /workspace/Js/HeuristicJsBackend.cpp
 Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o"
 	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o -c /workspace/Js/HeuristicJsBackend.cpp
 
 Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.i: cmake_force
@@ -86,10 +114,24 @@ Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.s"
 	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Js/HeuristicJsBackend.cpp -o CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.s
 
+Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
+Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o: /workspace/Js/SelfJsBackend.cpp
+Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o -c /workspace/Js/SelfJsBackend.cpp
+
+Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.i"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Js/SelfJsBackend.cpp > CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.i
+
+Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.s"
+	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Js/SelfJsBackend.cpp -o CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.s
+
 Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
 Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o: /workspace/Js/JsAnalyzer.cpp
 Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o"
 	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o -c /workspace/Js/JsAnalyzer.cpp
 
 Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.i: cmake_force
@@ -103,7 +145,7 @@ Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.s: cmake_force
 Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/flags.make
 Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o: /workspace/Js/JsCompiler.cpp
 Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o: Js/CMakeFiles/chtl_js_analyzer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o"
 	cd /workspace/build/Js && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o -MF CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o.d -o CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o -c /workspace/Js/JsCompiler.cpp
 
 Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.i: cmake_force
@@ -116,19 +158,25 @@ Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.s: cmake_force
 
 # Object files for target chtl_js_analyzer
 chtl_js_analyzer_OBJECTS = \
+"CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o" \
+"CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o" \
 "CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o" \
+"CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o" \
 "CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o" \
 "CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o"
 
 # External object files for target chtl_js_analyzer
 chtl_js_analyzer_EXTERNAL_OBJECTS =
 
+Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o
+Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o
 Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o
+Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o
 Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o
 Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o
 Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/build.make
 Js/libchtl_js_analyzer.a: Js/CMakeFiles/chtl_js_analyzer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libchtl_js_analyzer.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libchtl_js_analyzer.a"
 	cd /workspace/build/Js && $(CMAKE_COMMAND) -P CMakeFiles/chtl_js_analyzer.dir/cmake_clean_target.cmake
 	cd /workspace/build/Js && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_js_analyzer.dir/link.txt --verbose=$(VERBOSE)
 

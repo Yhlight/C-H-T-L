@@ -1,2 +1,2 @@
-/usr/bin/ar qc libchtl_css_analyzer.a CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o
+/usr/bin/ar qc libchtl_css_analyzer.a CMakeFiles/chtl_css_analyzer.dir/Lexer.cpp.o CMakeFiles/chtl_css_analyzer.dir/Parser.cpp.o CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.o CMakeFiles/chtl_css_analyzer.dir/SelfCssBackend.cpp.o CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o CMakeFiles/chtl_css_analyzer.dir/CssCompiler.cpp.o
 /usr/bin/ranlib libchtl_css_analyzer.a

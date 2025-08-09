@@ -202,4 +202,7 @@ Js/CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multiset.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h \
-  /workspace/Js/JsBackend.h /workspace/Js/HeuristicJsBackend.h
+  /workspace/Js/JsBackend.h /workspace/Js/SelfJsBackend.h \
+  /workspace/Js/Lexer.h /workspace/Js/Tokens.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstdint \
+  /workspace/Js/Parser.h /workspace/Js/Ast.h

@@ -1,8 +1,16 @@
 add_library(chtl_css_analyzer STATIC
+    Tokens.h
+    Lexer.h
+    Lexer.cpp
+    Ast.h
+    Parser.h
+    Parser.cpp
     CssFindings.h
     CssBackend.h
     HeuristicCssBackend.h
     HeuristicCssBackend.cpp
+    SelfCssBackend.h
+    SelfCssBackend.cpp
     CssAnalyzer.h
     CssAnalyzer.cpp
     CssCompileResult.h

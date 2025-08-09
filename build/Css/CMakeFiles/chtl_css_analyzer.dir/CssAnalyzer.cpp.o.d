@@ -205,4 +205,7 @@ Css/CMakeFiles/chtl_css_analyzer.dir/CssAnalyzer.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/map \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_map.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multimap.h \
-  /workspace/Css/CssBackend.h /workspace/Css/HeuristicCssBackend.h
+  /workspace/Css/CssBackend.h /workspace/Css/SelfCssBackend.h \
+  /workspace/Css/Lexer.h /workspace/Css/Tokens.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstdint \
+  /workspace/Css/Parser.h /workspace/Css/Ast.h

@@ -1,8 +1,16 @@
 add_library(chtl_js_analyzer STATIC
+    Tokens.h
+    Lexer.h
+    Lexer.cpp
+    Ast.h
+    Parser.h
+    Parser.cpp
     JsFindings.h
     JsBackend.h
     HeuristicJsBackend.h
     HeuristicJsBackend.cpp
+    SelfJsBackend.h
+    SelfJsBackend.cpp
     JsAnalyzer.h
     JsAnalyzer.cpp
     JsCompileResult.h

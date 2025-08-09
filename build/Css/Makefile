@@ -202,6 +202,78 @@ HeuristicCssBackend.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/HeuristicCssBackend.cpp.s
 .PHONY : HeuristicCssBackend.cpp.s
 
+Lexer.o: Lexer.cpp.o
+.PHONY : Lexer.o
+
+# target to build an object file
+Lexer.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Lexer.cpp.o
+.PHONY : Lexer.cpp.o
+
+Lexer.i: Lexer.cpp.i
+.PHONY : Lexer.i
+
+# target to preprocess a source file
+Lexer.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Lexer.cpp.i
+.PHONY : Lexer.cpp.i
+
+Lexer.s: Lexer.cpp.s
+.PHONY : Lexer.s
+
+# target to generate assembly for a file
+Lexer.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Lexer.cpp.s
+.PHONY : Lexer.cpp.s
+
+Parser.o: Parser.cpp.o
+.PHONY : Parser.o
+
+# target to build an object file
+Parser.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Parser.cpp.o
+.PHONY : Parser.cpp.o
+
+Parser.i: Parser.cpp.i
+.PHONY : Parser.i
+
+# target to preprocess a source file
+Parser.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Parser.cpp.i
+.PHONY : Parser.cpp.i
+
+Parser.s: Parser.cpp.s
+.PHONY : Parser.s
+
+# target to generate assembly for a file
+Parser.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/Parser.cpp.s
+.PHONY : Parser.cpp.s
+
+SelfCssBackend.o: SelfCssBackend.cpp.o
+.PHONY : SelfCssBackend.o
+
+# target to build an object file
+SelfCssBackend.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/SelfCssBackend.cpp.o
+.PHONY : SelfCssBackend.cpp.o
+
+SelfCssBackend.i: SelfCssBackend.cpp.i
+.PHONY : SelfCssBackend.i
+
+# target to preprocess a source file
+SelfCssBackend.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/SelfCssBackend.cpp.i
+.PHONY : SelfCssBackend.cpp.i
+
+SelfCssBackend.s: SelfCssBackend.cpp.s
+.PHONY : SelfCssBackend.s
+
+# target to generate assembly for a file
+SelfCssBackend.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/SelfCssBackend.cpp.s
+.PHONY : SelfCssBackend.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -220,6 +292,15 @@ help:
 	@echo "... HeuristicCssBackend.o"
 	@echo "... HeuristicCssBackend.i"
 	@echo "... HeuristicCssBackend.s"
+	@echo "... Lexer.o"
+	@echo "... Lexer.i"
+	@echo "... Lexer.s"
+	@echo "... Parser.o"
+	@echo "... Parser.i"
+	@echo "... Parser.s"
+	@echo "... SelfCssBackend.o"
+	@echo "... SelfCssBackend.i"
+	@echo "... SelfCssBackend.s"
 .PHONY : help
 
 

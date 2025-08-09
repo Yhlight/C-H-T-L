@@ -29,6 +29,11 @@ file(GLOB_RECURSE LIB_SOURCES
     "${CMAKE_SOURCE_DIR}/src/State/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/Node/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/Parser/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Generator/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Css/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Js/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Chtl_Js/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Scanner/*.cpp"
 )
 
 # 创建主可执行文件

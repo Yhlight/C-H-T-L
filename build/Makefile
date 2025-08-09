@@ -343,6 +343,72 @@ src/Context/ContextFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.s
 .PHONY : src/Context/ContextFactory.cpp.s
 
+src/Generator/BasicGenerator.o: src/Generator/BasicGenerator.cpp.o
+.PHONY : src/Generator/BasicGenerator.o
+
+# target to build an object file
+src/Generator/BasicGenerator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.o
+.PHONY : src/Generator/BasicGenerator.cpp.o
+
+src/Generator/BasicGenerator.i: src/Generator/BasicGenerator.cpp.i
+.PHONY : src/Generator/BasicGenerator.i
+
+# target to preprocess a source file
+src/Generator/BasicGenerator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.i
+.PHONY : src/Generator/BasicGenerator.cpp.i
+
+src/Generator/BasicGenerator.s: src/Generator/BasicGenerator.cpp.s
+.PHONY : src/Generator/BasicGenerator.s
+
+# target to generate assembly for a file
+src/Generator/BasicGenerator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.s
+.PHONY : src/Generator/BasicGenerator.cpp.s
+
+src/Generator/ConfigGenerator.o: src/Generator/ConfigGenerator.cpp.o
+.PHONY : src/Generator/ConfigGenerator.o
+
+# target to build an object file
+src/Generator/ConfigGenerator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o
+.PHONY : src/Generator/ConfigGenerator.cpp.o
+
+src/Generator/ConfigGenerator.i: src/Generator/ConfigGenerator.cpp.i
+.PHONY : src/Generator/ConfigGenerator.i
+
+# target to preprocess a source file
+src/Generator/ConfigGenerator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.i
+.PHONY : src/Generator/ConfigGenerator.cpp.i
+
+src/Generator/ConfigGenerator.s: src/Generator/ConfigGenerator.cpp.s
+.PHONY : src/Generator/ConfigGenerator.s
+
+# target to generate assembly for a file
+src/Generator/ConfigGenerator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.s
+.PHONY : src/Generator/ConfigGenerator.cpp.s
+
 src/Lexer/BasicLexer.o: src/Lexer/BasicLexer.cpp.o
 .PHONY : src/Lexer/BasicLexer.o
 
@@ -1028,6 +1094,12 @@ help:
 	@echo "... src/Context/ContextFactory.o"
 	@echo "... src/Context/ContextFactory.i"
 	@echo "... src/Context/ContextFactory.s"
+	@echo "... src/Generator/BasicGenerator.o"
+	@echo "... src/Generator/BasicGenerator.i"
+	@echo "... src/Generator/BasicGenerator.s"
+	@echo "... src/Generator/ConfigGenerator.o"
+	@echo "... src/Generator/ConfigGenerator.i"
+	@echo "... src/Generator/ConfigGenerator.s"
 	@echo "... src/Lexer/BasicLexer.o"
 	@echo "... src/Lexer/BasicLexer.i"
 	@echo "... src/Lexer/BasicLexer.s"

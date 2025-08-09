@@ -1,0 +1,330 @@
+#include "Generator/BasicGenerator.h"
+#include <sstream>
+#include <iostream>
+
+namespace chtl {
+
+BasicGenerator::BasicGenerator()
+    : context_(nullptr),
+      rootNode_(nullptr),
+      state_(GeneratorState::INITIAL),
+      output_(nullptr),
+      currentIndentLevel_(0),
+      linesGenerated_(0),
+      bytesGenerated_(0) {
+    updateIndent();
+}
+
+BasicGenerator::~BasicGenerator() {
+    if (fileStream_ && fileStream_->is_open()) {
+        fileStream_->close();
+    }
+}
+
+bool BasicGenerator::initialize(std::shared_ptr<BasicContext> context) {
+    if (!context) {
+        reportError("Invalid context provided to generator");
+        return false;
+    }
+    
+    context_ = context;
+    state_ = GeneratorState::INITIAL;
+    errors_.clear();
+    warnings_.clear();
+    linesGenerated_ = 0;
+    bytesGenerated_ = 0;
+    currentIndentLevel_ = 0;
+    updateIndent();
+    
+    return true;
+}
+
+bool BasicGenerator::generateToFile(std::shared_ptr<Node> node, const std::string& filename) {
+    if (!node) {
+        reportError("Cannot generate from null node");
+        return false;
+    }
+    
+    fileStream_ = std::make_unique<std::ofstream>(filename);
+    if (!fileStream_->is_open()) {
+        reportError("Failed to open output file: " + filename);
+        return false;
+    }
+    
+    output_ = fileStream_.get();
+    bool result = generate(node);
+    
+    fileStream_->close();
+    fileStream_.reset();
+    output_ = nullptr;
+    
+    return result;
+}
+
+bool BasicGenerator::generateToStream(std::shared_ptr<Node> node, std::ostream& stream) {
+    if (!node) {
+        reportError("Cannot generate from null node");
+        return false;
+    }
+    
+    output_ = &stream;
+    bool result = generate(node);
+    output_ = nullptr;
+    
+    return result;
+}
+
+bool BasicGenerator::generateToString(std::shared_ptr<Node> node, std::string& result) {
+    if (!node) {
+        reportError("Cannot generate from null node");
+        return false;
+    }
+    
+    std::ostringstream oss;
+    output_ = &oss;
+    bool success = generate(node);
+    output_ = nullptr;
+    
+    if (success) {
+        result = oss.str();
+    }
+    
+    return success;
+}
+
+void BasicGenerator::write(const std::string& text) {
+    if (output_) {
+        *output_ << text;
+        bytesGenerated_ += text.length();
+    }
+}
+
+void BasicGenerator::writeLine(const std::string& text) {
+    if (output_) {
+        if (!text.empty()) {
+            write(text);
+        }
+        write(config_.lineEnding);
+        linesGenerated_++;
+    }
+}
+
+void BasicGenerator::writeIndent() {
+    if (config_.prettyPrint && !config_.minify) {
+        write(currentIndent_);
+    }
+}
+
+void BasicGenerator::increaseIndent() {
+    currentIndentLevel_++;
+    updateIndent();
+}
+
+void BasicGenerator::decreaseIndent() {
+    if (currentIndentLevel_ > 0) {
+        currentIndentLevel_--;
+        updateIndent();
+    }
+}
+
+void BasicGenerator::updateIndent() {
+    if (config_.prettyPrint && !config_.minify) {
+        if (config_.useSpaces) {
+            currentIndent_ = std::string(currentIndentLevel_ * config_.indentSize, ' ');
+        } else {
+            currentIndent_ = std::string(currentIndentLevel_, '\t');
+        }
+    } else {
+        currentIndent_.clear();
+    }
+}
+
+void BasicGenerator::reportError(const std::string& message) {
+    errors_.push_back(message);
+    state_ = GeneratorState::ERROR;
+}
+
+void BasicGenerator::reportWarning(const std::string& message) {
+    warnings_.push_back(message);
+}
+
+void BasicGenerator::generateNode(std::shared_ptr<Node> node) {
+    if (!node) {
+        return;
+    }
+    
+    switch (node->getType()) {
+        case NodeType::ELEMENT:
+            generateElement(node);
+            break;
+        case NodeType::TEXT:
+            generateText(node);
+            break;
+        case NodeType::COMMENT:
+            generateComment(node);
+            break;
+        case NodeType::TEMPLATE:
+            generateTemplate(node);
+            break;
+        case NodeType::CUSTOM:
+            generateCustom(node);
+            break;
+        case NodeType::STYLE:
+            generateStyle(node);
+            break;
+        case NodeType::CONFIG:
+            generateConfig(node);
+            break;
+        case NodeType::IMPORT:
+            generateImport(node);
+            break;
+        case NodeType::NAMESPACE:
+            generateNamespace(node);
+            break;
+        case NodeType::OPERATE:
+            generateOperate(node);
+            break;
+        case NodeType::ORIGIN:
+            generateOrigin(node);
+            break;
+        default:
+            reportWarning("Unknown node type encountered");
+            break;
+    }
+}
+
+void BasicGenerator::beginGeneration() {
+    state_ = GeneratorState::GENERATING;
+    
+    if (config_.insertComments && !config_.minify) {
+        writeLine("<!-- Generated by CHTL Compiler -->");
+    }
+}
+
+void BasicGenerator::endGeneration() {
+    if (state_ != GeneratorState::ERROR) {
+        state_ = GeneratorState::SUCCESS;
+    }
+}
+
+std::string BasicGenerator::escapeHtml(const std::string& text) {
+    std::string result;
+    result.reserve(text.length() * 1.2); // 预留空间
+    
+    for (char c : text) {
+        switch (c) {
+            case '<':
+                result += "&lt;";
+                break;
+            case '>':
+                result += "&gt;";
+                break;
+            case '&':
+                result += "&amp;";
+                break;
+            case '"':
+                result += "&quot;";
+                break;
+            case '\'':
+                result += "&#39;";
+                break;
+            default:
+                result += c;
+                break;
+        }
+    }
+    
+    return result;
+}
+
+std::string BasicGenerator::escapeAttribute(const std::string& text) {
+    std::string result;
+    result.reserve(text.length() * 1.2);
+    
+    for (char c : text) {
+        switch (c) {
+            case '"':
+                result += "&quot;";
+                break;
+            case '&':
+                result += "&amp;";
+                break;
+            case '<':
+                result += "&lt;";
+                break;
+            case '>':
+                result += "&gt;";
+                break;
+            default:
+                result += c;
+                break;
+        }
+    }
+    
+    return result;
+}
+
+std::string BasicGenerator::escapeJavaScript(const std::string& text) {
+    std::string result;
+    result.reserve(text.length() * 1.2);
+    
+    for (char c : text) {
+        switch (c) {
+            case '\\':
+                result += "\\\\";
+                break;
+            case '"':
+                result += "\\\"";
+                break;
+            case '\'':
+                result += "\\'";
+                break;
+            case '\n':
+                result += "\\n";
+                break;
+            case '\r':
+                result += "\\r";
+                break;
+            case '\t':
+                result += "\\t";
+                break;
+            case '\b':
+                result += "\\b";
+                break;
+            case '\f':
+                result += "\\f";
+                break;
+            default:
+                result += c;
+                break;
+        }
+    }
+    
+    return result;
+}
+
+std::string BasicGenerator::escapeCss(const std::string& text) {
+    std::string result;
+    result.reserve(text.length() * 1.2);
+    
+    for (char c : text) {
+        if (c == '\\') {
+            result += "\\\\";
+        } else if (c == '"') {
+            result += "\\\"";
+        } else if (c == '\'') {
+            result += "\\'";
+        } else if (c < 32 || c > 126) {
+            // 转义非ASCII字符
+            char buf[8];
+            snprintf(buf, sizeof(buf), "\\%02X", static_cast<unsigned char>(c));
+            result += buf;
+        } else {
+            result += c;
+        }
+    }
+    
+    return result;
+}
+
+} // namespace chtl

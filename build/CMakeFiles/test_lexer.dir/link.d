@@ -7,6 +7,8 @@ bin/test_lexer: \
   CMakeFiles/test_lexer.dir/src/Context/BasicContext.cpp.o \
   CMakeFiles/test_lexer.dir/src/Context/ChtlContext.cpp.o \
   CMakeFiles/test_lexer.dir/src/Context/ContextFactory.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.o \
   CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.o \
@@ -68,6 +70,10 @@ CMakeFiles/test_lexer.dir/src/Context/BasicContext.cpp.o:
 CMakeFiles/test_lexer.dir/src/Context/ChtlContext.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/Context/ContextFactory.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.o:
 

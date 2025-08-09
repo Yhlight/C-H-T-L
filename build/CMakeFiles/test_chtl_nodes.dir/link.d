@@ -7,6 +7,8 @@ bin/test_chtl_nodes: \
   CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.o \
@@ -68,6 +70,10 @@ CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.o:
 CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.o:
+
+CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.o:
+
+CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o:
 

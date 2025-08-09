@@ -22,14 +22,6 @@ bool HtmlGenerator::generate(std::shared_ptr<Node> node) {
     
     beginGeneration();
     
-    // 如果需要生成DOCTYPE
-    if (htmlState_.hasDoctype && node->getType() == NodeType::ELEMENT) {
-        auto element = std::dynamic_pointer_cast<Element>(node);
-        if (element && element->getTagName() == "html") {
-            generateDoctype();
-        }
-    }
-    
     // 生成节点
     generateNode(node);
     
@@ -52,6 +44,25 @@ void HtmlGenerator::generateElement(std::shared_ptr<Node> node) {
     }
     
     const std::string& tagName = element->getTagName();
+    
+    // 特殊处理document节点
+    if (tagName == "document") {
+        // 查找html子节点并生成DOCTYPE
+        for (const auto& child : element->getChildren()) {
+            if (child->getType() == NodeType::ELEMENT) {
+                auto childElement = std::dynamic_pointer_cast<Element>(child);
+                if (childElement && childElement->getTagName() == "html" && htmlState_.hasDoctype) {
+                    generateDoctype();
+                    break;
+                }
+            }
+        }
+        // 生成所有子节点
+        for (const auto& child : element->getChildren()) {
+            generateNode(child);
+        }
+        return;
+    }
     
     // 转换属性格式
     std::map<std::string, std::string> attributes;

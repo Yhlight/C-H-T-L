@@ -50,6 +50,9 @@ add_executable(test_node ${LIB_SOURCES} src/test_node.cpp)
 add_executable(test_chtl_nodes ${LIB_SOURCES} src/test_chtl_nodes.cpp)
 add_executable(test_bridge_scanner ${LIB_SOURCES} src/test_bridge_scanner.cpp)
 add_executable(test_comment ${LIB_SOURCES} src/test_comment.cpp)
+add_executable(test_parser ${LIB_SOURCES} src/test_parser.cpp)
+add_executable(test_simple_parser ${LIB_SOURCES} src/test_simple_parser.cpp)
+add_executable(test_html_parsing ${LIB_SOURCES} src/test_html_parsing.cpp)
 
 # 启用测试
 enable_testing()

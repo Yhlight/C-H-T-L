@@ -36,7 +36,17 @@ protected:
     std::shared_ptr<Node> parseOrigin();
     
     // 辅助方法
-    std::shared_ptr<Node> parseAttributes();
+    Token advance();
+    Token currentToken();
+    Token peek();
+    bool check(TokenType type);
+    bool match(TokenType type);
+    Token consume(TokenType type, const std::string& message);
+    
+    void parseAttribute(std::shared_ptr<Element> element);
+    void parseElementContent(std::shared_ptr<Element> element);
+    std::shared_ptr<Node> parseInlineStyle(std::shared_ptr<Element> element);
+    void parseInlineStyleContent(std::shared_ptr<Element> element, const std::string& content);
     bool isStartOfElement();
     bool isStartOfTemplate();
     bool isStartOfCustom();

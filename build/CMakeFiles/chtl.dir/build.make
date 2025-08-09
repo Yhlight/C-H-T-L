@@ -198,24 +198,10 @@ CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/BasicLexer.cpp -o CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.s
 
-CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o: CMakeFiles/chtl.dir/flags.make
-CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o: /workspace/src/Lexer/ChtlLexer.cpp
-CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o -MF CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o.d -o CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o -c /workspace/src/Lexer/ChtlLexer.cpp
-
-CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Lexer/ChtlLexer.cpp > CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.i
-
-CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/ChtlLexer.cpp -o CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.s
-
 CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o: /workspace/src/Lexer/ConfigLexer.cpp
 CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o -MF CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o.d -o CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o -c /workspace/src/Lexer/ConfigLexer.cpp
 
 CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.i: cmake_force
@@ -225,6 +211,20 @@ CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.i: cmake_force
 CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/ConfigLexer.cpp -o CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.s
+
+CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o: CMakeFiles/chtl.dir/flags.make
+CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o: /workspace/src/Lexer/SimpleLexer.cpp
+CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o: CMakeFiles/chtl.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o -MF CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o.d -o CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o -c /workspace/src/Lexer/SimpleLexer.cpp
+
+CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Lexer/SimpleLexer.cpp > CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.i
+
+CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Lexer/SimpleLexer.cpp -o CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.s
 
 CMakeFiles/chtl.dir/src/Node/Comment.cpp.o: CMakeFiles/chtl.dir/flags.make
 CMakeFiles/chtl.dir/src/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
@@ -475,8 +475,8 @@ chtl_OBJECTS = \
 "CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o" \
 "CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o" \
 "CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o" \
-"CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o" \
 "CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o" \
+"CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o" \
 "CMakeFiles/chtl.dir/src/Node/Comment.cpp.o" \
 "CMakeFiles/chtl.dir/src/Node/Config.cpp.o" \
 "CMakeFiles/chtl.dir/src/Node/Custom.cpp.o" \
@@ -507,8 +507,8 @@ bin/chtl: CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o
-bin/chtl: CMakeFiles/chtl.dir/src/Lexer/ChtlLexer.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o
+bin/chtl: CMakeFiles/chtl.dir/src/Lexer/SimpleLexer.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Node/Comment.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Node/Config.cpp.o
 bin/chtl: CMakeFiles/chtl.dir/src/Node/Custom.cpp.o

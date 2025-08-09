@@ -8,7 +8,7 @@
 #include "ChtlContext.h"
 #include "CssContext.h"
 #include "JsContext.h"
-#include "Chtl_JsState.h"
+#include "Chtl_JsContext.h"
 
 namespace CHTL
 {

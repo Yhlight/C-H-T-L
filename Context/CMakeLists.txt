@@ -4,7 +4,7 @@ add_library(chtl_context STATIC
     ChtlContext.h
     CssContext.h
     JsContext.h
-    Chtl_JsState.h
+    Chtl_JsContext.h
     ContextFactory.h
 )
 

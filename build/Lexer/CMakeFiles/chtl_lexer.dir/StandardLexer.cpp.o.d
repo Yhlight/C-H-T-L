@@ -217,4 +217,4 @@ Lexer/CMakeFiles/chtl_lexer.dir/StandardLexer.cpp.o: \
   /workspace/Lexer/../Context/ChtlContext.h \
   /workspace/Lexer/../Context/CssContext.h \
   /workspace/Lexer/../Context/JsContext.h \
-  /workspace/Lexer/../Context/Chtl_JsState.h
+  /workspace/Lexer/../Context/Chtl_JsContext.h

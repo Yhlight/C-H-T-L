@@ -33,6 +33,7 @@ namespace CHTL
                 {"[Origin]", TokenType::KeywordOrigin},
                 {"[Import]", TokenType::KeywordImport},
                 {"[Namespace]", TokenType::KeywordNamespace},
+                {"[Configuration]", TokenType::KeywordConfiguration},
             };
             return mapInstance;
         }
@@ -47,6 +48,7 @@ namespace CHTL
                 {TokenType::KeywordOrigin, "[Origin]"},
                 {TokenType::KeywordImport, "[Import]"},
                 {TokenType::KeywordNamespace, "[Namespace]"},
+                {TokenType::KeywordConfiguration, "[Configuration]"},
                 {TokenType::KeywordInherit, "inherit"},
                 {TokenType::KeywordDelete, "delete"},
                 {TokenType::KeywordInsert, "insert"},

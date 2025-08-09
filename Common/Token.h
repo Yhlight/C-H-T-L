@@ -21,6 +21,7 @@ namespace CHTL
         KeywordOrigin,
         KeywordImport,
         KeywordNamespace,
+        KeywordConfiguration,
         KeywordInherit,
         KeywordDelete,
         KeywordInsert,

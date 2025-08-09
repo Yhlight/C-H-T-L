@@ -1,20 +1,14 @@
-# CSS Compiler Module
+# CSS Static Analyzer Module
 set(CSS_SOURCES
-    CssLexer.cpp
-    CssParser.cpp
-    CssGenerator.cpp
-    CssCompiler.cpp
+    CssAnalyzer.cpp
     CssTokenizer.cpp
-    CssAst.cpp
+    CssBlockExtractor.cpp
 )
 
 set(CSS_HEADERS
-    CssLexer.h
-    CssParser.h
-    CssGenerator.h
-    CssCompiler.h
+    CssAnalyzer.h
     CssTokenizer.h
-    CssAst.h
+    CssBlockExtractor.h
     CssTypes.h
 )
 

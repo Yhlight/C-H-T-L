@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_js_analyzer.a CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o
+/usr/bin/ranlib libchtl_js_analyzer.a

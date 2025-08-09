@@ -40,3 +40,9 @@
 /workspace/build/Loader/CMakeFiles/rebuild_cache.dir
 /workspace/build/CmodSystem/CMakeFiles/edit_cache.dir
 /workspace/build/CmodSystem/CMakeFiles/rebuild_cache.dir
+/workspace/build/Css/CMakeFiles/chtl_css_analyzer.dir
+/workspace/build/Css/CMakeFiles/edit_cache.dir
+/workspace/build/Css/CMakeFiles/rebuild_cache.dir
+/workspace/build/Js/CMakeFiles/chtl_js_analyzer.dir
+/workspace/build/Js/CMakeFiles/edit_cache.dir
+/workspace/build/Js/CMakeFiles/rebuild_cache.dir

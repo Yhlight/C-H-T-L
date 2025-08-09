@@ -441,7 +441,7 @@ Lexer/CMakeFiles/chtl_lexer.dir/StandardLexer.cpp.o
  /workspace/Common/Types.h
  /workspace/Context/BasicContext.h
  /workspace/Context/ChtlContext.h
- /workspace/Context/Chtl_JsState.h
+ /workspace/Context/Chtl_JsContext.h
  /workspace/Context/ContextFactory.h
  /workspace/Context/CssContext.h
  /workspace/Context/JsContext.h

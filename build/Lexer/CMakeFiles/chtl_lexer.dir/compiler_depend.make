@@ -439,7 +439,7 @@ Lexer/CMakeFiles/chtl_lexer.dir/StandardLexer.cpp.o: /workspace/Lexer/StandardLe
   /workspace/Common/Types.h \
   /workspace/Context/BasicContext.h \
   /workspace/Context/ChtlContext.h \
-  /workspace/Context/Chtl_JsState.h \
+  /workspace/Context/Chtl_JsContext.h \
   /workspace/Context/ContextFactory.h \
   /workspace/Context/CssContext.h \
   /workspace/Context/JsContext.h \
@@ -493,8 +493,6 @@ Lexer/CMakeFiles/chtl_lexer.dir/StandardLexer.cpp.o: /workspace/Lexer/StandardLe
 /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h:
-
-/workspace/Context/Chtl_JsState.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h:
 
@@ -745,6 +743,8 @@ Lexer/CMakeFiles/chtl_lexer.dir/StandardLexer.cpp.o: /workspace/Lexer/StandardLe
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/linux/posix_types.h:
+
+/workspace/Context/Chtl_JsContext.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 

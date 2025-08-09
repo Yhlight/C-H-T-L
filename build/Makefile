@@ -246,6 +246,32 @@ chtlc/fast:
 	$(MAKE) $(MAKESILENT) -f App/CMakeFiles/chtlc.dir/build.make App/CMakeFiles/chtlc.dir/build
 .PHONY : chtlc/fast
 
+#=============================================================================
+# Target rules for targets named chtl_css_analyzer
+
+# Build rule for target.
+chtl_css_analyzer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_css_analyzer
+.PHONY : chtl_css_analyzer
+
+# fast build rule for target.
+chtl_css_analyzer/fast:
+	$(MAKE) $(MAKESILENT) -f Css/CMakeFiles/chtl_css_analyzer.dir/build.make Css/CMakeFiles/chtl_css_analyzer.dir/build
+.PHONY : chtl_css_analyzer/fast
+
+#=============================================================================
+# Target rules for targets named chtl_js_analyzer
+
+# Build rule for target.
+chtl_js_analyzer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_js_analyzer
+.PHONY : chtl_js_analyzer
+
+# fast build rule for target.
+chtl_js_analyzer/fast:
+	$(MAKE) $(MAKESILENT) -f Js/CMakeFiles/chtl_js_analyzer.dir/build.make Js/CMakeFiles/chtl_js_analyzer.dir/build
+.PHONY : chtl_js_analyzer/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -256,7 +282,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... chtl_common"
 	@echo "... chtl_context"
+	@echo "... chtl_css_analyzer"
 	@echo "... chtl_generator"
+	@echo "... chtl_js_analyzer"
 	@echo "... chtl_lexer"
 	@echo "... chtl_node"
 	@echo "... chtl_parser"

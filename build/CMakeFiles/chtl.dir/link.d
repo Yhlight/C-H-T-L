@@ -4,6 +4,8 @@ bin/chtl: \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o \
   CMakeFiles/chtl.dir/src/common/Token.cpp.o \
+  CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o \
+  CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o \
   CMakeFiles/chtl.dir/src/main.cpp.o \
   CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o \
@@ -44,6 +46,10 @@ bin/chtl: \
 CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o:
 
 CMakeFiles/chtl.dir/src/common/Token.cpp.o:
+
+CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o:
+
+CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o:
 
 CMakeFiles/chtl.dir/src/main.cpp.o:
 

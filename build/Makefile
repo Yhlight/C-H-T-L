@@ -187,6 +187,54 @@ src/common/Token.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.s
 .PHONY : src/common/Token.cpp.s
 
+src/context/BasicContext.o: src/context/BasicContext.cpp.o
+.PHONY : src/context/BasicContext.o
+
+# target to build an object file
+src/context/BasicContext.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o
+.PHONY : src/context/BasicContext.cpp.o
+
+src/context/BasicContext.i: src/context/BasicContext.cpp.i
+.PHONY : src/context/BasicContext.i
+
+# target to preprocess a source file
+src/context/BasicContext.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.i
+.PHONY : src/context/BasicContext.cpp.i
+
+src/context/BasicContext.s: src/context/BasicContext.cpp.s
+.PHONY : src/context/BasicContext.s
+
+# target to generate assembly for a file
+src/context/BasicContext.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/BasicContext.cpp.s
+.PHONY : src/context/BasicContext.cpp.s
+
+src/context/ChtlContext.o: src/context/ChtlContext.cpp.o
+.PHONY : src/context/ChtlContext.o
+
+# target to build an object file
+src/context/ChtlContext.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o
+.PHONY : src/context/ChtlContext.cpp.o
+
+src/context/ChtlContext.i: src/context/ChtlContext.cpp.i
+.PHONY : src/context/ChtlContext.i
+
+# target to preprocess a source file
+src/context/ChtlContext.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.i
+.PHONY : src/context/ChtlContext.cpp.i
+
+src/context/ChtlContext.s: src/context/ChtlContext.cpp.s
+.PHONY : src/context/ChtlContext.s
+
+# target to generate assembly for a file
+src/context/ChtlContext.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.s
+.PHONY : src/context/ChtlContext.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -275,6 +323,12 @@ help:
 	@echo "... src/common/Token.o"
 	@echo "... src/common/Token.i"
 	@echo "... src/common/Token.s"
+	@echo "... src/context/BasicContext.o"
+	@echo "... src/context/BasicContext.i"
+	@echo "... src/context/BasicContext.s"
+	@echo "... src/context/ChtlContext.o"
+	@echo "... src/context/ChtlContext.i"
+	@echo "... src/context/ChtlContext.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -116,6 +116,17 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
 
 19. **继续开发**："继续你的开发即可"
 
+### 第六阶段：CSS/JS静态分析器
+20. **实现CSS和JS编译器**："下一步是实现CSS编译器和JS编译器"
+    - 用户说明：CSS和JS编译器不是真的编译器，而是静态分析器
+    - 不需要能够运行，也不需要能够读懂
+    - 但要能够做到静态分析
+
+21. **现代语法支持**：
+    - CSS编译器和JS编译器需要较现代支持
+    - 例如至少支持ES2022的语法
+    - CSS和JS编译器不会处理CHTL的内容，而是处理原生的CSS和JS
+
 ## 当前项目结构
 
 ```
@@ -167,11 +178,29 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
 │       └── BridgeScanner.h
 ├── src/
 │   └── (对应的实现文件)
+├── Css/
+│   ├── CMakeLists.txt
+│   ├── CssTypes.h
+│   ├── CssAnalyzer.h
+│   ├── CssAnalyzer.cpp
+│   ├── CssTokenizer.h
+│   ├── CssTokenizer.cpp
+│   └── CssBlockExtractor.h
+├── Js/
+│   ├── CMakeLists.txt
+│   ├── JsTypes.h
+│   ├── JsAnalyzer.h
+│   ├── JsAnalyzer.cpp
+│   ├── JsTokenizer.h
+│   └── JsBlockExtractor.h
+├── Chtl_Js/
+│   └── (待实现)
 ├── examples/
 │   ├── simple.chtl
 │   ├── test.chtl
 │   ├── complete_demo.chtl
-│   └── basic_demo.chtl
+│   ├── basic_demo.chtl
+│   └── showcase.chtl
 ├── tests/
 ├── docs/
 ├── CMakeLists.txt
@@ -220,6 +249,8 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
    - ✅ Namespace定义和使用（支持嵌套命名空间）
    - ✅ Operate节点解析（insert、delete、replace操作）
    - ✅ Origin节点解析（原始HTML、CSS、JavaScript嵌入）
+   - ✅ CSS静态分析器（支持现代CSS特性）
+   - ✅ JS静态分析器（支持ES2022+）
 
 2. **正在进行**
    - 🔄 实现模板展开机制
@@ -227,10 +258,10 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
    - 🔄 优化代码生成器
 
 3. **待完成**
-   - ⏳ CSS状态机（CssState）
-   - ⏳ JavaScript状态机（JsState）
-   - ⏳ 导入系统
-   - ⏳ 命名空间支持
+   - ⏳ CHTL-JS编译器（Chtl_Js）
+   - ⏳ CSS/JS的完整tokenizer实现
+   - ⏳ CSS/JS的block extractor实现
+   - ⏳ 导入系统的完整实现
    - ⏳ 优化系统
    - ⏳ 完整测试套件
 
@@ -300,6 +331,113 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
 - ✅ 支持DOCTYPE生成
 - ✅ 支持基本HTML输出
 
+### 第五阶段：CSS/JS静态分析器（已完成）
+- ✅ CSS静态分析器设计和实现
+- ✅ JS静态分析器设计和实现
+- ✅ 支持现代语法特性
+
+## CSS/JS静态分析器实现
+
+### CSS静态分析器
+位置：`/workspace/Css/`
+
+**设计目标**：
+- 支持现代CSS语法（CSS3+）
+- 静态分析CSS结构，不执行
+- 检测现代CSS特性使用情况
+- 提取关键信息供CHTL编译器使用
+
+**实现的功能**：
+1. **现代CSS特性检测**：
+   - CSS Variables（自定义属性）
+   - Grid Layout
+   - Flexbox
+   - Container Queries (@container)
+   - Cascade Layers (@layer)
+   - :has() 选择器
+   - :is()/:where() 选择器
+   - Logical Properties
+   - aspect-ratio
+   - color() 函数
+   - subgrid
+
+2. **CSS结构分析**：
+   - 选择器提取和分析
+   - 类名和ID提取
+   - @规则处理（@media, @layer, @container等）
+   - CSS变量定义和使用分析
+   - 属性值对提取
+
+3. **语法验证**：
+   - 括号平衡检查
+   - 基础语法验证
+   - 注释处理
+
+4. **代码质量分析**：
+   - 规则统计
+   - 选择器复杂度
+   - 嵌套深度分析
+
+关键文件：
+- `CssTypes.h`：定义CSS相关类型、现代特性枚举
+- `CssAnalyzer.h/cpp`：主分析器实现
+- `CssTokenizer.h/cpp`：CSS词法分析（基础实现）
+- `CssBlockExtractor.h`：CSS块提取器（接口）
+
+### JS静态分析器
+位置：`/workspace/Js/`
+
+**设计目标**：
+- 支持ES2022+语法
+- 静态分析JavaScript结构
+- 检测现代JS特性使用情况
+- 提供代码质量指标
+
+**实现的功能**：
+1. **ES版本检测**：
+   - ES6/ES2015：箭头函数、类、模板字符串、解构、let/const、模块等
+   - ES2017：async/await
+   - ES2020：可选链（?.）、空值合并（??）、BigInt、动态import
+   - ES2022：顶层await、私有字段（#）、静态块、Error.cause、Array.at()
+   - ESNext：装饰器等提案特性
+
+2. **代码结构分析**：
+   - 函数提取（普通函数、箭头函数、async函数、生成器）
+   - 类分析（字段、方法、继承）
+   - 变量和常量声明
+   - import/export分析
+   - 依赖关系提取
+
+3. **代码质量分析**：
+   - 圈复杂度计算
+   - 嵌套深度分析
+   - 代码行统计
+   - 潜在问题检测
+
+4. **语法验证**：
+   - 括号平衡检查
+   - 字符串和模板字符串处理
+   - 注释处理（单行//和多行/* */）
+
+关键文件：
+- `JsTypes.h`：定义JS相关类型、ES版本枚举、现代特性结构
+- `JsAnalyzer.h/cpp`：主分析器实现
+- `JsTokenizer.h`：JS词法分析（接口）
+- `JsBlockExtractor.h`：JS块提取器（接口）
+
+### 技术特点
+1. **纯静态分析**：不执行代码，只分析语法结构
+2. **现代语法支持**：完整支持最新的CSS和JavaScript特性
+3. **模块化设计**：分析器、tokenizer、块提取器分离
+4. **可扩展性**：易于添加新的语法特性检测
+5. **正则表达式驱动**：使用regex进行模式匹配和特性检测
+
+### 与CHTL集成
+- CSS分析器可用于分析Style节点中的CSS内容
+- JS分析器可用于分析script标签中的JavaScript
+- 为CHTL-JS扩展提供基础
+- 支持代码优化和验证
+
 ## 技术要点
 
 1. **注释处理**
@@ -331,32 +469,27 @@ CHTL（C++ Hypertext Language）是基于C++语言实现的超文本语言，使
 
 ## 下一步计划
 
-根据用户的"全权交给你"指示，计划如下：
+1. **完善CSS/JS分析器**
+   - ⏳ 实现CssTokenizer的完整功能
+   - ⏳ 实现CssBlockExtractor
+   - ⏳ 实现JsTokenizer
+   - ⏳ 实现JsBlockExtractor
+   - ⏳ 添加更多现代特性检测
 
-1. **解析器开发**（✅ 已完成）
-   - ✅ 实现模板解析
-   - ✅ 实现自定义元素解析
-   - ✅ 实现样式块的完整解析
-   - ✅ 实现配置块解析
-   - ✅ 实现Import和Namespace解析
-   - ✅ 实现Operate节点（DOM操作）
-   - ✅ 实现Origin节点（原始代码嵌入）
+2. **CHTL-JS编译器**
+   - ⏳ 设计CHTL的JavaScript扩展语法
+   - ⏳ 实现CHTL-JS词法分析
+   - ⏳ 实现CHTL-JS语法分析
+   - ⏳ 与标准JS分析器集成
 
-2. **增强生成器**
+3. **增强生成器**
    - ⏳ 实现模板展开机制
    - ⏳ 优化HTML输出格式
    - ⏳ 实现样式收集和优化
    - ⏳ 支持脚本整合
 
-3. **实现高级特性**
-   - ⏳ 导入系统（多文件编译）
-   - ⏳ 命名空间支持
-   - ⏳ 操作节点（DOM操作）
-   - ⏳ CSS和JavaScript状态机
-
-4. **测试和优化**
-   - ⏳ 创建完整测试套件
+4. **集成和测试**
+   - ⏳ 将CSS/JS分析器集成到主编译流程
+   - ⏳ 创建综合测试用例
    - ⏳ 性能优化
-   - ⏳ 错误恢复机制
-   - ⏳ 编写API文档
-   - ⏳ 创建用户指南
+   - ⏳ 文档编写

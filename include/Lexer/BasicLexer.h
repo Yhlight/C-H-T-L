@@ -7,10 +7,10 @@
 #include <istream>
 #include <fstream>
 #include "Common/Token.h"
-#include "state/BasicState.h"
-#include "context/BasicContext.h"
-#include "state/StateFactory.h"
-#include "context/ContextFactory.h"
+#include "State/BasicState.h"
+#include "Context/BasicContext.h"
+#include "State/StateFactory.h"
+#include "Context/ContextFactory.h"
 
 namespace chtl {
 

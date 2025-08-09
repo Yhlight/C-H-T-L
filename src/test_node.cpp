@@ -1,5 +1,5 @@
 #include <iostream>
-#include "node/Node.h"
+#include "Node/Node.h"
 
 using namespace chtl;
 

@@ -1,7 +1,7 @@
 #include "Lexer/ConfigLexer.h"
-#include "state/StateFactory.h"
-#include "context/ContextFactory.h"
-#include "context/ChtlContext.h"
+#include "State/StateFactory.h"
+#include "Context/ContextFactory.h"
+#include "Context/ChtlContext.h"
 #include <sstream>
 #include <algorithm>
 

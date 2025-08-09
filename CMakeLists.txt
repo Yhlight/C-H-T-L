@@ -24,10 +24,11 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # 收集库源文件（不包含main文件）
 file(GLOB_RECURSE LIB_SOURCES 
     "${CMAKE_SOURCE_DIR}/src/Common/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/context/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Context/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/Lexer/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/state/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/node/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/State/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Node/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Parser/*.cpp"
 )
 
 # 创建主可执行文件

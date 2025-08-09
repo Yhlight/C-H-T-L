@@ -4,24 +4,26 @@ bin/test_chtl_nodes: \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
   CMakeFiles/test_chtl_nodes.dir/src/Common/GlobalMap.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Common/Token.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/context/BasicContext.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/context/ChtlContext.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/context/ContextFactory.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Comment.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Config.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Custom.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Import.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Namespace.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Node.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/node/Template.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/state/ChtlState.cpp.o \
-  CMakeFiles/test_chtl_nodes.dir/src/state/StateFactory.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Comment.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Config.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Custom.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Import.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Namespace.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Node.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Operate.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Origin.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Style.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Node/Template.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Parser/BasicParser.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/Parser/ConfigParser.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/State/ChtlState.cpp.o \
+  CMakeFiles/test_chtl_nodes.dir/src/State/StateFactory.cpp.o \
   CMakeFiles/test_chtl_nodes.dir/src/test_chtl_nodes.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
   /lib/x86_64-linux-gnu/libm.so \
@@ -61,41 +63,45 @@ CMakeFiles/test_chtl_nodes.dir/src/Common/GlobalMap.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/Common/Token.cpp.o:
 
+CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.o:
+
+CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.o:
+
+CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.o:
+
 CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/context/BasicContext.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Comment.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/context/ChtlContext.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Config.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/context/ContextFactory.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Custom.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Comment.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Import.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Config.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Namespace.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Custom.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Node.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Import.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Operate.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Namespace.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Origin.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Node.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Style.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Operate.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Node/Template.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Origin.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Parser/BasicParser.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Style.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/Parser/ConfigParser.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/node/Template.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/State/ChtlState.cpp.o:
 
-CMakeFiles/test_chtl_nodes.dir/src/state/ChtlState.cpp.o:
-
-CMakeFiles/test_chtl_nodes.dir/src/state/StateFactory.cpp.o:
+CMakeFiles/test_chtl_nodes.dir/src/State/StateFactory.cpp.o:
 
 CMakeFiles/test_chtl_nodes.dir/src/test_chtl_nodes.cpp.o:
 

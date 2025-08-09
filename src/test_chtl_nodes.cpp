@@ -1,15 +1,15 @@
 #include <iostream>
 #include <memory>
-#include "node/Node.h"
-#include "node/Comment.h"
-#include "node/Template.h"
-#include "node/Custom.h"
-#include "node/Style.h"
-#include "node/Config.h"
-#include "node/Import.h"
-#include "node/Namespace.h"
-#include "node/Operate.h"
-#include "node/Origin.h"
+#include "Node/Node.h"
+#include "Node/Comment.h"
+#include "Node/Template.h"
+#include "Node/Custom.h"
+#include "Node/Style.h"
+#include "Node/Config.h"
+#include "Node/Import.h"
+#include "Node/Namespace.h"
+#include "Node/Operate.h"
+#include "Node/Origin.h"
 
 using namespace chtl;
 using namespace std;

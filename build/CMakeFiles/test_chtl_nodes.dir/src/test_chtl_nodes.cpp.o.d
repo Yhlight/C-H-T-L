@@ -215,7 +215,7 @@ CMakeFiles/test_chtl_nodes.dir/src/test_chtl_nodes.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward/auto_ptr.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/glue_memory_defs.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/execution_defs.h \
-  /workspace/include/node/Node.h \
+  /workspace/include/Node/Node.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/vector \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_vector.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_bvector.h \
@@ -235,12 +235,12 @@ CMakeFiles/test_chtl_nodes.dir/src/test_chtl_nodes.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/compare \
   /workspace/include/Common/Token.h \
   /workspace/include/Common/TokenType.h \
-  /workspace/include/node/Comment.h /workspace/include/node/Template.h \
-  /workspace/include/node/Custom.h /workspace/include/node/Style.h \
-  /workspace/include/node/Config.h /workspace/include/node/Import.h \
-  /workspace/include/node/Namespace.h /workspace/include/node/Operate.h \
+  /workspace/include/Node/Comment.h /workspace/include/Node/Template.h \
+  /workspace/include/Node/Custom.h /workspace/include/Node/Style.h \
+  /workspace/include/Node/Config.h /workspace/include/Node/Import.h \
+  /workspace/include/Node/Namespace.h /workspace/include/Node/Operate.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/set \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_tree.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multiset.h \
-  /workspace/include/node/Origin.h
+  /workspace/include/Node/Origin.h

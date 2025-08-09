@@ -2,8 +2,8 @@
 #define CHTL_CHTL_LEXER_H
 
 #include "Lexer/BasicLexer.h"
-#include "state/StateFactory.h"
-#include "context/ChtlContext.h"
+#include "State/StateFactory.h"
+#include "Context/ChtlContext.h"
 
 namespace chtl {
 

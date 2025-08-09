@@ -211,6 +211,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/state/ChtlState.o: src/state/ChtlState.cpp.o
+.PHONY : src/state/ChtlState.o
+
+# target to build an object file
+src/state/ChtlState.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o
+.PHONY : src/state/ChtlState.cpp.o
+
+src/state/ChtlState.i: src/state/ChtlState.cpp.i
+.PHONY : src/state/ChtlState.i
+
+# target to preprocess a source file
+src/state/ChtlState.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.i
+.PHONY : src/state/ChtlState.cpp.i
+
+src/state/ChtlState.s: src/state/ChtlState.cpp.s
+.PHONY : src/state/ChtlState.s
+
+# target to generate assembly for a file
+src/state/ChtlState.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/ChtlState.cpp.s
+.PHONY : src/state/ChtlState.cpp.s
+
+src/state/StateFactory.o: src/state/StateFactory.cpp.o
+.PHONY : src/state/StateFactory.o
+
+# target to build an object file
+src/state/StateFactory.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o
+.PHONY : src/state/StateFactory.cpp.o
+
+src/state/StateFactory.i: src/state/StateFactory.cpp.i
+.PHONY : src/state/StateFactory.i
+
+# target to preprocess a source file
+src/state/StateFactory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.i
+.PHONY : src/state/StateFactory.cpp.i
+
+src/state/StateFactory.s: src/state/StateFactory.cpp.s
+.PHONY : src/state/StateFactory.s
+
+# target to generate assembly for a file
+src/state/StateFactory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/state/StateFactory.cpp.s
+.PHONY : src/state/StateFactory.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -230,6 +278,12 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/state/ChtlState.o"
+	@echo "... src/state/ChtlState.i"
+	@echo "... src/state/ChtlState.s"
+	@echo "... src/state/StateFactory.o"
+	@echo "... src/state/StateFactory.i"
+	@echo "... src/state/StateFactory.s"
 .PHONY : help
 
 

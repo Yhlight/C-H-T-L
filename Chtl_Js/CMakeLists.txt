@@ -1,24 +1,25 @@
 # CHTL-JS Compiler Module
 set(CHTL_JS_SOURCES
-    ChtlJsAnalyzer.cpp
-    ChtlJsTokenizer.cpp
+    ChtlJsLexer.cpp
+    ChtlJsParser.cpp
+    ChtlJsState.cpp
+    ChtlJsContext.cpp
     ChtlJsTransformer.cpp
     ChtlJsGenerator.cpp
+    ChtlJsCompiler.cpp
 )
 
 set(CHTL_JS_HEADERS
     ChtlJsTypes.h
-    ChtlJsAnalyzer.h
-    ChtlJsTokenizer.h
+    ChtlJsLexer.h
+    ChtlJsParser.h
+    ChtlJsState.h
+    ChtlJsContext.h
     ChtlJsTransformer.h
     ChtlJsGenerator.h
+    ChtlJsCompiler.h
 )
 
 add_library(chtl_js STATIC ${CHTL_JS_SOURCES})
-target_include_directories(chtl_js PUBLIC ${CMAKE_SOURCE_DIR})
-target_link_libraries(chtl_js 
-    chtl_common 
-    chtl_context 
-    chtl_state
-    chtl_js_analyzer  # 链接标准JS分析器
-)
+target_include_directories(chtl_js PUBLIC ${CMAKE_SOURCE_DIR}/include)
+# CHTL-JS是独立的编译器，不依赖CHTL主编译器

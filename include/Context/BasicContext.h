@@ -138,13 +138,23 @@ public:
     // 模板和自定义注册（CHTL特有）
     virtual void registerTemplate(const std::string& name, std::shared_ptr<Node> templateNode) {
         // 默认实现：添加到符号表
-        SymbolInfo info{name, "template", "", getCurrentLine(), getCurrentColumn()};
+        SymbolInfo info;
+        info.name = name;
+        info.type = TokenType::TEMPLATE;
+        info.value = "template";
+        info.line = 0;
+        info.column = 0;
         addSymbol(name, info);
         (void)templateNode; // 避免未使用警告
     }
     virtual void registerCustom(const std::string& name, std::shared_ptr<Node> customNode) {
         // 默认实现：添加到符号表
-        SymbolInfo info{name, "custom", "", getCurrentLine(), getCurrentColumn()};
+        SymbolInfo info;
+        info.name = name;
+        info.type = TokenType::CUSTOM;
+        info.value = "custom";
+        info.line = 0;
+        info.column = 0;
         addSymbol(name, info);
         (void)customNode; // 避免未使用警告
     }

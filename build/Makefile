@@ -408,6 +408,19 @@ check/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/check.dir/build.make tests/CMakeFiles/check.dir/build
 .PHONY : check/fast
 
+#=============================================================================
+# Target rules for targets named chtl_cmod_system
+
+# Build rule for target.
+chtl_cmod_system: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_cmod_system
+.PHONY : chtl_cmod_system
+
+# fast build rule for target.
+chtl_cmod_system/fast:
+	$(MAKE) $(MAKESILENT) -f CmodSystem/CMakeFiles/chtl_cmod_system.dir/build.make CmodSystem/CMakeFiles/chtl_cmod_system.dir/build
+.PHONY : chtl_cmod_system/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -422,6 +435,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... check"
 	@echo "... uninstall"
+	@echo "... chtl_cmod_system"
 	@echo "... chtl_core"
 	@echo "... chtl_shared"
 	@echo "... test_bridge_scanner"

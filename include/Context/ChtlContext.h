@@ -99,17 +99,19 @@ public:
     void reset() override;
     void printDebugInfo() const override;
     
-    // 模板管理
-    bool addTemplate(const std::string& name, const TemplateInfo& info);
+    // 模板查询
+    void registerTemplate(const std::string& name, const TemplateInfo& info);
     bool hasTemplate(const std::string& name) const;
     TemplateInfo* getTemplate(const std::string& name);
-    const TemplateInfo* getTemplate(const std::string& name) const;
+    const TemplateInfo* getTemplateInfo(const std::string& name) const;
+    std::shared_ptr<Node> getTemplate(const std::string& name) const override;
     
-    // 自定义管理
-    bool addCustom(const std::string& name, const CustomInfo& info);
+    // 自定义查询
+    void registerCustom(const std::string& name, const CustomInfo& info);
     bool hasCustom(const std::string& name) const;
     CustomInfo* getCustom(const std::string& name);
-    const CustomInfo* getCustom(const std::string& name) const;
+    const CustomInfo* getCustomInfo(const std::string& name) const;
+    std::shared_ptr<Node> getCustom(const std::string& name) const override;
     
     // 命名空间管理
     void enterNamespace(const std::string& name);

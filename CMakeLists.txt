@@ -35,7 +35,7 @@ add_subdirectory(tests)
 # add_subdirectory(App)
 # add_subdirectory(Predefine)
 # add_subdirectory(Loader)
-# add_subdirectory(CmodSystem)
+add_subdirectory(CmodSystem)
 # add_subdirectory(Module)
 
 # 创建安装配置

@@ -38,41 +38,7 @@ bool BasicContext::isInScope(ScopeType scopeType) const {
     return false;
 }
 
-// 符号表管理实现
-void BasicContext::addSymbol(const std::string& name, const std::string& type, const std::string& value) {
-    auto& currentScope = getCurrentScope();
-    currentScope.symbols[name] = {name, type, value, currentLine_, currentColumn_};
-}
-
-bool BasicContext::hasSymbol(const std::string& name) const {
-    // 从当前作用域向上查找
-    for (auto it = scopeStack_.rbegin(); it != scopeStack_.rend(); ++it) {
-        if (it->symbols.find(name) != it->symbols.end()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-std::string BasicContext::getSymbolType(const std::string& name) const {
-    for (auto it = scopeStack_.rbegin(); it != scopeStack_.rend(); ++it) {
-        auto symbolIt = it->symbols.find(name);
-        if (symbolIt != it->symbols.end()) {
-            return symbolIt->second.type;
-        }
-    }
-    return "";
-}
-
-std::string BasicContext::getSymbolValue(const std::string& name) const {
-    for (auto it = scopeStack_.rbegin(); it != scopeStack_.rend(); ++it) {
-        auto symbolIt = it->symbols.find(name);
-        if (symbolIt != it->symbols.end()) {
-            return symbolIt->second.value;
-        }
-    }
-    return "";
-}
+// 符号表管理 - 这些方法在BasicContext中已经有实现
 
 SymbolInfo* BasicContext::getSymbol(const std::string& name) {
     if (!currentScope_) {
@@ -243,13 +209,12 @@ std::string BasicContext::formatWarning(const std::string& message, int line, in
 
 // 上下文管理
 void BasicContext::pushContext(const std::string& name) {
-    contextStack_.push_back(name);
+    // 使用作用域栈来模拟上下文栈
+    enterScope(ScopeType::NAMESPACE, name);
 }
 
 void BasicContext::popContext() {
-    if (!contextStack_.empty()) {
-        contextStack_.pop_back();
-    }
+    exitScope();
 }
 
 } // namespace chtl

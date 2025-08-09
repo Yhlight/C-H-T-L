@@ -35,3 +35,10 @@
 /workspace/build/tests/CMakeFiles/install.dir
 /workspace/build/tests/CMakeFiles/install/local.dir
 /workspace/build/tests/CMakeFiles/install/strip.dir
+/workspace/build/CmodSystem/CMakeFiles/chtl_cmod_system.dir
+/workspace/build/CmodSystem/CMakeFiles/edit_cache.dir
+/workspace/build/CmodSystem/CMakeFiles/rebuild_cache.dir
+/workspace/build/CmodSystem/CMakeFiles/list_install_components.dir
+/workspace/build/CmodSystem/CMakeFiles/install.dir
+/workspace/build/CmodSystem/CMakeFiles/install/local.dir
+/workspace/build/CmodSystem/CMakeFiles/install/strip.dir

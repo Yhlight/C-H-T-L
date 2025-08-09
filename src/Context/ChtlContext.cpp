@@ -118,21 +118,15 @@ void ChtlContext::printDebugInfo() const {
     }
 }
 
-bool ChtlContext::addTemplate(const std::string& name, const TemplateInfo& info) {
-    if (hasTemplate(name)) {
-        addError(formatError("Template '" + name + "' already exists", 
-                           info.defineLine, info.defineColumn));
-        return false;
-    }
-    
+// 模板管理
+void ChtlContext::registerTemplate(const std::string& name, const TemplateInfo& info) {
     templates_[name] = info;
-    
-    // 同时添加到当前命名空间
-    if (currentNamespace_) {
-        currentNamespace_->templates[name] = info;
-    }
-    
-    return true;
+    // 也注册到基类的符号表中
+    SymbolInfo symbolInfo;
+    symbolInfo.name = name;
+    symbolInfo.type = TokenType::TEMPLATE;
+    symbolInfo.value = "template";
+    addSymbol(name, symbolInfo);
 }
 
 bool ChtlContext::hasTemplate(const std::string& name) const {
@@ -147,7 +141,7 @@ TemplateInfo* ChtlContext::getTemplate(const std::string& name) {
     return nullptr;
 }
 
-const TemplateInfo* ChtlContext::getTemplate(const std::string& name) const {
+const TemplateInfo* ChtlContext::getTemplateInfo(const std::string& name) const {
     auto it = templates_.find(name);
     if (it != templates_.end()) {
         return &it->second;
@@ -155,21 +149,25 @@ const TemplateInfo* ChtlContext::getTemplate(const std::string& name) const {
     return nullptr;
 }
 
-bool ChtlContext::addCustom(const std::string& name, const CustomInfo& info) {
-    if (hasCustom(name)) {
-        addError(formatError("Custom '" + name + "' already exists", 
-                           info.defineLine, info.defineColumn));
-        return false;
+std::shared_ptr<Node> ChtlContext::getTemplate(const std::string& name) const {
+    // TODO: 需要从TemplateInfo创建Template节点
+    auto info = getTemplateInfo(name);
+    if (info) {
+        // 这里应该创建并返回一个Template节点
+        // 暂时返回nullptr
     }
-    
+    return nullptr;
+}
+
+// 自定义管理
+void ChtlContext::registerCustom(const std::string& name, const CustomInfo& info) {
     customs_[name] = info;
-    
-    // 同时添加到当前命名空间
-    if (currentNamespace_) {
-        currentNamespace_->customs[name] = info;
-    }
-    
-    return true;
+    // 也注册到基类的符号表中
+    SymbolInfo symbolInfo;
+    symbolInfo.name = name;
+    symbolInfo.type = TokenType::CUSTOM;
+    symbolInfo.value = "custom";
+    addSymbol(name, symbolInfo);
 }
 
 bool ChtlContext::hasCustom(const std::string& name) const {
@@ -184,10 +182,20 @@ CustomInfo* ChtlContext::getCustom(const std::string& name) {
     return nullptr;
 }
 
-const CustomInfo* ChtlContext::getCustom(const std::string& name) const {
+const CustomInfo* ChtlContext::getCustomInfo(const std::string& name) const {
     auto it = customs_.find(name);
     if (it != customs_.end()) {
         return &it->second;
+    }
+    return nullptr;
+}
+
+std::shared_ptr<Node> ChtlContext::getCustom(const std::string& name) const {
+    // TODO: 需要从CustomInfo创建Custom节点
+    auto info = getCustomInfo(name);
+    if (info) {
+        // 这里应该创建并返回一个Custom节点
+        // 暂时返回nullptr
     }
     return nullptr;
 }

@@ -35,6 +35,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.31/Modules/Platform/UnixPaths.cmake"
   "/usr/share/cmake-3.31/Modules/WriteBasicConfigVersionFile.cmake"
   "/workspace/CMakeLists.txt"
+  "/workspace/CmodSystem/CMakeLists.txt"
   "CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
   "/workspace/cmake/CHTLConfig.cmake.in"
@@ -57,6 +58,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/CMakeFiles/CMakeDirectoryInformation.cmake"
   "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "CmodSystem/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -80,4 +82,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "tests/CMakeFiles/test_simple_style.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_template_parsing.dir/DependInfo.cmake"
   "tests/CMakeFiles/check.dir/DependInfo.cmake"
+  "CmodSystem/CMakeFiles/chtl_cmod_system.dir/DependInfo.cmake"
   )

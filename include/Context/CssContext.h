@@ -39,10 +39,11 @@ public:
     CssContext();
     virtual ~CssContext() = default;
     
-    // BasicContext接口实现
-    void enterScope() override;
+    // 上下文管理
+    void enterScope(ScopeType scopeType, const std::string& scopeName = "") override;
     void exitScope() override;
     void reset() override;
+    bool validate() override { return true; } // Placeholder implementation
     
     // CSS选择器管理
     void addSelector(const std::string& selector);

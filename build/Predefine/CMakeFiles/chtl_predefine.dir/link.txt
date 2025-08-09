@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_predefine.a
+/usr/bin/ranlib libchtl_predefine.a

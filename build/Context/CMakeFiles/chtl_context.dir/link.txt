@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_context.a
+/usr/bin/ranlib libchtl_context.a

@@ -1,0 +1,21 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o.d"
+  "CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o"
+  "CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o.d"
+  "libchtl_js_analyzer.a"
+  "libchtl_js_analyzer.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/chtl_js_analyzer.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

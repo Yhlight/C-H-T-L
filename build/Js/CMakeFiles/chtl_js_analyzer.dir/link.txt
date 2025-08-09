@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_js_analyzer.a CMakeFiles/chtl_js_analyzer.dir/Lexer.cpp.o CMakeFiles/chtl_js_analyzer.dir/Parser.cpp.o CMakeFiles/chtl_js_analyzer.dir/HeuristicJsBackend.cpp.o CMakeFiles/chtl_js_analyzer.dir/SelfJsBackend.cpp.o CMakeFiles/chtl_js_analyzer.dir/JsAnalyzer.cpp.o CMakeFiles/chtl_js_analyzer.dir/JsCompiler.cpp.o
+/usr/bin/ranlib libchtl_js_analyzer.a

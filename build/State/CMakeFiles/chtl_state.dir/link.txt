@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_state.a CMakeFiles/chtl_state.dir/StandardState.cpp.o CMakeFiles/chtl_state.dir/ChtlState.cpp.o
+/usr/bin/ranlib libchtl_state.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libchtl_node.a
+/usr/bin/ranlib libchtl_node.a

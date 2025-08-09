@@ -1,5 +1,5 @@
-#include "common/Token.h"
-#include "common/GlobalMap.h"
+#include "Common/Token.h"
+#include "Common/GlobalMap.h"
 
 namespace chtl {
 

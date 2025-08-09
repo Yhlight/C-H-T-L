@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "common/GlobalMap.h"
-#include "common/Token.h"
+#include "Common/GlobalMap.h"
+#include "Common/Token.h"
 
 using namespace chtl;
 

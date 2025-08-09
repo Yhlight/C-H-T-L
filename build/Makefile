@@ -139,53 +139,53 @@ chtl/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/build
 .PHONY : chtl/fast
 
-src/common/GlobalMap.o: src/common/GlobalMap.cpp.o
-.PHONY : src/common/GlobalMap.o
+src/Common/GlobalMap.o: src/Common/GlobalMap.cpp.o
+.PHONY : src/Common/GlobalMap.o
 
 # target to build an object file
-src/common/GlobalMap.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o
-.PHONY : src/common/GlobalMap.cpp.o
+src/Common/GlobalMap.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o
+.PHONY : src/Common/GlobalMap.cpp.o
 
-src/common/GlobalMap.i: src/common/GlobalMap.cpp.i
-.PHONY : src/common/GlobalMap.i
+src/Common/GlobalMap.i: src/Common/GlobalMap.cpp.i
+.PHONY : src/Common/GlobalMap.i
 
 # target to preprocess a source file
-src/common/GlobalMap.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.i
-.PHONY : src/common/GlobalMap.cpp.i
+src/Common/GlobalMap.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.i
+.PHONY : src/Common/GlobalMap.cpp.i
 
-src/common/GlobalMap.s: src/common/GlobalMap.cpp.s
-.PHONY : src/common/GlobalMap.s
+src/Common/GlobalMap.s: src/Common/GlobalMap.cpp.s
+.PHONY : src/Common/GlobalMap.s
 
 # target to generate assembly for a file
-src/common/GlobalMap.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.s
-.PHONY : src/common/GlobalMap.cpp.s
+src/Common/GlobalMap.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.s
+.PHONY : src/Common/GlobalMap.cpp.s
 
-src/common/Token.o: src/common/Token.cpp.o
-.PHONY : src/common/Token.o
+src/Common/Token.o: src/Common/Token.cpp.o
+.PHONY : src/Common/Token.o
 
 # target to build an object file
-src/common/Token.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.o
-.PHONY : src/common/Token.cpp.o
+src/Common/Token.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.o
+.PHONY : src/Common/Token.cpp.o
 
-src/common/Token.i: src/common/Token.cpp.i
-.PHONY : src/common/Token.i
+src/Common/Token.i: src/Common/Token.cpp.i
+.PHONY : src/Common/Token.i
 
 # target to preprocess a source file
-src/common/Token.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.i
-.PHONY : src/common/Token.cpp.i
+src/Common/Token.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.i
+.PHONY : src/Common/Token.cpp.i
 
-src/common/Token.s: src/common/Token.cpp.s
-.PHONY : src/common/Token.s
+src/Common/Token.s: src/Common/Token.cpp.s
+.PHONY : src/Common/Token.s
 
 # target to generate assembly for a file
-src/common/Token.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/common/Token.cpp.s
-.PHONY : src/common/Token.cpp.s
+src/Common/Token.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Common/Token.cpp.s
+.PHONY : src/Common/Token.cpp.s
 
 src/context/BasicContext.o: src/context/BasicContext.cpp.o
 .PHONY : src/context/BasicContext.o
@@ -234,6 +234,30 @@ src/context/ChtlContext.s: src/context/ChtlContext.cpp.s
 src/context/ChtlContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.s
 .PHONY : src/context/ChtlContext.cpp.s
+
+src/lexer/BasicLexer.o: src/lexer/BasicLexer.cpp.o
+.PHONY : src/lexer/BasicLexer.o
+
+# target to build an object file
+src/lexer/BasicLexer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o
+.PHONY : src/lexer/BasicLexer.cpp.o
+
+src/lexer/BasicLexer.i: src/lexer/BasicLexer.cpp.i
+.PHONY : src/lexer/BasicLexer.i
+
+# target to preprocess a source file
+src/lexer/BasicLexer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.i
+.PHONY : src/lexer/BasicLexer.cpp.i
+
+src/lexer/BasicLexer.s: src/lexer/BasicLexer.cpp.s
+.PHONY : src/lexer/BasicLexer.s
+
+# target to generate assembly for a file
+src/lexer/BasicLexer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.s
+.PHONY : src/lexer/BasicLexer.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -317,18 +341,21 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... chtl"
-	@echo "... src/common/GlobalMap.o"
-	@echo "... src/common/GlobalMap.i"
-	@echo "... src/common/GlobalMap.s"
-	@echo "... src/common/Token.o"
-	@echo "... src/common/Token.i"
-	@echo "... src/common/Token.s"
+	@echo "... src/Common/GlobalMap.o"
+	@echo "... src/Common/GlobalMap.i"
+	@echo "... src/Common/GlobalMap.s"
+	@echo "... src/Common/Token.o"
+	@echo "... src/Common/Token.i"
+	@echo "... src/Common/Token.s"
 	@echo "... src/context/BasicContext.o"
 	@echo "... src/context/BasicContext.i"
 	@echo "... src/context/BasicContext.s"
 	@echo "... src/context/ChtlContext.o"
 	@echo "... src/context/ChtlContext.i"
 	@echo "... src/context/ChtlContext.s"
+	@echo "... src/lexer/BasicLexer.o"
+	@echo "... src/lexer/BasicLexer.i"
+	@echo "... src/lexer/BasicLexer.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

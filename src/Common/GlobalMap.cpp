@@ -1,4 +1,4 @@
-#include "common/GlobalMap.h"
+#include "Common/GlobalMap.h"
 #include <iostream>
 
 namespace chtl {

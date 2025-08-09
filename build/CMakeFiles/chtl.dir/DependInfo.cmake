@@ -8,10 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/workspace/src/common/GlobalMap.cpp" "CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/common/GlobalMap.cpp.o.d"
-  "/workspace/src/common/Token.cpp" "CMakeFiles/chtl.dir/src/common/Token.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/common/Token.cpp.o.d"
+  "/workspace/src/Common/GlobalMap.cpp" "CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o.d"
+  "/workspace/src/Common/Token.cpp" "CMakeFiles/chtl.dir/src/Common/Token.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Common/Token.cpp.o.d"
   "/workspace/src/context/BasicContext.cpp" "CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/context/BasicContext.cpp.o.d"
   "/workspace/src/context/ChtlContext.cpp" "CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/context/ChtlContext.cpp.o.d"
+  "/workspace/src/lexer/BasicLexer.cpp" "CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/lexer/BasicLexer.cpp.o.d"
   "/workspace/src/main.cpp" "CMakeFiles/chtl.dir/src/main.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/main.cpp.o.d"
   "/workspace/src/state/ChtlState.cpp" "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/state/ChtlState.cpp.o.d"
   "/workspace/src/state/StateFactory.cpp" "CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/state/StateFactory.cpp.o.d"

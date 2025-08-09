@@ -6,7 +6,7 @@
 #include <stack>
 #include <unordered_map>
 #include <vector>
-#include "common/Token.h"
+#include "Common/Token.h"
 
 namespace chtl {
 

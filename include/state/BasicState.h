@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include "common/Token.h"
+#include "Common/Token.h"
 
 namespace chtl {
 

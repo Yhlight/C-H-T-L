@@ -2,7 +2,7 @@
 #define CHTL_CHTL_STATE_H
 
 #include "state/BasicState.h"
-#include "common/GlobalMap.h"
+#include "Common/GlobalMap.h"
 #include <cctype>
 #include <sstream>
 

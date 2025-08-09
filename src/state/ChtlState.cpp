@@ -404,7 +404,10 @@ void ChtlState::completeToken() {
 void ChtlState::emitToken(TokenType type) {
     // TODO: 实际发送token到lexer
     (void)type; // 避免未使用参数警告
-    // lexer_->emitToken(createToken(type, buffer_, startLine_, startColumn_));
+    // 需要将BasicState中的lexer_转换为BasicLexer类型
+    // if (auto* basicLexer = dynamic_cast<BasicLexer*>(lexer_)) {
+    //     basicLexer->emitToken(createToken(type, buffer_, startLine_, startColumn_));
+    // }
 }
 
 void ChtlState::emitTokenAndReset(TokenType type) {

@@ -7,7 +7,6 @@ namespace CHTL
         CssAst ast;
         const std::size_t n = tokens.size();
         std::size_t i = 0;
-        auto at = [&](std::size_t k){ return k<n ? tokens[k] : CssToken{CssTokenType::Eof, "" ,0,0}; };
 
         while (i < n)
         {

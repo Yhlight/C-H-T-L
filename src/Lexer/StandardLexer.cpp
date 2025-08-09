@@ -1,21 +1,28 @@
 #include "Lexer/StandardLexer.h"
-#include "State/StateFactory.h"
+#include "Context/StandardContext.h"
 #include "Context/ContextFactory.h"
+#include "State/StandardState.h"
 
 namespace chtl {
 
 StandardLexer::StandardLexer() : BasicLexer() {
-    // 构造函数，基类已经完成了大部分初始化工作
+    // 初始化默认状态和上下文
+    if (!context_) {
+        context_ = std::make_shared<StandardContext>();
+    }
 }
 
-std::shared_ptr<BasicState> StandardLexer::createInitialState() {
-    // 创建CHTL状态作为标准状态
-    return StateFactory::createState(StateType::CHTL, this);
+std::shared_ptr<BasicContext> StandardLexer::createDefaultContext() const {
+    return std::make_shared<StandardContext>();
 }
 
-std::shared_ptr<BasicContext> StandardLexer::createInitialContext() {
-    // 创建CHTL上下文作为标准上下文
-    return ContextFactory::createContext(ContextType::CHTL);
+std::shared_ptr<BasicState> StandardLexer::createDefaultState() const {
+    return std::make_shared<StandardState>(this);
+}
+
+void StandardLexer::reset() {
+    BasicLexer::reset();
+    // StandardLexer特定的重置逻辑
 }
 
 } // namespace chtl

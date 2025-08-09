@@ -15,7 +15,7 @@ CmodPackager::CmodPackager() = default;
 CmodPackager::~CmodPackager() = default;
 
 // 打包CMOD模块
-CmodPackager::PackageResult CmodPackager::package(const std::string& modulePath, 
+CmodPackager::PackageResult CmodPackager::package(const std::string& modulePath,
                                                  const PackageOptions& options) {
     PackageResult result{false, "", "", {}, 0, {0, 0, 0, 0}};
     
@@ -43,7 +43,8 @@ CmodPackager::PackageResult CmodPackager::package(const std::string& modulePath,
     
     // 生成导出表
     if (options.generateExports) {
-        generateExportTable(*info, modulePath + "/src");
+        std::string exportTable = generateExportTable(*info);
+        // TODO: 将导出表写入文件或添加到打包内容中
     }
     
     // 收集文件
@@ -143,9 +144,59 @@ std::vector<CmodPackager::PackageEntry> CmodPackager::filterFiles(
 }
 
 // 生成导出表
-void CmodPackager::generateExportTable(CmodInfo& info, const std::string& srcPath) {
+std::string CmodPackager::generateExportTable(const CmodInfo& info) {
     CmodExtractor extractor;
-    extractor.scanExports(info, srcPath);
+    
+    // 扫描源目录获取更全面的导出信息
+    std::string srcPath = info.modulePath + "/src";
+    std::vector<std::string> styles, elements, vars;
+    
+    // 扫描目录中的所有文件
+    if (fs::exists(srcPath)) {
+        for (const auto& entry : fs::recursive_directory_iterator(srcPath)) {
+            if (entry.is_regular_file()) {
+                std::string ext = entry.path().extension().string();
+                if (ext == ".chtl") {
+                    // TODO: 解析文件并提取导出信息
+                }
+            }
+        }
+    }
+    
+    // 合并已有的导出信息
+    styles.insert(styles.end(), info.exportedStyles.begin(), info.exportedStyles.end());
+    elements.insert(elements.end(), info.exportedElements.begin(), info.exportedElements.end());
+    vars.insert(vars.end(), info.exportedVars.begin(), info.exportedVars.end());
+    
+    // 去重
+    std::sort(styles.begin(), styles.end());
+    styles.erase(std::unique(styles.begin(), styles.end()), styles.end());
+    
+    std::sort(elements.begin(), elements.end());
+    elements.erase(std::unique(elements.begin(), elements.end()), elements.end());
+    
+    std::sort(vars.begin(), vars.end());
+    vars.erase(std::unique(vars.begin(), vars.end()), vars.end());
+    
+    // 生成导出表
+    std::stringstream table;
+    table << "[Export]\n{\n";
+    
+    for (const auto& style : styles) {
+        table << "    @Style " << style << ";\n";
+    }
+    
+    for (const auto& elem : elements) {
+        table << "    @Element " << elem << ";\n";
+    }
+    
+    for (const auto& var : vars) {
+        table << "    @Var " << var << ";\n";
+    }
+    
+    table << "}\n";
+    
+    return table.str();
 }
 
 // 创建包清单

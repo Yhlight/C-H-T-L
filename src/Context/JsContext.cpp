@@ -66,8 +66,8 @@ void JsContext::addFunction(const std::string& name, bool isAsync, bool isGenera
     info.name = name;
     info.isAsync = isAsync;
     info.isGenerator = isGenerator;
-    info.line = getCurrentLine();
-    info.column = getCurrentColumn();
+    info.line = 0; // TODO: Get from lexer/parser
+    info.column = 0; // TODO: Get from lexer/parser
     
     functions_[name] = info;
     
@@ -82,8 +82,8 @@ void JsContext::addFunction(const std::string& name, bool isAsync, bool isGenera
 void JsContext::addClass(const std::string& name) {
     ClassInfo info;
     info.name = name;
-    info.line = getCurrentLine();
-    info.column = getCurrentColumn();
+    info.line = 0; // TODO: Get from lexer/parser
+    info.column = 0; // TODO: Get from lexer/parser
     
     classes_[name] = info;
 }
@@ -93,8 +93,8 @@ void JsContext::addVariable(const std::string& name, const std::string& type, bo
     info.name = name;
     info.type = type;
     info.isConst = isConst;
-    info.line = getCurrentLine();
-    info.column = getCurrentColumn();
+    info.line = 0; // TODO: Get from lexer/parser
+    info.column = 0; // TODO: Get from lexer/parser
     
     variables_[name] = info;
 }
@@ -116,8 +116,8 @@ void JsContext::addImport(const std::string& module, const std::string& alias) {
     ImportInfo info;
     info.module = module;
     info.alias = alias;
-    info.line = getCurrentLine();
-    info.column = getCurrentColumn();
+    info.line = 0; // TODO: Get from lexer/parser
+    info.column = 0; // TODO: Get from lexer/parser
     
     imports_.push_back(info);
 }
@@ -126,8 +126,8 @@ void JsContext::addExport(const std::string& name, bool isDefault) {
     ExportInfo info;
     info.name = name;
     info.isDefault = isDefault;
-    info.line = getCurrentLine();
-    info.column = getCurrentColumn();
+    info.line = 0; // TODO: Get from lexer/parser
+    info.column = 0; // TODO: Get from lexer/parser
     
     exports_.push_back(info);
 }

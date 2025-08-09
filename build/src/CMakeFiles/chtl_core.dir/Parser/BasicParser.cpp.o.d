@@ -1,6 +1,6 @@
-src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: \
-  /workspace/src/Context/ContextFactory.cpp \
-  /workspace/include/Context/ContextFactory.h \
+src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: \
+  /workspace/src/Parser/BasicParser.cpp \
+  /workspace/include/Parser/BasicParser.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/memory \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memoryfwd.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++config.h \
@@ -147,23 +147,6 @@ src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/backward/auto_ptr.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/glue_memory_defs.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/execution_defs.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_map \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/initializer_list \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_map.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable_policy.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/enable_special_members.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/node_handle.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/range_access.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memory_resource.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstddef \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator_args.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stack \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/string \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/char_traits.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/localefwd.h \
@@ -174,6 +157,8 @@ src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: \
   /usr/include/ctype.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream_insert.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/cxxabi_forced.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/range_access.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/initializer_list \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_string.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/string_view \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/string_view.tcc \
@@ -204,15 +189,29 @@ src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: \
   /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/charconv.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_string.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/functional \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/std_function.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/memory_resource.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cstddef \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uses_allocator_args.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/vector \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_vector.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_bvector.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/vector.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stack \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/functional \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/std_function.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_map \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_map.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/hashtable_policy.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/enable_special_members.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/node_handle.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/erase_if.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/array \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/compare \
-  /workspace/include/Context/BasicContext.h \
   /workspace/include/Common/Token.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iostream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ostream \
@@ -238,20 +237,24 @@ src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/istream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
-  /workspace/include/Common/TokenType.h \
-  /workspace/include/Context/ChtlContext.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/set \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_tree.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_set.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multiset.h \
-  /workspace/include/Context/CssContext.h \
+  /workspace/include/Common/TokenType.h /workspace/include/Node/Node.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/variant \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/parse_numbers.h \
+  /workspace/include/Lexer/BasicLexer.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/queue \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_heap.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_queue.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/fstream \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/codecvt.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/basic_file.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++io.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fstream.tcc \
+  /workspace/include/State/BasicState.h \
+  /workspace/include/Context/BasicContext.h \
+  /workspace/include/State/StateFactory.h \
+  /workspace/include/Context/ContextFactory.h \
+  /workspace/include/Common/GlobalMap.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
-  /workspace/include/Context/JsContext.h \
-  /workspace/include/Context/ChtlJsContext.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/algorithm \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algo.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/algorithmfwd.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_heap.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/uniform_int_dist.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/pstl/glue_algorithm_defs.h
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc

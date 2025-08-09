@@ -82,11 +82,11 @@ private:
     // 收集要打包的文件
     std::vector<PackageEntry> collectFiles(const std::string& modulePath);
     
-    // 过滤文件（排除不需要的文件）
+    // 过滤文件（排除临时文件等）
     std::vector<PackageEntry> filterFiles(const std::vector<PackageEntry>& entries);
     
     // 生成导出表
-    void generateExportTable(CmodInfo& info, const std::string& srcPath);
+    std::string generateExportTable(const CmodInfo& info);
     
     // 创建包清单
     std::string createManifest(const CmodInfo& info, 

@@ -2,113 +2,58 @@
 #define CHTL_CONTEXT_FACTORY_H
 
 #include <memory>
-#include <unordered_map>
 #include <stack>
-#include <string>
-#include <functional>
+#include <utility>
 #include "Context/BasicContext.h"
 
 namespace chtl {
 
-// 上下文切换规则
-struct ContextTransition {
-    ContextType fromContext;
-    std::string trigger;     // 触发条件
-    ContextType toContext;
-    bool inheritSymbols;     // 是否继承符号表
-    bool createNewScope;     // 是否创建新作用域
-};
+// 前向声明
+class ChtlContext;
+class CssContext;
+class JsContext;
+namespace chtl_js {
+    class ChtlJsContext;
+}
 
-// 上下文标记规则
-struct ContextMarker {
-    std::string pattern;     // 匹配模式（如 "[Template]", "[Custom]" 等）
-    ContextType contextType; // 对应的上下文类型
-    ScopeType scopeType;    // 创建的作用域类型
-    std::function<void(std::shared_ptr<BasicContext>&, const std::string&)> onEnter; // 进入时的回调
-};
-
-// 上下文工厂类 - 提供自动化上下文管理
+// 上下文工厂类 - 提供上下文管理
 class ContextFactory {
 private:
-    // 上下文栈
-    static thread_local std::stack<std::shared_ptr<BasicContext>> contextStack_;
-    
-    // 当前活动上下文
-    static thread_local std::shared_ptr<BasicContext> currentContext_;
-    
-    // 上下文转换表
-    static const std::vector<ContextTransition> transitions_;
-    
-    // 上下文标记规则
-    static const std::vector<ContextMarker> markers_;
-    
-    // 上下文创建器映射
-    using ContextCreator = std::function<std::shared_ptr<BasicContext>()>;
-    static const std::unordered_map<ContextType, ContextCreator> contextCreators_;
+    // 上下文栈 - 存储类型和上下文对
+    std::stack<std::pair<ContextType, std::shared_ptr<BasicContext>>> contextStack_;
     
 public:
     // 创建指定类型的上下文
-    static std::shared_ptr<BasicContext> createContext(ContextType type);
-    
-    // 创建初始上下文
-    static std::shared_ptr<BasicContext> createInitialContext();
-    
-    // 自动化上下文切换
-    static std::shared_ptr<BasicContext> autoTransition(
-        const std::string& trigger,
-        const std::shared_ptr<BasicContext>& currentContext = nullptr
-    );
-    
-    // 自动化上下文标记
-    static bool autoMark(
-        const std::string& token,
-        std::shared_ptr<BasicContext>& context
-    );
+    std::shared_ptr<BasicContext> createContext(ContextType type);
     
     // 上下文栈管理
-    static void pushContext(const std::shared_ptr<BasicContext>& context);
-    static std::shared_ptr<BasicContext> popContext();
-    static bool hasContextInStack();
-    static void clearContextStack();
+    void pushMarker(ContextType type, std::shared_ptr<BasicContext> context);
+    void popMarker();
     
-    // 获取当前活动上下文
-    static std::shared_ptr<BasicContext> getCurrentContext() { return currentContext_; }
-    static void setCurrentContext(const std::shared_ptr<BasicContext>& context) { currentContext_ = context; }
+    // 获取当前上下文
+    std::shared_ptr<BasicContext> getCurrentContext() const;
+    ContextType getCurrentType() const;
     
-    // 获取上下文栈深度
-    static size_t getStackDepth() { return contextStack_.size(); }
+    // 上下文切换
+    void switchContext(ContextType newType);
+    void restoreContext();
     
-    // 注册自定义转换和标记规则
-    static void registerTransition(const ContextTransition& transition);
-    static void registerMarker(const ContextMarker& marker);
+    // 重置工厂
+    void reset();
     
-    // 检查是否可以转换
-    static bool canTransition(ContextType from, const std::string& trigger);
+    // 类型转换辅助方法
+    std::shared_ptr<ChtlContext> asChtlContext() const;
+    std::shared_ptr<CssContext> asCssContext() const;
+    std::shared_ptr<JsContext> asJsContext() const;
+    std::shared_ptr<chtl_js::ChtlJsContext> asChtlJsContext() const;
     
-    // 获取转换目标上下文
-    static ContextType getTransitionTarget(ContextType from, const std::string& trigger);
+    // 上下文检查
+    bool isInContext(ContextType type) const;
+    size_t getStackDepth() const;
     
-    // 符号表继承
-    static void inheritSymbols(
-        const std::shared_ptr<BasicContext>& from,
-        std::shared_ptr<BasicContext>& to
-    );
-    
-    // 上下文合并
-    static void mergeContexts(
-        const std::shared_ptr<BasicContext>& source,
-        std::shared_ptr<BasicContext>& target
-    );
-    
-private:
-    // 初始化上下文创建器
-    static void initializeCreators();
-    
-    // 查找匹配的转换规则
-    static const ContextTransition* findTransition(ContextType from, const std::string& trigger);
-    
-    // 查找匹配的标记规则
-    static const ContextMarker* findMarker(const std::string& token);
+    // 错误传播
+    void propagateError(const std::string& error);
+    void propagateWarning(const std::string& warning);
 };
 
 } // namespace chtl

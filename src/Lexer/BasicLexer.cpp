@@ -316,16 +316,16 @@ void BasicLexer::autoTransitionState(const std::string& trigger) {
     }
 }
 
-void BasicLexer::autoMarkContext(const std::string& token) {
-    if (!context_) {
+void BasicLexer::updateState(char ch) {
+    if (!currentState_) {
         return;
     }
     
-    // 尝试自动上下文标记
-    ContextFactory::autoMark(token, context_);
-    
-    // 同步ContextFactory的当前上下文
-    ContextFactory::setCurrentContext(context_);
+    // 尝试状态转换
+    auto newState = StateFactory::transition(currentState_->getType(), ch);
+    if (newState && newState != currentState_) {
+        setState(newState);
+    }
 }
 
 } // namespace chtl

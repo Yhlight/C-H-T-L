@@ -130,7 +130,7 @@ bool FileLoader::parseFile(const std::string& filePath) {
     
     // 创建解析器组件
     auto context = std::make_shared<StandardContext>();
-    auto lexer = std::make_shared<StandardLexer>(context.get());
+    auto lexer = std::make_shared<StandardLexer>();
     parser_ = std::make_unique<StandardParser>(lexer, context);
     
     // TODO: 设置lexer输入并解析

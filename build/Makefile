@@ -233,6 +233,19 @@ chtl_predefine/fast:
 	$(MAKE) $(MAKESILENT) -f Predefine/CMakeFiles/chtl_predefine.dir/build.make Predefine/CMakeFiles/chtl_predefine.dir/build
 .PHONY : chtl_predefine/fast
 
+#=============================================================================
+# Target rules for targets named chtlc
+
+# Build rule for target.
+chtlc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtlc
+.PHONY : chtlc
+
+# fast build rule for target.
+chtlc/fast:
+	$(MAKE) $(MAKESILENT) -f App/CMakeFiles/chtlc.dir/build.make App/CMakeFiles/chtlc.dir/build
+.PHONY : chtlc/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -250,6 +263,7 @@ help:
 	@echo "... chtl_predefine"
 	@echo "... chtl_scanner"
 	@echo "... chtl_state"
+	@echo "... chtlc"
 .PHONY : help
 
 

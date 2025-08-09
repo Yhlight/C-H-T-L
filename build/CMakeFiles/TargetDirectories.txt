@@ -31,3 +31,6 @@
 /workspace/build/Optimize/CMakeFiles/rebuild_cache.dir
 /workspace/build/Utils/CMakeFiles/edit_cache.dir
 /workspace/build/Utils/CMakeFiles/rebuild_cache.dir
+/workspace/build/App/CMakeFiles/chtlc.dir
+/workspace/build/App/CMakeFiles/edit_cache.dir
+/workspace/build/App/CMakeFiles/rebuild_cache.dir

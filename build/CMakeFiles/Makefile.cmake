@@ -31,6 +31,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.31/Modules/Platform/Linux-Initialize.cmake"
   "/usr/share/cmake-3.31/Modules/Platform/Linux.cmake"
   "/usr/share/cmake-3.31/Modules/Platform/UnixPaths.cmake"
+  "/workspace/App/CMakeLists.txt"
   "/workspace/CMakeLists.txt"
   "/workspace/Common/CMakeLists.txt"
   "/workspace/Context/CMakeLists.txt"
@@ -67,6 +68,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "Predefine/CMakeFiles/CMakeDirectoryInformation.cmake"
   "Optimize/CMakeFiles/CMakeDirectoryInformation.cmake"
   "Utils/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "App/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -80,4 +82,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "Generator/CMakeFiles/chtl_generator.dir/DependInfo.cmake"
   "Scanner/CMakeFiles/chtl_scanner.dir/DependInfo.cmake"
   "Predefine/CMakeFiles/chtl_predefine.dir/DependInfo.cmake"
+  "App/CMakeFiles/chtlc.dir/DependInfo.cmake"
   )

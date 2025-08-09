@@ -63,5 +63,10 @@ add_executable(test_operate_origin ${LIB_SOURCES} src/test_operate_origin.cpp)
 # 启用测试
 enable_testing()
 
+# 添加子目录
+add_subdirectory(Css)
+add_subdirectory(Js)
+add_subdirectory(Chtl_Js)
+
 # 添加测试子目录
 add_subdirectory(tests)

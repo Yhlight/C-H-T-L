@@ -181,6 +181,32 @@ chtl_node/fast:
 	$(MAKE) $(MAKESILENT) -f Node/CMakeFiles/chtl_node.dir/build.make Node/CMakeFiles/chtl_node.dir/build
 .PHONY : chtl_node/fast
 
+#=============================================================================
+# Target rules for targets named chtl_parser
+
+# Build rule for target.
+chtl_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_parser
+.PHONY : chtl_parser
+
+# fast build rule for target.
+chtl_parser/fast:
+	$(MAKE) $(MAKESILENT) -f Parser/CMakeFiles/chtl_parser.dir/build.make Parser/CMakeFiles/chtl_parser.dir/build
+.PHONY : chtl_parser/fast
+
+#=============================================================================
+# Target rules for targets named chtl_generator
+
+# Build rule for target.
+chtl_generator: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_generator
+.PHONY : chtl_generator
+
+# fast build rule for target.
+chtl_generator/fast:
+	$(MAKE) $(MAKESILENT) -f Generator/CMakeFiles/chtl_generator.dir/build.make Generator/CMakeFiles/chtl_generator.dir/build
+.PHONY : chtl_generator/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -191,8 +217,10 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... chtl_common"
 	@echo "... chtl_context"
+	@echo "... chtl_generator"
 	@echo "... chtl_lexer"
 	@echo "... chtl_node"
+	@echo "... chtl_parser"
 	@echo "... chtl_state"
 .PHONY : help
 

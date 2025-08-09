@@ -34,8 +34,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/workspace/CMakeLists.txt"
   "/workspace/Common/CMakeLists.txt"
   "/workspace/Context/CMakeLists.txt"
+  "/workspace/Generator/CMakeLists.txt"
   "/workspace/Lexer/CMakeLists.txt"
   "/workspace/Node/CMakeLists.txt"
+  "/workspace/Parser/CMakeLists.txt"
   "/workspace/State/CMakeLists.txt"
   "CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
@@ -55,6 +57,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "State/CMakeFiles/CMakeDirectoryInformation.cmake"
   "Lexer/CMakeFiles/CMakeDirectoryInformation.cmake"
   "Node/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Parser/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "Generator/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -64,4 +68,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "State/CMakeFiles/chtl_state.dir/DependInfo.cmake"
   "Lexer/CMakeFiles/chtl_lexer.dir/DependInfo.cmake"
   "Node/CMakeFiles/chtl_node.dir/DependInfo.cmake"
+  "Parser/CMakeFiles/chtl_parser.dir/DependInfo.cmake"
+  "Generator/CMakeFiles/chtl_generator.dir/DependInfo.cmake"
   )

@@ -34,6 +34,11 @@ file(GLOB_RECURSE LIB_SOURCES
     "${CMAKE_SOURCE_DIR}/src/Js/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/Chtl_Js/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/Scanner/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Analyzer/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/AST/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Optimize/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/Predefine/*.cpp"
 )
 
 # 创建主可执行文件

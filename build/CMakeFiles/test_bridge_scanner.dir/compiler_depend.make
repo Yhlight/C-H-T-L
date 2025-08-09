@@ -7105,6 +7105,90 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
   /workspace/include/State/ChtlJsState.h \
   /workspace/include/State/StateFactory.h
 
+bin/test_bridge_scanner: /lib/x86_64-linux-gnu/Scrt1.o \
+  /lib/x86_64-linux-gnu/crti.o \
+  /lib/x86_64-linux-gnu/crtn.o \
+  /lib/x86_64-linux-gnu/libc.so \
+  /lib/x86_64-linux-gnu/libc.so.6 \
+  /lib/x86_64-linux-gnu/libgcc_s.so.1 \
+  /lib/x86_64-linux-gnu/libm.so \
+  /lib/x86_64-linux-gnu/libm.so.6 \
+  /lib/x86_64-linux-gnu/libmvec.so.1 \
+  /lib64/ld-linux-x86-64.so.2 \
+  /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
+  /usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o \
+  /usr/lib/gcc/x86_64-linux-gnu/14/libgcc.a \
+  /usr/lib/gcc/x86_64-linux-gnu/14/libgcc_s.so \
+  /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
+  /usr/lib/x86_64-linux-gnu/libc_nonshared.a \
+  CMakeFiles/test_bridge_scanner.dir/src/Common/GlobalMap.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Common/Token.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Context/BasicContext.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Context/ChtlContext.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Comment.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Config.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Custom.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Import.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Namespace.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Node.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Operate.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Origin.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Style.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Node/Template.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Parser/BasicParser.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Parser/ConfigParser.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Scanner/BridgeScanner.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/Scanner/Segment.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/State/ChtlState.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/State/StateFactory.cpp.o \
+  CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o
+
+
+CMakeFiles/test_bridge_scanner.dir/src/Scanner/Segment.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Parser/BasicParser.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Operate.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Node.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Namespace.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Import.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Config.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Comment.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.o:
+
+CMakeFiles/test_bridge_scanner.dir/src/Context/ChtlContext.cpp.o:
+
+/usr/lib/x86_64-linux-gnu/libc_nonshared.a:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/libgcc.a:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/crtendS.o:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o:
+
+/lib64/ld-linux-x86-64.so.2:
+
+/lib/x86_64-linux-gnu/libc.so:
+
+/lib/x86_64-linux-gnu/crtn.o:
 
 /workspace/src/test_bridge_scanner.cpp:
 
@@ -7134,6 +7218,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/c++/14/bits/regex_compiler.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/State/ChtlState.cpp.o:
+
 /usr/include/c++/14/bits/regex_automaton.h:
 
 /usr/include/c++/14/bits/regex_scanner.h:
@@ -7148,9 +7234,13 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /workspace/src/Scanner/BridgeScanner.cpp:
 
+/lib/x86_64-linux-gnu/crti.o:
+
 /workspace/src/Parser/ConfigParser.cpp:
 
 /workspace/src/Node/Template.cpp:
+
+/lib/x86_64-linux-gnu/libgcc_s.so.1:
 
 /workspace/src/Parser/BasicParser.cpp:
 
@@ -7172,6 +7262,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /workspace/include/State/StateFactory.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.o:
+
 /workspace/src/Node/Node.cpp:
 
 /workspace/include/State/BasicState.h:
@@ -7179,6 +7271,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 /workspace/include/Lexer/BasicLexer.h:
 
 /usr/include/c++/14/queue:
+
+CMakeFiles/test_bridge_scanner.dir/src/Common/Token.cpp.o:
 
 /usr/include/c++/14/cstring:
 
@@ -7214,7 +7308,11 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/c++/14/array:
 
+/usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so:
+
 /usr/include/c++/14/algorithm:
+
+/lib/x86_64-linux-gnu/Scrt1.o:
 
 /usr/include/c++/14/bits/locale_classes.h:
 
@@ -7236,6 +7334,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/Context/BasicContext.cpp.o:
+
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
@@ -7252,11 +7352,15 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/c++/14/bits/basic_ios.tcc:
 
+/lib/x86_64-linux-gnu/libc.so.6:
+
 /usr/include/c++/14/pstl/glue_memory_defs.h:
 
 /workspace/include/Parser/BasicParser.h:
 
 /usr/include/c++/14/bits/alloc_traits.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/libgcc_s.so:
 
 /usr/include/c++/14/bit:
 
@@ -7408,6 +7512,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.o:
+
 /usr/include/ctype.h:
 
 /usr/include/c++/14/bits/cxxabi_init_exception.h:
@@ -7420,11 +7526,17 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /workspace/src/Context/BasicContext.cpp:
 
+/lib/x86_64-linux-gnu/libmvec.so.1:
+
 /usr/include/stdlib.h:
 
 /usr/include/c++/14/istream:
 
+CMakeFiles/test_bridge_scanner.dir/src/Parser/ConfigParser.cpp.o:
+
 /usr/lib/llvm-20/lib/clang/20/include/sanitizer/tsan_interface.h:
+
+/lib/x86_64-linux-gnu/libm.so:
 
 /usr/include/c++/14/bits/std_abs.h:
 
@@ -7498,9 +7610,13 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/stdc-predef.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/Node/Template.cpp.o:
+
 /usr/include/wctype.h:
 
 /usr/include/sched.h:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Custom.cpp.o:
 
 /workspace/src/Lexer/BasicLexer.cpp:
 
@@ -7509,6 +7625,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 /usr/include/asm-generic/errno.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+
+CMakeFiles/test_bridge_scanner.dir/src/State/StateFactory.cpp.o:
 
 /usr/include/c++/14/cstdlib:
 
@@ -7534,6 +7652,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/c++/14/new:
 
+CMakeFiles/test_bridge_scanner.dir/src/Common/GlobalMap.cpp.o:
+
 /usr/include/c++/14/bits/parse_numbers.h:
 
 /usr/include/c++/14/compare:
@@ -7556,6 +7676,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
+CMakeFiles/test_bridge_scanner.dir/src/Node/Origin.cpp.o:
+
 /usr/include/c++/14/bits/functional_hash.h:
 
 /usr/include/c++/14/bits/hashtable.h:
@@ -7565,6 +7687,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h:
 
 /workspace/src/Common/GlobalMap.cpp:
+
+CMakeFiles/test_bridge_scanner.dir/src/Scanner/BridgeScanner.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
@@ -7617,6 +7741,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 /usr/include/c++/14/bits/move.h:
 
 /usr/include/c++/14/backward/auto_ptr.h:
+
+CMakeFiles/test_bridge_scanner.dir/src/Node/Style.cpp.o:
 
 /usr/include/c++/14/bits/nested_exception.h:
 
@@ -7724,6 +7850,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 
 /usr/include/c++/14/initializer_list:
 
+/lib/x86_64-linux-gnu/libm.so.6:
+
 /usr/include/c++/14/bits/regex_scanner.tcc:
 
 /workspace/src/Node/Custom.cpp:
@@ -7739,6 +7867,8 @@ CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o: /workspace/src
 /usr/include/c++/14/unordered_map:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h:
+
+CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h:
 

@@ -1,0 +1,31 @@
+# CHTLConfig.cmake - CHTL CMake configuration file
+
+@PACKAGE_INIT@
+
+set(CHTL_VERSION @PROJECT_VERSION@)
+set(CHTL_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(CHTL_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(CHTL_VERSION_PATCH @PROJECT_VERSION_PATCH@)
+
+include("${CMAKE_CURRENT_LIST_DIR}/CHTLTargets.cmake")
+
+# 提供CHTL::chtl_core和CHTL::chtl_shared目标
+set(CHTL_LIBRARIES CHTL::chtl_core)
+set(CHTL_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include/chtl")
+
+# 检查组件
+set(CHTL_FOUND TRUE)
+foreach(component ${CHTL_FIND_COMPONENTS})
+    if(component STREQUAL "shared")
+        if(TARGET CHTL::chtl_shared)
+            set(CHTL_shared_FOUND TRUE)
+        else()
+            set(CHTL_shared_FOUND FALSE)
+            if(CHTL_FIND_REQUIRED_shared)
+                set(CHTL_FOUND FALSE)
+            endif()
+        endif()
+    endif()
+endforeach()
+
+check_required_components(CHTL)

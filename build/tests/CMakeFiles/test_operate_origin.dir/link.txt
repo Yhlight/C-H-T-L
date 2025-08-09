@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_operate_origin.dir/link.d CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o -o ../bin/test_operate_origin  ../lib/libchtl_core.a

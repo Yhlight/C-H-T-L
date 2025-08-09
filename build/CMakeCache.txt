@@ -14,14 +14,17 @@
 # EXTERNAL cache entries
 ########################
 
-//Value Computed by CMake
-CHTL_Compiler_BINARY_DIR:STATIC=/workspace/build
+//Build tests
+BUILD_TESTS:BOOL=ON
 
 //Value Computed by CMake
-CHTL_Compiler_IS_TOP_LEVEL:STATIC=ON
+CHTL_BINARY_DIR:STATIC=/workspace/build
 
 //Value Computed by CMake
-CHTL_Compiler_SOURCE_DIR:STATIC=/workspace
+CHTL_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+CHTL_SOURCE_DIR:STATIC=/workspace
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
@@ -132,7 +135,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=CHTL_Compiler
+CMAKE_PROJECT_NAME:STATIC=CHTL
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=1.0.0
@@ -305,7 +308,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

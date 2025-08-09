@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_node.dir/link.d CMakeFiles/test_node.dir/test_node.cpp.o -o ../bin/test_node  ../lib/libchtl_core.a

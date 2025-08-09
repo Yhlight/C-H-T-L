@@ -95,6 +95,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	cd /workspace/build && $(CMAKE_COMMAND) -E cmake_progress_start /workspace/build/CMakeFiles /workspace/build/tests//CMakeFiles/progress.marks
@@ -126,6 +171,590 @@ depend:
 	cd /workspace/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+tests/CMakeFiles/test_lexer.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_lexer.dir/rule
+.PHONY : tests/CMakeFiles/test_lexer.dir/rule
+
+# Convenience name for target.
+test_lexer: tests/CMakeFiles/test_lexer.dir/rule
+.PHONY : test_lexer
+
+# fast build rule for target.
+test_lexer/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/build
+.PHONY : test_lexer/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_parser.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_parser.dir/rule
+.PHONY : tests/CMakeFiles/test_parser.dir/rule
+
+# Convenience name for target.
+test_parser: tests/CMakeFiles/test_parser.dir/rule
+.PHONY : test_parser
+
+# fast build rule for target.
+test_parser/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/build
+.PHONY : test_parser/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_import_namespace.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_import_namespace.dir/rule
+.PHONY : tests/CMakeFiles/test_import_namespace.dir/rule
+
+# Convenience name for target.
+test_import_namespace: tests/CMakeFiles/test_import_namespace.dir/rule
+.PHONY : test_import_namespace
+
+# fast build rule for target.
+test_import_namespace/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_namespace.dir/build.make tests/CMakeFiles/test_import_namespace.dir/build
+.PHONY : test_import_namespace/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_operate_origin.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_operate_origin.dir/rule
+.PHONY : tests/CMakeFiles/test_operate_origin.dir/rule
+
+# Convenience name for target.
+test_operate_origin: tests/CMakeFiles/test_operate_origin.dir/rule
+.PHONY : test_operate_origin
+
+# fast build rule for target.
+test_operate_origin/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_operate_origin.dir/build.make tests/CMakeFiles/test_operate_origin.dir/build
+.PHONY : test_operate_origin/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_chtl_js.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_chtl_js.dir/rule
+.PHONY : tests/CMakeFiles/test_chtl_js.dir/rule
+
+# Convenience name for target.
+test_chtl_js: tests/CMakeFiles/test_chtl_js.dir/rule
+.PHONY : test_chtl_js
+
+# fast build rule for target.
+test_chtl_js/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_js.dir/build.make tests/CMakeFiles/test_chtl_js.dir/build
+.PHONY : test_chtl_js/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_node.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_node.dir/rule
+.PHONY : tests/CMakeFiles/test_node.dir/rule
+
+# Convenience name for target.
+test_node: tests/CMakeFiles/test_node.dir/rule
+.PHONY : test_node
+
+# fast build rule for target.
+test_node/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_node.dir/build.make tests/CMakeFiles/test_node.dir/build
+.PHONY : test_node/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_chtl_nodes.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_chtl_nodes.dir/rule
+.PHONY : tests/CMakeFiles/test_chtl_nodes.dir/rule
+
+# Convenience name for target.
+test_chtl_nodes: tests/CMakeFiles/test_chtl_nodes.dir/rule
+.PHONY : test_chtl_nodes
+
+# fast build rule for target.
+test_chtl_nodes/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_nodes.dir/build.make tests/CMakeFiles/test_chtl_nodes.dir/build
+.PHONY : test_chtl_nodes/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_bridge_scanner.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_bridge_scanner.dir/rule
+.PHONY : tests/CMakeFiles/test_bridge_scanner.dir/rule
+
+# Convenience name for target.
+test_bridge_scanner: tests/CMakeFiles/test_bridge_scanner.dir/rule
+.PHONY : test_bridge_scanner
+
+# fast build rule for target.
+test_bridge_scanner/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_bridge_scanner.dir/build.make tests/CMakeFiles/test_bridge_scanner.dir/build
+.PHONY : test_bridge_scanner/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_comment.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_comment.dir/rule
+.PHONY : tests/CMakeFiles/test_comment.dir/rule
+
+# Convenience name for target.
+test_comment: tests/CMakeFiles/test_comment.dir/rule
+.PHONY : test_comment
+
+# fast build rule for target.
+test_comment/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_comment.dir/build.make tests/CMakeFiles/test_comment.dir/build
+.PHONY : test_comment/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_simple_parser.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_simple_parser.dir/rule
+.PHONY : tests/CMakeFiles/test_simple_parser.dir/rule
+
+# Convenience name for target.
+test_simple_parser: tests/CMakeFiles/test_simple_parser.dir/rule
+.PHONY : test_simple_parser
+
+# fast build rule for target.
+test_simple_parser/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_parser.dir/build.make tests/CMakeFiles/test_simple_parser.dir/build
+.PHONY : test_simple_parser/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_html_parsing.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_html_parsing.dir/rule
+.PHONY : tests/CMakeFiles/test_html_parsing.dir/rule
+
+# Convenience name for target.
+test_html_parsing: tests/CMakeFiles/test_html_parsing.dir/rule
+.PHONY : test_html_parsing
+
+# fast build rule for target.
+test_html_parsing/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_html_parsing.dir/build.make tests/CMakeFiles/test_html_parsing.dir/build
+.PHONY : test_html_parsing/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_style_parsing.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_style_parsing.dir/rule
+.PHONY : tests/CMakeFiles/test_style_parsing.dir/rule
+
+# Convenience name for target.
+test_style_parsing: tests/CMakeFiles/test_style_parsing.dir/rule
+.PHONY : test_style_parsing
+
+# fast build rule for target.
+test_style_parsing/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_parsing.dir/build.make tests/CMakeFiles/test_style_parsing.dir/build
+.PHONY : test_style_parsing/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_style_tokens.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_style_tokens.dir/rule
+.PHONY : tests/CMakeFiles/test_style_tokens.dir/rule
+
+# Convenience name for target.
+test_style_tokens: tests/CMakeFiles/test_style_tokens.dir/rule
+.PHONY : test_style_tokens
+
+# fast build rule for target.
+test_style_tokens/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_tokens.dir/build.make tests/CMakeFiles/test_style_tokens.dir/build
+.PHONY : test_style_tokens/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_simple_style.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_simple_style.dir/rule
+.PHONY : tests/CMakeFiles/test_simple_style.dir/rule
+
+# Convenience name for target.
+test_simple_style: tests/CMakeFiles/test_simple_style.dir/rule
+.PHONY : test_simple_style
+
+# fast build rule for target.
+test_simple_style/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_style.dir/build.make tests/CMakeFiles/test_simple_style.dir/build
+.PHONY : test_simple_style/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_template_parsing.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_template_parsing.dir/rule
+.PHONY : tests/CMakeFiles/test_template_parsing.dir/rule
+
+# Convenience name for target.
+test_template_parsing: tests/CMakeFiles/test_template_parsing.dir/rule
+.PHONY : test_template_parsing
+
+# fast build rule for target.
+test_template_parsing/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_template_parsing.dir/build.make tests/CMakeFiles/test_template_parsing.dir/build
+.PHONY : test_template_parsing/fast
+
+# Convenience name for target.
+tests/CMakeFiles/check.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/check.dir/rule
+.PHONY : tests/CMakeFiles/check.dir/rule
+
+# Convenience name for target.
+check: tests/CMakeFiles/check.dir/rule
+.PHONY : check
+
+# fast build rule for target.
+check/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/check.dir/build.make tests/CMakeFiles/check.dir/build
+.PHONY : check/fast
+
+test_bridge_scanner.o: test_bridge_scanner.cpp.o
+.PHONY : test_bridge_scanner.o
+
+# target to build an object file
+test_bridge_scanner.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_bridge_scanner.dir/build.make tests/CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.o
+.PHONY : test_bridge_scanner.cpp.o
+
+test_bridge_scanner.i: test_bridge_scanner.cpp.i
+.PHONY : test_bridge_scanner.i
+
+# target to preprocess a source file
+test_bridge_scanner.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_bridge_scanner.dir/build.make tests/CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.i
+.PHONY : test_bridge_scanner.cpp.i
+
+test_bridge_scanner.s: test_bridge_scanner.cpp.s
+.PHONY : test_bridge_scanner.s
+
+# target to generate assembly for a file
+test_bridge_scanner.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_bridge_scanner.dir/build.make tests/CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.s
+.PHONY : test_bridge_scanner.cpp.s
+
+test_chtl_js.o: test_chtl_js.cpp.o
+.PHONY : test_chtl_js.o
+
+# target to build an object file
+test_chtl_js.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_js.dir/build.make tests/CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.o
+.PHONY : test_chtl_js.cpp.o
+
+test_chtl_js.i: test_chtl_js.cpp.i
+.PHONY : test_chtl_js.i
+
+# target to preprocess a source file
+test_chtl_js.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_js.dir/build.make tests/CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.i
+.PHONY : test_chtl_js.cpp.i
+
+test_chtl_js.s: test_chtl_js.cpp.s
+.PHONY : test_chtl_js.s
+
+# target to generate assembly for a file
+test_chtl_js.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_js.dir/build.make tests/CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.s
+.PHONY : test_chtl_js.cpp.s
+
+test_chtl_nodes.o: test_chtl_nodes.cpp.o
+.PHONY : test_chtl_nodes.o
+
+# target to build an object file
+test_chtl_nodes.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_nodes.dir/build.make tests/CMakeFiles/test_chtl_nodes.dir/test_chtl_nodes.cpp.o
+.PHONY : test_chtl_nodes.cpp.o
+
+test_chtl_nodes.i: test_chtl_nodes.cpp.i
+.PHONY : test_chtl_nodes.i
+
+# target to preprocess a source file
+test_chtl_nodes.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_nodes.dir/build.make tests/CMakeFiles/test_chtl_nodes.dir/test_chtl_nodes.cpp.i
+.PHONY : test_chtl_nodes.cpp.i
+
+test_chtl_nodes.s: test_chtl_nodes.cpp.s
+.PHONY : test_chtl_nodes.s
+
+# target to generate assembly for a file
+test_chtl_nodes.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_chtl_nodes.dir/build.make tests/CMakeFiles/test_chtl_nodes.dir/test_chtl_nodes.cpp.s
+.PHONY : test_chtl_nodes.cpp.s
+
+test_comment.o: test_comment.cpp.o
+.PHONY : test_comment.o
+
+# target to build an object file
+test_comment.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_comment.dir/build.make tests/CMakeFiles/test_comment.dir/test_comment.cpp.o
+.PHONY : test_comment.cpp.o
+
+test_comment.i: test_comment.cpp.i
+.PHONY : test_comment.i
+
+# target to preprocess a source file
+test_comment.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_comment.dir/build.make tests/CMakeFiles/test_comment.dir/test_comment.cpp.i
+.PHONY : test_comment.cpp.i
+
+test_comment.s: test_comment.cpp.s
+.PHONY : test_comment.s
+
+# target to generate assembly for a file
+test_comment.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_comment.dir/build.make tests/CMakeFiles/test_comment.dir/test_comment.cpp.s
+.PHONY : test_comment.cpp.s
+
+test_html_parsing.o: test_html_parsing.cpp.o
+.PHONY : test_html_parsing.o
+
+# target to build an object file
+test_html_parsing.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_html_parsing.dir/build.make tests/CMakeFiles/test_html_parsing.dir/test_html_parsing.cpp.o
+.PHONY : test_html_parsing.cpp.o
+
+test_html_parsing.i: test_html_parsing.cpp.i
+.PHONY : test_html_parsing.i
+
+# target to preprocess a source file
+test_html_parsing.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_html_parsing.dir/build.make tests/CMakeFiles/test_html_parsing.dir/test_html_parsing.cpp.i
+.PHONY : test_html_parsing.cpp.i
+
+test_html_parsing.s: test_html_parsing.cpp.s
+.PHONY : test_html_parsing.s
+
+# target to generate assembly for a file
+test_html_parsing.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_html_parsing.dir/build.make tests/CMakeFiles/test_html_parsing.dir/test_html_parsing.cpp.s
+.PHONY : test_html_parsing.cpp.s
+
+test_import_namespace.o: test_import_namespace.cpp.o
+.PHONY : test_import_namespace.o
+
+# target to build an object file
+test_import_namespace.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_namespace.dir/build.make tests/CMakeFiles/test_import_namespace.dir/test_import_namespace.cpp.o
+.PHONY : test_import_namespace.cpp.o
+
+test_import_namespace.i: test_import_namespace.cpp.i
+.PHONY : test_import_namespace.i
+
+# target to preprocess a source file
+test_import_namespace.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_namespace.dir/build.make tests/CMakeFiles/test_import_namespace.dir/test_import_namespace.cpp.i
+.PHONY : test_import_namespace.cpp.i
+
+test_import_namespace.s: test_import_namespace.cpp.s
+.PHONY : test_import_namespace.s
+
+# target to generate assembly for a file
+test_import_namespace.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_namespace.dir/build.make tests/CMakeFiles/test_import_namespace.dir/test_import_namespace.cpp.s
+.PHONY : test_import_namespace.cpp.s
+
+test_lexer.o: test_lexer.cpp.o
+.PHONY : test_lexer.o
+
+# target to build an object file
+test_lexer.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.o
+.PHONY : test_lexer.cpp.o
+
+test_lexer.i: test_lexer.cpp.i
+.PHONY : test_lexer.i
+
+# target to preprocess a source file
+test_lexer.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.i
+.PHONY : test_lexer.cpp.i
+
+test_lexer.s: test_lexer.cpp.s
+.PHONY : test_lexer.s
+
+# target to generate assembly for a file
+test_lexer.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_lexer.dir/build.make tests/CMakeFiles/test_lexer.dir/test_lexer.cpp.s
+.PHONY : test_lexer.cpp.s
+
+test_node.o: test_node.cpp.o
+.PHONY : test_node.o
+
+# target to build an object file
+test_node.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_node.dir/build.make tests/CMakeFiles/test_node.dir/test_node.cpp.o
+.PHONY : test_node.cpp.o
+
+test_node.i: test_node.cpp.i
+.PHONY : test_node.i
+
+# target to preprocess a source file
+test_node.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_node.dir/build.make tests/CMakeFiles/test_node.dir/test_node.cpp.i
+.PHONY : test_node.cpp.i
+
+test_node.s: test_node.cpp.s
+.PHONY : test_node.s
+
+# target to generate assembly for a file
+test_node.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_node.dir/build.make tests/CMakeFiles/test_node.dir/test_node.cpp.s
+.PHONY : test_node.cpp.s
+
+test_operate_origin.o: test_operate_origin.cpp.o
+.PHONY : test_operate_origin.o
+
+# target to build an object file
+test_operate_origin.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_operate_origin.dir/build.make tests/CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.o
+.PHONY : test_operate_origin.cpp.o
+
+test_operate_origin.i: test_operate_origin.cpp.i
+.PHONY : test_operate_origin.i
+
+# target to preprocess a source file
+test_operate_origin.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_operate_origin.dir/build.make tests/CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.i
+.PHONY : test_operate_origin.cpp.i
+
+test_operate_origin.s: test_operate_origin.cpp.s
+.PHONY : test_operate_origin.s
+
+# target to generate assembly for a file
+test_operate_origin.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_operate_origin.dir/build.make tests/CMakeFiles/test_operate_origin.dir/test_operate_origin.cpp.s
+.PHONY : test_operate_origin.cpp.s
+
+test_parser.o: test_parser.cpp.o
+.PHONY : test_parser.o
+
+# target to build an object file
+test_parser.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.o
+.PHONY : test_parser.cpp.o
+
+test_parser.i: test_parser.cpp.i
+.PHONY : test_parser.i
+
+# target to preprocess a source file
+test_parser.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.i
+.PHONY : test_parser.cpp.i
+
+test_parser.s: test_parser.cpp.s
+.PHONY : test_parser.s
+
+# target to generate assembly for a file
+test_parser.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parser.dir/build.make tests/CMakeFiles/test_parser.dir/test_parser.cpp.s
+.PHONY : test_parser.cpp.s
+
+test_simple_parser.o: test_simple_parser.cpp.o
+.PHONY : test_simple_parser.o
+
+# target to build an object file
+test_simple_parser.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_parser.dir/build.make tests/CMakeFiles/test_simple_parser.dir/test_simple_parser.cpp.o
+.PHONY : test_simple_parser.cpp.o
+
+test_simple_parser.i: test_simple_parser.cpp.i
+.PHONY : test_simple_parser.i
+
+# target to preprocess a source file
+test_simple_parser.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_parser.dir/build.make tests/CMakeFiles/test_simple_parser.dir/test_simple_parser.cpp.i
+.PHONY : test_simple_parser.cpp.i
+
+test_simple_parser.s: test_simple_parser.cpp.s
+.PHONY : test_simple_parser.s
+
+# target to generate assembly for a file
+test_simple_parser.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_parser.dir/build.make tests/CMakeFiles/test_simple_parser.dir/test_simple_parser.cpp.s
+.PHONY : test_simple_parser.cpp.s
+
+test_simple_style.o: test_simple_style.cpp.o
+.PHONY : test_simple_style.o
+
+# target to build an object file
+test_simple_style.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_style.dir/build.make tests/CMakeFiles/test_simple_style.dir/test_simple_style.cpp.o
+.PHONY : test_simple_style.cpp.o
+
+test_simple_style.i: test_simple_style.cpp.i
+.PHONY : test_simple_style.i
+
+# target to preprocess a source file
+test_simple_style.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_style.dir/build.make tests/CMakeFiles/test_simple_style.dir/test_simple_style.cpp.i
+.PHONY : test_simple_style.cpp.i
+
+test_simple_style.s: test_simple_style.cpp.s
+.PHONY : test_simple_style.s
+
+# target to generate assembly for a file
+test_simple_style.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_style.dir/build.make tests/CMakeFiles/test_simple_style.dir/test_simple_style.cpp.s
+.PHONY : test_simple_style.cpp.s
+
+test_style_parsing.o: test_style_parsing.cpp.o
+.PHONY : test_style_parsing.o
+
+# target to build an object file
+test_style_parsing.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_parsing.dir/build.make tests/CMakeFiles/test_style_parsing.dir/test_style_parsing.cpp.o
+.PHONY : test_style_parsing.cpp.o
+
+test_style_parsing.i: test_style_parsing.cpp.i
+.PHONY : test_style_parsing.i
+
+# target to preprocess a source file
+test_style_parsing.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_parsing.dir/build.make tests/CMakeFiles/test_style_parsing.dir/test_style_parsing.cpp.i
+.PHONY : test_style_parsing.cpp.i
+
+test_style_parsing.s: test_style_parsing.cpp.s
+.PHONY : test_style_parsing.s
+
+# target to generate assembly for a file
+test_style_parsing.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_parsing.dir/build.make tests/CMakeFiles/test_style_parsing.dir/test_style_parsing.cpp.s
+.PHONY : test_style_parsing.cpp.s
+
+test_style_tokens.o: test_style_tokens.cpp.o
+.PHONY : test_style_tokens.o
+
+# target to build an object file
+test_style_tokens.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_tokens.dir/build.make tests/CMakeFiles/test_style_tokens.dir/test_style_tokens.cpp.o
+.PHONY : test_style_tokens.cpp.o
+
+test_style_tokens.i: test_style_tokens.cpp.i
+.PHONY : test_style_tokens.i
+
+# target to preprocess a source file
+test_style_tokens.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_tokens.dir/build.make tests/CMakeFiles/test_style_tokens.dir/test_style_tokens.cpp.i
+.PHONY : test_style_tokens.cpp.i
+
+test_style_tokens.s: test_style_tokens.cpp.s
+.PHONY : test_style_tokens.s
+
+# target to generate assembly for a file
+test_style_tokens.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_style_tokens.dir/build.make tests/CMakeFiles/test_style_tokens.dir/test_style_tokens.cpp.s
+.PHONY : test_style_tokens.cpp.s
+
+test_template_parsing.o: test_template_parsing.cpp.o
+.PHONY : test_template_parsing.o
+
+# target to build an object file
+test_template_parsing.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_template_parsing.dir/build.make tests/CMakeFiles/test_template_parsing.dir/test_template_parsing.cpp.o
+.PHONY : test_template_parsing.cpp.o
+
+test_template_parsing.i: test_template_parsing.cpp.i
+.PHONY : test_template_parsing.i
+
+# target to preprocess a source file
+test_template_parsing.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_template_parsing.dir/build.make tests/CMakeFiles/test_template_parsing.dir/test_template_parsing.cpp.i
+.PHONY : test_template_parsing.cpp.i
+
+test_template_parsing.s: test_template_parsing.cpp.s
+.PHONY : test_template_parsing.s
+
+# target to generate assembly for a file
+test_template_parsing.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_template_parsing.dir/build.make tests/CMakeFiles/test_template_parsing.dir/test_template_parsing.cpp.s
+.PHONY : test_template_parsing.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -133,8 +762,73 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... check"
+	@echo "... test_bridge_scanner"
+	@echo "... test_chtl_js"
+	@echo "... test_chtl_nodes"
+	@echo "... test_comment"
+	@echo "... test_html_parsing"
+	@echo "... test_import_namespace"
+	@echo "... test_lexer"
+	@echo "... test_node"
+	@echo "... test_operate_origin"
+	@echo "... test_parser"
+	@echo "... test_simple_parser"
+	@echo "... test_simple_style"
+	@echo "... test_style_parsing"
+	@echo "... test_style_tokens"
+	@echo "... test_template_parsing"
+	@echo "... test_bridge_scanner.o"
+	@echo "... test_bridge_scanner.i"
+	@echo "... test_bridge_scanner.s"
+	@echo "... test_chtl_js.o"
+	@echo "... test_chtl_js.i"
+	@echo "... test_chtl_js.s"
+	@echo "... test_chtl_nodes.o"
+	@echo "... test_chtl_nodes.i"
+	@echo "... test_chtl_nodes.s"
+	@echo "... test_comment.o"
+	@echo "... test_comment.i"
+	@echo "... test_comment.s"
+	@echo "... test_html_parsing.o"
+	@echo "... test_html_parsing.i"
+	@echo "... test_html_parsing.s"
+	@echo "... test_import_namespace.o"
+	@echo "... test_import_namespace.i"
+	@echo "... test_import_namespace.s"
+	@echo "... test_lexer.o"
+	@echo "... test_lexer.i"
+	@echo "... test_lexer.s"
+	@echo "... test_node.o"
+	@echo "... test_node.i"
+	@echo "... test_node.s"
+	@echo "... test_operate_origin.o"
+	@echo "... test_operate_origin.i"
+	@echo "... test_operate_origin.s"
+	@echo "... test_parser.o"
+	@echo "... test_parser.i"
+	@echo "... test_parser.s"
+	@echo "... test_simple_parser.o"
+	@echo "... test_simple_parser.i"
+	@echo "... test_simple_parser.s"
+	@echo "... test_simple_style.o"
+	@echo "... test_simple_style.i"
+	@echo "... test_simple_style.s"
+	@echo "... test_style_parsing.o"
+	@echo "... test_style_parsing.i"
+	@echo "... test_style_parsing.s"
+	@echo "... test_style_tokens.o"
+	@echo "... test_style_tokens.i"
+	@echo "... test_style_tokens.s"
+	@echo "... test_template_parsing.o"
+	@echo "... test_template_parsing.i"
+	@echo "... test_template_parsing.s"
 .PHONY : help
 
 

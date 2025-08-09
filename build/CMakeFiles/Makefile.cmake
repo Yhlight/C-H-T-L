@@ -34,6 +34,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/workspace/CMakeLists.txt"
   "CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
+  "/workspace/cmake/CHTLConfig.cmake.in"
+  "/workspace/src/CMakeLists.txt"
   "/workspace/tests/CMakeLists.txt"
   )
 
@@ -45,25 +47,31 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "CHTLConfig.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/CMakeFiles/CMakeDirectoryInformation.cmake"
   "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/chtl.dir/DependInfo.cmake"
-  "CMakeFiles/test_lexer.dir/DependInfo.cmake"
-  "CMakeFiles/test_node.dir/DependInfo.cmake"
-  "CMakeFiles/test_chtl_nodes.dir/DependInfo.cmake"
-  "CMakeFiles/test_bridge_scanner.dir/DependInfo.cmake"
-  "CMakeFiles/test_comment.dir/DependInfo.cmake"
-  "CMakeFiles/test_parser.dir/DependInfo.cmake"
-  "CMakeFiles/test_simple_parser.dir/DependInfo.cmake"
-  "CMakeFiles/test_html_parsing.dir/DependInfo.cmake"
-  "CMakeFiles/test_style_parsing.dir/DependInfo.cmake"
-  "CMakeFiles/test_style_tokens.dir/DependInfo.cmake"
-  "CMakeFiles/test_simple_style.dir/DependInfo.cmake"
-  "CMakeFiles/test_template_parsing.dir/DependInfo.cmake"
-  "CMakeFiles/test_import_namespace.dir/DependInfo.cmake"
-  "CMakeFiles/test_operate_origin.dir/DependInfo.cmake"
+  "src/CMakeFiles/chtl_core.dir/DependInfo.cmake"
+  "src/CMakeFiles/chtl_shared.dir/DependInfo.cmake"
+  "src/CMakeFiles/chtl.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_lexer.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_parser.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_import_namespace.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_operate_origin.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_chtl_js.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_node.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_chtl_nodes.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_bridge_scanner.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_comment.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_simple_parser.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_html_parsing.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_style_parsing.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_style_tokens.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_simple_style.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_template_parsing.dir/DependInfo.cmake"
+  "tests/CMakeFiles/check.dir/DependInfo.cmake"
   )

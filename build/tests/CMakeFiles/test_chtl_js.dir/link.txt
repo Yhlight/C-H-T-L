@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_chtl_js.dir/link.d CMakeFiles/test_chtl_js.dir/test_chtl_js.cpp.o -o ../bin/test_chtl_js  ../lib/libchtl_core.a

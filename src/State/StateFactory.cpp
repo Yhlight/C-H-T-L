@@ -1,8 +1,8 @@
 #include "State/StateFactory.h"
 #include "State/ChtlState.h"
 #include "State/CssState.h"
-#include "State/JsState.h"
-#include "State/ChtlJsState.h"
+// #include "State/JsState.h"
+// #include "State/ChtlJsState.h"
 #include <algorithm>
 #include <vector>
 
@@ -39,8 +39,8 @@ const std::vector<StateTransition> StateFactory::transitions_ = {
 const std::unordered_map<StateType, StateFactory::StateCreator> StateFactory::stateCreators_ = {
     {StateType::CHTL, [](BasicLexer* lexer) { return std::make_shared<ChtlState>(lexer); }},
     {StateType::CSS, [](BasicLexer* lexer) { return std::make_shared<CssState>(lexer); }},
-    {StateType::JS, [](BasicLexer* lexer) { return std::make_shared<JsState>(lexer); }},
-    {StateType::CHTL_JS, [](BasicLexer* lexer) { return std::make_shared<ChtlJsState>(lexer); }},
+    // TODO: {StateType::JS, [](BasicLexer* lexer) { return std::make_shared<JsState>(lexer); }},
+    // TODO: {StateType::CHTL_JS, [](BasicLexer* lexer) { return std::make_shared<ChtlJsState>(lexer); }},
     {StateType::ORIGIN, [](BasicLexer* lexer) { return std::make_shared<ChtlState>(lexer); }}, // 暂时使用ChtlState
     {StateType::STRING, [](BasicLexer* lexer) { return std::make_shared<ChtlState>(lexer); }}, // 暂时使用ChtlState
     {StateType::COMMENT, [](BasicLexer* lexer) { return std::make_shared<ChtlState>(lexer); }} // 暂时使用ChtlState

@@ -3,8 +3,8 @@
 
 namespace chtl {
 
-CssState::CssState() 
-    : BasicState(),
+CssState::CssState(BasicLexer* lexer) 
+    : BasicState(StateType::CSS, "CssState", lexer),
       currentState_(State::CSS_NORMAL),
       previousState_(State::CSS_NORMAL),
       stringDelimiter_('\0'),
@@ -29,6 +29,18 @@ void CssState::reset() {
     inPropertyName_ = false;
     inPropertyValue_ = false;
     currentBuffer_.clear();
+}
+
+std::shared_ptr<BasicState> CssState::handleChar(char ch) {
+    processChar(ch);
+    // CSS状态机通常不切换到其他状态
+    return nullptr;
+}
+
+bool CssState::accepts(char ch) const {
+    // CSS状态接受所有字符
+    (void)ch;  // 避免未使用参数警告
+    return true;
 }
 
 void CssState::processChar(char c) {

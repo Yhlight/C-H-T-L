@@ -1,0 +1,12 @@
+file(REMOVE_RECURSE
+  "../bin/test_comment"
+  "../bin/test_comment.pdb"
+  "CMakeFiles/test_comment.dir/link.d"
+  "CMakeFiles/test_comment.dir/test_comment.cpp.o"
+  "CMakeFiles/test_comment.dir/test_comment.cpp.o.d"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/test_comment.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

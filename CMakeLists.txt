@@ -1,16 +1,31 @@
-cmake_minimum_required(VERSION 3.16)
-project(CHTL_Compiler VERSION 1.0.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.10)
+project(CHTL VERSION 1.0.0 LANGUAGES CXX)
 
-# 设置C++17标准
+# 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# 设置编译选项
-if(MSVC)
-    add_compile_options(/W4 /WX)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+# 编译选项
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+# 编译器选项
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wall -Wextra -Wpedantic)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-g -O0)
+    else()
+        add_compile_options(-O3)
+    endif()
+elseif(MSVC)
+    add_compile_options(/W4)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(/Od)
+    else()
+        add_compile_options(/O2)
+    endif()
 endif()
 
 # 设置输出目录
@@ -21,52 +36,36 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # 包含目录
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# 收集库源文件（不包含main文件）
-file(GLOB_RECURSE LIB_SOURCES 
-    "${CMAKE_SOURCE_DIR}/src/Common/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Context/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Lexer/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/State/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Node/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Parser/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Generator/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Css/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Js/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Chtl_Js/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Scanner/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Analyzer/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/AST/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Utils/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Optimize/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Predefine/*.cpp"
+# 添加子目录
+add_subdirectory(src)
+
+# 测试选项
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+# 安装选项
+install(DIRECTORY include/ DESTINATION include/chtl)
+
+# 生成配置文件
+configure_file(
+    "${CMAKE_SOURCE_DIR}/cmake/CHTLConfig.cmake.in"
+    "${CMAKE_BINARY_DIR}/CHTLConfig.cmake"
+    @ONLY
 )
 
-# 创建主可执行文件
-add_executable(chtl ${LIB_SOURCES} src/main.cpp)
+# 导出目标
+install(EXPORT CHTLTargets
+    FILE CHTLTargets.cmake
+    NAMESPACE CHTL::
+    DESTINATION lib/cmake/CHTL
+)
 
-# 创建测试程序
-add_executable(test_lexer ${LIB_SOURCES} src/test_lexer.cpp)
-add_executable(test_node ${LIB_SOURCES} src/test_node.cpp)
-add_executable(test_chtl_nodes ${LIB_SOURCES} src/test_chtl_nodes.cpp)
-add_executable(test_bridge_scanner ${LIB_SOURCES} src/test_bridge_scanner.cpp)
-add_executable(test_comment ${LIB_SOURCES} src/test_comment.cpp)
-add_executable(test_parser ${LIB_SOURCES} src/test_parser.cpp)
-add_executable(test_simple_parser ${LIB_SOURCES} src/test_simple_parser.cpp)
-add_executable(test_html_parsing ${LIB_SOURCES} src/test_html_parsing.cpp)
-add_executable(test_style_parsing ${LIB_SOURCES} src/test_style_parsing.cpp)
-add_executable(test_style_tokens ${LIB_SOURCES} src/test_style_tokens.cpp)
-add_executable(test_simple_style ${LIB_SOURCES} src/test_simple_style.cpp)
-add_executable(test_template_parsing ${LIB_SOURCES} src/test_template_parsing.cpp)
-add_executable(test_import_namespace ${LIB_SOURCES} src/test_import_namespace.cpp)
-add_executable(test_operate_origin ${LIB_SOURCES} src/test_operate_origin.cpp)
-
-# 启用测试
-enable_testing()
-
-# 添加子目录
-add_subdirectory(Css)
-add_subdirectory(Js)
-add_subdirectory(Chtl_Js)
-
-# 添加测试子目录
-add_subdirectory(tests)
+# 状态信息
+message(STATUS "CHTL Compiler Configuration:")
+message(STATUS "  Version: ${PROJECT_VERSION}")
+message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "  Build Tests: ${BUILD_TESTS}")

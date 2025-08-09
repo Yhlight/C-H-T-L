@@ -30,6 +30,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Node/Template.cpp" "CMakeFiles/test_node.dir/src/Node/Template.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/Node/Template.cpp.o.d"
   "/workspace/src/Parser/BasicParser.cpp" "CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o.d"
   "/workspace/src/Parser/ConfigParser.cpp" "CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o.d"
+  "/workspace/src/Scanner/BridgeScanner.cpp" "CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o.d"
+  "/workspace/src/Scanner/Segment.cpp" "CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o.d"
   "/workspace/src/State/ChtlState.cpp" "CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o.d"
   "/workspace/src/State/StateFactory.cpp" "CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o.d"
   "/workspace/src/test_node.cpp" "CMakeFiles/test_node.dir/src/test_node.cpp.o" "gcc" "CMakeFiles/test_node.dir/src/test_node.cpp.o.d"

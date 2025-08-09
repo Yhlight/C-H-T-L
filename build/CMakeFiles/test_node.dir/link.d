@@ -24,6 +24,8 @@ bin/test_node: \
   CMakeFiles/test_node.dir/src/Node/Template.cpp.o \
   CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o \
   CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o \
+  CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o \
+  CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o \
   CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o \
   CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o \
   CMakeFiles/test_node.dir/src/test_node.cpp.o \
@@ -104,6 +106,10 @@ CMakeFiles/test_node.dir/src/Node/Template.cpp.o:
 CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o:
 
 CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o:
+
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o:
+
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o:
 
 CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o:
 

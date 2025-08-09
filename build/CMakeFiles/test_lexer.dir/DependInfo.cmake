@@ -30,6 +30,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Node/Template.cpp" "CMakeFiles/test_lexer.dir/src/Node/Template.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/Node/Template.cpp.o.d"
   "/workspace/src/Parser/BasicParser.cpp" "CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.o.d"
   "/workspace/src/Parser/ConfigParser.cpp" "CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.o.d"
+  "/workspace/src/Scanner/BridgeScanner.cpp" "CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.o.d"
+  "/workspace/src/Scanner/Segment.cpp" "CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.o.d"
   "/workspace/src/State/ChtlState.cpp" "CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.o.d"
   "/workspace/src/State/StateFactory.cpp" "CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.o.d"
   "/workspace/src/test_lexer.cpp" "CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o" "gcc" "CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o.d"

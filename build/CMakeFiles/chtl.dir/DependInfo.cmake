@@ -30,6 +30,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Node/Template.cpp" "CMakeFiles/chtl.dir/src/Node/Template.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Node/Template.cpp.o.d"
   "/workspace/src/Parser/BasicParser.cpp" "CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o.d"
   "/workspace/src/Parser/ConfigParser.cpp" "CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o.d"
+  "/workspace/src/Scanner/BridgeScanner.cpp" "CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o.d"
+  "/workspace/src/Scanner/Segment.cpp" "CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o.d"
   "/workspace/src/State/ChtlState.cpp" "CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o.d"
   "/workspace/src/State/StateFactory.cpp" "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o.d"
   "/workspace/src/main.cpp" "CMakeFiles/chtl.dir/src/main.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/main.cpp.o.d"

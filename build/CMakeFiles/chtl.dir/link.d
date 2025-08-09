@@ -24,6 +24,8 @@ bin/chtl: \
   CMakeFiles/chtl.dir/src/Node/Template.cpp.o \
   CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o \
   CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o \
+  CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o \
+  CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o \
   CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o \
   CMakeFiles/chtl.dir/src/main.cpp.o \
@@ -104,6 +106,10 @@ CMakeFiles/chtl.dir/src/Node/Template.cpp.o:
 CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o:
 
 CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o:
+
+CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o:
+
+CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o:
 
 CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o:
 

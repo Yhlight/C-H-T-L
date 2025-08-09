@@ -178,6 +178,19 @@ test_chtl_nodes/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/build
 .PHONY : test_chtl_nodes/fast
 
+#=============================================================================
+# Target rules for targets named test_bridge_scanner
+
+# Build rule for target.
+test_bridge_scanner: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_bridge_scanner
+.PHONY : test_bridge_scanner
+
+# fast build rule for target.
+test_bridge_scanner/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/build
+.PHONY : test_bridge_scanner/fast
+
 src/Common/GlobalMap.o: src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.o
 
@@ -187,6 +200,7 @@ src/Common/GlobalMap.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/GlobalMap.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/GlobalMap.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/GlobalMap.cpp.o
 .PHONY : src/Common/GlobalMap.cpp.o
 
 src/Common/GlobalMap.i: src/Common/GlobalMap.cpp.i
@@ -198,6 +212,7 @@ src/Common/GlobalMap.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/GlobalMap.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/GlobalMap.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/GlobalMap.cpp.i
 .PHONY : src/Common/GlobalMap.cpp.i
 
 src/Common/GlobalMap.s: src/Common/GlobalMap.cpp.s
@@ -209,6 +224,7 @@ src/Common/GlobalMap.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/GlobalMap.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/GlobalMap.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/GlobalMap.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/GlobalMap.cpp.s
 .PHONY : src/Common/GlobalMap.cpp.s
 
 src/Common/Token.o: src/Common/Token.cpp.o
@@ -220,6 +236,7 @@ src/Common/Token.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/Token.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/Token.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/Token.cpp.o
 .PHONY : src/Common/Token.cpp.o
 
 src/Common/Token.i: src/Common/Token.cpp.i
@@ -231,6 +248,7 @@ src/Common/Token.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/Token.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/Token.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/Token.cpp.i
 .PHONY : src/Common/Token.cpp.i
 
 src/Common/Token.s: src/Common/Token.cpp.s
@@ -242,6 +260,7 @@ src/Common/Token.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Common/Token.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Common/Token.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Common/Token.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Common/Token.cpp.s
 .PHONY : src/Common/Token.cpp.s
 
 src/Context/BasicContext.o: src/Context/BasicContext.cpp.o
@@ -253,6 +272,7 @@ src/Context/BasicContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/BasicContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/BasicContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/BasicContext.cpp.o
 .PHONY : src/Context/BasicContext.cpp.o
 
 src/Context/BasicContext.i: src/Context/BasicContext.cpp.i
@@ -264,6 +284,7 @@ src/Context/BasicContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/BasicContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/BasicContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/BasicContext.cpp.i
 .PHONY : src/Context/BasicContext.cpp.i
 
 src/Context/BasicContext.s: src/Context/BasicContext.cpp.s
@@ -275,6 +296,7 @@ src/Context/BasicContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/BasicContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/BasicContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/BasicContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/BasicContext.cpp.s
 .PHONY : src/Context/BasicContext.cpp.s
 
 src/Context/ChtlContext.o: src/Context/ChtlContext.cpp.o
@@ -286,6 +308,7 @@ src/Context/ChtlContext.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ChtlContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ChtlContext.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ChtlContext.cpp.o
 .PHONY : src/Context/ChtlContext.cpp.o
 
 src/Context/ChtlContext.i: src/Context/ChtlContext.cpp.i
@@ -297,6 +320,7 @@ src/Context/ChtlContext.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ChtlContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ChtlContext.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ChtlContext.cpp.i
 .PHONY : src/Context/ChtlContext.cpp.i
 
 src/Context/ChtlContext.s: src/Context/ChtlContext.cpp.s
@@ -308,6 +332,7 @@ src/Context/ChtlContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ChtlContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ChtlContext.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ChtlContext.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ChtlContext.cpp.s
 .PHONY : src/Context/ChtlContext.cpp.s
 
 src/Context/ContextFactory.o: src/Context/ContextFactory.cpp.o
@@ -319,6 +344,7 @@ src/Context/ContextFactory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ContextFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ContextFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.o
 .PHONY : src/Context/ContextFactory.cpp.o
 
 src/Context/ContextFactory.i: src/Context/ContextFactory.cpp.i
@@ -330,6 +356,7 @@ src/Context/ContextFactory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ContextFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ContextFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.i
 .PHONY : src/Context/ContextFactory.cpp.i
 
 src/Context/ContextFactory.s: src/Context/ContextFactory.cpp.s
@@ -341,6 +368,7 @@ src/Context/ContextFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Context/ContextFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Context/ContextFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Context/ContextFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Context/ContextFactory.cpp.s
 .PHONY : src/Context/ContextFactory.cpp.s
 
 src/Generator/BasicGenerator.o: src/Generator/BasicGenerator.cpp.o
@@ -352,6 +380,7 @@ src/Generator/BasicGenerator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.o
 .PHONY : src/Generator/BasicGenerator.cpp.o
 
 src/Generator/BasicGenerator.i: src/Generator/BasicGenerator.cpp.i
@@ -363,6 +392,7 @@ src/Generator/BasicGenerator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.i
 .PHONY : src/Generator/BasicGenerator.cpp.i
 
 src/Generator/BasicGenerator.s: src/Generator/BasicGenerator.cpp.s
@@ -374,6 +404,7 @@ src/Generator/BasicGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/BasicGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/BasicGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/BasicGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/BasicGenerator.cpp.s
 .PHONY : src/Generator/BasicGenerator.cpp.s
 
 src/Generator/ConfigGenerator.o: src/Generator/ConfigGenerator.cpp.o
@@ -385,6 +416,7 @@ src/Generator/ConfigGenerator.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.o
 .PHONY : src/Generator/ConfigGenerator.cpp.o
 
 src/Generator/ConfigGenerator.i: src/Generator/ConfigGenerator.cpp.i
@@ -396,6 +428,7 @@ src/Generator/ConfigGenerator.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.i
 .PHONY : src/Generator/ConfigGenerator.cpp.i
 
 src/Generator/ConfigGenerator.s: src/Generator/ConfigGenerator.cpp.s
@@ -407,6 +440,7 @@ src/Generator/ConfigGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Generator/ConfigGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Generator/ConfigGenerator.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Generator/ConfigGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Generator/ConfigGenerator.cpp.s
 .PHONY : src/Generator/ConfigGenerator.cpp.s
 
 src/Lexer/BasicLexer.o: src/Lexer/BasicLexer.cpp.o
@@ -418,6 +452,7 @@ src/Lexer/BasicLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.o
 .PHONY : src/Lexer/BasicLexer.cpp.o
 
 src/Lexer/BasicLexer.i: src/Lexer/BasicLexer.cpp.i
@@ -429,6 +464,7 @@ src/Lexer/BasicLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.i
 .PHONY : src/Lexer/BasicLexer.cpp.i
 
 src/Lexer/BasicLexer.s: src/Lexer/BasicLexer.cpp.s
@@ -440,6 +476,7 @@ src/Lexer/BasicLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/BasicLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/BasicLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/BasicLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/BasicLexer.cpp.s
 .PHONY : src/Lexer/BasicLexer.cpp.s
 
 src/Lexer/ChtlLexer.o: src/Lexer/ChtlLexer.cpp.o
@@ -451,6 +488,7 @@ src/Lexer/ChtlLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.o
 .PHONY : src/Lexer/ChtlLexer.cpp.o
 
 src/Lexer/ChtlLexer.i: src/Lexer/ChtlLexer.cpp.i
@@ -462,6 +500,7 @@ src/Lexer/ChtlLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.i
 .PHONY : src/Lexer/ChtlLexer.cpp.i
 
 src/Lexer/ChtlLexer.s: src/Lexer/ChtlLexer.cpp.s
@@ -473,6 +512,7 @@ src/Lexer/ChtlLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ChtlLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ChtlLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ChtlLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ChtlLexer.cpp.s
 .PHONY : src/Lexer/ChtlLexer.cpp.s
 
 src/Lexer/ConfigLexer.o: src/Lexer/ConfigLexer.cpp.o
@@ -484,6 +524,7 @@ src/Lexer/ConfigLexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.o
 .PHONY : src/Lexer/ConfigLexer.cpp.o
 
 src/Lexer/ConfigLexer.i: src/Lexer/ConfigLexer.cpp.i
@@ -495,6 +536,7 @@ src/Lexer/ConfigLexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.i
 .PHONY : src/Lexer/ConfigLexer.cpp.i
 
 src/Lexer/ConfigLexer.s: src/Lexer/ConfigLexer.cpp.s
@@ -506,6 +548,7 @@ src/Lexer/ConfigLexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Lexer/ConfigLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Lexer/ConfigLexer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Lexer/ConfigLexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Lexer/ConfigLexer.cpp.s
 .PHONY : src/Lexer/ConfigLexer.cpp.s
 
 src/Node/Comment.o: src/Node/Comment.cpp.o
@@ -517,6 +560,7 @@ src/Node/Comment.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Comment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Comment.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Comment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Comment.cpp.o
 .PHONY : src/Node/Comment.cpp.o
 
 src/Node/Comment.i: src/Node/Comment.cpp.i
@@ -528,6 +572,7 @@ src/Node/Comment.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Comment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Comment.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Comment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Comment.cpp.i
 .PHONY : src/Node/Comment.cpp.i
 
 src/Node/Comment.s: src/Node/Comment.cpp.s
@@ -539,6 +584,7 @@ src/Node/Comment.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Comment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Comment.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Comment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Comment.cpp.s
 .PHONY : src/Node/Comment.cpp.s
 
 src/Node/Config.o: src/Node/Config.cpp.o
@@ -550,6 +596,7 @@ src/Node/Config.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Config.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Config.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Config.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Config.cpp.o
 .PHONY : src/Node/Config.cpp.o
 
 src/Node/Config.i: src/Node/Config.cpp.i
@@ -561,6 +608,7 @@ src/Node/Config.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Config.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Config.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Config.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Config.cpp.i
 .PHONY : src/Node/Config.cpp.i
 
 src/Node/Config.s: src/Node/Config.cpp.s
@@ -572,6 +620,7 @@ src/Node/Config.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Config.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Config.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Config.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Config.cpp.s
 .PHONY : src/Node/Config.cpp.s
 
 src/Node/Custom.o: src/Node/Custom.cpp.o
@@ -583,6 +632,7 @@ src/Node/Custom.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Custom.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Custom.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Custom.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Custom.cpp.o
 .PHONY : src/Node/Custom.cpp.o
 
 src/Node/Custom.i: src/Node/Custom.cpp.i
@@ -594,6 +644,7 @@ src/Node/Custom.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Custom.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Custom.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Custom.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Custom.cpp.i
 .PHONY : src/Node/Custom.cpp.i
 
 src/Node/Custom.s: src/Node/Custom.cpp.s
@@ -605,6 +656,7 @@ src/Node/Custom.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Custom.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Custom.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Custom.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Custom.cpp.s
 .PHONY : src/Node/Custom.cpp.s
 
 src/Node/Import.o: src/Node/Import.cpp.o
@@ -616,6 +668,7 @@ src/Node/Import.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Import.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Import.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Import.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Import.cpp.o
 .PHONY : src/Node/Import.cpp.o
 
 src/Node/Import.i: src/Node/Import.cpp.i
@@ -627,6 +680,7 @@ src/Node/Import.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Import.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Import.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Import.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Import.cpp.i
 .PHONY : src/Node/Import.cpp.i
 
 src/Node/Import.s: src/Node/Import.cpp.s
@@ -638,6 +692,7 @@ src/Node/Import.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Import.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Import.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Import.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Import.cpp.s
 .PHONY : src/Node/Import.cpp.s
 
 src/Node/Namespace.o: src/Node/Namespace.cpp.o
@@ -649,6 +704,7 @@ src/Node/Namespace.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Namespace.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Namespace.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Namespace.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Namespace.cpp.o
 .PHONY : src/Node/Namespace.cpp.o
 
 src/Node/Namespace.i: src/Node/Namespace.cpp.i
@@ -660,6 +716,7 @@ src/Node/Namespace.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Namespace.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Namespace.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Namespace.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Namespace.cpp.i
 .PHONY : src/Node/Namespace.cpp.i
 
 src/Node/Namespace.s: src/Node/Namespace.cpp.s
@@ -671,6 +728,7 @@ src/Node/Namespace.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Namespace.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Namespace.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Namespace.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Namespace.cpp.s
 .PHONY : src/Node/Namespace.cpp.s
 
 src/Node/Node.o: src/Node/Node.cpp.o
@@ -682,6 +740,7 @@ src/Node/Node.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Node.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Node.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Node.cpp.o
 .PHONY : src/Node/Node.cpp.o
 
 src/Node/Node.i: src/Node/Node.cpp.i
@@ -693,6 +752,7 @@ src/Node/Node.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Node.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Node.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Node.cpp.i
 .PHONY : src/Node/Node.cpp.i
 
 src/Node/Node.s: src/Node/Node.cpp.s
@@ -704,6 +764,7 @@ src/Node/Node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Node.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Node.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Node.cpp.s
 .PHONY : src/Node/Node.cpp.s
 
 src/Node/Operate.o: src/Node/Operate.cpp.o
@@ -715,6 +776,7 @@ src/Node/Operate.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Operate.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Operate.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Operate.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Operate.cpp.o
 .PHONY : src/Node/Operate.cpp.o
 
 src/Node/Operate.i: src/Node/Operate.cpp.i
@@ -726,6 +788,7 @@ src/Node/Operate.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Operate.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Operate.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Operate.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Operate.cpp.i
 .PHONY : src/Node/Operate.cpp.i
 
 src/Node/Operate.s: src/Node/Operate.cpp.s
@@ -737,6 +800,7 @@ src/Node/Operate.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Operate.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Operate.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Operate.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Operate.cpp.s
 .PHONY : src/Node/Operate.cpp.s
 
 src/Node/Origin.o: src/Node/Origin.cpp.o
@@ -748,6 +812,7 @@ src/Node/Origin.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Origin.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Origin.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Origin.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Origin.cpp.o
 .PHONY : src/Node/Origin.cpp.o
 
 src/Node/Origin.i: src/Node/Origin.cpp.i
@@ -759,6 +824,7 @@ src/Node/Origin.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Origin.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Origin.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Origin.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Origin.cpp.i
 .PHONY : src/Node/Origin.cpp.i
 
 src/Node/Origin.s: src/Node/Origin.cpp.s
@@ -770,6 +836,7 @@ src/Node/Origin.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Origin.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Origin.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Origin.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Origin.cpp.s
 .PHONY : src/Node/Origin.cpp.s
 
 src/Node/Style.o: src/Node/Style.cpp.o
@@ -781,6 +848,7 @@ src/Node/Style.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Style.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Style.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Style.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Style.cpp.o
 .PHONY : src/Node/Style.cpp.o
 
 src/Node/Style.i: src/Node/Style.cpp.i
@@ -792,6 +860,7 @@ src/Node/Style.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Style.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Style.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Style.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Style.cpp.i
 .PHONY : src/Node/Style.cpp.i
 
 src/Node/Style.s: src/Node/Style.cpp.s
@@ -803,6 +872,7 @@ src/Node/Style.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Style.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Style.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Style.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Style.cpp.s
 .PHONY : src/Node/Style.cpp.s
 
 src/Node/Template.o: src/Node/Template.cpp.o
@@ -814,6 +884,7 @@ src/Node/Template.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Template.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Template.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Template.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Template.cpp.o
 .PHONY : src/Node/Template.cpp.o
 
 src/Node/Template.i: src/Node/Template.cpp.i
@@ -825,6 +896,7 @@ src/Node/Template.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Template.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Template.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Template.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Template.cpp.i
 .PHONY : src/Node/Template.cpp.i
 
 src/Node/Template.s: src/Node/Template.cpp.s
@@ -836,6 +908,7 @@ src/Node/Template.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Node/Template.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Node/Template.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Node/Template.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Node/Template.cpp.s
 .PHONY : src/Node/Template.cpp.s
 
 src/Parser/BasicParser.o: src/Parser/BasicParser.cpp.o
@@ -847,6 +920,7 @@ src/Parser/BasicParser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/BasicParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/BasicParser.cpp.o
 .PHONY : src/Parser/BasicParser.cpp.o
 
 src/Parser/BasicParser.i: src/Parser/BasicParser.cpp.i
@@ -858,6 +932,7 @@ src/Parser/BasicParser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/BasicParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/BasicParser.cpp.i
 .PHONY : src/Parser/BasicParser.cpp.i
 
 src/Parser/BasicParser.s: src/Parser/BasicParser.cpp.s
@@ -869,6 +944,7 @@ src/Parser/BasicParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/BasicParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/BasicParser.cpp.s
 .PHONY : src/Parser/BasicParser.cpp.s
 
 src/Parser/ConfigParser.o: src/Parser/ConfigParser.cpp.o
@@ -880,6 +956,7 @@ src/Parser/ConfigParser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/ConfigParser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/ConfigParser.cpp.o
 .PHONY : src/Parser/ConfigParser.cpp.o
 
 src/Parser/ConfigParser.i: src/Parser/ConfigParser.cpp.i
@@ -891,6 +968,7 @@ src/Parser/ConfigParser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/ConfigParser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/ConfigParser.cpp.i
 .PHONY : src/Parser/ConfigParser.cpp.i
 
 src/Parser/ConfigParser.s: src/Parser/ConfigParser.cpp.s
@@ -902,7 +980,80 @@ src/Parser/ConfigParser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Parser/ConfigParser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Parser/ConfigParser.cpp.s
 .PHONY : src/Parser/ConfigParser.cpp.s
+
+src/Scanner/BridgeScanner.o: src/Scanner/BridgeScanner.cpp.o
+.PHONY : src/Scanner/BridgeScanner.o
+
+# target to build an object file
+src/Scanner/BridgeScanner.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/BridgeScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/BridgeScanner.cpp.o
+.PHONY : src/Scanner/BridgeScanner.cpp.o
+
+src/Scanner/BridgeScanner.i: src/Scanner/BridgeScanner.cpp.i
+.PHONY : src/Scanner/BridgeScanner.i
+
+# target to preprocess a source file
+src/Scanner/BridgeScanner.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/BridgeScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/BridgeScanner.cpp.i
+.PHONY : src/Scanner/BridgeScanner.cpp.i
+
+src/Scanner/BridgeScanner.s: src/Scanner/BridgeScanner.cpp.s
+.PHONY : src/Scanner/BridgeScanner.s
+
+# target to generate assembly for a file
+src/Scanner/BridgeScanner.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/BridgeScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/BridgeScanner.cpp.s
+.PHONY : src/Scanner/BridgeScanner.cpp.s
+
+src/Scanner/Segment.o: src/Scanner/Segment.cpp.o
+.PHONY : src/Scanner/Segment.o
+
+# target to build an object file
+src/Scanner/Segment.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/Segment.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/Segment.cpp.o
+.PHONY : src/Scanner/Segment.cpp.o
+
+src/Scanner/Segment.i: src/Scanner/Segment.cpp.i
+.PHONY : src/Scanner/Segment.i
+
+# target to preprocess a source file
+src/Scanner/Segment.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/Segment.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/Segment.cpp.i
+.PHONY : src/Scanner/Segment.cpp.i
+
+src/Scanner/Segment.s: src/Scanner/Segment.cpp.s
+.PHONY : src/Scanner/Segment.s
+
+# target to generate assembly for a file
+src/Scanner/Segment.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/Scanner/Segment.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/Scanner/Segment.cpp.s
+.PHONY : src/Scanner/Segment.cpp.s
 
 src/State/ChtlState.o: src/State/ChtlState.cpp.o
 .PHONY : src/State/ChtlState.o
@@ -913,6 +1064,7 @@ src/State/ChtlState.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/ChtlState.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/ChtlState.cpp.o
 .PHONY : src/State/ChtlState.cpp.o
 
 src/State/ChtlState.i: src/State/ChtlState.cpp.i
@@ -924,6 +1076,7 @@ src/State/ChtlState.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/ChtlState.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/ChtlState.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/ChtlState.cpp.i
 .PHONY : src/State/ChtlState.cpp.i
 
 src/State/ChtlState.s: src/State/ChtlState.cpp.s
@@ -935,6 +1088,7 @@ src/State/ChtlState.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/ChtlState.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/ChtlState.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/ChtlState.cpp.s
 .PHONY : src/State/ChtlState.cpp.s
 
 src/State/StateFactory.o: src/State/StateFactory.cpp.o
@@ -946,6 +1100,7 @@ src/State/StateFactory.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/StateFactory.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/StateFactory.cpp.o
 .PHONY : src/State/StateFactory.cpp.o
 
 src/State/StateFactory.i: src/State/StateFactory.cpp.i
@@ -957,6 +1112,7 @@ src/State/StateFactory.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/StateFactory.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/StateFactory.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/StateFactory.cpp.i
 .PHONY : src/State/StateFactory.cpp.i
 
 src/State/StateFactory.s: src/State/StateFactory.cpp.s
@@ -968,6 +1124,7 @@ src/State/StateFactory.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_lexer.dir/build.make CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_node.dir/build.make CMakeFiles/test_node.dir/src/State/StateFactory.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_chtl_nodes.dir/build.make CMakeFiles/test_chtl_nodes.dir/src/State/StateFactory.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/State/StateFactory.cpp.s
 .PHONY : src/State/StateFactory.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -993,6 +1150,30 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/test_bridge_scanner.o: src/test_bridge_scanner.cpp.o
+.PHONY : src/test_bridge_scanner.o
+
+# target to build an object file
+src/test_bridge_scanner.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.o
+.PHONY : src/test_bridge_scanner.cpp.o
+
+src/test_bridge_scanner.i: src/test_bridge_scanner.cpp.i
+.PHONY : src/test_bridge_scanner.i
+
+# target to preprocess a source file
+src/test_bridge_scanner.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.i
+.PHONY : src/test_bridge_scanner.cpp.i
+
+src/test_bridge_scanner.s: src/test_bridge_scanner.cpp.s
+.PHONY : src/test_bridge_scanner.s
+
+# target to generate assembly for a file
+src/test_bridge_scanner.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_bridge_scanner.dir/build.make CMakeFiles/test_bridge_scanner.dir/src/test_bridge_scanner.cpp.s
+.PHONY : src/test_bridge_scanner.cpp.s
 
 src/test_chtl_nodes.o: src/test_chtl_nodes.cpp.o
 .PHONY : src/test_chtl_nodes.o
@@ -1076,6 +1257,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... chtl"
+	@echo "... test_bridge_scanner"
 	@echo "... test_chtl_nodes"
 	@echo "... test_lexer"
 	@echo "... test_node"
@@ -1145,6 +1327,12 @@ help:
 	@echo "... src/Parser/ConfigParser.o"
 	@echo "... src/Parser/ConfigParser.i"
 	@echo "... src/Parser/ConfigParser.s"
+	@echo "... src/Scanner/BridgeScanner.o"
+	@echo "... src/Scanner/BridgeScanner.i"
+	@echo "... src/Scanner/BridgeScanner.s"
+	@echo "... src/Scanner/Segment.o"
+	@echo "... src/Scanner/Segment.i"
+	@echo "... src/Scanner/Segment.s"
 	@echo "... src/State/ChtlState.o"
 	@echo "... src/State/ChtlState.i"
 	@echo "... src/State/ChtlState.s"
@@ -1154,6 +1342,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/test_bridge_scanner.o"
+	@echo "... src/test_bridge_scanner.i"
+	@echo "... src/test_bridge_scanner.s"
 	@echo "... src/test_chtl_nodes.o"
 	@echo "... src/test_chtl_nodes.i"
 	@echo "... src/test_chtl_nodes.s"

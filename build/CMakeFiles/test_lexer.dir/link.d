@@ -24,6 +24,8 @@ bin/test_lexer: \
   CMakeFiles/test_lexer.dir/src/Node/Template.cpp.o \
   CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.o \
   CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.o \
+  CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.o \
   CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.o \
   CMakeFiles/test_lexer.dir/src/State/StateFactory.cpp.o \
   CMakeFiles/test_lexer.dir/src/test_lexer.cpp.o \
@@ -104,6 +106,10 @@ CMakeFiles/test_lexer.dir/src/Node/Template.cpp.o:
 CMakeFiles/test_lexer.dir/src/Parser/BasicParser.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/Parser/ConfigParser.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Scanner/BridgeScanner.cpp.o:
+
+CMakeFiles/test_lexer.dir/src/Scanner/Segment.cpp.o:
 
 CMakeFiles/test_lexer.dir/src/State/ChtlState.cpp.o:
 

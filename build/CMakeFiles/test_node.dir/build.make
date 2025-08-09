@@ -380,10 +380,38 @@ CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Parser/ConfigParser.cpp -o CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.s
 
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o: CMakeFiles/test_node.dir/flags.make
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o: /workspace/src/Scanner/BridgeScanner.cpp
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o: CMakeFiles/test_node.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o -MF CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o.d -o CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o -c /workspace/src/Scanner/BridgeScanner.cpp
+
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Scanner/BridgeScanner.cpp > CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.i
+
+CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Scanner/BridgeScanner.cpp -o CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.s
+
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o: CMakeFiles/test_node.dir/flags.make
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o: /workspace/src/Scanner/Segment.cpp
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o: CMakeFiles/test_node.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o -MF CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o.d -o CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o -c /workspace/src/Scanner/Segment.cpp
+
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Scanner/Segment.cpp > CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.i
+
+CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Scanner/Segment.cpp -o CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.s
+
 CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o: CMakeFiles/test_node.dir/flags.make
 CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o: /workspace/src/State/ChtlState.cpp
 CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o: CMakeFiles/test_node.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o -MF CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o.d -o CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o -c /workspace/src/State/ChtlState.cpp
 
 CMakeFiles/test_node.dir/src/State/ChtlState.cpp.i: cmake_force
@@ -397,7 +425,7 @@ CMakeFiles/test_node.dir/src/State/ChtlState.cpp.s: cmake_force
 CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o: CMakeFiles/test_node.dir/flags.make
 CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o: /workspace/src/State/StateFactory.cpp
 CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o: CMakeFiles/test_node.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o -MF CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o.d -o CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o -c /workspace/src/State/StateFactory.cpp
 
 CMakeFiles/test_node.dir/src/State/StateFactory.cpp.i: cmake_force
@@ -411,7 +439,7 @@ CMakeFiles/test_node.dir/src/State/StateFactory.cpp.s: cmake_force
 CMakeFiles/test_node.dir/src/test_node.cpp.o: CMakeFiles/test_node.dir/flags.make
 CMakeFiles/test_node.dir/src/test_node.cpp.o: /workspace/src/test_node.cpp
 CMakeFiles/test_node.dir/src/test_node.cpp.o: CMakeFiles/test_node.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/test_node.dir/src/test_node.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/test_node.dir/src/test_node.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_node.dir/src/test_node.cpp.o -MF CMakeFiles/test_node.dir/src/test_node.cpp.o.d -o CMakeFiles/test_node.dir/src/test_node.cpp.o -c /workspace/src/test_node.cpp
 
 CMakeFiles/test_node.dir/src/test_node.cpp.i: cmake_force
@@ -446,6 +474,8 @@ test_node_OBJECTS = \
 "CMakeFiles/test_node.dir/src/Node/Template.cpp.o" \
 "CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o" \
 "CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o" \
+"CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o" \
+"CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o" \
 "CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o" \
 "CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o" \
 "CMakeFiles/test_node.dir/src/test_node.cpp.o"
@@ -475,13 +505,15 @@ bin/test_node: CMakeFiles/test_node.dir/src/Node/Style.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/Node/Template.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/Parser/BasicParser.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/Parser/ConfigParser.cpp.o
+bin/test_node: CMakeFiles/test_node.dir/src/Scanner/BridgeScanner.cpp.o
+bin/test_node: CMakeFiles/test_node.dir/src/Scanner/Segment.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/State/ChtlState.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/State/StateFactory.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/src/test_node.cpp.o
 bin/test_node: CMakeFiles/test_node.dir/build.make
 bin/test_node: CMakeFiles/test_node.dir/compiler_depend.ts
 bin/test_node: CMakeFiles/test_node.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Linking CXX executable bin/test_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Linking CXX executable bin/test_node"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_node.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

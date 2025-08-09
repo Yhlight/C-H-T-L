@@ -207,6 +207,19 @@ chtl_generator/fast:
 	$(MAKE) $(MAKESILENT) -f Generator/CMakeFiles/chtl_generator.dir/build.make Generator/CMakeFiles/chtl_generator.dir/build
 .PHONY : chtl_generator/fast
 
+#=============================================================================
+# Target rules for targets named chtl_scanner
+
+# Build rule for target.
+chtl_scanner: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 chtl_scanner
+.PHONY : chtl_scanner
+
+# fast build rule for target.
+chtl_scanner/fast:
+	$(MAKE) $(MAKESILENT) -f Scanner/CMakeFiles/chtl_scanner.dir/build.make Scanner/CMakeFiles/chtl_scanner.dir/build
+.PHONY : chtl_scanner/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -221,6 +234,7 @@ help:
 	@echo "... chtl_lexer"
 	@echo "... chtl_node"
 	@echo "... chtl_parser"
+	@echo "... chtl_scanner"
 	@echo "... chtl_state"
 .PHONY : help
 

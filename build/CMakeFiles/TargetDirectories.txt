@@ -21,3 +21,6 @@
 /workspace/build/Generator/CMakeFiles/chtl_generator.dir
 /workspace/build/Generator/CMakeFiles/edit_cache.dir
 /workspace/build/Generator/CMakeFiles/rebuild_cache.dir
+/workspace/build/Scanner/CMakeFiles/chtl_scanner.dir
+/workspace/build/Scanner/CMakeFiles/edit_cache.dir
+/workspace/build/Scanner/CMakeFiles/rebuild_cache.dir

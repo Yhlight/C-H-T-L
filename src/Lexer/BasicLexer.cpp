@@ -328,14 +328,4 @@ void BasicLexer::autoMarkContext(const std::string& token) {
     ContextFactory::setCurrentContext(context_);
 }
 
-std::shared_ptr<BasicState> BasicLexer::createInitialState() {
-    // 默认创建CHTL状态
-    return StateFactory::createState(StateType::CHTL, this);
-}
-
-std::shared_ptr<BasicContext> BasicLexer::createInitialContext() {
-    // 默认创建CHTL上下文
-    return ContextFactory::createContext(ContextType::CHTL);
-}
-
 } // namespace chtl

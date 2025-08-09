@@ -100,9 +100,9 @@ protected:
     virtual void reportError(const std::string& message);
     virtual void reportError(const std::string& message, int line, int column);
     
-    // 创建初始状态和上下文的方法
-    virtual std::shared_ptr<BasicState> createInitialState();
-    virtual std::shared_ptr<BasicContext> createInitialContext();
+    // 子类需要实现的方法
+    virtual std::shared_ptr<BasicState> createInitialState() = 0;
+    virtual std::shared_ptr<BasicContext> createInitialContext() = 0;
     
     // 辅助方法
     void updatePosition(char ch);

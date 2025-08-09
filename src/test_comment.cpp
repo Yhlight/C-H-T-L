@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
-#include "Lexer/BasicLexer.h"
+#include "Lexer/StandardLexer.h"
 #include "State/ChtlState.h"
 #include "Context/ChtlContext.h"
 #include "Node/Node.h"
@@ -15,7 +15,7 @@ using namespace chtl;
 void testCommentLexer() {
     cout << "========== Testing Comment Lexer ==========" << endl;
     
-    BasicLexer lexer;
+    StandardLexer lexer;
     string chtlCode = R"(
 -- 这是一个CHTL注释，会被生成器识别
 // 这是普通注释，不会被生成器识别
@@ -142,7 +142,7 @@ void testCommentGeneration() {
 void testDifferentComments() {
     cout << "========== Testing Different Comment Types ==========" << endl;
     
-    BasicLexer lexer;
+    StandardLexer lexer;
     string chtlCode = R"(
 -- CHTL注释1：这会出现在HTML中
 // C++风格注释：这不会出现在HTML中

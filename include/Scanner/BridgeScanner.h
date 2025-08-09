@@ -162,6 +162,13 @@ private:
     bool hasAsyncExtensions(const std::string& code);
     bool hasReactiveBindings(const std::string& code);
     
+    // CHTL-JS特性检测器（新增）
+    bool hasChtlSelector(const std::string& code);         // {{selector}}
+    bool hasChtlArrowOperator(const std::string& code);    // ->
+    bool hasChtlListen(const std::string& code);           // ->listen()
+    bool hasChtlDelegate(const std::string& code);         // ->delegate()
+    bool hasChtlAnimate(const std::string& code);          // animate()
+    
     // Token分析
     void analyzeTokens(const std::vector<Token>& tokens);
     bool isTokenSequenceChtl(const std::vector<Token>& tokens, size_t start);

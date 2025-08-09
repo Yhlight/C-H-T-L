@@ -1,0 +1,233 @@
+// GlobalMap - 全局关键字表
+// 用于存储CHTL编程语言的所有关键字和保留字
+
+[Namespace] GlobalMap
+{
+    // ===== 核心关键字 =====
+    [Template] @Var CoreKeywords
+    {
+        // 模板和自定义
+        TEMPLATE: "[Template]";
+        CUSTOM: "[Custom]";
+        
+        // 导入导出
+        IMPORT: "[Import]";
+        ORIGIN: "[Origin]";
+        
+        // 命名空间
+        NAMESPACE: "[Namespace]";
+        
+        // 配置
+        CONFIGURATION: "[Configuration]";
+        
+        // 信息
+        INFO: "[Info]";
+        EXPORT: "[Export]";
+    }
+    
+    // ===== 类型关键字 =====
+    [Template] @Var TypeKeywords
+    {
+        // 样式类型
+        STYLE: "@Style";
+        STYLE_LOWER: "@style";
+        CSS: "@CSS";
+        CSS_MIXED: "@Css";
+        CSS_LOWER: "@css";
+        
+        // 元素类型
+        ELEMENT: "@Element";
+        
+        // 变量类型
+        VAR: "@Var";
+        
+        // 原始类型
+        HTML: "@Html";
+        JAVASCRIPT: "@JavaScript";
+        
+        // 文件类型
+        CHTL: "@Chtl";
+    }
+    
+    // ===== 操作关键字 =====
+    [Template] @Var OperationKeywords
+    {
+        // 继承
+        INHERIT: "inherit";
+        
+        // 删除
+        DELETE: "delete";
+        
+        // 插入
+        INSERT: "insert";
+        
+        // 位置关键字
+        AFTER: "after";
+        BEFORE: "before";
+        REPLACE: "replace";
+        AT_TOP: "at top";
+        AT_BOTTOM: "at bottom";
+        
+        // 导入相关
+        FROM: "from";
+        AS: "as";
+        
+        // 约束
+        EXCEPT: "except";
+    }
+    
+    // ===== 元素关键字 =====
+    [Template] @Var ElementKeywords
+    {
+        // 文本
+        TEXT: "text";
+        
+        // 样式
+        STYLE: "style";
+        
+        // 脚本
+        SCRIPT: "script";
+    }
+    
+    // ===== 配置关键字 =====
+    [Template] @Var ConfigKeywords
+    {
+        // 配置项
+        INDEX_INITIAL_COUNT: "INDEX_INITIAL_COUNT";
+        DISABLE_NAME_GROUP: "DISABLE_NAME_GROUP";
+        DEBUG_MODE: "DEBUG_MODE";
+        
+        // Name配置块
+        NAME_BLOCK: "[Name]";
+        
+        // Name配置项
+        CUSTOM_STYLE: "CUSTOM_STYLE";
+        CUSTOM_ELEMENT: "CUSTOM_ELEMENT";
+        CUSTOM_VAR: "CUSTOM_VAR";
+        TEMPLATE_STYLE: "TEMPLATE_STYLE";
+        TEMPLATE_ELEMENT: "TEMPLATE_ELEMENT";
+        TEMPLATE_VAR: "TEMPLATE_VAR";
+        ORIGIN_HTML: "ORIGIN_HTML";
+        ORIGIN_STYLE: "ORIGIN_STYLE";
+        ORIGIN_JAVASCRIPT: "ORIGIN_JAVASCRIPT";
+        
+        // 关键字配置
+        KEYWORD_INHERIT: "KEYWORD_INHERIT";
+        KEYWORD_DELETE: "KEYWORD_DELETE";
+        KEYWORD_INSERT: "KEYWORD_INSERT";
+        KEYWORD_AFTER: "KEYWORD_AFTER";
+        KEYWORD_BEFORE: "KEYWORD_BEFORE";
+        KEYWORD_REPLACE: "KEYWORD_REPLACE";
+        KEYWORD_ATTOP: "KEYWORD_ATTOP";
+        KEYWORD_ATBOTTOM: "KEYWORD_ATBOTTOM";
+        KEYWORD_FROM: "KEYWORD_FROM";
+        KEYWORD_AS: "KEYWORD_AS";
+        KEYWORD_EXCEPT: "KEYWORD_EXCEPT";
+        KEYWORD_TEXT: "KEYWORD_TEXT";
+        KEYWORD_STYLE: "KEYWORD_STYLE";
+        KEYWORD_CUSTOM: "KEYWORD_CUSTOM";
+        KEYWORD_TEMPLATE: "KEYWORD_TEMPLATE";
+        KEYWORD_ORIGIN: "KEYWORD_ORIGIN";
+        KEYWORD_IMPORT: "KEYWORD_IMPORT";
+        KEYWORD_NAMESPACE: "KEYWORD_NAMESPACE";
+        
+        // 选项数量限制
+        OPTION_COUNT: "OPTION_COUNT";
+    }
+    
+    // ===== 符号和操作符 =====
+    [Template] @Var Symbols
+    {
+        // 基础符号
+        COLON: ":";
+        EQUAL: "=";
+        SEMICOLON: ";";
+        COMMA: ",";
+        DOT: ".";
+        
+        // 括号
+        LEFT_BRACE: "{";
+        RIGHT_BRACE: "}";
+        LEFT_BRACKET: "[";
+        RIGHT_BRACKET: "]";
+        LEFT_PAREN: "(";
+        RIGHT_PAREN: ")";
+        
+        // 引号
+        DOUBLE_QUOTE: "\"";
+        SINGLE_QUOTE: "'";
+        
+        // 注释
+        SINGLE_LINE_COMMENT: "//";
+        MULTI_LINE_COMMENT_START: "/*";
+        MULTI_LINE_COMMENT_END: "*/";
+        GENERATOR_COMMENT: "--";
+        
+        // 特殊符号
+        AMPERSAND: "&";
+        ARROW: "->";
+        WILDCARD: "*";
+    }
+    
+    // ===== JavaScript增强语法 =====
+    [Template] @Var JavaScriptEnhanced
+    {
+        // 选择器
+        SELECTOR_START: "{{";
+        SELECTOR_END: "}}";
+        
+        // 增强方法
+        LISTEN: "listen";
+        DELEGATE: "delegate";
+        ANIMATE: "animate";
+        
+        // 动画属性
+        DURATION: "duration";
+        EASING: "easing";
+        BEGIN: "begin";
+        WHEN: "when";
+        AT: "at";
+        END: "end";
+        LOOP: "loop";
+        DIRECTION: "direction";
+        DELAY: "delay";
+        CALLBACK: "callback";
+    }
+    
+    // ===== CMOD相关 =====
+    [Template] @Var CMODKeywords
+    {
+        // 信息字段
+        NAME: "name";
+        VERSION: "version";
+        DESCRIPTION: "description";
+        AUTHOR: "author";
+        LICENSE: "license";
+        DEPENDENCIES: "dependencies";
+        CATEGORY: "category";
+        MIN_CHTL_VERSION: "minCHTLVersion";
+        MAX_CHTL_VERSION: "maxCHTLVersion";
+        
+        // 文件夹
+        SRC: "src";
+        INFO: "info";
+        MODULE: "module";
+    }
+    
+    // ===== 保留字列表 =====
+    [Template] @Var ReservedWords
+    {
+        // 所有需要保留的关键字集合
+        // 这里可以用于快速检查某个标识符是否为保留字
+        keywords: "[Template], [Custom], [Import], [Origin], [Namespace], [Configuration], [Info], [Export], [Name]";
+        types: "@Style, @style, @CSS, @Css, @css, @Element, @Var, @Html, @JavaScript, @Chtl";
+        operations: "inherit, delete, insert, after, before, replace, at, top, bottom, from, as, except";
+        elements: "text, style, script";
+    }
+}
+
+-- GlobalMap 使用说明：
+-- 1. 导入: [Import] @Chtl from common/GlobalMap.chtl
+-- 2. 使用关键字: GlobalMap.CoreKeywords(TEMPLATE)
+-- 3. 检查保留字: 使用 ReservedWords 变量组
+-- 4. 获取符号: GlobalMap.Symbols(COLON) 等

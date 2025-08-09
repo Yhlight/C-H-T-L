@@ -1,306 +1,233 @@
-// GlobalMap - 全局表
-// 用于存储全局共享的样式组、元素模板和变量组
+// GlobalMap - 全局关键字表
+// 用于存储CHTL编程语言的所有关键字和保留字
 
-// 全局命名空间
 [Namespace] GlobalMap
 {
-    // ===== 全局变量组 =====
-    [Template] @Var GlobalColors
+    // ===== 核心关键字 =====
+    [Template] @Var CoreKeywords
     {
-        // 主题色
-        primary: "#007bff";
-        primaryDark: "#0056b3";
-        primaryLight: "#5ca3ff";
+        // 模板和自定义
+        TEMPLATE: "[Template]";
+        CUSTOM: "[Custom]";
         
-        // 功能色
-        success: "#28a745";
-        danger: "#dc3545";
-        warning: "#ffc107";
-        info: "#17a2b8";
+        // 导入导出
+        IMPORT: "[Import]";
+        ORIGIN: "[Origin]";
         
-        // 中性色
-        white: "#ffffff";
-        black: "#000000";
-        gray100: "#f8f9fa";
-        gray200: "#e9ecef";
-        gray300: "#dee2e6";
-        gray400: "#ced4da";
-        gray500: "#adb5bd";
-        gray600: "#6c757d";
-        gray700: "#495057";
-        gray800: "#343a40";
-        gray900: "#212529";
+        // 命名空间
+        NAMESPACE: "[Namespace]";
         
-        // 背景色
-        bgLight: "#f8f9fa";
-        bgDark: "#343a40";
-        bgBody: "#ffffff";
-    }
-    
-    [Template] @Var GlobalFonts
-    {
-        // 字体族
-        fontPrimary: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
-        fontSecondary: "Georgia, 'Times New Roman', Times, serif";
-        fontCode: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace";
+        // 配置
+        CONFIGURATION: "[Configuration]";
         
-        // 字体大小
-        fontSize12: "12px";
-        fontSize14: "14px";
-        fontSize16: "16px";
-        fontSize18: "18px";
-        fontSize20: "20px";
-        fontSize24: "24px";
-        fontSize32: "32px";
-        fontSize48: "48px";
+        // 信息
+        INFO: "[Info]";
+        EXPORT: "[Export]";
+    }
+    
+    // ===== 类型关键字 =====
+    [Template] @Var TypeKeywords
+    {
+        // 样式类型
+        STYLE: "@Style";
+        STYLE_LOWER: "@style";
+        CSS: "@CSS";
+        CSS_MIXED: "@Css";
+        CSS_LOWER: "@css";
         
-        // 字体粗细
-        fontWeightLight: "300";
-        fontWeightNormal: "400";
-        fontWeightMedium: "500";
-        fontWeightBold: "700";
+        // 元素类型
+        ELEMENT: "@Element";
         
-        // 行高
-        lineHeightTight: "1.2";
-        lineHeightNormal: "1.5";
-        lineHeightRelaxed: "1.8";
-    }
-    
-    [Template] @Var GlobalSpacing
-    {
-        // 间距系统 (基于 4px 网格)
-        space0: "0";
-        space1: "4px";
-        space2: "8px";
-        space3: "12px";
-        space4: "16px";
-        space5: "20px";
-        space6: "24px";
-        space8: "32px";
-        space10: "40px";
-        space12: "48px";
-        space16: "64px";
-        space20: "80px";
-        space24: "96px";
-        space32: "128px";
-    }
-    
-    [Template] @Var GlobalBorders
-    {
-        // 边框宽度
-        borderWidth0: "0";
-        borderWidth1: "1px";
-        borderWidth2: "2px";
-        borderWidth4: "4px";
+        // 变量类型
+        VAR: "@Var";
         
-        // 边框圆角
-        borderRadius0: "0";
-        borderRadius2: "2px";
-        borderRadius4: "4px";
-        borderRadius6: "6px";
-        borderRadius8: "8px";
-        borderRadius12: "12px";
-        borderRadius16: "16px";
-        borderRadiusFull: "9999px";
+        // 原始类型
+        HTML: "@Html";
+        JAVASCRIPT: "@JavaScript";
         
-        // 边框样式
-        borderStyleSolid: "solid";
-        borderStyleDashed: "dashed";
-        borderStyleDotted: "dotted";
+        // 文件类型
+        CHTL: "@Chtl";
     }
     
-    [Template] @Var GlobalShadows
+    // ===== 操作关键字 =====
+    [Template] @Var OperationKeywords
     {
-        // 阴影系统
-        shadowNone: "none";
-        shadowSm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)";
-        shadowBase: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
-        shadowMd: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
-        shadowLg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)";
-        shadowXl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)";
-        shadow2xl: "0 25px 50px -12px rgba(0, 0, 0, 0.25)";
-        shadowInner: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)";
-    }
-    
-    [Template] @Var GlobalBreakpoints
-    {
-        // 响应式断点
-        breakpointXs: "0";
-        breakpointSm: "576px";
-        breakpointMd: "768px";
-        breakpointLg: "992px";
-        breakpointXl: "1200px";
-        breakpointXxl: "1400px";
-    }
-    
-    [Template] @Var GlobalTransitions
-    {
-        // 过渡时长
-        duration75: "75ms";
-        duration100: "100ms";
-        duration150: "150ms";
-        duration200: "200ms";
-        duration300: "300ms";
-        duration500: "500ms";
-        duration700: "700ms";
-        duration1000: "1000ms";
+        // 继承
+        INHERIT: "inherit";
         
-        // 缓动函数
-        easingLinear: "linear";
-        easingIn: "cubic-bezier(0.4, 0, 1, 1)";
-        easingOut: "cubic-bezier(0, 0, 0.2, 1)";
-        easingInOut: "cubic-bezier(0.4, 0, 0.2, 1)";
+        // 删除
+        DELETE: "delete";
+        
+        // 插入
+        INSERT: "insert";
+        
+        // 位置关键字
+        AFTER: "after";
+        BEFORE: "before";
+        REPLACE: "replace";
+        AT_TOP: "at top";
+        AT_BOTTOM: "at bottom";
+        
+        // 导入相关
+        FROM: "from";
+        AS: "as";
+        
+        // 约束
+        EXCEPT: "except";
     }
     
-    // ===== 全局样式组 =====
-    [Template] @Style GlobalReset
+    // ===== 元素关键字 =====
+    [Template] @Var ElementKeywords
     {
-        // 基础重置样式
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+        // 文本
+        TEXT: "text";
+        
+        // 样式
+        STYLE: "style";
+        
+        // 脚本
+        SCRIPT: "script";
     }
     
-    [Template] @Style GlobalText
+    // ===== 配置关键字 =====
+    [Template] @Var ConfigKeywords
     {
-        // 基础文本样式
-        font-family: GlobalFonts(fontPrimary);
-        font-size: GlobalFonts(fontSize16);
-        line-height: GlobalFonts(lineHeightNormal);
-        color: GlobalColors(gray900);
+        // 配置项
+        INDEX_INITIAL_COUNT: "INDEX_INITIAL_COUNT";
+        DISABLE_NAME_GROUP: "DISABLE_NAME_GROUP";
+        DEBUG_MODE: "DEBUG_MODE";
+        
+        // Name配置块
+        NAME_BLOCK: "[Name]";
+        
+        // Name配置项
+        CUSTOM_STYLE: "CUSTOM_STYLE";
+        CUSTOM_ELEMENT: "CUSTOM_ELEMENT";
+        CUSTOM_VAR: "CUSTOM_VAR";
+        TEMPLATE_STYLE: "TEMPLATE_STYLE";
+        TEMPLATE_ELEMENT: "TEMPLATE_ELEMENT";
+        TEMPLATE_VAR: "TEMPLATE_VAR";
+        ORIGIN_HTML: "ORIGIN_HTML";
+        ORIGIN_STYLE: "ORIGIN_STYLE";
+        ORIGIN_JAVASCRIPT: "ORIGIN_JAVASCRIPT";
+        
+        // 关键字配置
+        KEYWORD_INHERIT: "KEYWORD_INHERIT";
+        KEYWORD_DELETE: "KEYWORD_DELETE";
+        KEYWORD_INSERT: "KEYWORD_INSERT";
+        KEYWORD_AFTER: "KEYWORD_AFTER";
+        KEYWORD_BEFORE: "KEYWORD_BEFORE";
+        KEYWORD_REPLACE: "KEYWORD_REPLACE";
+        KEYWORD_ATTOP: "KEYWORD_ATTOP";
+        KEYWORD_ATBOTTOM: "KEYWORD_ATBOTTOM";
+        KEYWORD_FROM: "KEYWORD_FROM";
+        KEYWORD_AS: "KEYWORD_AS";
+        KEYWORD_EXCEPT: "KEYWORD_EXCEPT";
+        KEYWORD_TEXT: "KEYWORD_TEXT";
+        KEYWORD_STYLE: "KEYWORD_STYLE";
+        KEYWORD_CUSTOM: "KEYWORD_CUSTOM";
+        KEYWORD_TEMPLATE: "KEYWORD_TEMPLATE";
+        KEYWORD_ORIGIN: "KEYWORD_ORIGIN";
+        KEYWORD_IMPORT: "KEYWORD_IMPORT";
+        KEYWORD_NAMESPACE: "KEYWORD_NAMESPACE";
+        
+        // 选项数量限制
+        OPTION_COUNT: "OPTION_COUNT";
     }
     
-    [Template] @Style GlobalFlex
+    // ===== 符号和操作符 =====
+    [Template] @Var Symbols
     {
-        // Flex布局
-        display: flex;
+        // 基础符号
+        COLON: ":";
+        EQUAL: "=";
+        SEMICOLON: ";";
+        COMMA: ",";
+        DOT: ".";
+        
+        // 括号
+        LEFT_BRACE: "{";
+        RIGHT_BRACE: "}";
+        LEFT_BRACKET: "[";
+        RIGHT_BRACKET: "]";
+        LEFT_PAREN: "(";
+        RIGHT_PAREN: ")";
+        
+        // 引号
+        DOUBLE_QUOTE: "\"";
+        SINGLE_QUOTE: "'";
+        
+        // 注释
+        SINGLE_LINE_COMMENT: "//";
+        MULTI_LINE_COMMENT_START: "/*";
+        MULTI_LINE_COMMENT_END: "*/";
+        GENERATOR_COMMENT: "--";
+        
+        // 特殊符号
+        AMPERSAND: "&";
+        ARROW: "->";
+        WILDCARD: "*";
     }
     
-    [Template] @Style GlobalFlexCenter
+    // ===== JavaScript增强语法 =====
+    [Template] @Var JavaScriptEnhanced
     {
-        // Flex居中
-        @Style GlobalFlex;
-        justify-content: center;
-        align-items: center;
+        // 选择器
+        SELECTOR_START: "{{";
+        SELECTOR_END: "}}";
+        
+        // 增强方法
+        LISTEN: "listen";
+        DELEGATE: "delegate";
+        ANIMATE: "animate";
+        
+        // 动画属性
+        DURATION: "duration";
+        EASING: "easing";
+        BEGIN: "begin";
+        WHEN: "when";
+        AT: "at";
+        END: "end";
+        LOOP: "loop";
+        DIRECTION: "direction";
+        DELAY: "delay";
+        CALLBACK: "callback";
     }
     
-    [Template] @Style GlobalFlexBetween
+    // ===== CMOD相关 =====
+    [Template] @Var CMODKeywords
     {
-        // Flex两端对齐
-        @Style GlobalFlex;
-        justify-content: space-between;
-        align-items: center;
+        // 信息字段
+        NAME: "name";
+        VERSION: "version";
+        DESCRIPTION: "description";
+        AUTHOR: "author";
+        LICENSE: "license";
+        DEPENDENCIES: "dependencies";
+        CATEGORY: "category";
+        MIN_CHTL_VERSION: "minCHTLVersion";
+        MAX_CHTL_VERSION: "maxCHTLVersion";
+        
+        // 文件夹
+        SRC: "src";
+        INFO: "info";
+        MODULE: "module";
     }
     
-    [Template] @Style GlobalContainer
+    // ===== 保留字列表 =====
+    [Template] @Var ReservedWords
     {
-        // 容器样式
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: GlobalSpacing(space4);
-        padding-right: GlobalSpacing(space4);
-    }
-    
-    // ===== 全局元素模板 =====
-    [Template] @Element GlobalButton
-    {
-        button
-        {
-            style
-            {
-                // 基础按钮样式
-                @Style GlobalText;
-                padding: GlobalSpacing(space2) GlobalSpacing(space4);
-                border: GlobalBorders(borderWidth1) GlobalBorders(borderStyleSolid) GlobalColors(gray300);
-                border-radius: GlobalBorders(borderRadius4);
-                background-color: GlobalColors(white);
-                cursor: pointer;
-                transition: all GlobalTransitions(duration200) GlobalTransitions(easingInOut);
-                
-                &:hover
-                {
-                    background-color: GlobalColors(gray100);
-                    border-color: GlobalColors(gray400);
-                }
-                
-                &:active
-                {
-                    transform: translateY(1px);
-                }
-            }
-        }
-    }
-    
-    [Template] @Element GlobalCard
-    {
-        div
-        {
-            style
-            {
-                // 卡片样式
-                .global-card
-                {
-                    background-color: GlobalColors(white);
-                    border-radius: GlobalBorders(borderRadius8);
-                    box-shadow: GlobalShadows(shadowBase);
-                    padding: GlobalSpacing(space6);
-                    transition: box-shadow GlobalTransitions(duration200) GlobalTransitions(easingInOut);
-                }
-                
-                &:hover
-                {
-                    box-shadow: GlobalShadows(shadowMd);
-                }
-            }
-        }
-    }
-    
-    [Template] @Element GlobalModal
-    {
-        // 模态框背景
-        div
-        {
-            style
-            {
-                .global-modal-overlay
-                {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: rgba(0, 0, 0, 0.5);
-                    @Style GlobalFlexCenter;
-                    z-index: 1000;
-                }
-            }
-            
-            // 模态框内容
-            div
-            {
-                style
-                {
-                    .global-modal-content
-                    {
-                        background-color: GlobalColors(white);
-                        border-radius: GlobalBorders(borderRadius12);
-                        box-shadow: GlobalShadows(shadowXl);
-                        padding: GlobalSpacing(space8);
-                        max-width: 600px;
-                        width: 90%;
-                        max-height: 90vh;
-                        overflow-y: auto;
-                    }
-                }
-            }
-        }
+        // 所有需要保留的关键字集合
+        // 这里可以用于快速检查某个标识符是否为保留字
+        keywords: "[Template], [Custom], [Import], [Origin], [Namespace], [Configuration], [Info], [Export], [Name]";
+        types: "@Style, @style, @CSS, @Css, @css, @Element, @Var, @Html, @JavaScript, @Chtl";
+        operations: "inherit, delete, insert, after, before, replace, at, top, bottom, from, as, except";
+        elements: "text, style, script";
     }
 }
 
-// 导出说明注释
--- GlobalMap 全局表使用说明：
--- 1. 导入整个GlobalMap: [Import] @Chtl from common/GlobalMap.chtl
--- 2. 使用全局变量: GlobalColors(primary) 或 GlobalMap.GlobalColors(primary)
--- 3. 使用全局样式组: @Style GlobalReset 或 @Style GlobalReset from GlobalMap
--- 4. 使用全局元素: @Element GlobalButton 或 @Element GlobalButton from GlobalMap
+-- GlobalMap 使用说明：
+-- 1. 导入: [Import] @Chtl from common/GlobalMap.chtl
+-- 2. 使用关键字: GlobalMap.CoreKeywords(TEMPLATE)
+-- 3. 检查保留字: 使用 ReservedWords 变量组
+-- 4. 获取符号: GlobalMap.Symbols(COLON) 等

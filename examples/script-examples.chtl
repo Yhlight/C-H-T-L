@@ -1,0 +1,257 @@
+// CHTL Script块示例
+// 展示如何在CHTL中使用局部JavaScript代码
+
+Import @Chtl from "Chtholly.Core.*"
+Import @Utils from "Chtholly.Utils.*"
+
+// 1. 基础Script块 - 立即执行
+[Script] {
+    console.log("Hello from CHTL Script!");
+    
+    // 定义局部变量
+    const message = "CHTL supports JavaScript!";
+    document.querySelector("#output").textContent = message;
+}
+
+// 2. 命名的Script块 - 可以被引用和调用
+[Script] @InitApp {
+    // 初始化应用程序
+    const app = {
+        name: "CHTL Demo App",
+        version: "1.0.0",
+        initialized: false
+    };
+    
+    app.init = function() {
+        if (!this.initialized) {
+            console.log(`Initializing ${this.name} v${this.version}`);
+            this.initialized = true;
+        }
+    };
+    
+    // 将app对象暴露到全局
+    window.CHTLApp = app;
+}
+
+// 3. 模块化Script - 支持导出
+[Script] @MathUtils type="module" {
+    // 数学工具函数
+    function add(a, b) {
+        return a + b;
+    }
+    
+    function multiply(a, b) {
+        return a * b;
+    }
+    
+    function factorial(n) {
+        if (n <= 1) return 1;
+        return n * factorial(n - 1);
+    }
+    
+    // 导出函数
+    exports.add = add;
+    exports.multiply = multiply;
+    exports.factorial = factorial;
+}
+
+// 4. 延迟执行的Script
+[Script] @DeferredSetup defer {
+    // 这个脚本会在其他脚本执行完后执行
+    console.log("Deferred script executed");
+    
+    // 使用之前定义的模块
+    if (window.CHTL && window.CHTL.modules.MathUtils) {
+        const math = window.CHTL.modules.MathUtils;
+        console.log("5 + 3 =", math.add(5, 3));
+        console.log("5! =", math.factorial(5));
+    }
+}
+
+// 5. DOM加载后执行的Script
+[Script] @DOMSetup onmount {
+    // 当DOM内容加载完成后执行
+    const elements = document.querySelectorAll('.chtl-element');
+    elements.forEach(el => {
+        el.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    });
+}
+
+// 6. 带作用域的Script
+[Script] @ComponentLogic scope="TodoComponent" {
+    // 这个脚本在TodoComponent的作用域内执行
+    // $scope 参数会自动传入
+    
+    $scope.todos = [];
+    $scope.currentId = 0;
+    
+    $scope.addTodo = function(text) {
+        $scope.todos.push({
+            id: ++$scope.currentId,
+            text: text,
+            completed: false
+        });
+    };
+    
+    $scope.toggleTodo = function(id) {
+        const todo = $scope.todos.find(t => t.id === id);
+        if (todo) {
+            todo.completed = !todo.completed;
+        }
+    };
+}
+
+// 7. 异步Script
+[Script] @DataFetcher async {
+    // 异步执行的脚本
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        console.log('Fetched data:', data);
+        
+        // 更新UI
+        updateDataDisplay(data);
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+    }
+}
+
+// 8. 按需执行的Script
+[Script] @ValidationRules ondemand {
+    // 这个脚本不会自动执行，需要手动调用
+    const rules = {
+        email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        phone: /^\d{3}-\d{3}-\d{4}$/,
+        
+        validate: function(type, value) {
+            return this[type] ? this[type].test(value) : false;
+        }
+    };
+    
+    return rules;
+}
+
+// 9. 带依赖的Script
+[Script] @AppController depends="InitApp,MathUtils" {
+    // 依赖于InitApp和MathUtils脚本
+    
+    // 初始化应用
+    if (window.CHTLApp) {
+        window.CHTLApp.init();
+    }
+    
+    // 使用数学工具
+    if (window.CHTL.modules.MathUtils) {
+        const result = window.CHTL.modules.MathUtils.multiply(7, 8);
+        console.log("7 × 8 =", result);
+    }
+}
+
+// 10. 全局Script（谨慎使用）
+[Script] type="global" {
+    // 这个脚本在全局作用域执行，没有封装
+    var globalConfig = {
+        apiUrl: "https://api.example.com",
+        timeout: 5000
+    };
+}
+
+// 在组件中使用Script
+[Custom] @Element InteractiveButton {
+    props: {
+        text: string = "Click me"
+        onClick: function
+    }
+    
+    // 组件内的局部Script
+    [Script] {
+        // 组件特定的逻辑
+        let clickCount = 0;
+        
+        this.handleClick = function() {
+            clickCount++;
+            console.log(`Button clicked ${clickCount} times`);
+            
+            if (props.onClick) {
+                props.onClick(clickCount);
+            }
+        };
+    }
+    
+    render: {
+        button {
+            class: "interactive-button"
+            onclick: this.handleClick
+            
+            @Text { props.text }
+            
+            // 内联Script
+            [Script] {
+                // 鼠标悬停效果
+                this.addEventListener('mouseenter', () => {
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                this.addEventListener('mouseleave', () => {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        }
+    }
+}
+
+// 样式定义
+[Style] {
+    .interactive-button {
+        padding: 10px 20px;
+        background: #67C3CC;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    
+    .interactive-button:active {
+        transform: scale(0.95) !important;
+    }
+}
+
+// 页面结构
+div {
+    id: "app"
+    class: "container"
+    
+    h1 { "CHTL Script块示例" }
+    
+    div {
+        id: "output"
+        class: "output-area"
+        "输出将显示在这里..."
+    }
+    
+    @InteractiveButton {
+        text: "测试按钮"
+        onClick: (count) => {
+            document.getElementById('output').textContent = 
+                `按钮被点击了 ${count} 次`;
+        }
+    }
+    
+    // 页面底部的Script
+    [Script] onload {
+        console.log("页面加载完成！");
+        
+        // 可以调用按需脚本
+        if (window.CHTL.executeScript) {
+            const validator = window.CHTL.executeScript('ValidationRules');
+            if (validator) {
+                console.log("Email validation:", 
+                    validator.validate('email', 'test@example.com'));
+            }
+        }
+    }
+}

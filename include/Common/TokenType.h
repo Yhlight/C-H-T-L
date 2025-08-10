@@ -38,6 +38,7 @@ enum class TokenType {
     NAME,                 // [Name]
     INFO,                 // [Info]
     EXPORT,               // [Export]
+    SCRIPT,               // [Script]
     
     // 特殊前缀
     AT_STYLE,             // @Style

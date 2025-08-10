@@ -15,6 +15,7 @@
 #include "Node/Origin.h"
 #include "Node/Info.h"
 #include "Node/Export.h"
+#include "Node/Script.h"
 #include <algorithm>
 #include <cctype>
 
@@ -93,6 +94,10 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     if (currentToken_.type == TokenType::EXPORT) {
         advance();
         return parseExport();
+    }
+    if (currentToken_.type == TokenType::SCRIPT) {
+        advance();
+        return parseScript();
     }
     
     // 检查特殊标记（以[开头）- 备用方案
@@ -1847,6 +1852,162 @@ std::shared_ptr<Node> StandardParser::parseExport() {
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
     
     return exportNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseScript() {
+    // [Script]已经被消费
+    
+    auto scriptNode = std::make_shared<Script>();
+    
+    // 检查是否有命名的脚本块 [Script] @ScriptName
+    if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
+        check(TokenType::AT_VAR) || check(TokenType::IDENTIFIER)) {
+        
+        if (match(TokenType::AT_STYLE) || match(TokenType::AT_ELEMENT) || 
+            match(TokenType::AT_VAR)) {
+            // 处理@前缀的名称
+            if (check(TokenType::IDENTIFIER)) {
+                scriptNode->setName(currentToken_.value);
+                advance();
+            }
+        } else if (check(TokenType::IDENTIFIER)) {
+            // 直接的标识符作为名称
+            scriptNode->setName(currentToken_.value);
+            advance();
+        }
+    }
+    
+    // 解析可选的属性
+    while (!check(TokenType::LEFT_BRACE) && !isAtEnd()) {
+        if (check(TokenType::IDENTIFIER)) {
+            std::string attrName = currentToken_.value;
+            advance();
+            
+            if (attrName == "type") {
+                if (match(TokenType::EQUALS)) {
+                    if (check(TokenType::STRING_LITERAL) || check(TokenType::IDENTIFIER)) {
+                        std::string typeValue = currentToken_.value;
+                        advance();
+                        
+                        if (typeValue == "module") {
+                            scriptNode->setScriptType(Script::ScriptType::MODULE);
+                        } else if (typeValue == "global") {
+                            scriptNode->setScriptType(Script::ScriptType::GLOBAL);
+                        } else if (typeValue == "scoped") {
+                            scriptNode->setScriptType(Script::ScriptType::SCOPED);
+                        } else if (typeValue == "inline") {
+                            scriptNode->setScriptType(Script::ScriptType::INLINE);
+                        }
+                    }
+                }
+            } else if (attrName == "scope") {
+                if (match(TokenType::EQUALS)) {
+                    if (check(TokenType::STRING_LITERAL) || check(TokenType::IDENTIFIER)) {
+                        scriptNode->setScope(currentToken_.value);
+                        advance();
+                    }
+                }
+            } else if (attrName == "defer") {
+                scriptNode->setTiming(Script::ExecutionTiming::DEFERRED);
+            } else if (attrName == "async") {
+                scriptNode->setAsync(true);
+            } else if (attrName == "onload") {
+                scriptNode->setTiming(Script::ExecutionTiming::ON_LOAD);
+            } else if (attrName == "onmount") {
+                scriptNode->setTiming(Script::ExecutionTiming::ON_MOUNT);
+            } else if (attrName == "ondemand") {
+                scriptNode->setTiming(Script::ExecutionTiming::ON_DEMAND);
+            } else if (attrName == "depends") {
+                if (match(TokenType::EQUALS)) {
+                    if (check(TokenType::STRING_LITERAL)) {
+                        // 解析依赖列表（逗号分隔）
+                        std::string deps = currentToken_.value;
+                        advance();
+                        
+                        // 简单的逗号分隔解析
+                        size_t start = 0;
+                        size_t end = deps.find(',');
+                        while (end != std::string::npos) {
+                            std::string dep = deps.substr(start, end - start);
+                            // 去除空格
+                            dep.erase(0, dep.find_first_not_of(" \t"));
+                            dep.erase(dep.find_last_not_of(" \t") + 1);
+                            if (!dep.empty()) {
+                                scriptNode->addDependency(dep);
+                            }
+                            start = end + 1;
+                            end = deps.find(',', start);
+                        }
+                        // 处理最后一个依赖
+                        std::string dep = deps.substr(start);
+                        dep.erase(0, dep.find_first_not_of(" \t"));
+                        dep.erase(dep.find_last_not_of(" \t") + 1);
+                        if (!dep.empty()) {
+                            scriptNode->addDependency(dep);
+                        }
+                    }
+                }
+            }
+        } else {
+            advance(); // 跳过未知的token
+        }
+    }
+    
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // 收集脚本内容直到遇到 }
+    std::string scriptContent;
+    int braceDepth = 1;
+    bool inString = false;
+    char stringChar = '\0';
+    bool escaped = false;
+    
+    while (!isAtEnd() && braceDepth > 0) {
+        Token token = currentToken_;
+        advance();
+        
+        // 处理字符串字面量以正确计算大括号深度
+        if (token.type == TokenType::STRING_LITERAL) {
+            // 字符串字面量，添加引号
+            scriptContent += "\"" + token.value + "\"";
+        } else if (token.type == TokenType::LEFT_BRACE) {
+            scriptContent += token.value;
+            if (!inString) {
+                braceDepth++;
+            }
+        } else if (token.type == TokenType::RIGHT_BRACE) {
+            if (!inString) {
+                braceDepth--;
+                if (braceDepth == 0) {
+                    break; // 不添加最后的 }
+                }
+            }
+            scriptContent += token.value;
+        } else {
+            // 对于其他token，添加原始值
+            scriptContent += token.value;
+        }
+        
+        // 添加空格（除非是某些特殊情况）
+        if (!isAtEnd() && braceDepth > 0) {
+            // 检查下一个token是否需要空格分隔
+            Token next = currentToken_;
+            if (token.type != TokenType::DOT && next.type != TokenType::DOT &&
+                token.type != TokenType::LEFT_PAREN && next.type != TokenType::RIGHT_PAREN &&
+                token.type != TokenType::LEFT_BRACKET && next.type != TokenType::RIGHT_BRACKET &&
+                next.type != TokenType::COMMA && next.type != TokenType::SEMICOLON) {
+                scriptContent += " ";
+            }
+        }
+    }
+    
+    // 去除首尾空白
+    scriptContent.erase(0, scriptContent.find_first_not_of(" \t\n\r"));
+    scriptContent.erase(scriptContent.find_last_not_of(" \t\n\r") + 1);
+    
+    scriptNode->setContent(scriptContent);
+    
+    return scriptNode;
 }
 
 std::shared_ptr<Node> StandardParser::parseComment() {

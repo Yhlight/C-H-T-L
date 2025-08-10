@@ -112,6 +112,9 @@ private:
     std::shared_ptr<Node> parseInfo();
     std::shared_ptr<Node> parseExport();
     
+    // 脚本块
+    std::shared_ptr<Node> parseScript();
+    
     // Token操作辅助方法
     Token peek();
     Token previous();

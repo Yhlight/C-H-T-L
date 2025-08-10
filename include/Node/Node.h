@@ -37,7 +37,8 @@ enum class NodeType {
     REFERENCE,  // 引用节点（@Style, @Element, @Var的使用）
     DELETE,     // 删除操作节点
     INFO,       // [Info]块节点
-    EXPORT      // [Export]块节点
+    EXPORT,     // [Export]块节点
+    SCRIPT      // [Script]块节点
 };
 
 // 属性值类型

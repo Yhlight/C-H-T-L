@@ -578,6 +578,20 @@ std::shared_ptr<Node> StandardParser::parseTemplate() {
     templateNode->setType(templateType);
     templateNode->setName(templateName);
     
+    // 检查是否有参数列表
+    if (match(TokenType::LEFT_PAREN)) {
+        // 解析参数列表
+        while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+            auto paramName = consume(TokenType::IDENTIFIER, "Expected parameter name").value;
+            templateNode->addParameter(paramName);
+            
+            if (!check(TokenType::RIGHT_PAREN)) {
+                consume(TokenType::COMMA, "Expected ',' or ')'");
+            }
+        }
+        consume(TokenType::RIGHT_PAREN, "Expected ')'");
+    }
+    
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
     // 根据模板类型解析内容

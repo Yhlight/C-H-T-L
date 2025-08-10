@@ -7,7 +7,23 @@
 
 namespace chtl {
 
-// 配置解析器 - 专门解析[Configuration]块
+class ConfigLexer;
+class Config;
+
+// 配置格式枚举
+enum class ConfigFormat {
+    CHTL,    // 默认CHTL格式
+    JSON,
+    YAML,
+    INI,
+    TOML,
+    XML
+};
+
+/**
+ * 配置解析器
+ * 专门用于解析 [Configuration] 块中的各种配置格式
+ */
 class ConfigParser : public BasicParser {
 private:
     // 配置解析状态
@@ -26,6 +42,22 @@ private:
     std::shared_ptr<Config> currentConfig_;
     std::string currentKey_;
     std::vector<std::string> currentArray_;
+    
+    // 当前格式
+    ConfigFormat currentFormat_;
+    
+    // 当前配置节点
+    std::shared_ptr<Config> currentConfig_;
+    
+    // 辅助方法
+    void parseConfigContent(std::shared_ptr<Config> configNode);
+    void parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName);
+    void parseConfigItem(std::shared_ptr<Config> configNode, const std::string& groupPrefix = "");
+    std::string parseConfigValue();
+    void skipToNextStatement();
+    
+    // 格式检测
+    ConfigFormat detectFormat();
     
     // 有效的配置键
     static const std::unordered_set<std::string> VALID_CONFIG_KEYS;
@@ -46,6 +78,9 @@ public:
     // 获取最后解析的配置
     std::shared_ptr<Config> getLastConfig() const { return currentConfig_; }
     
+    // 导出功能
+    void exportConfig(std::shared_ptr<Config> configNode, ConfigFormat format, const std::string& filename);
+    
 protected:
     // 覆盖基类初始化方法
     void initializeParser() override;
@@ -55,7 +90,7 @@ private:
     // 解析辅助方法
     bool parseConfigurationBlock();
     bool parseConfigKey();
-    bool parseConfigValue();
+
     bool parseConfigArray();
     bool parseStringValue(std::string& result);
     bool parseArrayElement(std::string& result);
@@ -70,6 +105,14 @@ private:
     void applySpecialConfigurations();
     void applyKeywordAliases();
     void applyImportPaths();
+
+    // 导出方法
+    std::string exportToJSON(std::shared_ptr<Config> configNode);
+    std::string exportToYAML(std::shared_ptr<Config> configNode);
+    std::string exportToINI(std::shared_ptr<Config> configNode);
+    std::string exportToTOML(std::shared_ptr<Config> configNode);
+    std::string exportToXML(std::shared_ptr<Config> configNode);
+    std::string exportToCHTL(std::shared_ptr<Config> configNode);
 };
 
 } // namespace chtl

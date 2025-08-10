@@ -1,6 +1,9 @@
 #include "Parser/StandardParser.h"
-#include "Common/Token.h"
+#include "Lexer/StandardLexer.h"
+#include "Context/StandardContext.h"
 #include "Node/Node.h"
+#include "Node/Element.h"
+#include "Node/Text.h"
 #include "Node/Comment.h"
 #include "Node/Template.h"
 #include "Node/Custom.h"
@@ -27,8 +30,7 @@ StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_pt
 }
 
 std::shared_ptr<Node> StandardParser::parse() {
-    auto root = std::make_shared<Node>(NodeType::DOCUMENT);
-    root->setTagName("document");
+    auto root = std::make_shared<Element>("document");
     
     // 初始化第一个token
     currentToken_ = getNextToken();
@@ -102,10 +104,10 @@ std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
 }
 
 std::shared_ptr<Node> StandardParser::parseElement() {
-    auto nameToken = consume(TokenType::IDENTIFIER, "Expected element name");
+    // 元素标签名已被消费
+    auto nameToken = previousToken_;
     
-    auto element = std::make_shared<Node>(NodeType::ELEMENT);
-    element->setTagName(nameToken.value);
+    auto element = std::make_shared<Element>(nameToken.value);
     
     // 检查是否有索引访问 element[index]
     if (match(TokenType::LEFT_BRACKET)) {
@@ -192,7 +194,7 @@ std::shared_ptr<Node> StandardParser::parseText() {
     consume(TokenType::IDENTIFIER, "text");
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    auto textNode = std::make_shared<Node>(NodeType::TEXT);
+    auto textNode = std::make_shared<Text>();
     std::string content;
     
     // 收集文本内容，支持字符串字面量和无引号字面量
@@ -703,7 +705,23 @@ void StandardParser::parseCustomElementContent(std::shared_ptr<Custom> customNod
 }
 
 void StandardParser::parseCustomVarContent(std::shared_ptr<Custom> customNode) {
-    parseVarTemplateContent(std::static_pointer_cast<Template>(customNode));
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查inherit继承
+        if (match(TokenType::INHERIT)) {
+            parseInherit(customNode);
+            continue;
+        }
+        
+        // 其他内容作为var内容
+        auto varNode = parseTextContent();
+        if (varNode) {
+            customNode->addChild(varNode);
+        }
+    }
 }
 
 void StandardParser::parseInherit(std::shared_ptr<Node> node) {
@@ -729,8 +747,9 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     auto typeToken = advance(); // @Style, @Element, or @Var
     auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
     
-    auto refNode = std::make_shared<Node>(NodeType::REFERENCE);
-    refNode->setTagName(typeToken.value + " " + nameToken.value);
+    auto refNode = std::make_shared<Element>("reference");
+    refNode->setAttribute("type", typeToken.value);
+    refNode->setAttribute("name", nameToken.value);
     
     // 检查是否有特例化块
     if (check(TokenType::LEFT_BRACE)) {
@@ -754,8 +773,9 @@ std::shared_ptr<Node> StandardParser::parseStyleReference() {
     auto typeToken = advance(); // @Style or @Var
     auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
     
-    auto refNode = std::make_shared<Node>(NodeType::REFERENCE);
-    refNode->setTagName(typeToken.value + " " + nameToken.value);
+    auto refNode = std::make_shared<Element>("reference");
+    refNode->setAttribute("type", typeToken.value);
+    refNode->setAttribute("name", nameToken.value);
     
     // 变量组可能有参数
     if (typeToken.type == TokenType::AT_VAR && match(TokenType::LEFT_PAREN)) {
@@ -804,7 +824,7 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
         
         // delete操作
         if (match(TokenType::DELETE_KW)) {
-            parseDelete(refNode);
+            parseDelete();
             continue;
         }
         
@@ -829,44 +849,43 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
     }
 }
 
-void StandardParser::parseDelete(std::shared_ptr<Node> parent) {
-    // delete关键字已被消费
+void StandardParser::parseDelete() {
+    // [Delete]已经被消费
     
-    // 收集要删除的项
+    // 解析删除列表
     std::vector<std::string> deleteItems;
     
-    do {
-        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
-            auto type = advance();
-            auto name = consume(TokenType::IDENTIFIER, "Expected name").value;
-            deleteItems.push_back(type.value + " " + name);
-        } else if (check(TokenType::IDENTIFIER)) {
-            auto item = advance();
+    if (match(TokenType::LEFT_PAREN)) {
+        // [Delete] (item1, item2, ...)
+        while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+            auto item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+            deleteItems.push_back(item);
             
-            // 检查是否有索引
-            if (match(TokenType::LEFT_BRACKET)) {
-                auto index = consume(TokenType::NUMBER, "Expected index").value;
-                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-                deleteItems.push_back(item.value + "[" + index + "]");
-            } else {
-                deleteItems.push_back(item.value);
+            if (!match(TokenType::COMMA)) {
+                break;
             }
         }
-    } while (match(TokenType::COMMA));
+        consume(TokenType::RIGHT_PAREN, "Expected ')'");
+    } else {
+        // [Delete] item
+        auto item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+        deleteItems.push_back(item);
+    }
     
-    consume(TokenType::SEMICOLON, "Expected ';'");
-    
-    // 创建删除节点
+    // 创建Delete节点
     for (const auto& item : deleteItems) {
-        auto deleteNode = std::make_shared<Node>(NodeType::DELETE);
-        deleteNode->setTagName(item);
-        parent->addChild(deleteNode);
+        auto deleteNode = std::make_shared<Element>("delete");
+        deleteNode->setAttribute("target", item);
+        // 将删除节点添加到当前上下文
+        if (currentNode_) {
+            currentNode_->addChild(deleteNode);
+        }
     }
 }
 
 std::shared_ptr<Node> StandardParser::parseOperation() {
     if (match(TokenType::DELETE_KW)) {
-        parseDelete(nullptr);
+        parseDelete();
         return nullptr;
     }
     
@@ -1227,12 +1246,11 @@ void StandardParser::parseExcept(std::shared_ptr<Node> parent) {
 
 std::shared_ptr<Node> StandardParser::parseInfo() {
     // [Info]已经被消费
-    
-    auto infoNode = std::make_shared<Node>(NodeType::INFO);
-    
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    // 解析信息项
+    auto infoNode = std::make_shared<Element>("info");
+    
+    // 解析Info内容
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         
@@ -1250,12 +1268,11 @@ std::shared_ptr<Node> StandardParser::parseInfo() {
 
 std::shared_ptr<Node> StandardParser::parseExport() {
     // [Export]已经被消费
-    
-    auto exportNode = std::make_shared<Node>(NodeType::EXPORT);
-    
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    // 解析导出项
+    auto exportNode = std::make_shared<Element>("export");
+
+    // 解析Export内容
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         

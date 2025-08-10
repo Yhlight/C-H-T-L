@@ -76,7 +76,8 @@ protected:
     // 位置管理
     void advanceChar();
     char currentChar() const;
-    char peekChar(int offset = 0) const;
+    char peekChar() const;
+    char peekChar(int offset) const;
     std::string readWhile(std::function<bool(char)> predicate);
     
     // 辅助方法

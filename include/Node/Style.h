@@ -29,9 +29,6 @@ public:
     Style(StyleScope scope = StyleScope::LOCAL)
         : Node(NodeType::STYLE, "style"), scope_(scope) {}
     
-    // 默认构造函数
-    Style() : Node(NodeType::STYLE, "style"), scope_(StyleScope::LOCAL) {}
-    
     // 作用域管理
     StyleScope getScope() const { return scope_; }
     void setScope(StyleScope scope) { scope_ = scope; }

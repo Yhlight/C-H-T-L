@@ -2,6 +2,7 @@
 #include "Node/Config.h"
 #include "Common/Token.h"
 #include <sstream>
+#include <fstream> // Added for file writing
 
 namespace chtl {
 
@@ -282,127 +283,43 @@ void ConfigParser::exportConfig(std::shared_ptr<Config> configNode, ConfigFormat
     }
     
     // TODO: 写入文件
-    (void)filename; // 暂时消除未使用警告
+    if (!filename.empty()) {
+        std::ofstream file(filename);
+        if (file.is_open()) {
+            file << content;
+            file.close();
+        }
+    }
 }
 
 std::string ConfigParser::exportToJSON(std::shared_ptr<Config> configNode) {
-    std::stringstream ss;
-    ss << "{\n";
-    
-    bool first = true;
-    
-    // 导出普通配置项
-    for (const auto& [key, value] : configNode->getConfigs()) {
-        if (!first) ss << ",\n";
-        first = false;
-        
-        ss << "  \"" << key << "\": ";
-        
-        // 检查是否是数字或布尔值
-        if (value == "true" || value == "false" ||
-            std::all_of(value.begin(), value.end(), [](char c) { 
-                return std::isdigit(c) || c == '.' || c == '-'; 
-            })) {
-            ss << value;
-        } else {
-            ss << "\"" << value << "\"";
-        }
-    }
-    
-    // TODO: 导出数组配置项
-    
-    ss << "\n}";
-    return ss.str();
+    // TODO: 实现JSON导出
+    return "{}";
 }
 
 std::string ConfigParser::exportToYAML(std::shared_ptr<Config> configNode) {
-    std::stringstream ss;
-    
-    // 导出普通配置项
-    for (const auto& [key, value] : configNode->getConfigs()) {
-        // 处理嵌套键（如 Name.CUSTOM_STYLE）
-        size_t dotPos = key.find('.');
-        if (dotPos != std::string::npos) {
-            std::string group = key.substr(0, dotPos);
-            std::string subkey = key.substr(dotPos + 1);
-            ss << group << ":\n";
-            ss << "  " << subkey << ": " << value << "\n";
-        } else {
-            ss << key << ": " << value << "\n";
-        }
-    }
-    
-    return ss.str();
+    // TODO: 实现YAML导出
+    return "";
 }
 
 std::string ConfigParser::exportToINI(std::shared_ptr<Config> configNode) {
-    std::stringstream ss;
-    std::map<std::string, std::vector<std::pair<std::string, std::string>>> groups;
-    
-    // 按组分类配置项
-    for (const auto& [key, value] : configNode->getConfigs()) {
-        size_t dotPos = key.find('.');
-        if (dotPos != std::string::npos) {
-            std::string group = key.substr(0, dotPos);
-            std::string subkey = key.substr(dotPos + 1);
-            groups[group].push_back({subkey, value});
-        } else {
-            groups[""].push_back({key, value});
-        }
-    }
-    
-    // 输出INI格式
-    for (const auto& [group, items] : groups) {
-        if (!group.empty()) {
-            ss << "[" << group << "]\n";
-        }
-        for (const auto& [key, value] : items) {
-            ss << key << " = " << value << "\n";
-        }
-        ss << "\n";
-    }
-    
-    return ss.str();
+    // TODO: 实现INI导出
+    return "";
 }
 
 std::string ConfigParser::exportToTOML(std::shared_ptr<Config> configNode) {
     // TODO: 实现TOML导出
-    return "# TOML export not implemented yet\n";
+    return "";
 }
 
 std::string ConfigParser::exportToXML(std::shared_ptr<Config> configNode) {
-    std::stringstream ss;
-    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-    ss << "<configuration>\n";
-    
-    for (const auto& [key, value] : configNode->getConfigs()) {
-        ss << "  <" << key << ">" << value << "</" << key << ">\n";
-    }
-    
-    ss << "</configuration>\n";
-    return ss.str();
+    // TODO: 实现XML导出
+    return "<config></config>";
 }
 
 std::string ConfigParser::exportToCHTL(std::shared_ptr<Config> configNode) {
-    std::stringstream ss;
-    ss << "[Configuration]\n{\n";
-    
-    for (const auto& [key, value] : configNode->getConfigs()) {
-        ss << "    " << key << " = ";
-        
-        // 检查是否需要引号
-        if (value.find(' ') != std::string::npos ||
-            value.find(',') != std::string::npos) {
-            ss << "\"" << value << "\"";
-        } else {
-            ss << value;
-        }
-        
-        ss << ";\n";
-    }
-    
-    ss << "}\n";
-    return ss.str();
+    // TODO: 实现CHTL导出
+    return "[Configuration]\n";
 }
 
 void ConfigParser::skipToNextStatement() {

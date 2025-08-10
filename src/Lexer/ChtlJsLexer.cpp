@@ -82,7 +82,7 @@ void ChtlJsLexer::reset() {
 
 bool ChtlJsLexer::isInChtlMode() const {
     return inChtlSequence_ || 
-           (chtlJsState_ && chtlJsState_->isInChtlSelector());
+           (chtlJsState_ && chtlJsState_->isInSelectorMode());
 }
 
 Token ChtlJsLexer::recognizeToken() {
@@ -309,6 +309,10 @@ char ChtlJsLexer::currentChar() const {
         return '\0';
     }
     return input_[position_];
+}
+
+char ChtlJsLexer::peekChar() const {
+    return peekChar(1);
 }
 
 char ChtlJsLexer::peekChar(int offset) const {

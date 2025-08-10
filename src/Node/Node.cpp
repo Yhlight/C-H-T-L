@@ -7,18 +7,6 @@ namespace chtl {
 
 // ==================== Node 基类实现 ====================
 
-void Node::appendChild(const std::shared_ptr<Node>& child) {
-    if (!child) return;
-    
-    // 如果child已有父节点，先从原父节点移除
-    if (auto oldParent = child->getParent()) {
-        oldParent->removeChild(child);
-    }
-    
-    children_.push_back(child);
-    child->setParent(shared_from_this());
-}
-
 void Node::insertBefore(const std::shared_ptr<Node>& child, const std::shared_ptr<Node>& ref) {
     if (!child) return;
     

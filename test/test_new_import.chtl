@@ -1,0 +1,24 @@
+// Test new import syntax
+Import @Chtl from "chtholly/core".*
+Import @Style from "styles/base".*
+Import @Html from "components".*
+
+// Regular imports without wildcards
+Import @Chtl from "utils/helper"
+Import @JavaScript from "scripts/main"
+
+// Old [Import] block syntax (no wildcards allowed)
+[Import]
+    @Html
+    @Style
+    @JavaScript
+    [Custom] @Element Button
+    [Template] @Style Card
+
+// Test elements
+div {
+    class: "container"
+    h1 {
+        "Hello World"
+    }
+}

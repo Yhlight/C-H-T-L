@@ -32,6 +32,7 @@ StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_pt
 
 std::shared_ptr<Node> StandardParser::parse() {
     auto root = std::make_shared<Element>("document");
+    root->setTagName("document");
     
     // 初始化第一个token
     currentToken_ = getNextToken();
@@ -54,7 +55,11 @@ std::shared_ptr<Node> StandardParser::parse() {
 }
 
 std::shared_ptr<Node> StandardParser::parseTopLevel() {
-    // 检查特殊标记token（词法分析器已经识别为完整token）
+    // 调试输出
+    // std::cout << "DEBUG parseTopLevel: token type=" << static_cast<int>(currentToken_.type) 
+    //           << " value=[" << currentToken_.value << "]" << std::endl;
+    
+    // 检查特殊块标记  
     if (currentToken_.type == TokenType::CUSTOM) {
         advance();
         return parseCustom();
@@ -96,11 +101,13 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     // 检查Import语句 (Import @Chtl from "...")
     if (currentToken_.type == TokenType::IDENTIFIER && 
         currentToken_.value == "Import") {
+        // std::cout << "DEBUG: Calling parseImportStatement" << std::endl;
         return parseImportStatement();
     }
     
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
+        std::string tagName = currentToken_.value;
         advance();  // 消费元素名
         try {
             return parseElement();
@@ -583,10 +590,10 @@ std::shared_ptr<Node> StandardParser::parseTemplate() {
         // 解析参数列表
         while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
             auto paramName = consume(TokenType::IDENTIFIER, "Expected parameter name").value;
-            templateNode->addParameter(paramName);
+            templateNode->setParameter(paramName, "");  // 模板参数只需要名称
             
-            if (!check(TokenType::RIGHT_PAREN)) {
-                consume(TokenType::COMMA, "Expected ',' or ')'");
+            if (!match(TokenType::COMMA)) {
+                break;
             }
         }
         consume(TokenType::RIGHT_PAREN, "Expected ')'");
@@ -1311,6 +1318,8 @@ void StandardParser::parseNameConfig(std::shared_ptr<Config> configNode) {
 }
 
 std::shared_ptr<Node> StandardParser::parseImportStatement() {
+    // std::cout << "DEBUG parseImportStatement: entered" << std::endl;
+    
     // Import关键字
     consume(TokenType::IDENTIFIER, "Expected 'Import'");
     
@@ -1353,7 +1362,24 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
     std::string modulePath = currentToken_.value;
     advance();
     
+    // 检查是否有通配符后缀 (.*) 
+    bool isWildcard = false;
+    if (match(TokenType::DOT)) {
+        if (match(TokenType::WILDCARD)) {
+            isWildcard = true;
+            // 将路径标记为通配符导入
+            modulePath += ".*";
+        } else {
+            addError("Expected '*' after '.' in import path");
+        }
+    }
+    
     importNode->setPath(modulePath);
+    
+    // 如果是通配符导入，设置为导入所有
+    if (isWildcard) {
+        importNode->addImportItem("*");
+    }
     
     return importNode;
 }
@@ -1367,10 +1393,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     Import::ImportType importType = Import::ImportType::CHTL;
     std::string importName;
     
-    if (match(TokenType::WILDCARD)) {
-        // 通配导入
-        importType = Import::ImportType::ALL;
-    } else if (match(TokenType::AT_HTML)) {
+    if (match(TokenType::AT_HTML)) {
         importType = Import::ImportType::HTML;
     } else if (match(TokenType::AT_STYLE)) {
         importType = Import::ImportType::CSS;

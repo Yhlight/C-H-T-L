@@ -1,0 +1,10 @@
+// Test file with import statements and elements
+Import @Chtl from "chtholly/core".*
+Import @Style from "styles/base".*
+
+div {
+    class: "container"
+    h1 {
+        "Test Import"
+    }
+}

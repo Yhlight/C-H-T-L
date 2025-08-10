@@ -852,8 +852,28 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     
     // 检查是否有from子句（命名空间）
     if (match(TokenType::FROM)) {
-        auto namespaceToken = consume(TokenType::IDENTIFIER, "Expected namespace");
-        refNode->setAttribute("from", namespaceToken.value);
+        // 解析命名空间路径（支持嵌套，如 space.room2）
+        std::string namespacePath;
+        
+        do {
+            auto nsToken = consume(TokenType::IDENTIFIER, "Expected namespace name");
+            if (!namespacePath.empty()) {
+                namespacePath += ".";
+            }
+            namespacePath += nsToken.value;
+        } while (match(TokenType::DOT));
+        
+        refNode->setAttribute("from", namespacePath);
+        
+        // 使用命名空间管理器验证和解析引用
+        auto nsManager = std::static_pointer_cast<StandardContext>(context_)->getNamespaceManager();
+        if (nsManager) {
+            // 查找命名空间中的成员
+            auto member = nsManager->findMember(namespacePath, nameToken.value);
+            if (!member) {
+                context_->addWarning("Member '" + nameToken.value + "' not found in namespace '" + namespacePath + "'");
+            }
+        }
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");
@@ -880,6 +900,32 @@ std::shared_ptr<Node> StandardParser::parseStyleReference() {
         consume(TokenType::LEFT_BRACE, "Expected '{'");
         parseSpecialization(refNode);
         consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    }
+    
+    // 检查是否有from子句（命名空间）
+    if (match(TokenType::FROM)) {
+        // 解析命名空间路径（支持嵌套，如 space.room2）
+        std::string namespacePath;
+        
+        do {
+            auto nsToken = consume(TokenType::IDENTIFIER, "Expected namespace name");
+            if (!namespacePath.empty()) {
+                namespacePath += ".";
+            }
+            namespacePath += nsToken.value;
+        } while (match(TokenType::DOT));
+        
+        refNode->setAttribute("from", namespacePath);
+        
+        // 使用命名空间管理器验证和解析引用
+        auto nsManager = std::static_pointer_cast<StandardContext>(context_)->getNamespaceManager();
+        if (nsManager) {
+            // 查找命名空间中的成员
+            auto member = nsManager->findMember(namespacePath, nameToken.value);
+            if (!member) {
+                context_->addWarning("Member '" + nameToken.value + "' not found in namespace '" + namespacePath + "'");
+            }
+        }
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");
@@ -1313,33 +1359,96 @@ std::shared_ptr<Node> StandardParser::parseNamespace() {
     auto nameToken = consume(TokenType::IDENTIFIER, "Expected namespace name");
     namespaceNode->setName(nameToken.value);
     
+    // 获取命名空间管理器
+    auto nsManager = std::static_pointer_cast<StandardContext>(context_)->getNamespaceManager();
+    if (nsManager) {
+        // 获取当前命名空间路径
+        std::string currentPath = nsManager->getCurrentNamespace();
+        
+        // 注册命名空间
+        nsManager->registerNamespace(namespaceNode, currentPath);
+        
+        // 设置新的当前命名空间
+        std::string newPath = currentPath.empty() ? nameToken.value : currentPath + "." + nameToken.value;
+        nsManager->setCurrentNamespace(newPath);
+    }
+    
     // 检查是否有内容块
     if (check(TokenType::LEFT_BRACE)) {
         consume(TokenType::LEFT_BRACE, "Expected '{'");
         
         // 解析命名空间内容
-        while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-            skipWhitespaceAndComments();
-            
-            if (check(TokenType::RIGHT_BRACE)) break;
-            
-            // except约束
-            if (check(TokenType::EXCEPT)) {
-                parseExcept(namespaceNode);
-                continue;
-            }
-            
-            // 嵌套命名空间或其他内容
+        parseNamespaceContent(namespaceNode);
+        
+        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    } else {
+        // 检查是否是简化的嵌套语法
+        // [Namespace] space
+        // [Namespace] room  // 只有一层关系时可以不写花括号
+        if (check(TokenType::LEFT_BRACKET) && peekNext() == TokenType::NAMESPACE_KW) {
+            // 下一行也是命名空间声明
             auto child = parseTopLevel();
-            if (child) {
+            if (child && child->getType() == NodeType::NAMESPACE) {
                 namespaceNode->addChild(child);
             }
         }
-        
-        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    }
+    
+    // 恢复上一级命名空间
+    if (nsManager) {
+        std::string currentPath = nsManager->getCurrentNamespace();
+        size_t lastDot = currentPath.rfind('.');
+        if (lastDot != std::string::npos) {
+            nsManager->setCurrentNamespace(currentPath.substr(0, lastDot));
+        } else {
+            nsManager->setCurrentNamespace("");
+        }
     }
     
     return namespaceNode;
+}
+
+void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceNode) {
+    auto nsManager = std::static_pointer_cast<StandardContext>(context_)->getNamespaceManager();
+    std::string currentNsPath = nsManager ? nsManager->getCurrentNamespace() : "";
+    
+    while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+        skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // except约束
+        if (check(TokenType::EXCEPT)) {
+            parseExcept(namespaceNode);
+            continue;
+        }
+        
+        // 嵌套命名空间或其他内容
+        auto child = parseTopLevel();
+        if (child) {
+            namespaceNode->addChild(child);
+            
+            // 注册成员到命名空间
+            if (nsManager && child->getType() != NodeType::NAMESPACE) {
+                std::string memberName;
+                
+                // 根据节点类型获取名称
+                if (child->getType() == NodeType::CUSTOM) {
+                    auto custom = std::static_pointer_cast<Custom>(child);
+                    memberName = custom->getCustomName();
+                } else if (child->getType() == NodeType::TEMPLATE) {
+                    auto tmpl = std::static_pointer_cast<Template>(child);
+                    memberName = tmpl->getTemplateName();
+                }
+                
+                if (!memberName.empty()) {
+                    if (!nsManager->registerMember(currentNsPath, memberName, child->getType(), child)) {
+                        context_->addWarning("Member '" + memberName + "' already exists in namespace '" + currentNsPath + "'");
+                    }
+                }
+            }
+        }
+    }
 }
 
 void StandardParser::parseExcept(std::shared_ptr<Node> parent) {
@@ -1518,6 +1627,22 @@ void StandardParser::skipToNextStatement() {
         }
         advance();
     }
+}
+
+TokenType StandardParser::peekNext() {
+    // 保存当前状态
+    Token savedCurrent = currentToken_;
+    Token savedPrevious = previousToken_;
+    
+    // 前进一个token
+    advance();
+    TokenType nextType = currentToken_.type;
+    
+    // 恢复状态
+    currentToken_ = savedCurrent;
+    previousToken_ = savedPrevious;
+    
+    return nextType;
 }
 
 } // namespace chtl

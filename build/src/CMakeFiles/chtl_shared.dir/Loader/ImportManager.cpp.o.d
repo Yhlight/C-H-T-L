@@ -296,4 +296,6 @@ src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_tree.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multiset.h \
-  /workspace/include/Node/Import.h /workspace/include/Node/Comment.h
+  /workspace/include/Context/NamespaceManager.h \
+  /workspace/include/Node/Namespace.h /workspace/include/Node/Import.h \
+  /workspace/include/Node/Comment.h

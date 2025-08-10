@@ -16,6 +16,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o"
   "CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o.d"
+  "CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.o"
+  "CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.o"
   "CMakeFiles/chtl_shared.dir/Context/StandardContext.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Css/CssAnalyzer.cpp.o"

@@ -405,6 +405,33 @@ Context/JsContext.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.s
 .PHONY : Context/JsContext.cpp.s
 
+Context/NamespaceManager.o: Context/NamespaceManager.cpp.o
+.PHONY : Context/NamespaceManager.o
+
+# target to build an object file
+Context/NamespaceManager.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/NamespaceManager.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.o
+.PHONY : Context/NamespaceManager.cpp.o
+
+Context/NamespaceManager.i: Context/NamespaceManager.cpp.i
+.PHONY : Context/NamespaceManager.i
+
+# target to preprocess a source file
+Context/NamespaceManager.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/NamespaceManager.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.i
+.PHONY : Context/NamespaceManager.cpp.i
+
+Context/NamespaceManager.s: Context/NamespaceManager.cpp.s
+.PHONY : Context/NamespaceManager.s
+
+# target to generate assembly for a file
+Context/NamespaceManager.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Context/NamespaceManager.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.s
+.PHONY : Context/NamespaceManager.cpp.s
+
 Context/StandardContext.o: Context/StandardContext.cpp.o
 .PHONY : Context/StandardContext.o
 
@@ -1442,6 +1469,9 @@ help:
 	@echo "... Context/JsContext.o"
 	@echo "... Context/JsContext.i"
 	@echo "... Context/JsContext.s"
+	@echo "... Context/NamespaceManager.o"
+	@echo "... Context/NamespaceManager.i"
+	@echo "... Context/NamespaceManager.s"
 	@echo "... Context/StandardContext.o"
 	@echo "... Context/StandardContext.i"
 	@echo "... Context/StandardContext.s"

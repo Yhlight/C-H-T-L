@@ -15,6 +15,7 @@ libchtl.so: \
   CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o \
   CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o \
   CMakeFiles/chtl_shared.dir/Context/ContextFactory.cpp.o \
+  CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.o \
   CMakeFiles/chtl_shared.dir/Lexer/BasicLexer.cpp.o \
   CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.o \
   CMakeFiles/chtl_shared.dir/Lexer/ConfigLexer.cpp.o \
@@ -104,6 +105,8 @@ CMakeFiles/chtl_shared.dir/Context/CssContext.cpp.o:
 CMakeFiles/chtl_shared.dir/Context/JsContext.cpp.o:
 
 CMakeFiles/chtl_shared.dir/Context/ContextFactory.cpp.o:
+
+CMakeFiles/chtl_shared.dir/Context/NamespaceManager.cpp.o:
 
 CMakeFiles/chtl_shared.dir/Lexer/BasicLexer.cpp.o:
 

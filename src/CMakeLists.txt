@@ -19,6 +19,7 @@ set(CHTL_SOURCES
     Context/CssContext.cpp
     Context/JsContext.cpp
     Context/ContextFactory.cpp
+    Context/NamespaceManager.cpp
     
     # Lexer
     Lexer/BasicLexer.cpp

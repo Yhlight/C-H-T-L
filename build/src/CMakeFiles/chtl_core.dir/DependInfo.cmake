@@ -16,6 +16,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Context/ContextFactory.cpp" "src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Context/ContextFactory.cpp.o.d"
   "/workspace/src/Context/CssContext.cpp" "src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Context/CssContext.cpp.o.d"
   "/workspace/src/Context/JsContext.cpp" "src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Context/JsContext.cpp.o.d"
+  "/workspace/src/Context/NamespaceManager.cpp" "src/CMakeFiles/chtl_core.dir/Context/NamespaceManager.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Context/NamespaceManager.cpp.o.d"
   "/workspace/src/Context/StandardContext.cpp" "src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Context/StandardContext.cpp.o.d"
   "/workspace/src/Css/CssAnalyzer.cpp" "src/CMakeFiles/chtl_core.dir/Css/CssAnalyzer.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Css/CssAnalyzer.cpp.o.d"
   "/workspace/src/Css/CssBlockExtractor.cpp" "src/CMakeFiles/chtl_core.dir/Css/CssBlockExtractor.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Css/CssBlockExtractor.cpp.o.d"

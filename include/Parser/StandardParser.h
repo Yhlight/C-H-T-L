@@ -16,6 +16,7 @@ class Node;
 class Style;
 class Template;
 class Custom;
+class Namespace;
 class Config;
 
 class StandardParser : public BasicParser {
@@ -104,6 +105,7 @@ private:
     
     // 命名空间解析
     std::shared_ptr<Node> parseNamespace();
+    void parseNamespaceContent(std::shared_ptr<Namespace> namespaceNode);
     void parseExcept(std::shared_ptr<Node> parent);
     
     // 信息和导出
@@ -121,6 +123,7 @@ private:
     
     // 工具方法
     void skipWhitespaceAndComments();
+    TokenType peekNext();  // 查看下一个token的类型
     void skipToNextStatement();
     
     // 错误处理

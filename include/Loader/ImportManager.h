@@ -8,6 +8,7 @@
 #include <functional>
 #include <chrono>
 #include "Loader/DependencyGraph.h"
+#include "Loader/ImportResolver.h"
 #include "Node/Node.h"
 #include "Context/BasicContext.h"
 
@@ -132,6 +133,7 @@ private:
     ImportConfig config_;
     std::shared_ptr<BasicContext> context_;
     DependencyGraph dependencyGraph_;
+    std::unique_ptr<ImportResolver> resolver_;
     
     // 缓存
     std::unordered_map<std::string, ImportCacheEntry> cache_;

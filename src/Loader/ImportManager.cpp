@@ -14,7 +14,8 @@ namespace chtl {
 
 namespace fs = std::filesystem;
 
-ImportManager::ImportManager() {
+ImportManager::ImportManager() 
+    : resolver_(std::make_unique<ImportResolver>()) {
     // 设置默认搜索路径
     config_.searchPaths.push_back(".");
     config_.searchPaths.push_back("./modules");
@@ -54,13 +55,16 @@ ImportResult ImportManager::importModuleInternal(const std::string& modulePath,
                                                 std::vector<std::string>& importStack) {
     ImportResult result;
     
-    // 解析模块路径
-    std::string resolvedPath = resolveModulePath(modulePath, fromPath);
-    if (resolvedPath.empty()) {
-        result.errors.push_back("Cannot resolve module path: " + modulePath);
+    // 使用ImportResolver解析模块路径
+    Import::ImportType importType = Import::ImportType::CHTL; // 默认为CHTL
+    auto resolveResult = resolver_->resolve(modulePath, importType, fromPath);
+    
+    if (!resolveResult.success) {
+        result.errors.push_back(resolveResult.errorMessage);
         return result;
     }
     
+    std::string resolvedPath = resolveResult.resolvedPath;
     result.resolvedPath = resolvedPath;
     
     // 检查是否已经在导入栈中（快速循环检测）

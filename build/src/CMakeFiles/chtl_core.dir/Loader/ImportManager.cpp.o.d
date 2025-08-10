@@ -217,7 +217,49 @@ src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o: \
   /workspace/include/Loader/DependencyGraph.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/unordered_set.h \
-  /workspace/include/Node/Node.h \
+  /workspace/include/Loader/ImportResolver.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/filesystem \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_fwd.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/system_error \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stdexcept \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_path.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/locale \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_classes.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_classes.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cwctype \
+  /usr/include/wctype.h \
+  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ios_base.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/streambuf \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/streambuf.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/streambuf_iterator.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets_nonio.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/time_members.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/messages_members.h \
+  /usr/include/libintl.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/codecvt.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets_nonio.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_conv.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iomanip \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/quoted_string.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/istream \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ios \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_ios.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_ios.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ostream \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/codecvt \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_dir.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_ops.h \
+  /workspace/include/Node/Import.h /workspace/include/Node/Node.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/algorithm \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algo.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/algorithmfwd.h \
@@ -233,48 +275,7 @@ src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
   /workspace/include/Common/Token.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iostream \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ostream \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ios \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ios_base.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_classes.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_classes.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/system_error \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stdexcept \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/streambuf \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/streambuf.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_ios.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/cwctype \
-  /usr/include/wctype.h \
-  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/streambuf_iterator.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/basic_ios.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/ostream.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/istream \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
   /workspace/include/Common/TokenType.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/filesystem \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_fwd.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_path.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/locale \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets_nonio.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/time_members.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/messages_members.h \
-  /usr/include/libintl.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/codecvt.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets_nonio.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_conv.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iomanip \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/quoted_string.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/codecvt \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_dir.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/fs_ops.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/fstream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/basic_file.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/x86_64-linux-gnu/c++/14/bits/c++io.h \
@@ -299,4 +300,4 @@ src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o: \
   /workspace/include/Context/NamespaceManager.h \
   /workspace/include/Node/Namespace.h \
   /workspace/include/Utils/ConstraintValidator.h \
-  /workspace/include/Node/Import.h /workspace/include/Node/Comment.h
+  /workspace/include/Node/Comment.h

@@ -36,21 +36,15 @@ std::shared_ptr<Node> StandardParser::parse() {
     currentToken_ = getNextToken();
     
     try {
-        std::cout << "[DEBUG] parse: starting main loop\n";
         while (!isAtEnd()) {
             skipWhitespaceAndComments();
             if (isAtEnd()) break;
             
-            std::cout << "[DEBUG] parse: calling parseTopLevel\n";
             auto node = parseTopLevel();
             if (node) {
-                std::cout << "[DEBUG] parse: got node, adding to root\n";
                 root->addChild(node);
-            } else {
-                std::cout << "[DEBUG] parse: parseTopLevel returned null\n";
             }
         }
-        std::cout << "[DEBUG] parse: finished main loop\n";
     } catch (const std::exception& e) {
         addError("Parse error: " + std::string(e.what()));
     }
@@ -59,9 +53,6 @@ std::shared_ptr<Node> StandardParser::parse() {
 }
 
 std::shared_ptr<Node> StandardParser::parseTopLevel() {
-    std::cout << "[DEBUG] parseTopLevel: currentToken type=" << static_cast<int>(currentToken_.type) 
-              << " value='" << currentToken_.value << "'\n";
-    
     // 检查特殊标记token（词法分析器已经识别为完整token）
     if (currentToken_.type == TokenType::CUSTOM) {
         advance();
@@ -80,7 +71,6 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         return parseConfiguration();
     }
     if (currentToken_.type == TokenType::IMPORT) {
-        std::cout << "[DEBUG] Found IMPORT token\n";
         advance();
         return parseImport();
     }
@@ -1320,8 +1310,6 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
 
 std::shared_ptr<Node> StandardParser::parseImport() {
     // [Import]已经被消费
-    
-    std::cout << "[DEBUG] parseImport called\n";
     
     auto importNode = std::make_shared<Import>();
     

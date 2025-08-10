@@ -69,6 +69,7 @@ set(CHTL_SOURCES
     # Loader
     Loader/DependencyGraph.cpp
     Loader/ImportManager.cpp
+    Loader/ImportResolver.cpp
     
     # Utils
     Utils/ConstraintValidator.cpp

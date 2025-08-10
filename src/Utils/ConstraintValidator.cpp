@@ -14,15 +14,11 @@ ConstraintValidator::ConstraintValidator(std::shared_ptr<BasicContext> context)
 bool ConstraintValidator::validateConstraints(std::shared_ptr<Node> ast) {
     if (!ast) return true;
     
-    std::cout << "[DEBUG] Starting constraint validation\n";
-    
     clear();
     
     // 开始递归验证
     std::unordered_set<std::string> globalConstraints;
     validateRecursive(ast, "", globalConstraints);
-    
-    std::cout << "[DEBUG] Validation complete. Violations: " << violations_.size() << "\n";
     
     return violations_.empty();
 }
@@ -225,12 +221,9 @@ void ConstraintValidator::validateRecursive(std::shared_ptr<Node> node,
                           currentPath + "/" + node->getTagName();
     pathStack_.push_back(nodePath);
     
-    std::cout << "[DEBUG] Validating node: " << nodePath << "\n";
-    
     // 收集当前节点的约束
     std::unordered_set<std::string> currentConstraints = activeConstraints;
     for (const auto& constraint : node->getConstraints()) {
-        std::cout << "[DEBUG] Node has constraint: " << constraint << "\n";
         currentConstraints.insert(constraint);
         registerConstraint(nodePath, constraint);
     }
@@ -244,9 +237,7 @@ void ConstraintValidator::validateRecursive(std::shared_ptr<Node> node,
     for (const auto& child : node->getChildren()) {
         // 检查子节点是否违反当前约束
         for (const auto& constraint : currentConstraints) {
-            // 调试输出
-            std::cout << "[DEBUG] Checking child '" << child->getTagName() 
-                      << "' against constraint '" << constraint << "'\n";
+
             
             if (matchesConstraint(child, constraint)) {
                 ConstraintInfo violation;

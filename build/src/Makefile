@@ -864,6 +864,33 @@ Loader/ImportManager.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s
 .PHONY : Loader/ImportManager.cpp.s
 
+Loader/ImportResolver.o: Loader/ImportResolver.cpp.o
+.PHONY : Loader/ImportResolver.o
+
+# target to build an object file
+Loader/ImportResolver.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportResolver.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.o
+.PHONY : Loader/ImportResolver.cpp.o
+
+Loader/ImportResolver.i: Loader/ImportResolver.cpp.i
+.PHONY : Loader/ImportResolver.i
+
+# target to preprocess a source file
+Loader/ImportResolver.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportResolver.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.i
+.PHONY : Loader/ImportResolver.cpp.i
+
+Loader/ImportResolver.s: Loader/ImportResolver.cpp.s
+.PHONY : Loader/ImportResolver.s
+
+# target to generate assembly for a file
+Loader/ImportResolver.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportResolver.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.s
+.PHONY : Loader/ImportResolver.cpp.s
+
 Node/Comment.o: Node/Comment.cpp.o
 .PHONY : Node/Comment.o
 
@@ -1547,6 +1574,9 @@ help:
 	@echo "... Loader/ImportManager.o"
 	@echo "... Loader/ImportManager.i"
 	@echo "... Loader/ImportManager.s"
+	@echo "... Loader/ImportResolver.o"
+	@echo "... Loader/ImportResolver.i"
+	@echo "... Loader/ImportResolver.s"
 	@echo "... Node/Comment.o"
 	@echo "... Node/Comment.i"
 	@echo "... Node/Comment.s"

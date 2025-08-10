@@ -7,6 +7,7 @@ namespace chtl {
 const std::unordered_map<std::string, TokenType> GlobalMap::KEYWORD_MAP = {
     {"text", TokenType::TEXT},
     {"style", TokenType::STYLE},
+    {"script", TokenType::SCRIPT_KW},
     {"inherit", TokenType::INHERIT},
     {"delete", TokenType::DELETE_KW},
     {"insert", TokenType::INSERT},

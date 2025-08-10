@@ -61,6 +61,9 @@ private:
     std::shared_ptr<Node> parseStyleBlock();
     void parseStyleContent(std::shared_ptr<Style> styleNode);
     void parseSelectorBlock(std::shared_ptr<Style> styleNode);
+    
+    // 脚本解析
+    std::shared_ptr<Node> parseScriptBlock();
     void parseContextSelector(std::shared_ptr<Style> styleNode);
     void parseCssProperty(std::string& cssContent);
     

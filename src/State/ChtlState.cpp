@@ -161,7 +161,7 @@ std::shared_ptr<BasicState> ChtlState::handleIdentifier(char ch) {
     if (type == TokenType::STYLE && ch == '{') {
         inStyleBlock_ = true;
     }
-    if (type == TokenType::IDENTIFIER && buffer_ == "script" && ch == '{') {
+    if (type == TokenType::SCRIPT_KW && ch == '{') {
         inScriptBlock_ = true;
     }
     

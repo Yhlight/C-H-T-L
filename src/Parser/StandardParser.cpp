@@ -239,6 +239,11 @@ std::shared_ptr<Node> StandardParser::parseNode() {
         return parseStyleBlock();
     }
     
+    // script块
+    if (currentToken_.type == TokenType::SCRIPT_KW) {
+        return parseScriptBlock();
+    }
+    
     // @Element, @Style, @Var引用
     if (currentToken_.type == TokenType::AT_ELEMENT || 
         currentToken_.type == TokenType::AT_STYLE || 
@@ -347,6 +352,73 @@ std::shared_ptr<Node> StandardParser::parseStyleBlock() {
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
     
     return styleNode;
+}
+
+std::shared_ptr<Node> StandardParser::parseScriptBlock() {
+    consume(TokenType::SCRIPT_KW, "script");
+    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    auto scriptNode = std::make_shared<Script>();
+    
+    // 收集脚本内容直到遇到匹配的 }
+    std::string scriptContent;
+    int braceDepth = 1;
+    
+    while (!isAtEnd() && braceDepth > 0) {
+        Token token = currentToken_;
+        advance();
+        
+        // 处理大括号以正确计算深度
+        if (token.type == TokenType::LEFT_BRACE) {
+            scriptContent += token.value;
+            braceDepth++;
+        } else if (token.type == TokenType::RIGHT_BRACE) {
+            braceDepth--;
+            if (braceDepth == 0) {
+                break; // 不添加最后的 }
+            }
+            scriptContent += token.value;
+        } else if (token.type == TokenType::STRING_LITERAL) {
+            // 字符串字面量，保留引号
+            scriptContent += "\"" + token.value + "\"";
+        } else {
+            // 对于其他token，添加原始值
+            scriptContent += token.value;
+        }
+        
+        // 添加空格（智能处理）
+        if (!isAtEnd() && braceDepth > 0) {
+            Token next = currentToken_;
+            
+            // 决定是否需要空格
+            bool needSpace = true;
+            
+            // 以下情况不需要空格
+            if (token.type == TokenType::DOT || next.type == TokenType::DOT ||
+                token.type == TokenType::LEFT_PAREN || next.type == TokenType::RIGHT_PAREN ||
+                token.type == TokenType::LEFT_BRACKET || next.type == TokenType::RIGHT_BRACKET ||
+                token.type == TokenType::SEMICOLON || next.type == TokenType::SEMICOLON ||
+                token.type == TokenType::COMMA || next.type == TokenType::COMMA ||
+                token.type == TokenType::COLON || next.type == TokenType::COLON ||
+                (token.type == TokenType::OPERATOR && token.value == "!") ||
+                (token.type == TokenType::IDENTIFIER && next.type == TokenType::LEFT_PAREN)) {
+                needSpace = false;
+            }
+            
+            if (needSpace) {
+                scriptContent += " ";
+            }
+        }
+    }
+    
+    // 去除首尾空白
+    scriptContent.erase(0, scriptContent.find_first_not_of(" \t\n\r"));
+    scriptContent.erase(scriptContent.find_last_not_of(" \t\n\r") + 1);
+    
+    scriptNode->setContent(scriptContent);
+    scriptNode->setScriptType(Script::ScriptType::INLINE);  // 局部script块默认为内联类型
+    
+    return scriptNode;
 }
 
 void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {

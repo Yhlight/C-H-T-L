@@ -15,6 +15,7 @@ enum class TokenType {
     // 关键字
     TEXT,                 // text
     STYLE,                // style
+    SCRIPT_KW,            // script (用于局部script块)
     INHERIT,              // inherit
     DELETE_KW,            // delete (使用DELETE_KW避免与C++关键字冲突)
     INSERT,               // insert

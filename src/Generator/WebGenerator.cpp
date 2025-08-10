@@ -790,6 +790,63 @@ std::shared_ptr<Origin> WebGenerator::findOriginDefinition(const std::string& ty
     return nullptr;
 }
 
+void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
+    // 处理导入
+    if (import->isNamespaceImport()) {
+        // 从命名空间导入
+        std::string namespaceName = import->getTargetNamespace();
+        std::string alias = import->getAlias();
+        
+        if (configManager_->isDebugMode()) {
+            result_.warnings.push_back("Import from namespace: " + namespaceName + 
+                                       (alias.empty() ? "" : " as " + alias));
+        }
+        
+        // TODO: 实际的命名空间导入逻辑需要模块系统支持
+    } else {
+        // 从文件导入
+        std::string filePath = import->getFilePath();
+        std::string alias = import->getAlias();
+        
+        if (configManager_->isDebugMode()) {
+            result_.warnings.push_back("Import from file: " + filePath + 
+                                       (alias.empty() ? "" : " as " + alias));
+        }
+        
+        // TODO: 实际的文件导入逻辑需要模块系统支持
+    }
+}
+
+void WebGenerator::visitExport(const std::shared_ptr<Export>& export_) {
+    // 处理导出
+    std::string fromNamespace = export_->getFromNamespace();
+    
+    if (configManager_->isDebugMode()) {
+        if (!fromNamespace.empty()) {
+            result_.warnings.push_back("Export from namespace: " + fromNamespace);
+        }
+        
+        for (const auto& item : export_->getExportItems()) {
+            std::string typeStr;
+            switch (item.type) {
+                case Export::ExportType::ELEMENT: typeStr = "@Element"; break;
+                case Export::ExportType::STYLE: typeStr = "@Style"; break;
+                case Export::ExportType::VAR: typeStr = "@Var"; break;
+                case Export::ExportType::NAMESPACE: typeStr = "namespace"; break;
+                case Export::ExportType::ALL: typeStr = "*"; break;
+            }
+            
+            std::string exportInfo = "Export: " + typeStr + " " + item.name;
+            if (!item.alias.empty()) {
+                exportInfo += " as " + item.alias;
+            }
+            result_.warnings.push_back(exportInfo);
+        }
+    }
+    
+    // TODO: 实际的导出逻辑需要模块系统支持
+}
+
 // 辅助函数：去除首尾空格
 std::string WebGenerator::trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");

@@ -1441,109 +1441,14 @@ void StandardParser::parseNameConfig(std::shared_ptr<Config> configNode) {
 }
 
 std::shared_ptr<Node> StandardParser::parseImportStatement() {
-    // std::cout << "DEBUG parseImportStatement: entered" << std::endl;
+    // 这是旧语法，发出警告
+    addWarning("'Import' without brackets is deprecated. Use '[Import]' instead.");
     
     // Import关键字
     consume(TokenType::IDENTIFIER, "Expected 'Import'");
     
-    auto importNode = std::make_shared<Import>();
-    
-    // 解析导入类型 (@Chtl, @Html, @Style, @JavaScript)
-    Import::ImportType importType = Import::ImportType::CHTL;
-    
-    if (match(TokenType::AT_CHTL)) {
-        importType = Import::ImportType::CHTL;
-    } else if (match(TokenType::AT_HTML)) {
-        importType = Import::ImportType::HTML;
-    } else if (match(TokenType::AT_STYLE)) {
-        importType = Import::ImportType::CSS;
-    } else if (match(TokenType::AT_JAVASCRIPT)) {
-        importType = Import::ImportType::JS;
-    } else {
-        addError("Expected import type (@Chtl, @Html, @Style, @JavaScript)");
-        skipToNextStatement();
-        return nullptr;
-    }
-    
-    importNode->setType(importType);
-    
-    // 期望 'from' 关键字
-    if (!check(TokenType::IDENTIFIER) || currentToken_.value != "from") {
-        addError("Expected 'from' after import type");
-        skipToNextStatement();
-        return nullptr;
-    }
-    advance(); // 消费 'from'
-    
-    // 解析模块路径 - 支持字符串字面量或无引号的标识符路径
-    std::string modulePath;
-    
-    if (check(TokenType::STRING_LITERAL)) {
-        // 带引号的路径: "path/to/module" 或 "path/to/module.*"
-        modulePath = currentToken_.value;
-        advance();
-    } else if (check(TokenType::IDENTIFIER)) {
-        // 无引号的路径: path/to/module 或 Chtholly.Space
-        modulePath = currentToken_.value;
-        advance();
-        
-        // 继续读取路径的其余部分（处理 . 和 / 分隔符）
-        while (!isAtEnd()) {
-            if (check(TokenType::DOT)) {
-                advance(); // 消费点
-                modulePath += ".";
-                
-                if (check(TokenType::WILDCARD)) {
-                    // 通配符: path.*
-                    modulePath += "*";
-                    advance();
-                    break; // 通配符后路径结束
-                } else if (check(TokenType::IDENTIFIER)) {
-                    // 子模块: Chtholly.Space
-                    modulePath += currentToken_.value;
-                    advance();
-                } else {
-                    addError("Expected identifier or '*' after '.' in module path");
-                    break;
-                }
-            } else if (check(TokenType::SLASH)) {
-                // 路径分隔符
-                advance();
-                modulePath += "/";
-                
-                if (check(TokenType::WILDCARD)) {
-                    // 通配符: path/*
-                    modulePath += "*";
-                    advance();
-                    break; // 通配符后路径结束
-                } else if (check(TokenType::IDENTIFIER)) {
-                    modulePath += currentToken_.value;
-                    advance();
-                } else {
-                    addError("Expected identifier or '*' after '/' in module path");
-                    break;
-                }
-            } else {
-                // 路径结束
-                break;
-            }
-        }
-    } else {
-        addError("Expected module path after 'from'");
-        skipToNextStatement();
-        return nullptr;
-    }
-    
-    importNode->setPath(modulePath);
-    
-    // 如果路径以 .* 或 /* 结尾，标记为通配符导入
-    if (modulePath.size() >= 2 && 
-        ((modulePath.substr(modulePath.size() - 2) == ".*") ||
-         (modulePath.substr(modulePath.size() - 2) == "/*"))) {
-        importNode->addImportItem("*");
-    }
-    
-    return importNode;
+    // 转发到parseImport处理
+    return parseImport();
 }
 
 std::shared_ptr<Node> StandardParser::parseImport() {
@@ -1587,60 +1492,54 @@ std::shared_ptr<Node> StandardParser::parseImport() {
             importType = Import::ImportType::TEMPLATE_VAR;
             importName = consume(TokenType::IDENTIFIER, "Expected template var name").value;
         }
+    } else if (match(TokenType::STAR)) {
+        // 通配符导入
+        importType = Import::ImportType::ALL;
+        importNode->addImportItem("*");
     }
     
     importNode->setType(importType);
     if (!importName.empty()) {
         importNode->setName(importName);
+        importNode->addImportItem(importName);
     }
     
-    // from子句
-    consume(TokenType::FROM, "Expected 'from'");
+    // 期望 'from' 关键字
+    if (!matchIdentifier("from")) {
+        addError("Expected 'from' in import statement");
+        skipToNextStatement();
+        return nullptr;
+    }
     
-    // 路径（支持字符串或标识符序列）
-    std::string path;
-    bool isStringLiteral = false;
+    // 检查是否是 from namespace
+    bool isFromNamespace = false;
+    std::string namespaceName;
     
-    if (check(TokenType::STRING_LITERAL)) {
-        // 字符串路径
-        isStringLiteral = true;
-        path = advance().value;
-        // 移除引号
-        if (path.size() >= 2 && path.front() == '"' && path.back() == '"') {
-            path = path.substr(1, path.size() - 2);
-        }
+    if (checkIdentifier("namespace")) {
+        advance(); // 消费 'namespace'
+        isFromNamespace = true;
+        namespaceName = consume(TokenType::IDENTIFIER, "Expected namespace name").value;
+        importNode->setNamespaceImport(true);
+        importNode->setTargetNamespace(namespaceName);
     } else {
-        // 标识符序列（支持.代替/）
-        while (!check(TokenType::AS) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
-            if (match(TokenType::DOT)) {
-                path += "/";
-            } else if (check(TokenType::IDENTIFIER)) {
-                if (!path.empty() && path.back() != '/') {
-                    path += "/";
-                }
-                path += advance().value;
-            } else {
-                break;
-            }
-        }
+        // 解析文件路径
+        auto pathToken = consume(TokenType::STRING_LITERAL, "Expected file path");
+        importNode->setFilePath(pathToken.value);
+    }
+    
+    // 检查 'as' 重命名
+    if (matchIdentifier("as")) {
+        auto aliasToken = consume(TokenType::IDENTIFIER, "Expected alias name");
+        importNode->setAlias(aliasToken.value);
         
-        // 只对标识符序列进行点号转换，不对字符串字面量进行转换
-        for (size_t i = 0; i < path.length(); ++i) {
-            if (path[i] == '.') {
-                path[i] = '/';
-            }
+        // 更新别名映射
+        if (!importName.empty()) {
+            importNode->addImportItem(importName, aliasToken.value);
         }
     }
     
-    importNode->setPath(path);
-    
-    // as子句（可选）
-    if (match(TokenType::AS)) {
-        auto alias = consume(TokenType::IDENTIFIER, "Expected alias").value;
-        importNode->setAlias(alias);
-    }
-    
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    // 期望分号（可选）
+    match(TokenType::SEMICOLON);
     
     return importNode;
 }
@@ -2157,12 +2056,23 @@ bool StandardParser::isAtEnd() {
 }
 
 bool StandardParser::check(TokenType type) {
-    if (isAtEnd()) return false;
-    return currentToken_.type == type;
+    return !isAtEnd() && currentToken_.type == type;
+}
+
+bool StandardParser::checkIdentifier(const std::string& value) {
+    return !isAtEnd() && currentToken_.type == TokenType::IDENTIFIER && currentToken_.value == value;
 }
 
 bool StandardParser::match(TokenType type) {
     if (check(type)) {
+        advance();
+        return true;
+    }
+    return false;
+}
+
+bool StandardParser::matchIdentifier(const std::string& value) {
+    if (checkIdentifier(value)) {
         advance();
         return true;
     }

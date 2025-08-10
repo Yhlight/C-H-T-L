@@ -160,6 +160,8 @@ protected:
     void visitComment(const std::shared_ptr<Comment>& comment) override;
     void visitOrigin(const std::shared_ptr<Origin>& origin) override;
     void visitReference(const std::shared_ptr<Reference>& ref) override;
+    void visitImport(const std::shared_ptr<Import>& import) override;
+    void visitExport(const std::shared_ptr<Export>& export_) override;
     
 private:
     // 原始嵌入定义存储

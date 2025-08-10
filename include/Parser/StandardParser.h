@@ -124,7 +124,9 @@ private:
     Token advance();
     bool isAtEnd();
     bool check(TokenType type);
+    bool checkIdentifier(const std::string& value);
     bool match(TokenType type);
+    bool matchIdentifier(const std::string& value);
     Token consume(TokenType type, const std::string& message);
     
     // 工具方法

@@ -1,0 +1,7 @@
+[Custom] @Element A {
+    div { text { "A" } }
+}
+
+div {
+    @Element A;
+}

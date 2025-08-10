@@ -1,0 +1,14 @@
+// 简单的自定义组件测试
+
+[Custom] @Element Box {
+    div {
+        class: "box";
+        text { "This is a box" }
+    }
+}
+
+// 使用组件
+div {
+    h2 { text { "Test Custom Component" } }
+    @Element Box;
+}

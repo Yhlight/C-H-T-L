@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <set>
 #include <variant>
+#include <iostream>
 #include <tuple>
 #include <iostream>
 
@@ -319,27 +320,19 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 }
 
 void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
-    // 获取自定义组件名称
-    std::string componentName = custom->getCustomName();
-    if (componentName.empty()) {
-        // 尝试从属性获取
-        // TODO: Custom nodes don't have attributes yet
-        // auto attrs = custom->getAttributes();
-        // if (attrs.find("name") != attrs.end()) {
-        //     componentName = attrs.at("name");
-        // }
-    }
+    // Custom 节点通常是定义，不应该直接生成内容
+    // 但如果是从引用克隆的实例，需要生成其子节点
     
-    // 查找组件定义
-    auto componentDef = findComponentDefinition(componentName, custom->getCustomType());
-    if (!componentDef) {
-        result_.warnings.push_back("Component not found: " + componentName);
-        htmlCollector_.append("<!-- Component not found: " + componentName + " -->");
+    // 检查是否有名称 - 有名称的是定义
+    if (!custom->getCustomName().empty()) {
+        // 这是一个定义，不生成内容
         return;
     }
     
-    // 处理组件实例
-    processCustomComponent(custom, componentDef);
+    // 没有名称，可能是克隆的实例，生成其子节点内容
+    for (const auto& child : custom->getChildren()) {
+        visit(child);
+    }
 }
 
 std::shared_ptr<Node> WebGenerator::findComponentDefinition(const std::string& name, Custom::CustomType type) {
@@ -1013,6 +1006,7 @@ void WebGenerator::mergeElement(std::shared_ptr<Node> target,
 
 // 处理引用节点
 void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
+
     auto attributes = refNode->getAttributes();
     
     // 获取引用信息
@@ -1028,8 +1022,11 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     
 
     
+
+    
     // 构建查找键
     std::string key = type + " " + name;
+
     
     // 根据 kind 属性决定查找 Template 还是 Custom
     std::shared_ptr<Node> definition = nullptr;
@@ -1051,10 +1048,12 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         auto customIt = customDefinitions_.find(key);
         if (customIt != customDefinitions_.end()) {
             definition = customIt->second;
+
         } else {
             auto templateIt = templateDefinitions_.find(key);
             if (templateIt != templateDefinitions_.end()) {
                 definition = templateIt->second;
+
             }
         }
     }
@@ -1066,7 +1065,7 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         return;
     }
     
-    // 处理组件实例（对于元素引用）
+        // 处理组件实例（对于元素引用）
     if (type == "@Element") {
         // 克隆定义
         auto cloned = definition->clone(true);
@@ -1076,8 +1075,11 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
             applyReferenceModifications(cloned, refNode);
         }
         
-        // 递归生成
-        visit(cloned);
+        // 直接生成克隆定义的子节点
+        // 跳过 Custom/Template 节点本身，直接访问其内容
+        for (const auto& child : cloned->getChildren()) {
+            visit(child);
+        }
     } else if (type == "@Style") {
         // 样式引用直接访问
         visit(definition);

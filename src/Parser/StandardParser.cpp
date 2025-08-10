@@ -299,6 +299,7 @@ std::shared_ptr<Node> StandardParser::parseElement() {
 std::shared_ptr<Node> StandardParser::parseNode() {
     // text块
     if (currentToken_.value == "text") {
+        advance();  // 消费 'text'
         return parseText();
     }
     
@@ -335,8 +336,10 @@ std::shared_ptr<Node> StandardParser::parseNode() {
 }
 
 std::shared_ptr<Node> StandardParser::parseText() {
-    consume(TokenType::IDENTIFIER, "text");
-    consume(TokenType::LEFT_BRACE, "Expected '{'");
+    // text 关键字已经在 parseNode 中被识别，现在应该在 {
+    if (!match(TokenType::LEFT_BRACE)) {
+        throw std::runtime_error("Expected '{' after 'text'");
+    }
     
     auto textNode = std::make_shared<Text>();
     std::string content;
@@ -361,7 +364,7 @@ std::shared_ptr<Node> StandardParser::parseText() {
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
     
-    textNode->setText(content);
+    textNode->setData(content);
     return textNode;
 }
 

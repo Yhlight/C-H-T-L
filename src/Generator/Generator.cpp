@@ -17,6 +17,7 @@
 #include <set>
 
 
+
 namespace chtl {
 
 // CodeCollector 实现
@@ -134,6 +135,7 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
                 break;
         }
         customDefinitions_[key] = custom;
+
 
     }
     

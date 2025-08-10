@@ -16,6 +16,7 @@
 #include "Node/Info.h"
 #include "Node/Export.h"
 #include "Node/Script.h"
+#include "Runtime/ChtlJsRuntime.h"
 #include <algorithm>
 #include <cctype>
 
@@ -360,6 +361,17 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
     
     auto scriptNode = std::make_shared<Script>();
     
+    // 为局部script块生成或获取元素ID
+    std::string elementId;
+    if (context_) {
+        // 从上下文获取当前元素ID（如果有的话）
+        elementId = context_->getCurrentElementId();
+    }
+    if (elementId.empty()) {
+        auto& runtime = ChtlJsRuntime::getInstance();
+        elementId = runtime.generateElementId();
+    }
+    
     // 收集脚本内容直到遇到匹配的 }
     std::string scriptContent;
     int braceDepth = 1;
@@ -371,35 +383,26 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
         
         // 检查 {{ 开始
         if (token.type == TokenType::DOUBLE_LEFT_BRACE) {
-            inDoubleLeftBrace = true;
-            // 暂时不添加，等待检查是否是 {{&}}
-            continue;
-        }
-        
-        // 检查 {{& 模式
-        if (inDoubleLeftBrace && token.type == TokenType::AMPERSAND) {
-            // 检查下一个token是否是 }}
-            if (!isAtEnd() && currentToken_.type == TokenType::DOUBLE_RIGHT_BRACE) {
-                advance(); // 消费 }}
-                // 替换 {{&}} 为 this
-                scriptContent += "this";
-                inDoubleLeftBrace = false;
-                continue;
+            // 检查是否是 {{&}} 模式
+            if (!isAtEnd() && currentToken_.type == TokenType::AMPERSAND) {
+                Token ampToken = currentToken_;
+                advance();
+                if (!isAtEnd() && currentToken_.type == TokenType::DOUBLE_RIGHT_BRACE) {
+                    advance(); // 消费 }}
+                    // 替换 {{&}} 为 {{&}}（保留原样，让运行时处理）
+                    scriptContent += "{{&}}";
+                    continue;
+                } else {
+                    // 不是 {{&}} 模式，恢复
+                    scriptContent += "{{" + ampToken.value;
+                }
             } else {
-                // 不是 {{&}} 模式，恢复原始内容
-                scriptContent += "{{&";
-                inDoubleLeftBrace = false;
+                // 可能是 {{selector}} 语法
+                scriptContent += "{{";
             }
         }
-        
-        // 如果之前有未处理的 {{
-        if (inDoubleLeftBrace) {
-            scriptContent += "{{";
-            inDoubleLeftBrace = false;
-        }
-        
         // 处理大括号以正确计算深度
-        if (token.type == TokenType::LEFT_BRACE) {
+        else if (token.type == TokenType::LEFT_BRACE) {
             scriptContent += token.value;
             braceDepth++;
         } else if (token.type == TokenType::RIGHT_BRACE) {
@@ -408,6 +411,8 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
                 break; // 不添加最后的 }
             }
             scriptContent += token.value;
+        } else if (token.type == TokenType::DOUBLE_RIGHT_BRACE) {
+            scriptContent += "}}";
         } else if (token.type == TokenType::STRING_LITERAL) {
             // 字符串字面量，保留引号
             scriptContent += "\"" + token.value + "\"";
@@ -430,8 +435,16 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
                 token.type == TokenType::SEMICOLON || next.type == TokenType::SEMICOLON ||
                 token.type == TokenType::COMMA || next.type == TokenType::COMMA ||
                 token.type == TokenType::COLON || next.type == TokenType::COLON ||
+                token.type == TokenType::DOUBLE_LEFT_BRACE || next.type == TokenType::DOUBLE_LEFT_BRACE ||
+                token.type == TokenType::DOUBLE_RIGHT_BRACE || next.type == TokenType::DOUBLE_RIGHT_BRACE ||
                 (token.type == TokenType::OPERATOR && token.value == "!") ||
                 (token.type == TokenType::IDENTIFIER && next.type == TokenType::LEFT_PAREN)) {
+                needSpace = false;
+            }
+            
+            // -> 操作符前后不需要空格
+            if ((token.type == TokenType::HYPHEN && next.type == TokenType::OPERATOR && next.value == ">") ||
+                (token.type == TokenType::OPERATOR && token.value == ">" && previous().type == TokenType::HYPHEN)) {
                 needSpace = false;
             }
             
@@ -447,6 +460,7 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
     
     scriptNode->setContent(scriptContent);
     scriptNode->setScriptType(Script::ScriptType::INLINE);  // 局部script块默认为内联类型
+    scriptNode->setScope(elementId);  // 设置作用域为元素ID
     
     return scriptNode;
 }

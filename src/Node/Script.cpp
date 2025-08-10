@@ -1,5 +1,6 @@
 #include "Node/Script.h"
 #include "Visitor/Visitor.h"
+#include "Runtime/ChtlJsRuntime.h"
 #include <sstream>
 
 namespace chtl {
@@ -7,7 +8,23 @@ namespace chtl {
 std::string Script::generateWrappedCode() const {
     std::stringstream ss;
     
-    // 根据脚本类型生成不同的包装代码
+    // 如果是局部内联脚本，使用运行时处理
+    if (scriptType_ == ScriptType::INLINE && isScoped()) {
+        // 获取运行时实例
+        auto& runtime = ChtlJsRuntime::getInstance();
+        
+        // 获取或生成元素ID
+        std::string elementId = scope_.empty() ? 
+            runtime.generateElementId() : scope_;
+        
+        // 收集局部脚本
+        runtime.collectLocalScript(content_, elementId);
+        
+        // 返回空字符串，因为代码已被收集
+        return "";
+    }
+    
+    // 原有的包装逻辑
     switch (scriptType_) {
         case ScriptType::GLOBAL:
             // 全局脚本直接执行

@@ -16,8 +16,7 @@ void testImportComplete() {
     std::cout << "====================================\n\n";
     
     // CHTL代码示例
-    std::string chtlCode = R"(
-[Import] @Html from "layout.html" as layout;
+    std::string chtlCode = R"([Import] @Html from "layout.html" as layout;
 [Import] @Style from "theme.css";
 [Import] @Style from "custom.css" as customStyles;
 [Import] @JavaScript from "utils.js";
@@ -57,6 +56,31 @@ div {
     }
     
     std::cout << "✓ Parse successful\n";
+    std::cout << "  AST root has " << ast->getChildren().size() << " children\n";
+    
+    // 检查警告
+    if (!context->getWarnings().empty()) {
+        std::cout << "  Warnings during parsing:\n";
+        for (const auto& warn : context->getWarnings()) {
+            std::cout << "    - " << warn << "\n";
+        }
+    }
+    
+    // 分离Import节点和其他节点
+    std::vector<std::shared_ptr<Import>> imports;
+    std::vector<std::shared_ptr<Node>> otherNodes;
+    
+    for (const auto& child : ast->getChildren()) {
+        if (auto importNode = std::dynamic_pointer_cast<Import>(child)) {
+            imports.push_back(importNode);
+        } else {
+            otherNodes.push_back(child);
+            std::cout << "  Other node type: " << child->getTagName() << "\n";
+        }
+    }
+    
+    std::cout << "  Found " << imports.size() << " import nodes\n";
+    std::cout << "  Found " << otherNodes.size() << " other nodes\n";
     
     // 处理导入节点
     ImportProcessor processor(context);
@@ -88,6 +112,11 @@ div {
                     std::cout << "  Error: " << err << "\n";
                 }
             }
+            if (!result.warnings.empty()) {
+                for (const auto& warn : result.warnings) {
+                    std::cout << "  Warning: " << warn << "\n";
+                }
+            }
             std::cout << "  Generated " << result.generatedNodes.size() << " nodes\n";
         }
         else if (auto originNode = std::dynamic_pointer_cast<Origin>(node)) {
@@ -113,6 +142,30 @@ div {
     std::cout << "\n--- Summary ---\n";
     std::cout << "Total imports found: " << importCount << "\n";
     std::cout << "Total origin references found: " << originCount << "\n";
+    
+    // 调试：遍历AST打印所有节点
+    std::cout << "\n--- AST Structure ---\n";
+    std::function<void(std::shared_ptr<Node>, int)> printAST = [&](std::shared_ptr<Node> node, int depth) {
+        std::string indent(depth * 2, ' ');
+        std::cout << indent << "- ";
+        if (node->getTagName().empty()) {
+            if (auto import = std::dynamic_pointer_cast<Import>(node)) {
+                std::cout << "[Import]";
+            } else {
+                std::cout << "Node";
+            }
+        } else {
+            std::cout << node->getTagName();
+        }
+        if (auto origin = std::dynamic_pointer_cast<Origin>(node)) {
+            std::cout << " (Origin)";
+        }
+        std::cout << "\n";
+        for (const auto& child : node->getChildren()) {
+            printAST(child, depth + 1);
+        }
+    };
+    printAST(ast, 0);
     
     // 生成HTML查看结果
     std::cout << "\n--- Generated HTML ---\n";

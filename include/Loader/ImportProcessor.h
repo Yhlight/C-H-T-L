@@ -55,13 +55,6 @@ private:
                                             const std::string& content,
                                             const std::string& name = "");
     
-    // 创建link节点（用于CSS）
-    std::shared_ptr<Node> createLinkNode(const std::string& href);
-    
-    // 创建script节点（用于JS）
-    std::shared_ptr<Node> createScriptNode(const std::string& src = "",
-                                           const std::string& content = "");
-    
     // 读取文件内容
     std::string readFileContent(const std::string& path);
     

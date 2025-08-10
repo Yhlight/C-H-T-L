@@ -100,7 +100,22 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
-        return parseElement();
+        advance();  // 消费元素名
+        try {
+            return parseElement();
+        } catch (const std::exception& e) {
+            // 错误恢复：跳到下一个分号或右大括号
+            while (!isAtEnd() && 
+                   currentToken_.type != TokenType::SEMICOLON &&
+                   currentToken_.type != TokenType::RIGHT_BRACE) {
+                advance();
+            }
+            if (currentToken_.type == TokenType::SEMICOLON ||
+                currentToken_.type == TokenType::RIGHT_BRACE) {
+                advance();
+            }
+            return nullptr;
+        }
     }
     
     // 检查注释
@@ -1629,8 +1644,7 @@ Token StandardParser::previous() {
 
 Token StandardParser::advance() {
     previousToken_ = currentToken_;
-    consumeToken();  // 消费当前token
-    currentToken_ = peekNextToken();  // 获取下一个token作为当前token
+    currentToken_ = getNextToken();  // 直接获取下一个token
     return previousToken_;
 }
 

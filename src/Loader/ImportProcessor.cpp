@@ -95,17 +95,25 @@ ImportProcessResult ImportProcessor::processCssImport(std::shared_ptr<Import> im
                                                      const std::string& resolvedPath) {
     ImportProcessResult result;
     
-    // 创建link节点
-    auto linkNode = createLinkNode(resolvedPath);
-    if (linkNode) {
-        result.generatedNodes.push_back(linkNode);
+    // 如果没有as（别名），跳过此导入
+    if (importNode->getAlias().empty()) {
+        result.warnings.push_back("CSS import without 'as' clause is skipped");
+        result.success = true;
+        return result;
     }
     
-    // 如果有别名，创建Origin节点（内容为@import语句）
-    if (!importNode->getAlias().empty()) {
-        std::string importContent = "@import url('" + resolvedPath + "');";
-        auto originNode = createOriginNode(Origin::OriginType::STYLE, importContent, importNode->getAlias());
+    // 读取CSS文件内容
+    std::string content = readFileContent(resolvedPath);
+    if (content.empty()) {
+        result.errors.push_back("Failed to read CSS file: " + resolvedPath);
+        return result;
+    }
+    
+    // 创建Origin节点
+    auto originNode = createOriginNode(Origin::OriginType::STYLE, content, importNode->getAlias());
+    if (originNode) {
         result.generatedNodes.push_back(originNode);
+        result.success = true;
         
         if (context_) {
             // TODO: 实现符号注册
@@ -113,7 +121,6 @@ ImportProcessResult ImportProcessor::processCssImport(std::shared_ptr<Import> im
         }
     }
     
-    result.success = true;
     return result;
 }
 
@@ -121,17 +128,25 @@ ImportProcessResult ImportProcessor::processJsImport(std::shared_ptr<Import> imp
                                                     const std::string& resolvedPath) {
     ImportProcessResult result;
     
-    // 创建script节点
-    auto scriptNode = createScriptNode(resolvedPath);
-    if (scriptNode) {
-        result.generatedNodes.push_back(scriptNode);
+    // 如果没有as（别名），跳过此导入
+    if (importNode->getAlias().empty()) {
+        result.warnings.push_back("JavaScript import without 'as' clause is skipped");
+        result.success = true;
+        return result;
     }
     
-    // 如果有别名，创建Origin节点（内容为模块导入语句）
-    if (!importNode->getAlias().empty()) {
-        std::string importContent = "import * as " + importNode->getAlias() + " from '" + resolvedPath + "';";
-        auto originNode = createOriginNode(Origin::OriginType::JAVASCRIPT, importContent, importNode->getAlias());
+    // 读取JS文件内容
+    std::string content = readFileContent(resolvedPath);
+    if (content.empty()) {
+        result.errors.push_back("Failed to read JavaScript file: " + resolvedPath);
+        return result;
+    }
+    
+    // 创建Origin节点
+    auto originNode = createOriginNode(Origin::OriginType::JAVASCRIPT, content, importNode->getAlias());
+    if (originNode) {
         result.generatedNodes.push_back(originNode);
+        result.success = true;
         
         if (context_) {
             // TODO: 实现符号注册
@@ -139,7 +154,6 @@ ImportProcessResult ImportProcessor::processJsImport(std::shared_ptr<Import> imp
         }
     }
     
-    result.success = true;
     return result;
 }
 
@@ -167,27 +181,7 @@ std::shared_ptr<Origin> ImportProcessor::createOriginNode(Origin::OriginType typ
     return originNode;
 }
 
-std::shared_ptr<Node> ImportProcessor::createLinkNode(const std::string& href) {
-    auto linkNode = std::make_shared<Element>("link");
-    linkNode->setAttribute("rel", "stylesheet");
-    linkNode->setAttribute("href", href);
-    return linkNode;
-}
 
-std::shared_ptr<Node> ImportProcessor::createScriptNode(const std::string& src,
-                                                       const std::string& content) {
-    auto scriptNode = std::make_shared<Element>("script");
-    
-    if (!src.empty()) {
-        scriptNode->setAttribute("src", src);
-    }
-    
-    if (!content.empty()) {
-        scriptNode->setText(content);
-    }
-    
-    return scriptNode;
-}
 
 std::string ImportProcessor::readFileContent(const std::string& path) {
     std::ifstream file(path);

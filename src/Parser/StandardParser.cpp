@@ -1403,6 +1403,12 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         importNode->setAlias(alias);
     }
     
+    // inline关键字（必须在as之后）
+    if (check(TokenType::IDENTIFIER) && currentToken_.value == "inline") {
+        advance(); // 消费inline
+        importNode->setInline(true);
+    }
+    
     consume(TokenType::SEMICOLON, "Expected ';'");
     
     return importNode;

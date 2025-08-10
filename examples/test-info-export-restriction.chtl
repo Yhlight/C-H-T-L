@@ -1,0 +1,50 @@
+// 测试[Info]和[Export]在常规文件中被忽略
+
+// 这是一个常规CHTL文件，不应该解析[Info]和[Export]
+
+[Configuration] {
+    DEBUG_MODE = true;
+}
+
+// 尝试使用[Info] - 应该被忽略并显示警告
+[Info] {
+    name = "test-module";
+    version = "1.0.0";
+    description = "This should be ignored";
+}
+
+// 定义一些正常的内容
+[Template] @Element Card {
+    div {
+        class: "card";
+        style {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    }
+}
+
+// 尝试使用[Export] - 应该被忽略并显示警告
+[Export] {
+    @Element Card;
+    @Style CardStyle;
+}
+
+// 正常的导入应该工作
+[Import] @Chtl from "components.chtl";
+
+body {
+    h1 {
+        text { "Info/Export Restriction Test" }
+    }
+    
+    p {
+        text { "If this file is parsed correctly, [Info] and [Export] blocks should be ignored with warnings." }
+    }
+    
+    // 使用定义的模板
+    @Element Card {
+        text { "This card should render normally" }
+    }
+}

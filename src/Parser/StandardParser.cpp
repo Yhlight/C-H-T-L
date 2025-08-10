@@ -59,18 +59,18 @@ std::shared_ptr<Node> StandardParser::parse() {
 }
 
 std::shared_ptr<Node> StandardParser::parseTopLevel() {
-    // 调试输出
-    // std::cout << "DEBUG parseTopLevel: token type=" << static_cast<int>(currentToken_.type) 
-    //           << " value=[" << currentToken_.value << "]" << std::endl;
+    skipWhitespaceAndComments();
     
-    // 检查特殊块标记  
-    if (currentToken_.type == TokenType::CUSTOM) {
-        advance();
-        return parseCustom();
-    }
+    if (isAtEnd()) return nullptr;
+    
+    // 检查特殊标记，使用更准确的TokenType判断
     if (currentToken_.type == TokenType::TEMPLATE) {
         advance();
         return parseTemplate();
+    }
+    if (currentToken_.type == TokenType::CUSTOM) {
+        advance();
+        return parseCustom();
     }
     if (currentToken_.type == TokenType::ORIGIN) {
         advance();
@@ -88,11 +88,22 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         advance();
         return parseNamespace();
     }
+    // [Info] 和 [Export] 只在 CMOD 模式下解析
     if (currentToken_.type == TokenType::INFO) {
+        if (!isCmodMode_) {
+            addWarning("[Info] blocks are only for CMOD files and will be ignored");
+            skipBlock();
+            return nullptr;
+        }
         advance();
         return parseInfo();
     }
     if (currentToken_.type == TokenType::EXPORT) {
+        if (!isCmodMode_) {
+            addWarning("[Export] blocks are only for CMOD files and will be ignored");
+            skipBlock();
+            return nullptr;
+        }
         advance();
         return parseExport();
     }
@@ -146,8 +157,7 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
 std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
     consume(TokenType::LEFT_BRACKET, "Expected '['");
     
-    auto typeToken = consume(TokenType::IDENTIFIER, "Expected block type");
-    std::string blockType = typeToken.value;
+    auto blockType = consume(TokenType::IDENTIFIER, "Expected block type").value;
     
     consume(TokenType::RIGHT_BRACKET, "Expected ']'");
     
@@ -164,13 +174,50 @@ std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
     } else if (blockType == "Namespace") {
         return parseNamespace();
     } else if (blockType == "Info") {
+        if (!isCmodMode_) {
+            addWarning("[Info] blocks are only for CMOD files and will be ignored");
+            skipBlock();
+            return nullptr;
+        }
         return parseInfo();
     } else if (blockType == "Export") {
+        if (!isCmodMode_) {
+            addWarning("[Export] blocks are only for CMOD files and will be ignored");
+            skipBlock();
+            return nullptr;
+        }
         return parseExport();
     } else {
         addError("Unknown block type: " + blockType);
         skipToNextStatement();
         return nullptr;
+    }
+}
+
+// 添加跳过块的方法
+void StandardParser::skipBlock() {
+    // 跳过可能的属性或名称
+    while (!check(TokenType::LEFT_BRACE) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
+        advance();
+    }
+    
+    // 如果是分号结尾，直接结束
+    if (match(TokenType::SEMICOLON)) {
+        return;
+    }
+    
+    // 如果是大括号，跳过整个块
+    if (match(TokenType::LEFT_BRACE)) {
+        int braceCount = 1;
+        while (braceCount > 0 && !isAtEnd()) {
+            if (match(TokenType::LEFT_BRACE)) {
+                braceCount++;
+            } else if (match(TokenType::RIGHT_BRACE)) {
+                braceCount--;
+            } else {
+                advance();
+            }
+        }
     }
 }
 

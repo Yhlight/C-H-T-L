@@ -1,0 +1,30 @@
+// CMOD主模块文件
+
+[Template] @Element TestComponent {
+    div {
+        class: "test-component";
+        style {
+            padding: 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+        }
+        
+        h3 {
+            text { "Test Component" }
+        }
+    }
+}
+
+[Template] @Style TestStyle {
+    font-family: "Arial", sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+[Custom] @Var TestColors {
+    primary: "#007bff";
+    secondary: "#6c757d";
+    success: "#28a745";
+    danger: "#dc3545";
+}

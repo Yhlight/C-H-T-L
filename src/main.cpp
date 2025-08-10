@@ -8,6 +8,8 @@
 #include "Generator/Generator.h"
 #include "Context/StandardContext.h"
 #include "Context/EnhancedContext.h"
+#include "Error/ErrorHandler.h"
+#include "Utils/FileUtils.h"
 
 namespace fs = std::filesystem;
 
@@ -109,7 +111,16 @@ int main(int argc, char* argv[]) {
     
     // 语法分析
     std::cout << "Parsing...\n";
-    chtl::StandardParser parser(tokens, context);
+    chtl::StandardParser parser(std::make_shared<chtl::StandardLexer>(lexer), context);
+    
+    // 检测是否是CMOD文件并设置模式
+    bool isCmod = FileUtils::isCmodFile(inputFile);
+    parser.setCmodMode(isCmod);
+    
+    if (isCmod) {
+        std::cout << "Note: Parsing as CMOD file ([Info] and [Export] blocks enabled)\n";
+    }
+    
     auto ast = parser.parse();
     
     if (!ast || context->hasErrors()) {

@@ -24,6 +24,10 @@ public:
     StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context);
     ~StandardParser() override = default;
 
+    // 设置CMOD模式
+    void setCmodMode(bool cmodMode) { isCmodMode_ = cmodMode; }
+    bool isCmodMode() const { return isCmodMode_; }
+
     // 主解析方法
     std::shared_ptr<Node> parse() override;
 
@@ -42,6 +46,9 @@ private:
     bool inCustomBlock_;
     bool inConfigBlock_;
     bool inOriginBlock_;
+    
+    // CMOD模式标志
+    bool isCmodMode_ = false;
     
     // 顶层解析
     std::shared_ptr<Node> parseTopLevel();
@@ -133,11 +140,19 @@ private:
     void skipWhitespaceAndComments();
     TokenType peekNext();  // 查看下一个token的类型
     void skipToNextStatement();
+    void skipBlock();
     
     // 错误处理
     void addError(const std::string& message) {
         if (context_) {
-            context_->addError(message);
+            context_->reportError(message, currentToken_.line, currentToken_.column);
+        }
+        errorCount_++;
+    }
+    
+    void addWarning(const std::string& message) {
+        if (context_) {
+            context_->reportWarning(message, currentToken_.line, currentToken_.column);
         }
     }
 };

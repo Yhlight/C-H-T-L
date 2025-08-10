@@ -489,8 +489,8 @@ void StandardParser::parseContextSelector(std::shared_ptr<Style> styleNode) {
 void StandardParser::parseCssProperty(std::string& cssContent) {
     auto propertyName = consume(TokenType::IDENTIFIER, "Expected property name");
     
-    if (!match(TokenType::COLON)) {
-        addError("Expected ':' after property name");
+    if (!match(TokenType::COLON) && !match(TokenType::EQUALS)) {
+        addError("Expected ':' or '=' after property name");
         skipToNextStatement();
         return;
     }

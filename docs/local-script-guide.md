@@ -20,6 +20,92 @@ div {
 }
 ```
 
+## {{&}} 上下文语法
+
+在script块中，可以使用 `{{&}}` 来表示当前元素（包含该script块的元素）。这个语法会在解析时自动替换为 `this`。
+
+### 基本用法
+
+```chtl
+div {
+    id: "my-div"
+    
+    script {
+        // {{&}} 会被替换为 this，指向包含此script块的div
+        {{&}}.addEventListener('click', function() {
+            console.log('Clicked:', {{&}}.id); // 输出: "Clicked: my-div"
+        });
+        
+        // 等价于
+        // this.addEventListener('click', function() {
+        //     console.log('Clicked:', this.id);
+        // });
+    }
+}
+```
+
+### {{&}} 的优势
+
+1. **更清晰的语义**：`{{&}}` 明确表示"当前元素"，避免了 `this` 的歧义
+2. **与style块一致**：style块中使用 `&` 表示当前选择器，script块使用 `{{&}}` 保持概念一致
+3. **避免this绑定问题**：在回调函数中使用 `{{&}}` 可以避免this上下文丢失的问题
+
+### 使用示例
+
+```chtl
+// 1. 基础事件绑定
+button {
+    "点击我"
+    
+    script {
+        {{&}}.onclick = () => {
+            {{&}}.textContent = "已点击！";
+        };
+    }
+}
+
+// 2. 操作样式和属性
+div {
+    class: "box"
+    data-state: "inactive"
+    
+    script {
+        // 初始化样式
+        {{&}}.style.backgroundColor = '#f0f0f0';
+        
+        // 切换状态
+        {{&}}.addEventListener('click', () => {
+            if ({{&}}.dataset.state === 'inactive') {
+                {{&}}.dataset.state = 'active';
+                {{&}}.style.backgroundColor = '#67C3CC';
+            } else {
+                {{&}}.dataset.state = 'inactive';
+                {{&}}.style.backgroundColor = '#f0f0f0';
+            }
+        });
+    }
+}
+
+// 3. 与子元素交互
+div {
+    class: "container"
+    
+    button { "添加项目" }
+    ul { class: "list" }
+    
+    script {
+        const button = {{&}}.querySelector('button');
+        const list = {{&}}.querySelector('.list');
+        
+        button.onclick = () => {
+            const li = document.createElement('li');
+            li.textContent = `项目 ${list.children.length + 1}`;
+            list.appendChild(li);
+        };
+    }
+}
+```
+
 ## 特性对比
 
 | 特性 | [Script] 块 | script {} 块 |
@@ -30,6 +116,7 @@ div {
 | 执行时机 | 可配置（defer、async等） | 立即执行 |
 | 命名 | 支持 `[Script] @Name` | 不支持命名 |
 | 类型 | 可配置（module、global等） | 始终为内联类型 |
+| 上下文引用 | 无特殊语法 | 支持 `{{&}}` 表示当前元素 |
 
 ## 使用场景
 
@@ -41,9 +128,10 @@ button {
     "点击我"
     
     script {
-        // 直接在元素内绑定行为
-        document.getElementById('my-button').addEventListener('click', () => {
+        // 使用 {{&}} 直接引用当前按钮
+        {{&}}.addEventListener('click', () => {
             alert('按钮被点击了！');
+            {{&}}.disabled = true;
         });
     }
 }
@@ -73,9 +161,9 @@ button {
             }
             
             script {
-                // 组件的交互逻辑
-                const btn = this.querySelector('.toggle-btn');
-                const content = this.querySelector('.toggle-content');
+                // 使用 {{&}} 操作组件元素
+                const btn = {{&}}.querySelector('.toggle-btn');
+                const content = {{&}}.querySelector('.toggle-content');
                 
                 btn.addEventListener('click', () => {
                     content.style.display = 
@@ -95,16 +183,15 @@ div {
     id: "chart"
     
     script {
-        // 初始化数据
+        // 初始化数据并存储到元素
         const data = [
             { label: 'A', value: 10 },
             { label: 'B', value: 20 },
             { label: 'C', value: 15 }
         ];
         
-        // 存储到元素的dataset中
-        const container = document.getElementById('chart');
-        container.dataset.chartData = JSON.stringify(data);
+        // 使用 {{&}} 存储数据
+        {{&}}.dataset.chartData = JSON.stringify(data);
     }
 }
 ```
@@ -118,14 +205,12 @@ div {
     "悬停查看效果"
     
     script {
-        const box = document.querySelector('.animated-box');
-        
-        box.addEventListener('mouseenter', () => {
-            box.style.transform = 'scale(1.1) rotate(5deg)';
+        {{&}}.addEventListener('mouseenter', () => {
+            {{&}}.style.transform = 'scale(1.1) rotate(5deg)';
         });
         
-        box.addEventListener('mouseleave', () => {
-            box.style.transform = 'scale(1) rotate(0deg)';
+        {{&}}.addEventListener('mouseleave', () => {
+            {{&}}.style.transform = 'scale(1) rotate(0deg)';
         });
     }
     
@@ -169,11 +254,10 @@ form {
     }
     
     script {
-        const form = document.getElementById('user-form');
-        const emailInput = document.getElementById('email');
-        const errorSpan = document.getElementById('email-error');
+        const emailInput = {{&}}.querySelector('#email');
+        const errorSpan = {{&}}.querySelector('#email-error');
         
-        form.addEventListener('submit', (e) => {
+        {{&}}.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const email = emailInput.value;
@@ -203,8 +287,8 @@ div {
         // 使用 const/let 避免污染全局作用域
         const localData = { count: 0 };
         
-        // 如果需要跨script块通信，使用元素的dataset
-        this.dataset.count = '0';
+        // 使用 {{&}} 将数据关联到元素
+        {{&}}.dataset.count = '0';
     }
 }
 ```
@@ -224,12 +308,12 @@ div {
     // 初始化
     script {
         const state = { items: [] };
-        this.dataset.state = JSON.stringify(state);
+        {{&}}.dataset.state = JSON.stringify(state);
     }
     
     // 事件处理
     script {
-        this.addEventListener('click', handleClick);
+        {{&}}.addEventListener('click', handleClick);
         
         function handleClick(e) {
             // 处理逻辑
@@ -258,8 +342,8 @@ div {
     
     // 定义行为
     script {
-        this.addEventListener('click', () => {
-            this.classList.toggle('active');
+        {{&}}.addEventListener('click', () => {
+            {{&}}.classList.toggle('active');
         });
     }
 }
@@ -272,12 +356,12 @@ div {
     script {
         try {
             // 可能出错的代码
-            const data = JSON.parse(this.dataset.config);
+            const data = JSON.parse({{&}}.dataset.config);
             processData(data);
         } catch (error) {
             console.error('Script error:', error);
             // 优雅降级
-            this.textContent = '加载失败';
+            {{&}}.textContent = '加载失败';
         }
     }
 }
@@ -286,10 +370,32 @@ div {
 ## 注意事项
 
 1. **执行顺序**：script块按照在文档中出现的顺序执行
-2. **this上下文**：在script块中，`this`通常指向包含它的元素
+2. **{{&}}上下文**：`{{&}}` 始终指向包含script块的最近父元素
 3. **作用域隔离**：每个script块都有独立的作用域
 4. **性能考虑**：避免在循环中创建大量script块
 5. **兼容性**：生成的JavaScript代码兼容现代浏览器
+
+## {{&}} 在嵌套结构中的行为
+
+```chtl
+div {
+    class: "outer"
+    
+    script {
+        // {{&}} 指向 div.outer
+        console.log({{&}}.className); // "outer"
+    }
+    
+    div {
+        class: "inner"
+        
+        script {
+            // {{&}} 指向 div.inner
+            console.log({{&}}.className); // "inner"
+        }
+    }
+}
+```
 
 ## 与[Script]块的选择
 
@@ -298,6 +404,7 @@ div {
   - 简单的事件处理
   - 局部状态管理
   - 组件内部逻辑
+  - 需要引用当前元素（使用{{&}}）
 
 - 使用 `[Script]`：
   - 全局功能
@@ -308,4 +415,4 @@ div {
 
 ## 总结
 
-局部script块为CHTL带来了更自然、更直观的JavaScript集成方式。通过与style块一致的语法，开发者可以在同一个地方定义元素的结构、样式和行为，实现真正的组件化开发。
+局部script块为CHTL带来了更自然、更直观的JavaScript集成方式。通过与style块一致的语法，以及 `{{&}}` 上下文引用，开发者可以在同一个地方定义元素的结构、样式和行为，实现真正的组件化开发。

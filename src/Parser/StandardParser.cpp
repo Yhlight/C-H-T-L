@@ -363,10 +363,40 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
     // 收集脚本内容直到遇到匹配的 }
     std::string scriptContent;
     int braceDepth = 1;
+    bool inDoubleLeftBrace = false;
     
     while (!isAtEnd() && braceDepth > 0) {
         Token token = currentToken_;
         advance();
+        
+        // 检查 {{ 开始
+        if (token.type == TokenType::DOUBLE_LEFT_BRACE) {
+            inDoubleLeftBrace = true;
+            // 暂时不添加，等待检查是否是 {{&}}
+            continue;
+        }
+        
+        // 检查 {{& 模式
+        if (inDoubleLeftBrace && token.type == TokenType::AMPERSAND) {
+            // 检查下一个token是否是 }}
+            if (!isAtEnd() && currentToken_.type == TokenType::DOUBLE_RIGHT_BRACE) {
+                advance(); // 消费 }}
+                // 替换 {{&}} 为 this
+                scriptContent += "this";
+                inDoubleLeftBrace = false;
+                continue;
+            } else {
+                // 不是 {{&}} 模式，恢复原始内容
+                scriptContent += "{{&";
+                inDoubleLeftBrace = false;
+            }
+        }
+        
+        // 如果之前有未处理的 {{
+        if (inDoubleLeftBrace) {
+            scriptContent += "{{";
+            inDoubleLeftBrace = false;
+        }
         
         // 处理大括号以正确计算深度
         if (token.type == TokenType::LEFT_BRACE) {

@@ -1356,7 +1356,7 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
     std::string modulePath;
     
     if (check(TokenType::STRING_LITERAL)) {
-        // 带引号的路径: "path/to/module"
+        // 带引号的路径: "path/to/module" 或 "path/to/module.*"
         modulePath = currentToken_.value;
         advance();
     } else if (check(TokenType::IDENTIFIER)) {
@@ -1367,19 +1367,20 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
         // 继续读取路径的其余部分（处理 . 和 / 分隔符）
         while (!isAtEnd()) {
             if (check(TokenType::DOT)) {
-                // 检查是否是通配符 (.*)
-                if (peekNext() == TokenType::WILDCARD) {
-                    break; // 这是通配符后缀，不是路径的一部分
-                }
-                // 否则是路径的一部分，如 Chtholly.Space
                 advance(); // 消费点
                 modulePath += ".";
                 
-                if (check(TokenType::IDENTIFIER)) {
+                if (check(TokenType::WILDCARD)) {
+                    // 通配符: path.*
+                    modulePath += "*";
+                    advance();
+                    break; // 通配符后路径结束
+                } else if (check(TokenType::IDENTIFIER)) {
+                    // 子模块: Chtholly.Space
                     modulePath += currentToken_.value;
                     advance();
                 } else {
-                    addError("Expected identifier after '.' in module path");
+                    addError("Expected identifier or '*' after '.' in module path");
                     break;
                 }
             } else if (check(TokenType::SLASH)) {
@@ -1387,11 +1388,16 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
                 advance();
                 modulePath += "/";
                 
-                if (check(TokenType::IDENTIFIER)) {
+                if (check(TokenType::WILDCARD)) {
+                    // 通配符: path/*
+                    modulePath += "*";
+                    advance();
+                    break; // 通配符后路径结束
+                } else if (check(TokenType::IDENTIFIER)) {
                     modulePath += currentToken_.value;
                     advance();
                 } else {
-                    addError("Expected identifier after '/' in module path");
+                    addError("Expected identifier or '*' after '/' in module path");
                     break;
                 }
             } else {
@@ -1405,22 +1411,12 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
         return nullptr;
     }
     
-    // 检查是否有通配符后缀 (.*) 
-    bool isWildcard = false;
-    if (match(TokenType::DOT)) {
-        if (match(TokenType::WILDCARD)) {
-            isWildcard = true;
-            // 将路径标记为通配符导入
-            modulePath += ".*";
-        } else {
-            addError("Expected '*' after '.' in import path");
-        }
-    }
-    
     importNode->setPath(modulePath);
     
-    // 如果是通配符导入，设置为导入所有
-    if (isWildcard) {
+    // 如果路径以 .* 或 /* 结尾，标记为通配符导入
+    if (modulePath.size() >= 2 && 
+        ((modulePath.substr(modulePath.size() - 2) == ".*") ||
+         (modulePath.substr(modulePath.size() - 2) == "/*"))) {
         importNode->addImportItem("*");
     }
     

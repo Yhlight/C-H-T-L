@@ -168,6 +168,14 @@ private:
     
     std::string generateHTMLDocument();
     void injectRuntimeCode();
+    void processReference(const std::shared_ptr<Element>& refNode);
+    void applyReferenceModifications(std::shared_ptr<Node> target,
+                                    const std::shared_ptr<Element>& refNode);
+    void mergeElement(std::shared_ptr<Node> target, 
+                     const std::shared_ptr<Element>& source);
+    void executeDeleteOperation(std::shared_ptr<Node> target,
+                               const std::shared_ptr<Operate>& deleteOp);
+    void deleteFromNode(std::shared_ptr<Node> node, const std::string& target);
     void processCustomComponent(const std::shared_ptr<Custom>& instance, 
                                 const std::shared_ptr<Node>& definition);
     std::shared_ptr<Node> findComponentDefinition(const std::string& name, Custom::CustomType type);

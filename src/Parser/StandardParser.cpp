@@ -158,6 +158,30 @@ std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
     
     consume(TokenType::RIGHT_BRACKET, "Expected ']'");
     
+    // 检查是否是全缀名引用
+    if ((blockType == "Template" || blockType == "Custom") && 
+        (check(TokenType::AT_ELEMENT) || check(TokenType::AT_STYLE) || check(TokenType::AT_VAR))) {
+        // 这是一个全缀名引用，解析引用
+        auto typeToken = advance(); // @Element/@Style/@Var
+        auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
+        
+        auto refNode = std::make_shared<Element>("reference");
+        refNode->setAttribute("type", typeToken.value);
+        refNode->setAttribute("name", nameToken.value);
+        refNode->setAttribute("kind", blockType);  // Template 或 Custom
+        
+        // 检查是否有特例化块
+        if (check(TokenType::LEFT_BRACE)) {
+            consume(TokenType::LEFT_BRACE, "Expected '{'");
+            parseSpecialization(refNode);
+            consume(TokenType::RIGHT_BRACE, "Expected '}'");
+        }
+        
+        consume(TokenType::SEMICOLON, "Expected ';'");
+        return refNode;
+    }
+    
+    // 普通特殊块
     if (blockType == "Template") {
         return parseTemplate();
     } else if (blockType == "Custom") {
@@ -296,15 +320,15 @@ std::shared_ptr<Node> StandardParser::parseNode() {
         return parseReference();
     }
     
+    // 特殊块
+    if (currentToken_.type == TokenType::LEFT_BRACKET) {
+        return parseSpecialBlock();
+    }
+    
     // 普通元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
         advance();  // 消费元素名
         return parseElement();
-    }
-    
-    // 特殊块
-    if (currentToken_.type == TokenType::LEFT_BRACKET) {
-        return parseSpecialBlock();
     }
     
     advance();
@@ -1140,6 +1164,8 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     
     return refNode;
 }
+
+
 
 std::shared_ptr<Node> StandardParser::parseStyleReference() {
     auto typeToken = advance(); // @Style or @Var

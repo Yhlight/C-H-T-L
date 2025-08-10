@@ -1,0 +1,20 @@
+// 调试全缀名
+
+html {
+    body {
+        div {
+            text { "Before references" }
+        }
+        
+        // 测试1：普通 div
+        div {
+            text { "Normal div" }
+        }
+        
+        // 测试2：引用不存在的组件
+        @Element NotFound;
+        
+        // 测试3：普通文本
+        text { "Just text" }
+    }
+}

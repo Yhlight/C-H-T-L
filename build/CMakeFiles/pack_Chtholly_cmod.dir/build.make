@@ -69,10 +69,8 @@ include CMakeFiles/pack_Chtholly_cmod.dir/progress.make
 CMakeFiles/pack_Chtholly_cmod: module/Chtholly.cmod
 
 module/Chtholly.cmod: chtl
-module/Chtholly.cmod: /workspace/src/Module/Chtholly
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Packing CMOD module: Chtholly"
-	/workspace/build/chtl --pack-cmod /workspace/src/Module/Chtholly
-	/usr/bin/cmake -E rename Chtholly.cmod /workspace/build/module/Chtholly.cmod
+	cd /workspace && /workspace/build/chtl --pack-cmod /workspace/src/Module/Chtholly -o /workspace/build/module
 
 CMakeFiles/pack_Chtholly_cmod.dir/codegen:
 .PHONY : CMakeFiles/pack_Chtholly_cmod.dir/codegen

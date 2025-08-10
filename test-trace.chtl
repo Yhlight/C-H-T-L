@@ -1,0 +1,24 @@
+// 测试全缀名功能
+
+[Template] @Element Box {
+    div {
+        text { "Template Box" }
+    }
+}
+
+[Custom] @Element Box {
+    div {
+        text { "Custom Box" }
+    }
+}
+
+div {
+    // 测试1：短引用（应该优先使用 Custom）
+    @Element Box;
+    
+    // 测试2：全缀名 Template 引用
+    [Template] @Element Box;
+    
+    // 测试3：全缀名 Custom 引用
+    [Custom] @Element Box;
+}

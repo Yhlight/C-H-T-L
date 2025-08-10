@@ -14,6 +14,7 @@
 #include <set>
 #include <variant>
 #include <tuple>
+#include <iostream>
 
 namespace chtl {
 
@@ -201,6 +202,21 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
 
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     const std::string& tag = element->getTagName();
+    
+    // 特殊处理引用节点
+    if (tag == "reference") {
+        processReference(element);
+        return;
+    }
+    
+    // 特殊处理文档根节点
+    if (tag == "document") {
+        // 只处理子节点，不生成 document 标签
+        for (const auto& child : element->getChildren()) {
+            visit(child);
+        }
+        return;
+    }
     
     // 生成开始标签
     htmlCollector_.append("<" + tag);
@@ -885,6 +901,179 @@ std::string WebGenerator::trim(const std::string& str) {
     
     size_t last = str.find_last_not_of(" \t\n\r");
     return str.substr(first, (last - first + 1));
+}
+
+// 应用引用修改
+void WebGenerator::applyReferenceModifications(std::shared_ptr<Node> target,
+                                             const std::shared_ptr<Element>& refNode) {
+    // 应用引用节点中的子节点作为修改
+    for (const auto& child : refNode->getChildren()) {
+        if (child->getType() == NodeType::ELEMENT) {
+            auto element = std::static_pointer_cast<Element>(child);
+            // 查找目标中对应的元素并合并属性和子节点
+            mergeElement(target, element);
+        } else if (child->getType() == NodeType::OPERATE) {
+            auto op = std::static_pointer_cast<Operate>(child);
+            if (op->getOperationType() == Operate::OperationType::DELETE) {
+                // 执行删除操作
+                executeDeleteOperation(target, op);
+            } else if (op->getOperationType() == Operate::OperationType::INSERT) {
+                // 执行插入操作
+                executeInsertOperation(target, op);
+            }
+        }
+        // 其他类型的子节点直接添加
+        else {
+            target->addChild(child->clone(true));
+        }
+    }
+}
+
+// 执行删除操作
+void WebGenerator::executeDeleteOperation(std::shared_ptr<Node> target,
+                                        const std::shared_ptr<Operate>& deleteOp) {
+    // 获取要删除的目标
+    const std::string& deleteTarget = deleteOp->getTarget();
+    
+    // 递归删除
+    deleteFromNode(target, deleteTarget);
+}
+
+// 从节点中删除指定项
+void WebGenerator::deleteFromNode(std::shared_ptr<Node> node, const std::string& target) {
+    // 获取子节点的可修改引用
+    auto& children = const_cast<std::vector<std::shared_ptr<Node>>&>(node->getChildren());
+    
+    // 删除匹配的子节点
+    children.erase(
+        std::remove_if(children.begin(), children.end(),
+            [&target](const std::shared_ptr<Node>& child) {
+                if (child->getType() == NodeType::ELEMENT) {
+                    auto element = std::static_pointer_cast<Element>(child);
+                    // 检查标签名
+                    if (element->getTagName() == target) {
+                        return true;
+                    }
+                    // 检查索引访问 (e.g., div[0])
+                    size_t bracketPos = target.find('[');
+                    if (bracketPos != std::string::npos) {
+                        std::string tagName = target.substr(0, bracketPos);
+                        if (element->getTagName() == tagName) {
+                            // TODO: 实现索引匹配
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }),
+        children.end()
+    );
+    
+    // 递归处理子节点
+    for (auto& child : children) {
+        deleteFromNode(child, target);
+    }
+}
+
+// 合并元素
+void WebGenerator::mergeElement(std::shared_ptr<Node> target, 
+                               const std::shared_ptr<Element>& source) {
+    // 在目标中查找同名元素
+    if (target->getType() == NodeType::ELEMENT) {
+        auto targetElement = std::static_pointer_cast<Element>(target);
+        if (targetElement->getTagName() == source->getTagName()) {
+            // 合并属性
+            for (const auto& [key, value] : source->getAttributes()) {
+                targetElement->setAttribute(key, value);
+            }
+            // 合并子节点
+            for (const auto& child : source->getChildren()) {
+                targetElement->addChild(child->clone(true));
+            }
+            return;
+        }
+    }
+    
+    // 递归查找子节点
+    for (auto& child : target->getChildren()) {
+        mergeElement(child, source);
+    }
+}
+
+// 处理引用节点
+void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
+    auto attributes = refNode->getAttributes();
+    
+    // 获取引用信息
+    std::string type = attributes.find("type") != attributes.end() && 
+        std::holds_alternative<std::string>(attributes.at("type")) 
+        ? std::get<std::string>(attributes.at("type")) : "";
+    std::string name = attributes.find("name") != attributes.end() && 
+        std::holds_alternative<std::string>(attributes.at("name")) 
+        ? std::get<std::string>(attributes.at("name")) : "";
+    std::string kind = attributes.find("kind") != attributes.end() && 
+        std::holds_alternative<std::string>(attributes.at("kind"))
+        ? std::get<std::string>(attributes.at("kind")) : "";
+    
+    // 调试输出
+    std::cout << "DEBUG: Processing reference - type: " << type 
+              << ", name: " << name 
+              << ", kind: " << kind << std::endl;
+    
+    // 构建查找键
+    std::string key = type + " " + name;
+    
+    // 根据 kind 属性决定查找 Template 还是 Custom
+    std::shared_ptr<Node> definition = nullptr;
+    
+    if (kind == "Template") {
+        // 明确查找 Template
+        auto it = templateDefinitions_.find(key);
+        if (it != templateDefinitions_.end()) {
+            definition = it->second;
+        }
+    } else if (kind == "Custom") {
+        // 明确查找 Custom
+        auto it = customDefinitions_.find(key);
+        if (it != customDefinitions_.end()) {
+            definition = it->second;
+        }
+    } else {
+        // 没有指定 kind，按优先级查找：先 Custom 后 Template
+        auto customIt = customDefinitions_.find(key);
+        if (customIt != customDefinitions_.end()) {
+            definition = customIt->second;
+        } else {
+            auto templateIt = templateDefinitions_.find(key);
+            if (templateIt != templateDefinitions_.end()) {
+                definition = templateIt->second;
+            }
+        }
+    }
+    
+    if (!definition) {
+        // 未找到定义，生成警告注释
+        htmlCollector_.append("<!-- Warning: Component '" + name + 
+            (kind.empty() ? "" : " [" + kind + "]") + "' not found -->");
+        return;
+    }
+    
+    // 处理组件实例（对于元素引用）
+    if (type == "@Element") {
+        // 克隆定义
+        auto cloned = definition->clone(true);
+        
+        // 应用实例修改（如果有特例化内容）
+        if (!refNode->getChildren().empty()) {
+            applyReferenceModifications(cloned, refNode);
+        }
+        
+        // 递归生成
+        visit(cloned);
+    } else if (type == "@Style") {
+        // 样式引用直接访问
+        visit(definition);
+    }
 }
 
 } // namespace chtl

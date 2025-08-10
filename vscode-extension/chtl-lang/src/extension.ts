@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { ChtlCompiler, CompileResult, Diagnostic } from './compiler';
+import { activateLanguageClient, deactivateLanguageClient } from './languageClient';
 
 const fsAsync = {
     readFile: promisify(fs.readFile),
@@ -30,6 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Create output channel
     outputChannel = vscode.window.createOutputChannel('CHTL');
     context.subscriptions.push(outputChannel);
+    
+    // Activate language server
+    activateLanguageClient(context);
     
     // Check if compiler is available
     if (!compiler.isAvailable()) {
@@ -739,4 +743,7 @@ export function deactivate() {
     if (outputChannel) {
         outputChannel.dispose();
     }
+    
+    // Stop language server
+    return deactivateLanguageClient();
 }

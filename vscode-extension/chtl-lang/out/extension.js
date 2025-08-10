@@ -29,6 +29,7 @@ const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const util_1 = require("util");
 const compiler_1 = require("./compiler");
+const languageClient_1 = require("./languageClient");
 const fsAsync = {
     readFile: (0, util_1.promisify)(fs.readFile),
     writeFile: (0, util_1.promisify)(fs.writeFile),
@@ -50,6 +51,8 @@ function activate(context) {
     // Create output channel
     outputChannel = vscode.window.createOutputChannel('CHTL');
     context.subscriptions.push(outputChannel);
+    // Activate language server
+    (0, languageClient_1.activateLanguageClient)(context);
     // Check if compiler is available
     if (!compiler.isAvailable()) {
         vscode.window.showWarningMessage('CHTL compiler not found. Some features may not work. Please install the CHTL compiler or update your settings.', 'Open Settings').then(selection => {
@@ -601,6 +604,8 @@ function deactivate() {
     if (outputChannel) {
         outputChannel.dispose();
     }
+    // Stop language server
+    return (0, languageClient_1.deactivateLanguageClient)();
 }
 exports.deactivate = deactivate;
 //# sourceMappingURL=extension.js.map

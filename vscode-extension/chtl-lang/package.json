@@ -25,13 +25,68 @@
     "onLanguage:chtl"
   ],
   "main": "./out/extension.js",
-  "contributes": {
-    "languages": [{
-      "id": "chtl",
-      "aliases": ["CHTL", "chtl"],
-      "extensions": [".chtl"],
-      "configuration": "./language-configuration.json"
-    }],
+      "contributes": {
+        "languages": [{
+            "id": "chtl",
+            "aliases": ["CHTL", "chtl"],
+            "extensions": [".chtl"],
+            "configuration": "./language-configuration.json"
+        }],
+        "debuggers": [{
+            "type": "chtl",
+            "label": "CHTL Debug",
+            "program": "./out/debugAdapter.js",
+            "runtime": "node",
+            "configurationAttributes": {
+                "launch": {
+                    "required": ["program"],
+                    "properties": {
+                        "program": {
+                            "type": "string",
+                            "description": "Path to CHTL file to debug",
+                            "default": "${file}"
+                        },
+                        "stopOnEntry": {
+                            "type": "boolean",
+                            "description": "Automatically stop after launch",
+                            "default": false
+                        },
+                        "outputDirectory": {
+                            "type": "string",
+                            "description": "Output directory for compiled files",
+                            "default": "${workspaceFolder}/dist"
+                        },
+                        "sourceMaps": {
+                            "type": "boolean",
+                            "description": "Enable source maps",
+                            "default": true
+                        }
+                    }
+                }
+            },
+            "initialConfigurations": [{
+                "type": "chtl",
+                "request": "launch",
+                "name": "Debug CHTL File",
+                "program": "${file}",
+                "stopOnEntry": false,
+                "outputDirectory": "${workspaceFolder}/dist",
+                "sourceMaps": true
+            }],
+            "configurationSnippets": [{
+                "label": "CHTL: Debug Current File",
+                "description": "Debug the currently open CHTL file",
+                "body": {
+                    "type": "chtl",
+                    "request": "launch",
+                    "name": "Debug CHTL File",
+                    "program": "^\"\\${file}\"",
+                    "stopOnEntry": false,
+                    "outputDirectory": "^\"\\${workspaceFolder}/dist\"",
+                    "sourceMaps": true
+                }
+            }]
+        }],
     "grammars": [{
       "language": "chtl",
       "scopeName": "source.chtl",
@@ -156,6 +211,9 @@
   "dependencies": {
     "vscode-languageclient": "^8.0.2",
     "vscode-languageserver": "^8.0.2",
-    "vscode-languageserver-textdocument": "^1.0.8"
+    "vscode-languageserver-textdocument": "^1.0.8",
+    "@vscode/debugadapter": "^1.58.0",
+    "@vscode/debugprotocol": "^1.58.0",
+    "await-notify": "^1.0.1"
   }
 }

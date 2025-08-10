@@ -144,7 +144,13 @@ connection.onInitialize((params: InitializeParams) => {
                     'chtl.extractComponent',
                     'chtl.inlineComponent',
                     'chtl.convertToTemplate',
-                    'chtl.convertToCustom'
+                    'chtl.convertToCustom',
+                    'chtl.extractStyle',
+                    'chtl.inlineStyle',
+                    'chtl.extractVariable',
+                    'chtl.renameComponent',
+                    'chtl.wrapInElement',
+                    'chtl.unwrapElement'
                 ]
             },
             // 诊断
@@ -772,6 +778,30 @@ connection.onExecuteCommand(
                 // 转换为模板逻辑
                 await convertToTemplate(params.arguments![0], params.arguments![1]);
                 break;
+            case 'chtl.extractStyle':
+                // 提取样式
+                await extractStyle(params.arguments![0], params.arguments![1]);
+                break;
+            case 'chtl.inlineStyle':
+                // 内联样式
+                await inlineStyle(params.arguments![0], params.arguments![1]);
+                break;
+            case 'chtl.extractVariable':
+                // 提取变量
+                await extractVariable(params.arguments![0], params.arguments![1]);
+                break;
+            case 'chtl.renameComponent':
+                // 重命名组件
+                await renameComponent(params.arguments![0], params.arguments![1], params.arguments![2]);
+                break;
+            case 'chtl.wrapInElement':
+                // 包装元素
+                await wrapInElement(params.arguments![0], params.arguments![1], params.arguments![2]);
+                break;
+            case 'chtl.unwrapElement':
+                // 解包元素
+                await unwrapElement(params.arguments![0], params.arguments![1]);
+                break;
         }
     }
 );
@@ -973,3 +1003,288 @@ documents.listen(connection);
 
 // 启动连接
 connection.listen();
+
+// 额外的重构函数实现
+
+async function extractStyle(uri: string, range: Range): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    const text = document.getText(range);
+    
+    // 解析样式内容
+    const styleMatch = text.match(/style\s*\{([^}]+)\}/);
+    if (!styleMatch) {
+        return;
+    }
+    
+    const styleContent = styleMatch[1].trim();
+    const styleName = 'ExtractedStyle';
+    
+    // 创建样式模板
+    const newStyle = `[Template] @Style ${styleName} {\n${styleContent.split(';').map(s => '    ' + s.trim()).join(';\n')};\n}\n\n`;
+    
+    // 替换为样式引用
+    const edit: TextEdit = {
+        range: range,
+        newText: `style {\n    @Style ${styleName};\n}`
+    };
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: [
+                {
+                    range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+                    newText: newStyle
+                },
+                edit
+            ]
+        }]
+    });
+}
+
+async function inlineStyle(uri: string, position: Position): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    // 查找样式引用
+    const line = document.getText({
+        start: { line: position.line, character: 0 },
+        end: { line: position.line + 1, character: 0 }
+    });
+    
+    const styleRefMatch = line.match(/@Style\s+(\w+)/);
+    if (!styleRefMatch) {
+        return;
+    }
+    
+    const styleName = styleRefMatch[1];
+    
+    // 查找样式定义
+    const text = document.getText();
+    const styleDefRegex = new RegExp(`\\[Template\\]\\s*@Style\\s+${styleName}\\s*\\{([^}]+)\\}`, 'g');
+    const match = styleDefRegex.exec(text);
+    
+    if (!match) {
+        return;
+    }
+    
+    const styleContent = match[1].trim();
+    
+    // 替换引用为内联样式
+    const edit: TextEdit = {
+        range: {
+            start: { line: position.line, character: 0 },
+            end: { line: position.line + 1, character: 0 }
+        },
+        newText: styleContent + '\n'
+    };
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: [edit]
+        }]
+    });
+}
+
+async function extractVariable(uri: string, range: Range): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    const text = document.getText(range);
+    const varName = await connection.window.showInputBox({
+        prompt: 'Variable name:',
+        value: 'myVariable'
+    });
+    
+    if (!varName) {
+        return;
+    }
+    
+    // 创建变量组
+    const varGroup = `[Template] @Var CommonVariables {\n    ${varName}: ${text};\n}\n\n`;
+    
+    // 替换为变量引用
+    const edit: TextEdit = {
+        range: range,
+        newText: `CommonVariables(${varName})`
+    };
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: [
+                {
+                    range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+                    newText: varGroup
+                },
+                edit
+            ]
+        }]
+    });
+}
+
+async function renameComponent(uri: string, position: Position, newName: string): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    const wordRange = getWordRangeAtPosition(document, position);
+    if (!wordRange) {
+        return;
+    }
+    
+    const oldName = document.getText(wordRange);
+    
+    // 查找所有引用
+    const text = document.getText();
+    const edits: TextEdit[] = [];
+    
+    // 替换定义
+    const defRegex = new RegExp(`(\\[(?:Template|Custom)\\]\\s*@\\w+\\s+)${oldName}(\\s*\\{)`, 'g');
+    let match;
+    while ((match = defRegex.exec(text)) !== null) {
+        const start = document.positionAt(match.index + match[1].length);
+        const end = document.positionAt(match.index + match[1].length + oldName.length);
+        edits.push({
+            range: { start, end },
+            newText: newName
+        });
+    }
+    
+    // 替换引用
+    const refRegex = new RegExp(`@\\w+\\s+${oldName}(?:\\s*[;{])`, 'g');
+    while ((match = refRegex.exec(text)) !== null) {
+        const start = document.positionAt(match.index + match[0].indexOf(oldName));
+        const end = document.positionAt(match.index + match[0].indexOf(oldName) + oldName.length);
+        edits.push({
+            range: { start, end },
+            newText: newName
+        });
+    }
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: edits
+        }]
+    });
+}
+
+async function wrapInElement(uri: string, range: Range, elementName?: string): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    const text = document.getText(range);
+    const element = elementName || await connection.window.showInputBox({
+        prompt: 'Element name:',
+        value: 'div'
+    }) || 'div';
+    
+    // 计算缩进
+    const startLine = document.getText({
+        start: { line: range.start.line, character: 0 },
+        end: range.start
+    });
+    const indent = startLine.match(/^\s*/)?.[0] || '';
+    
+    // 包装内容
+    const wrappedContent = `${element} {\n${text.split('\n').map(line => '    ' + line).join('\n')}\n${indent}}`;
+    
+    const edit: TextEdit = {
+        range: range,
+        newText: wrappedContent
+    };
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: [edit]
+        }]
+    });
+}
+
+async function unwrapElement(uri: string, position: Position): Promise<void> {
+    const document = documents.get(uri);
+    if (!document) {
+        return;
+    }
+
+    // 查找包含的元素
+    const text = document.getText();
+    const lines = text.split('\n');
+    const currentLine = position.line;
+    
+    // 向上查找开始标签
+    let startLine = currentLine;
+    let braceCount = 0;
+    for (let i = currentLine; i >= 0; i--) {
+        const line = lines[i];
+        if (line.includes('{')) {
+            braceCount++;
+            if (braceCount === 1 && /\w+\s*\{/.test(line)) {
+                startLine = i;
+                break;
+            }
+        }
+        if (line.includes('}')) {
+            braceCount--;
+        }
+    }
+    
+    // 向下查找结束标签
+    let endLine = currentLine;
+    braceCount = 0;
+    for (let i = startLine; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.includes('{')) {
+            braceCount++;
+        }
+        if (line.includes('}')) {
+            braceCount--;
+            if (braceCount === 0) {
+                endLine = i;
+                break;
+            }
+        }
+    }
+    
+    // 提取内容
+    const content: string[] = [];
+    for (let i = startLine + 1; i < endLine; i++) {
+        // 移除一级缩进
+        content.push(lines[i].replace(/^    /, ''));
+    }
+    
+    const edit: TextEdit = {
+        range: {
+            start: { line: startLine, character: 0 },
+            end: { line: endLine + 1, character: 0 }
+        },
+        newText: content.join('\n') + '\n'
+    };
+
+    // 应用编辑
+    connection.workspace.applyEdit({
+        documentChanges: [{
+            textDocument: { uri, version: document.version },
+            edits: [edit]
+        }]
+    });
+}

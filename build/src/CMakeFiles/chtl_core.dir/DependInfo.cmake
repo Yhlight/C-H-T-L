@@ -30,6 +30,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Lexer/ChtlJsLexer.cpp" "src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Lexer/ChtlJsLexer.cpp.o.d"
   "/workspace/src/Lexer/ConfigLexer.cpp" "src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Lexer/ConfigLexer.cpp.o.d"
   "/workspace/src/Lexer/StandardLexer.cpp" "src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Lexer/StandardLexer.cpp.o.d"
+  "/workspace/src/Loader/DependencyGraph.cpp" "src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.o.d"
+  "/workspace/src/Loader/ImportManager.cpp" "src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o.d"
   "/workspace/src/Node/Comment.cpp" "src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o.d"
   "/workspace/src/Node/Config.cpp" "src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o.d"
   "/workspace/src/Node/Custom.cpp" "src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o" "gcc" "src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o.d"

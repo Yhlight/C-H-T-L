@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_import_manager.dir/link.d CMakeFiles/test_import_manager.dir/test_import_manager.cpp.o -o test_import_manager  ../src/libchtl_core.a

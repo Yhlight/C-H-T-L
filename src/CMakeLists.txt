@@ -64,6 +64,10 @@ set(CHTL_SOURCES
     
     # CHTL-JS (只包含实际存在的文件)
     ChtlJs/ChtlJsContext.cpp
+    
+    # Loader
+    Loader/DependencyGraph.cpp
+    Loader/ImportManager.cpp
 )
 
 # 创建静态库

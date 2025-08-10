@@ -31,6 +31,7 @@
 /workspace/build/tests/CMakeFiles/test_specialization.dir
 /workspace/build/tests/CMakeFiles/test_context_aware_comments.dir
 /workspace/build/tests/CMakeFiles/test_compilation.dir
+/workspace/build/tests/CMakeFiles/test_import_manager.dir
 /workspace/build/tests/CMakeFiles/check.dir
 /workspace/build/tests/CMakeFiles/edit_cache.dir
 /workspace/build/tests/CMakeFiles/rebuild_cache.dir

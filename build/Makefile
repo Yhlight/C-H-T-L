@@ -435,6 +435,19 @@ test_compilation/fast:
 .PHONY : test_compilation/fast
 
 #=============================================================================
+# Target rules for targets named test_import_manager
+
+# Build rule for target.
+test_import_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_import_manager
+.PHONY : test_import_manager
+
+# fast build rule for target.
+test_import_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_manager.dir/build.make tests/CMakeFiles/test_import_manager.dir/build
+.PHONY : test_import_manager/fast
+
+#=============================================================================
 # Target rules for targets named check
 
 # Build rule for target.
@@ -512,6 +525,7 @@ help:
 	@echo "... test_compilation"
 	@echo "... test_context_aware_comments"
 	@echo "... test_html_parsing"
+	@echo "... test_import_manager"
 	@echo "... test_import_namespace"
 	@echo "... test_lexer"
 	@echo "... test_node"

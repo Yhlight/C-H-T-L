@@ -414,6 +414,20 @@ test_compilation/fast:
 .PHONY : test_compilation/fast
 
 # Convenience name for target.
+tests/CMakeFiles/test_import_manager.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_import_manager.dir/rule
+.PHONY : tests/CMakeFiles/test_import_manager.dir/rule
+
+# Convenience name for target.
+test_import_manager: tests/CMakeFiles/test_import_manager.dir/rule
+.PHONY : test_import_manager
+
+# fast build rule for target.
+test_import_manager/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_manager.dir/build.make tests/CMakeFiles/test_import_manager.dir/build
+.PHONY : test_import_manager/fast
+
+# Convenience name for target.
 tests/CMakeFiles/check.dir/rule:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/check.dir/rule
 .PHONY : tests/CMakeFiles/check.dir/rule
@@ -594,6 +608,30 @@ test_html_parsing.s: test_html_parsing.cpp.s
 test_html_parsing.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_html_parsing.dir/build.make tests/CMakeFiles/test_html_parsing.dir/test_html_parsing.cpp.s
 .PHONY : test_html_parsing.cpp.s
+
+test_import_manager.o: test_import_manager.cpp.o
+.PHONY : test_import_manager.o
+
+# target to build an object file
+test_import_manager.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_manager.dir/build.make tests/CMakeFiles/test_import_manager.dir/test_import_manager.cpp.o
+.PHONY : test_import_manager.cpp.o
+
+test_import_manager.i: test_import_manager.cpp.i
+.PHONY : test_import_manager.i
+
+# target to preprocess a source file
+test_import_manager.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_manager.dir/build.make tests/CMakeFiles/test_import_manager.dir/test_import_manager.cpp.i
+.PHONY : test_import_manager.cpp.i
+
+test_import_manager.s: test_import_manager.cpp.s
+.PHONY : test_import_manager.s
+
+# target to generate assembly for a file
+test_import_manager.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_import_manager.dir/build.make tests/CMakeFiles/test_import_manager.dir/test_import_manager.cpp.s
+.PHONY : test_import_manager.cpp.s
 
 test_import_namespace.o: test_import_namespace.cpp.o
 .PHONY : test_import_namespace.o
@@ -879,6 +917,7 @@ help:
 	@echo "... test_compilation"
 	@echo "... test_context_aware_comments"
 	@echo "... test_html_parsing"
+	@echo "... test_import_manager"
 	@echo "... test_import_namespace"
 	@echo "... test_lexer"
 	@echo "... test_node"
@@ -911,6 +950,9 @@ help:
 	@echo "... test_html_parsing.o"
 	@echo "... test_html_parsing.i"
 	@echo "... test_html_parsing.s"
+	@echo "... test_import_manager.o"
+	@echo "... test_import_manager.i"
+	@echo "... test_import_manager.s"
 	@echo "... test_import_namespace.o"
 	@echo "... test_import_namespace.i"
 	@echo "... test_import_namespace.s"

@@ -783,6 +783,60 @@ Lexer/StandardLexer.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.s
 .PHONY : Lexer/StandardLexer.cpp.s
 
+Loader/DependencyGraph.o: Loader/DependencyGraph.cpp.o
+.PHONY : Loader/DependencyGraph.o
+
+# target to build an object file
+Loader/DependencyGraph.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o
+.PHONY : Loader/DependencyGraph.cpp.o
+
+Loader/DependencyGraph.i: Loader/DependencyGraph.cpp.i
+.PHONY : Loader/DependencyGraph.i
+
+# target to preprocess a source file
+Loader/DependencyGraph.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.i
+.PHONY : Loader/DependencyGraph.cpp.i
+
+Loader/DependencyGraph.s: Loader/DependencyGraph.cpp.s
+.PHONY : Loader/DependencyGraph.s
+
+# target to generate assembly for a file
+Loader/DependencyGraph.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.s
+.PHONY : Loader/DependencyGraph.cpp.s
+
+Loader/ImportManager.o: Loader/ImportManager.cpp.o
+.PHONY : Loader/ImportManager.o
+
+# target to build an object file
+Loader/ImportManager.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o
+.PHONY : Loader/ImportManager.cpp.o
+
+Loader/ImportManager.i: Loader/ImportManager.cpp.i
+.PHONY : Loader/ImportManager.i
+
+# target to preprocess a source file
+Loader/ImportManager.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.i
+.PHONY : Loader/ImportManager.cpp.i
+
+Loader/ImportManager.s: Loader/ImportManager.cpp.s
+.PHONY : Loader/ImportManager.s
+
+# target to generate assembly for a file
+Loader/ImportManager.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s
+.PHONY : Loader/ImportManager.cpp.s
+
 Node/Comment.o: Node/Comment.cpp.o
 .PHONY : Node/Comment.o
 
@@ -1430,6 +1484,12 @@ help:
 	@echo "... Lexer/StandardLexer.o"
 	@echo "... Lexer/StandardLexer.i"
 	@echo "... Lexer/StandardLexer.s"
+	@echo "... Loader/DependencyGraph.o"
+	@echo "... Loader/DependencyGraph.i"
+	@echo "... Loader/DependencyGraph.s"
+	@echo "... Loader/ImportManager.o"
+	@echo "... Loader/ImportManager.i"
+	@echo "... Loader/ImportManager.s"
 	@echo "... Node/Comment.o"
 	@echo "... Node/Comment.i"
 	@echo "... Node/Comment.s"

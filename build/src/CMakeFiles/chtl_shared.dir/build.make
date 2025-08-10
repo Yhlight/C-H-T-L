@@ -674,6 +674,34 @@ src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.s"
 	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/ChtlJs/ChtlJsContext.cpp -o CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.s
 
+src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o: src/CMakeFiles/chtl_shared.dir/flags.make
+src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o: /workspace/src/Loader/DependencyGraph.cpp
+src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o: src/CMakeFiles/chtl_shared.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o -MF CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o.d -o CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o -c /workspace/src/Loader/DependencyGraph.cpp
+
+src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.i"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Loader/DependencyGraph.cpp > CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.i
+
+src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.s"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Loader/DependencyGraph.cpp -o CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.s
+
+src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o: src/CMakeFiles/chtl_shared.dir/flags.make
+src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o: /workspace/src/Loader/ImportManager.cpp
+src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o: src/CMakeFiles/chtl_shared.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building CXX object src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o -MF CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o.d -o CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o -c /workspace/src/Loader/ImportManager.cpp
+
+src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.i"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Loader/ImportManager.cpp > CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.i
+
+src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Loader/ImportManager.cpp -o CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s
+
 # Object files for target chtl_shared
 chtl_shared_OBJECTS = \
 "CMakeFiles/chtl_shared.dir/Common/GlobalMap.cpp.o" \
@@ -718,7 +746,9 @@ chtl_shared_OBJECTS = \
 "CMakeFiles/chtl_shared.dir/Js/JsAnalyzer.cpp.o" \
 "CMakeFiles/chtl_shared.dir/Js/JsTokenizer.cpp.o" \
 "CMakeFiles/chtl_shared.dir/Js/JsBlockExtractor.cpp.o" \
-"CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o"
+"CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o" \
+"CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o" \
+"CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o"
 
 # External object files for target chtl_shared
 chtl_shared_EXTERNAL_OBJECTS =
@@ -766,10 +796,12 @@ src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsAnalyzer.cpp.o
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsTokenizer.cpp.o
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Js/JsBlockExtractor.cpp.o
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o
+src/libchtl.so: src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/build.make
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/compiler_depend.ts
 src/libchtl.so: src/CMakeFiles/chtl_shared.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX shared library libchtl.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Linking CXX shared library libchtl.so"
 	cd /workspace/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_shared.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

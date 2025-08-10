@@ -100,6 +100,7 @@ private:
     
     // 导入解析
     std::shared_ptr<Node> parseImport();
+    std::shared_ptr<Node> parseImportStatement();
     
     // 命名空间解析
     std::shared_ptr<Node> parseNamespace();

@@ -58,6 +58,12 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         return parseSpecialBlock();
     }
     
+    // 检查Import语句 (Import @Chtl from "...")
+    if (currentToken_.type == TokenType::IDENTIFIER && 
+        currentToken_.value == "Import") {
+        return parseImportStatement();
+    }
+    
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
         return parseElement();
@@ -1172,6 +1178,54 @@ void StandardParser::parseNameConfig(std::shared_ptr<Config> configNode) {
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         parseConfigItem(configNode);
     }
+}
+
+std::shared_ptr<Node> StandardParser::parseImportStatement() {
+    // Import关键字
+    consume(TokenType::IDENTIFIER, "Expected 'Import'");
+    
+    auto importNode = std::make_shared<Import>();
+    
+    // 解析导入类型 (@Chtl, @Html, @Style, @JavaScript)
+    Import::ImportType importType = Import::ImportType::CHTL;
+    
+    if (match(TokenType::AT_CHTL)) {
+        importType = Import::ImportType::CHTL;
+    } else if (match(TokenType::AT_HTML)) {
+        importType = Import::ImportType::HTML;
+    } else if (match(TokenType::AT_STYLE)) {
+        importType = Import::ImportType::CSS;
+    } else if (match(TokenType::AT_JAVASCRIPT)) {
+        importType = Import::ImportType::JS;
+    } else {
+        addError("Expected import type (@Chtl, @Html, @Style, @JavaScript)");
+        skipToNextStatement();
+        return nullptr;
+    }
+    
+    importNode->setType(importType);
+    
+    // 期望 'from' 关键字
+    if (!check(TokenType::IDENTIFIER) || currentToken_.value != "from") {
+        addError("Expected 'from' after import type");
+        skipToNextStatement();
+        return nullptr;
+    }
+    advance(); // 消费 'from'
+    
+    // 解析模块路径
+    if (!check(TokenType::STRING_LITERAL)) {
+        addError("Expected module path string after 'from'");
+        skipToNextStatement();
+        return nullptr;
+    }
+    
+    std::string modulePath = currentToken_.value;
+    advance();
+    
+    importNode->setPath(modulePath);
+    
+    return importNode;
 }
 
 std::shared_ptr<Node> StandardParser::parseImport() {

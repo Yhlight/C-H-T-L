@@ -1,0 +1,13 @@
+// 简单的索引删除测试
+
+div {
+    div { text { "第一个 div" } }
+    div { text { "第二个 div" } }
+    div { text { "第三个 div" } }
+    span { text { "第一个 span" } }
+    span { text { "第二个 span" } }
+    
+    // 在 Operate 节点中测试删除
+    delete div[1];     // 删除第二个 div
+    delete span[0];    // 删除第一个 span
+}

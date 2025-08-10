@@ -1,0 +1,32 @@
+// 完整的索引删除功能测试
+
+// 1. 定义自定义组件
+[Custom] @Element ItemList {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+        li { text { "Item 4" } }
+        li { text { "Item 5" } }
+    }
+}
+
+// 2. 测试容器
+div {
+    // 原始列表
+    h3 { text { "原始列表" } }
+    @Element ItemList;
+    
+    // 删除特定索引
+    h3 { text { "删除索引 1 和 3" } }
+    @Element ItemList {
+        delete li[1];  // 删除 Item 2
+        delete li[3];  // 删除原来的 Item 5（因为索引已更新）
+    }
+    
+    // 删除所有
+    h3 { text { "删除所有 li" } }
+    @Element ItemList {
+        delete li;
+    }
+}

@@ -1,0 +1,30 @@
+// 测试索引删除功能
+
+[Custom] @Element TestBox {
+    div { text { "第一个 div" } }
+    div { text { "第二个 div" } }
+    div { text { "第三个 div" } }
+    span { text { "第一个 span" } }
+    span { text { "第二个 span" } }
+    p { text { "一个段落" } }
+}
+
+body {
+    // 测试1：删除特定索引的元素
+    @Element TestBox {
+        delete div[1];      // 删除第二个 div
+        delete span[0];     // 删除第一个 span
+    }
+    
+    // 测试2：删除所有某类元素
+    @Element TestBox {
+        delete p;           // 删除所有 p 元素
+    }
+    
+    // 测试3：混合删除
+    @Element TestBox {
+        delete div[0];      // 删除第一个 div
+        delete div[0];      // 现在删除的是原来的第二个 div（因为索引更新了）
+        delete span;        // 删除所有 span
+    }
+}

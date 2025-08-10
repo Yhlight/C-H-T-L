@@ -203,19 +203,27 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     const std::string& tag = element->getTagName();
     
+
+
     // 特殊处理引用节点
     if (tag == "reference") {
         processReference(element);
         return;
     }
     
-    // 特殊处理文档根节点
+        // 特殊处理文档根节点
     if (tag == "document") {
         // 只处理子节点，不生成 document 标签
+
         for (const auto& child : element->getChildren()) {
             visit(child);
         }
         return;
+    }
+    
+    // 特殊处理 delete 节点（不生成 HTML）
+    if (tag == "delete") {
+        return;  // delete 节点不应该生成任何输出
     }
     
     // 生成开始标签
@@ -390,9 +398,16 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
     std::vector<std::shared_ptr<Node>> insertOperations;
     
     for (const auto& child : instance->getChildren()) {
-        if (child->getType() == NodeType::DELETE) {
-            // TODO: Need to implement proper delete target extraction
-            // For now, just mark as delete operation
+        if (child->getType() == NodeType::ELEMENT) {
+            auto element = std::static_pointer_cast<Element>(child);
+            if (element->getTagName() == "delete") {
+                // 提取删除目标
+                auto attrs = element->getAttributes();
+                if (attrs.find("target") != attrs.end() && 
+                    std::holds_alternative<std::string>(attrs.at("target"))) {
+                    deleteTargets.insert(std::get<std::string>(attrs.at("target")));
+                }
+            }
         } else if (child->getType() == NodeType::OPERATE) {
             auto op = std::static_pointer_cast<Operate>(child);
             if (op->getOperation() == Operate::OperationType::INSERT) {
@@ -402,33 +417,8 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
     }
     
     // 执行删除操作
-    if (!deleteTargets.empty()) {
-        auto& children = target->getChildren();
-        children.erase(
-            std::remove_if(children.begin(), children.end(),
-                [&deleteTargets](const std::shared_ptr<Node>& node) {
-                    if (node->getType() == NodeType::ELEMENT) {
-                        auto elem = std::static_pointer_cast<Element>(node);
-                        // 检查标签名
-                        if (deleteTargets.find(elem->getTagName()) != deleteTargets.end()) {
-                            return true;
-                        }
-                        // 检查是否是引用（如 @Element Name）
-                        // TODO: Implement when REFERENCE node type is added
-                        /*
-                        if (node->getType() == NodeType::REFERENCE) {
-                            auto attrs = node->getAttributes();
-                            if (attrs.find("name") != attrs.end() &&
-                                deleteTargets.find(attrs.at("name")) != deleteTargets.end()) {
-                                return true;
-                            }
-                        }
-                        */
-                    }
-                    return false;
-                }),
-            children.end()
-        );
+    for (const auto& deleteTarget : deleteTargets) {
+        deleteFromNode(target, deleteTarget);
     }
     
     // 执行插入操作
@@ -944,30 +934,51 @@ void WebGenerator::deleteFromNode(std::shared_ptr<Node> node, const std::string&
     // 获取子节点的可修改引用
     auto& children = const_cast<std::vector<std::shared_ptr<Node>>&>(node->getChildren());
     
-    // 删除匹配的子节点
-    children.erase(
-        std::remove_if(children.begin(), children.end(),
-            [&target](const std::shared_ptr<Node>& child) {
-                if (child->getType() == NodeType::ELEMENT) {
-                    auto element = std::static_pointer_cast<Element>(child);
-                    // 检查标签名
-                    if (element->getTagName() == target) {
-                        return true;
-                    }
-                    // 检查索引访问 (e.g., div[0])
-                    size_t bracketPos = target.find('[');
-                    if (bracketPos != std::string::npos) {
-                        std::string tagName = target.substr(0, bracketPos);
+    // 检查是否是索引访问
+    size_t bracketPos = target.find('[');
+    if (bracketPos != std::string::npos) {
+        // 解析标签名和索引
+        std::string tagName = target.substr(0, bracketPos);
+        size_t closeBracket = target.find(']', bracketPos);
+        if (closeBracket != std::string::npos) {
+            std::string indexStr = target.substr(bracketPos + 1, closeBracket - bracketPos - 1);
+            try {
+                int targetIndex = std::stoi(indexStr);
+                int currentIndex = 0;
+                
+                // 查找并删除指定索引的元素
+                auto it = children.begin();
+                while (it != children.end()) {
+                    if ((*it)->getType() == NodeType::ELEMENT) {
+                        auto element = std::static_pointer_cast<Element>(*it);
                         if (element->getTagName() == tagName) {
-                            // TODO: 实现索引匹配
-                            return false;
+                            if (currentIndex == targetIndex) {
+                                it = children.erase(it);
+                                break;  // 只删除一个
+                            }
+                            currentIndex++;
                         }
                     }
+                    ++it;
                 }
-                return false;
-            }),
-        children.end()
-    );
+            } catch (const std::exception&) {
+                // 索引解析失败，忽略
+            }
+        }
+    } else {
+        // 普通标签名删除（删除所有匹配的）
+        children.erase(
+            std::remove_if(children.begin(), children.end(),
+                [&target](const std::shared_ptr<Node>& child) {
+                    if (child->getType() == NodeType::ELEMENT) {
+                        auto element = std::static_pointer_cast<Element>(child);
+                        return element->getTagName() == target;
+                    }
+                    return false;
+                }),
+            children.end()
+        );
+    }
     
     // 递归处理子节点
     for (auto& child : children) {
@@ -1015,10 +1026,7 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         std::holds_alternative<std::string>(attributes.at("kind"))
         ? std::get<std::string>(attributes.at("kind")) : "";
     
-    // 调试输出
-    std::cout << "DEBUG: Processing reference - type: " << type 
-              << ", name: " << name 
-              << ", kind: " << kind << std::endl;
+
     
     // 构建查找键
     std::string key = type + " " + name;

@@ -1,0 +1,26 @@
+// 测试索引删除功能
+
+[Custom] @Element TestBox {
+    div { 
+        class: "box-1";
+        text { "第一个 div" } 
+    }
+    div { 
+        class: "box-2";
+        text { "第二个 div" } 
+    }
+    div { 
+        class: "box-3";
+        text { "第三个 div" } 
+    }
+    span { text { "第一个 span" } }
+    span { text { "第二个 span" } }
+}
+
+// 使用自定义组件并删除特定索引的元素
+div {
+    @Element TestBox {
+        delete div[1];      // 删除第二个 div
+        delete span[0];     // 删除第一个 span
+    }
+}

@@ -8,6 +8,7 @@
 #include "Node/Template.h"
 #include "Node/Custom.h"
 #include "Node/Style.h"
+
 #include "Node/Config.h"
 #include "Node/Import.h"
 #include "Node/Namespace.h"
@@ -123,10 +124,8 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
-        std::string tagName = currentToken_.value;
-        advance();  // 消费元素名
         try {
-            return parseElement();
+            return parseNode();  // parseNode 会处理元素
         } catch (const std::exception& e) {
             // 错误恢复：跳到下一个分号或右大括号
             while (!isAtEnd() && 
@@ -1282,7 +1281,15 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
     if (match(TokenType::LEFT_PAREN)) {
         // [Delete] (item1, item2, ...)
         while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
-            auto item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+            std::string item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+            
+            // 检查是否有索引
+            if (match(TokenType::LEFT_BRACKET)) {
+                auto indexToken = consume(TokenType::NUMBER, "Expected index");
+                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+                item += "[" + indexToken.value + "]";
+            }
+            
             deleteItems.push_back(item);
             
             if (!match(TokenType::COMMA)) {
@@ -1291,8 +1298,16 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
         }
         consume(TokenType::RIGHT_PAREN, "Expected ')'");
     } else {
-        // [Delete] item
-        auto item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+        // [Delete] item 或 [Delete] item[index]
+        std::string item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
+        
+        // 检查是否有索引
+        if (match(TokenType::LEFT_BRACKET)) {
+            auto indexToken = consume(TokenType::NUMBER, "Expected index");
+            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+            item += "[" + indexToken.value + "]";
+        }
+        
         deleteItems.push_back(item);
     }
     

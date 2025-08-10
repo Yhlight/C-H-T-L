@@ -15,7 +15,7 @@
 #include <regex>
 #include <sstream>
 #include <set>
-#include <iostream>
+
 
 namespace chtl {
 
@@ -67,10 +67,7 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     collectDefinitions(ast);
     
     // 第二遍处理：生成代码
-    // 遍历所有顶级子节点
-    for (const auto& child : ast->getChildren()) {
-        visit(child);
-    }
+    visit(ast);
     
     // 收集结果
     result_.html = htmlCollector_.getCode();
@@ -119,7 +116,7 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
                 break;
         }
         templateDefinitions_[key] = tmpl;
-        std::cout << "DEBUG: Collected Template definition: " << key << std::endl;
+
     }
     
     // 收集Custom定义
@@ -137,7 +134,7 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
                 break;
         }
         customDefinitions_[key] = custom;
-        std::cout << "DEBUG: Collected Custom definition: " << key << std::endl;
+
     }
     
     // 递归收集子节点

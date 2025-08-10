@@ -65,6 +65,9 @@ public:
     // 生成delegate函数定义
     std::string generateDelegateFunction();
     
+    // 生成增强方法（listen、animate等）
+    std::string generateEnhancedMethods();
+    
     // 处理{{&}}语法（在特定上下文中）
     std::string processAmpersandSyntax(const std::string& code, const std::string& elementContext);
     
@@ -112,6 +115,18 @@ public:
     
     // 转换{{selector}}语法为document.querySelector
     std::string transformSelectorSyntax(const std::string& code);
+    
+    // 转换单个选择器
+    std::string transformSingleSelector(const std::string& selector, const std::string& index = "");
+    
+    // 转换animate语法
+    std::string transformAnimateSyntax(const std::string& code);
+    
+    // 查找匹配的大括号
+    size_t findMatchingBrace(const std::string& code, size_t startPos);
+    
+    // 查找最近的选择器
+    std::string findNearestSelector(const std::string& code);
     
     // 包装局部script代码
     std::string wrapLocalScript(const std::string& code, const std::string& elementId);

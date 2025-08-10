@@ -1,0 +1,84 @@
+// Hello World - CHTL代码生成测试
+
+div {
+    class: "container"
+    
+    h1 {
+        id: "title"
+        "Hello CHTL!"
+        
+        style {
+            color: #67C3CC;
+            text-align: center;
+            margin: 40px 0;
+        }
+    }
+    
+    p {
+        class: "description"
+        "这是一个使用CHTL编写的简单示例。"
+    }
+    
+    button {
+        id: "click-me"
+        class: "btn-primary"
+        "点击我"
+        
+        script {
+            {{&}}->listen({
+                click: () => {
+                    alert("Hello from CHTL!");
+                    {{&}}.textContent = "已点击!";
+                    {{&}}->animate({
+                        duration: 300,
+                        easing: 'ease-out',
+                        begin: { transform: 'scale(1)' },
+                        end: { transform: 'scale(1.1)' },
+                        callback: () => {
+                            {{&}}->animate({
+                                duration: 300,
+                                easing: 'ease-in',
+                                begin: { transform: 'scale(1.1)' },
+                                end: { transform: 'scale(1)' }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+    
+    style {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn-primary {
+            display: block;
+            margin: 0 auto;
+            padding: 12px 24px;
+            background: #67C3CC;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #5AB3BC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    }
+}

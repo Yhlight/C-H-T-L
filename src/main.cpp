@@ -1,0 +1,215 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <memory>
+#include <filesystem>
+#include "Lexer/StandardLexer.h"
+#include "Parser/StandardParser.h"
+#include "Generator/Generator.h"
+#include "Context/StandardContext.h"
+
+namespace fs = std::filesystem;
+
+void printUsage(const std::string& programName) {
+    std::cout << "Usage: " << programName << " [options] <input-file>\n";
+    std::cout << "Options:\n";
+    std::cout << "  -o, --output <dir>      Output directory (default: ./dist)\n";
+    std::cout << "  -p, --platform <name>   Target platform: web, react, vue (default: web)\n";
+    std::cout << "  --inline-styles         Inline CSS in HTML\n";
+    std::cout << "  --inline-scripts        Inline JS in HTML\n";
+    std::cout << "  --no-scope-styles       Disable CSS scoping\n";
+    std::cout << "  --minify                Minify output\n";
+    std::cout << "  --source-map            Generate source maps\n";
+    std::cout << "  -h, --help              Show this help message\n";
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        printUsage(argv[0]);
+        return 1;
+    }
+    
+    // 解析命令行参数
+    std::string inputFile;
+    chtl::GeneratorOptions options;
+    options.outputPath = "./dist";
+    
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        
+        if (arg == "-h" || arg == "--help") {
+            printUsage(argv[0]);
+            return 0;
+        } else if (arg == "-o" || arg == "--output") {
+            if (i + 1 < argc) {
+                options.outputPath = argv[++i];
+            } else {
+                std::cerr << "Error: Missing output directory\n";
+                return 1;
+            }
+        } else if (arg == "-p" || arg == "--platform") {
+            if (i + 1 < argc) {
+                options.targetPlatform = argv[++i];
+            } else {
+                std::cerr << "Error: Missing platform name\n";
+                return 1;
+            }
+        } else if (arg == "--inline-styles") {
+            options.inlineStyles = true;
+        } else if (arg == "--inline-scripts") {
+            options.inlineScripts = true;
+        } else if (arg == "--no-scope-styles") {
+            options.scopeStyles = false;
+        } else if (arg == "--minify") {
+            options.minify = true;
+        } else if (arg == "--source-map") {
+            options.sourceMap = true;
+        } else if (arg[0] != '-') {
+            inputFile = arg;
+        } else {
+            std::cerr << "Error: Unknown option: " << arg << "\n";
+            return 1;
+        }
+    }
+    
+    if (inputFile.empty()) {
+        std::cerr << "Error: No input file specified\n";
+        printUsage(argv[0]);
+        return 1;
+    }
+    
+    // 读取输入文件
+    std::ifstream file(inputFile);
+    if (!file.is_open()) {
+        std::cerr << "Error: Cannot open file: " << inputFile << "\n";
+        return 1;
+    }
+    
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string input = buffer.str();
+    file.close();
+    
+    // 创建上下文
+    auto context = std::make_shared<chtl::StandardContext>();
+    
+    // 词法分析
+    std::cout << "Lexing...\n";
+    chtl::StandardLexer lexer(input, context);
+    auto tokens = lexer.tokenize();
+    
+    if (context->hasErrors()) {
+        std::cerr << "Lexer errors:\n";
+        for (const auto& error : context->getErrors()) {
+            std::cerr << "  " << error << "\n";
+        }
+        return 1;
+    }
+    
+    // 语法分析
+    std::cout << "Parsing...\n";
+    chtl::StandardParser parser(tokens, context);
+    auto ast = parser.parse();
+    
+    if (!ast || context->hasErrors()) {
+        std::cerr << "Parser errors:\n";
+        for (const auto& error : context->getErrors()) {
+            std::cerr << "  " << error << "\n";
+        }
+        return 1;
+    }
+    
+    // 代码生成
+    std::cout << "Generating code for platform: " << options.targetPlatform << "\n";
+    auto generator = chtl::createGenerator(options.targetPlatform, options);
+    auto result = generator->generate(ast);
+    
+    // 检查生成错误
+    if (!result.errors.empty()) {
+        std::cerr << "Generation errors:\n";
+        for (const auto& error : result.errors) {
+            std::cerr << "  " << error << "\n";
+        }
+        return 1;
+    }
+    
+    // 显示警告
+    if (!result.warnings.empty()) {
+        std::cout << "Warnings:\n";
+        for (const auto& warning : result.warnings) {
+            std::cout << "  " << warning << "\n";
+        }
+    }
+    
+    // 创建输出目录
+    fs::create_directories(options.outputPath);
+    
+    // 写入输出文件
+    if (options.inlineStyles && options.inlineScripts) {
+        // 所有内容都内联在HTML中
+        std::string outputFile = fs::path(options.outputPath) / "index.html";
+        std::ofstream out(outputFile);
+        if (!out.is_open()) {
+            std::cerr << "Error: Cannot create output file: " << outputFile << "\n";
+            return 1;
+        }
+        out << result.html;
+        out.close();
+        std::cout << "Generated: " << outputFile << "\n";
+    } else {
+        // 分别输出文件
+        
+        // HTML
+        std::string htmlFile = fs::path(options.outputPath) / "index.html";
+        std::ofstream htmlOut(htmlFile);
+        if (!htmlOut.is_open()) {
+            std::cerr << "Error: Cannot create HTML file: " << htmlFile << "\n";
+            return 1;
+        }
+        htmlOut << result.html;
+        htmlOut.close();
+        std::cout << "Generated: " << htmlFile << "\n";
+        
+        // CSS
+        if (!result.css.empty() && !options.inlineStyles) {
+            std::string cssFile = fs::path(options.outputPath) / "styles.css";
+            std::ofstream cssOut(cssFile);
+            if (!cssOut.is_open()) {
+                std::cerr << "Error: Cannot create CSS file: " << cssFile << "\n";
+                return 1;
+            }
+            cssOut << result.css;
+            cssOut.close();
+            std::cout << "Generated: " << cssFile << "\n";
+        }
+        
+        // JavaScript
+        if (!result.js.empty() && !options.inlineScripts) {
+            std::string jsFile = fs::path(options.outputPath) / "app.js";
+            std::ofstream jsOut(jsFile);
+            if (!jsOut.is_open()) {
+                std::cerr << "Error: Cannot create JS file: " << jsFile << "\n";
+                return 1;
+            }
+            jsOut << result.js;
+            jsOut.close();
+            std::cout << "Generated: " << jsFile << "\n";
+        }
+        
+        // Source Map
+        if (!result.sourceMap.empty()) {
+            std::string mapFile = fs::path(options.outputPath) / "app.js.map";
+            std::ofstream mapOut(mapFile);
+            if (!mapOut.is_open()) {
+                std::cerr << "Error: Cannot create source map file: " << mapFile << "\n";
+                return 1;
+            }
+            mapOut << result.sourceMap;
+            mapOut.close();
+            std::cout << "Generated: " << mapFile << "\n";
+        }
+    }
+    
+    std::cout << "Compilation completed successfully!\n";
+    return 0;
+}

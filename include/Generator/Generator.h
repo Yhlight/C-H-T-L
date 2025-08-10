@@ -139,6 +139,7 @@ public:
     using Generator::Generator;
     
     GeneratorResult generate(const std::shared_ptr<Node>& ast) override;
+    void visit(const std::shared_ptr<Node>& node) override;
     
 protected:
     void visitElement(const std::shared_ptr<Element>& element) override;
@@ -159,6 +160,16 @@ private:
     void expandComponent(const std::string& componentName,
                          const std::unordered_map<std::string, std::string>& props,
                          const std::vector<std::shared_ptr<Node>>& children);
+    
+    // 约束检查
+    bool checkConstraints(const std::shared_ptr<Node>& node, Node* parent);
+    bool matchesConstraint(const std::shared_ptr<Node>& node, const std::string& constraint);
+    
+    // 变量处理
+    std::string processVarReferences(const std::string& css);
+    std::string findVarValue(const std::string& varGroupName, const std::string& propertyName);
+    void processStyleContent(const std::shared_ptr<Style>& style);
+    std::string expandVarGroup(const std::string& varGroupName);
 };
 
 // React平台生成器

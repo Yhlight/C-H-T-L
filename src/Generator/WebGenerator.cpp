@@ -5,10 +5,14 @@
 #include "Node/Script.h"
 #include "Node/Custom.h"
 #include "Node/Operate.h"
+#include "Node/Template.h"
+#include "Node/Reference.h"
 #include "Runtime/ChtlJsRuntime.h"
 #include <regex>
 #include <algorithm>
 #include <set>
+#include <variant>
+#include <tuple>
 
 namespace chtl {
 
@@ -87,6 +91,104 @@ void WebGenerator::injectRuntimeCode() {
         // 在用户代码之前注入运行时
         result_.js = runtimeCode + "\n" + result_.js;
     }
+}
+
+void WebGenerator::visit(const std::shared_ptr<Node>& node) {
+    if (!node) return;
+    
+    // 检查父节点的约束
+    if (node->getParent() && !checkConstraints(node, node->getParent())) {
+        // 约束违反，跳过此节点
+        result_.warnings.push_back("Constraint violation: " + node->toString() + " not allowed in parent");
+        return;
+    }
+    
+    // 调用基类的visit方法
+    Generator::visit(node);
+}
+
+bool WebGenerator::checkConstraints(const std::shared_ptr<Node>& node, Node* parent) {
+    if (!parent) return true;
+    
+    const auto& constraints = parent->getConstraints();
+    if (constraints.empty()) return true;
+    
+    for (const auto& constraint : constraints) {
+        if (matchesConstraint(node, constraint)) {
+            // except表示"禁止"，所以匹配就是违反
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const std::string& constraint) {
+    // HTML元素约束
+    if (constraint == "@Html") {
+        return node->getType() == NodeType::ELEMENT;
+    }
+    
+    // [Custom]类型约束
+    if (constraint == "[Custom]") {
+        return node->getType() == NodeType::CUSTOM;
+    }
+    
+    // [Template]类型约束
+    if (constraint == "[Template]") {
+        return node->getType() == NodeType::TEMPLATE;
+    }
+    
+    // 具体类型约束，如 "[Template] @Var"
+    if (constraint.find("[Template] @") == 0) {
+        if (auto tmpl = std::dynamic_pointer_cast<Template>(node)) {
+            std::string typeStr = constraint.substr(12); // 跳过 "[Template] @"
+            if (typeStr == "Style" && tmpl->getTemplateType() == Template::TemplateType::STYLE) return true;
+            if (typeStr == "Element" && tmpl->getTemplateType() == Template::TemplateType::ELEMENT) return true;
+            if (typeStr == "Var" && tmpl->getTemplateType() == Template::TemplateType::VAR) return true;
+        }
+        return false;
+    }
+    
+    // 具体类型约束，如 "[Custom] @Element Box"
+    if (constraint.find("[Custom] @") == 0) {
+        if (auto custom = std::dynamic_pointer_cast<Custom>(node)) {
+            size_t atPos = constraint.find('@');
+            size_t spacePos = constraint.find(' ', atPos);
+            if (spacePos != std::string::npos) {
+                // 有具体名称
+                std::string name = constraint.substr(spacePos + 1);
+                return custom->getCustomName() == name;
+            } else {
+                // 只有类型
+                std::string typeStr = constraint.substr(atPos + 1);
+                if (typeStr == "Style" && custom->getCustomType() == Custom::CustomType::STYLE) return true;
+                if (typeStr == "Element" && custom->getCustomType() == Custom::CustomType::ELEMENT) return true;
+                if (typeStr == "Var" && custom->getCustomType() == Custom::CustomType::VAR) return true;
+            }
+        }
+        return false;
+    }
+    
+    // 具体元素名约束（如 "span", "div"）
+    if (node->getType() == NodeType::ELEMENT) {
+        auto element = std::static_pointer_cast<Element>(node);
+        return element->getTagName() == constraint;
+    }
+    
+    // 引用约束（如 "@Element Box"）
+    if (node->getType() == NodeType::REFERENCE) {
+        auto attrs = node->getAttributes();
+        if (attrs.find("name") != attrs.end()) {
+            // 需要从variant中提取字符串
+            if (std::holds_alternative<std::string>(attrs.at("name"))) {
+                std::string refName = std::get<std::string>(attrs.at("name"));
+                return constraint.find(refName) != std::string::npos;
+            }
+        }
+    }
+    
+    return false;
 }
 
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
@@ -395,7 +497,10 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
         }
     }
     
-    std::string css = style->getContent();
+    std::string css = style->getCssContent();
+    
+    // 处理变量组引用
+    css = processVarReferences(css);
     
     // 处理嵌套规则
     if (css.find("&") != std::string::npos && isScoped) {
@@ -414,6 +519,130 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
     }
     
     cssCollector_.appendLine(css);
+}
+
+std::string WebGenerator::processVarReferences(const std::string& css) {
+    std::string result = css;
+    
+    // 查找所有的变量组引用，格式如：VarName(propertyName)
+    std::regex varRegex(R"((\w+)\((\w+)(?:\s*=\s*([^)]+))?\))");
+    std::smatch match;
+    std::string::const_iterator searchStart(css.cbegin());
+    
+    std::vector<std::tuple<size_t, size_t, std::string>> replacements;
+    
+    while (std::regex_search(searchStart, css.cend(), match, varRegex)) {
+        std::string varGroupName = match[1];
+        std::string propertyName = match[2];
+        std::string overrideValue = match[3]; // 可能为空
+        
+        size_t startPos = match.position() + (searchStart - css.cbegin());
+        size_t length = match.length();
+        
+        std::string replacementValue;
+        
+        if (!overrideValue.empty()) {
+            // 使用特例化的值
+            replacementValue = overrideValue;
+        } else {
+            // 查找变量组定义
+            replacementValue = findVarValue(varGroupName, propertyName);
+        }
+        
+        if (!replacementValue.empty()) {
+            replacements.push_back({startPos, length, replacementValue});
+        }
+        
+        searchStart = match.suffix().first;
+    }
+    
+    // 从后向前替换，避免位置偏移
+    for (auto it = replacements.rbegin(); it != replacements.rend(); ++it) {
+        result.replace(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it));
+    }
+    
+    return result;
+}
+
+std::string WebGenerator::findVarValue(const std::string& varGroupName, const std::string& propertyName) {
+    // 先在Custom定义中查找
+    std::string key = "@Var " + varGroupName;
+    auto customIt = customDefinitions_.find(key);
+    if (customIt != customDefinitions_.end()) {
+        auto custom = std::static_pointer_cast<Custom>(customIt->second);
+        auto props = custom->getProperties();
+        if (props.find(propertyName) != props.end()) {
+            return props.at(propertyName);
+        }
+    }
+    
+    // 再在Template定义中查找
+    auto templateIt = templateDefinitions_.find(key);
+    if (templateIt != templateDefinitions_.end()) {
+        auto tmpl = std::static_pointer_cast<Template>(templateIt->second);
+        auto params = tmpl->getParameters();
+        if (params.find(propertyName) != params.end()) {
+            return params.at(propertyName);
+        }
+    }
+    
+    // 未找到，返回原始引用
+    result_.warnings.push_back("Variable not found: " + varGroupName + "(" + propertyName + ")");
+    return varGroupName + "(" + propertyName + ")";
+}
+
+// 处理样式中的@Var引用
+void WebGenerator::processStyleContent(const std::shared_ptr<Style>& style) {
+    std::string content = style->getCssContent();
+    
+    // 查找@Var引用
+    std::regex varRefRegex(R"(@Var\s+(\w+)\s*;)");
+    std::smatch match;
+    std::string::const_iterator searchStart(content.cbegin());
+    
+    while (std::regex_search(searchStart, content.cend(), match, varRefRegex)) {
+        std::string varName = match[1];
+        
+        // 查找变量组定义并展开所有属性
+        std::string replacement = expandVarGroup(varName);
+        
+        size_t startPos = match.position() + (searchStart - content.cbegin());
+        content.replace(startPos, match.length(), replacement);
+        
+        searchStart = content.cbegin() + startPos + replacement.length();
+    }
+    
+    style->setContent(content);
+}
+
+std::string WebGenerator::expandVarGroup(const std::string& varGroupName) {
+    std::stringstream ss;
+    
+    // 查找变量组定义
+    std::string key = "@Var " + varGroupName;
+    
+    // 先在Custom定义中查找
+    auto customIt = customDefinitions_.find(key);
+    if (customIt != customDefinitions_.end()) {
+        auto custom = std::static_pointer_cast<Custom>(customIt->second);
+        for (const auto& [prop, value] : custom->getProperties()) {
+            ss << prop << ": " << value << ";\n";
+        }
+        return ss.str();
+    }
+    
+    // 再在Template定义中查找
+    auto templateIt = templateDefinitions_.find(key);
+    if (templateIt != templateDefinitions_.end()) {
+        auto tmpl = std::static_pointer_cast<Template>(templateIt->second);
+        for (const auto& [prop, value] : tmpl->getParameters()) {
+            ss << prop << ": " << value << ";\n";
+        }
+        return ss.str();
+    }
+    
+    result_.warnings.push_back("Variable group not found: " + varGroupName);
+    return "/* @Var " + varGroupName + " not found */";
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {

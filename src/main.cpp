@@ -7,6 +7,7 @@
 #include "Parser/StandardParser.h"
 #include "Generator/Generator.h"
 #include "Context/StandardContext.h"
+#include "Context/EnhancedContext.h"
 
 namespace fs = std::filesystem;
 
@@ -90,8 +91,10 @@ int main(int argc, char* argv[]) {
     std::string input = buffer.str();
     file.close();
     
-    // 创建上下文
-    auto context = std::make_shared<chtl::StandardContext>();
+    // 创建增强上下文（带错误处理）
+    auto context = chtl::createEnhancedContext();
+    context->setSourceFile(inputFile);
+    context->setSourceCode(input);
     
     // 词法分析
     std::cout << "Lexing...\n";
@@ -99,10 +102,8 @@ int main(int argc, char* argv[]) {
     auto tokens = lexer.tokenize();
     
     if (context->hasErrors()) {
-        std::cerr << "Lexer errors:\n";
-        for (const auto& error : context->getErrors()) {
-            std::cerr << "  " << error << "\n";
-        }
+        std::cerr << "\n" << context->formatErrors() << "\n";
+        std::cerr << context->formatSummary() << "\n";
         return 1;
     }
     
@@ -112,10 +113,8 @@ int main(int argc, char* argv[]) {
     auto ast = parser.parse();
     
     if (!ast || context->hasErrors()) {
-        std::cerr << "Parser errors:\n";
-        for (const auto& error : context->getErrors()) {
-            std::cerr << "  " << error << "\n";
-        }
+        std::cerr << "\n" << context->formatErrors() << "\n";
+        std::cerr << context->formatSummary() << "\n";
         return 1;
     }
     

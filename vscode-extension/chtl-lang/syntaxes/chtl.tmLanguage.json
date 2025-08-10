@@ -1,0 +1,274 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CHTL",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#imports" },
+    { "include": "#exports" },
+    { "include": "#config" },
+    { "include": "#info" },
+    { "include": "#custom" },
+    { "include": "#template" },
+    { "include": "#style-block" },
+    { "include": "#script-block" },
+    { "include": "#elements" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.chtl",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.chtl",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "imports": {
+      "patterns": [
+        {
+          "name": "keyword.control.import.chtl",
+          "match": "\\b(Import)\\b",
+          "captures": {
+            "1": { "name": "keyword.control.import.chtl" }
+          }
+        },
+        {
+          "match": "(Import)\\s+(@\\w+)\\s+(from)\\s+(\"[^\"]*\")",
+          "captures": {
+            "1": { "name": "keyword.control.import.chtl" },
+            "2": { "name": "variable.other.chtl" },
+            "3": { "name": "keyword.control.from.chtl" },
+            "4": { "name": "string.quoted.double.chtl" }
+          }
+        }
+      ]
+    },
+    "exports": {
+      "patterns": [
+        {
+          "begin": "\\[Export\\]",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.export.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.export.chtl"
+        }
+      ]
+    },
+    "config": {
+      "patterns": [
+        {
+          "begin": "\\[Config\\]",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.config.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.config.chtl"
+        }
+      ]
+    },
+    "info": {
+      "patterns": [
+        {
+          "begin": "\\[Info\\]",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.info.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.info.chtl"
+        }
+      ]
+    },
+    "custom": {
+      "patterns": [
+        {
+          "match": "\\[(Custom|Template|Style|Script|Namespace)\\]\\s+(@\\w+)\\s+(\\w+)",
+          "captures": {
+            "1": { "name": "storage.type.chtl" },
+            "2": { "name": "storage.modifier.chtl" },
+            "3": { "name": "entity.name.type.chtl" }
+          }
+        },
+        {
+          "match": "@(Element|Style|Var|Function)\\s+(\\w+)",
+          "captures": {
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.type.chtl" }
+          }
+        },
+        {
+          "match": "@\\w+",
+          "name": "variable.other.chtl"
+        }
+      ]
+    },
+    "template": {
+      "patterns": [
+        {
+          "begin": "\\[Template\\]",
+          "beginCaptures": {
+            "0": { "name": "storage.type.template.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.template.chtl"
+        }
+      ]
+    },
+    "style-block": {
+      "patterns": [
+        {
+          "begin": "\\bstyle\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.style.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.embedded.block.css",
+          "patterns": [
+            { "include": "source.css" }
+          ]
+        },
+        {
+          "begin": "\\[Style\\]",
+          "beginCaptures": {
+            "0": { "name": "storage.type.style.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.style.chtl"
+        }
+      ]
+    },
+    "script-block": {
+      "patterns": [
+        {
+          "begin": "\\bscript\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.script.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.embedded.block.javascript",
+          "patterns": [
+            { "include": "#chtl-js-syntax" },
+            { "include": "source.js" }
+          ]
+        },
+        {
+          "begin": "\\[Script\\]",
+          "beginCaptures": {
+            "0": { "name": "storage.type.script.chtl" }
+          },
+          "end": "(?=\\{)",
+          "name": "meta.script.chtl"
+        }
+      ]
+    },
+    "chtl-js-syntax": {
+      "patterns": [
+        {
+          "match": "\\{\\{&\\}\\}",
+          "name": "variable.language.this.chtl"
+        },
+        {
+          "match": "\\{\\{[#.]?[\\w\\s\\[\\]]+\\}\\}",
+          "name": "variable.other.selector.chtl"
+        },
+        {
+          "match": "->",
+          "name": "keyword.operator.chtl"
+        },
+        {
+          "match": "\\b(listen|animate|delegate)\\b",
+          "name": "support.function.chtl"
+        }
+      ]
+    },
+    "elements": {
+      "patterns": [
+        {
+          "match": "\\b(div|span|p|a|img|ul|ol|li|h[1-6]|button|input|form|table|tr|td|th|header|footer|main|nav|section|article)\\b\\s*(?=\\{)",
+          "captures": {
+            "1": { "name": "entity.name.tag.html.chtl" }
+          }
+        },
+        {
+          "match": "\\b(id|class|style|href|src|alt|type|name|value|placeholder|disabled|checked)\\s*:",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.chtl",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.chtl",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.chtl",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.chtl",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.template.chtl",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "constant.character.escape.chtl",
+              "match": "\\\\."
+            },
+            {
+              "name": "variable.interpolation.chtl",
+              "match": "\\$\\{[^}]+\\}"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.chtl",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.chtl",
+          "match": "\\b(if|else|for|while|return|break|continue|function|const|let|var|true|false|null|undefined)\\b"
+        },
+        {
+          "name": "keyword.other.chtl",
+          "match": "\\b(from|as|export|import)\\b"
+        },
+        {
+          "name": "storage.type.chtl",
+          "match": "\\b(string|number|boolean|array|object|any)\\b"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.chtl"
+}

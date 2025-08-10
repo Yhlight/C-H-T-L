@@ -1,0 +1,207 @@
+{
+  "Import Statement": {
+    "prefix": "imp",
+    "body": [
+      "Import @${1:Name} from \"${2:module}\""
+    ],
+    "description": "Import statement"
+  },
+  "Import All": {
+    "prefix": "impa",
+    "body": [
+      "Import @${1:Name} from \"${2:module}.*\""
+    ],
+    "description": "Import all from module"
+  },
+  "Custom Element": {
+    "prefix": "custom",
+    "body": [
+      "[Custom] @Element ${1:ComponentName} {",
+      "  props: {",
+      "    ${2:propName}: ${3:string} = ${4:\"default\"}",
+      "  }",
+      "  ",
+      "  render: {",
+      "    div {",
+      "      $0",
+      "    }",
+      "  }",
+      "}"
+    ],
+    "description": "Custom element component"
+  },
+  "Template Function": {
+    "prefix": "template",
+    "body": [
+      "[Template] @Function ${1:functionName}(${2:params}) {",
+      "  ${3:// function body}",
+      "  return {",
+      "    $0",
+      "  }",
+      "}"
+    ],
+    "description": "Template function"
+  },
+  "Style Block": {
+    "prefix": "style",
+    "body": [
+      "style {",
+      "  ${1:.className} {",
+      "    $0",
+      "  }",
+      "}"
+    ],
+    "description": "Style block"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": [
+      "script {",
+      "  $0",
+      "}"
+    ],
+    "description": "Local script block"
+  },
+  "Element with Attributes": {
+    "prefix": "div",
+    "body": [
+      "div {",
+      "  ${1:id: \"${2:myId}\"}",
+      "  ${3:class: \"${4:myClass}\"}",
+      "  $0",
+      "}"
+    ],
+    "description": "Div element with attributes"
+  },
+  "Button with Script": {
+    "prefix": "btn",
+    "body": [
+      "button {",
+      "  id: \"${1:btn-id}\"",
+      "  class: \"${2:btn}\"",
+      "  \"${3:Click me}\"",
+      "  ",
+      "  script {",
+      "    {{&}}->listen({",
+      "      click: () => {",
+      "        ${4:// handle click}",
+      "      }",
+      "    });",
+      "  }",
+      "}"
+    ],
+    "description": "Button with click handler"
+  },
+  "CHTL JS Selector": {
+    "prefix": "sel",
+    "body": [
+      "{{${1:#id}}}"
+    ],
+    "description": "CHTL JS selector"
+  },
+  "CHTL JS This": {
+    "prefix": "this",
+    "body": [
+      "{{&}}"
+    ],
+    "description": "CHTL JS current element reference"
+  },
+  "Listen Event": {
+    "prefix": "listen",
+    "body": [
+      "{{${1:&}}}->listen({",
+      "  ${2:click}: (${3:e}) => {",
+      "    $0",
+      "  }",
+      "})"
+    ],
+    "description": "Listen to events"
+  },
+  "Animate": {
+    "prefix": "animate",
+    "body": [
+      "{{${1:&}}}->animate({",
+      "  duration: ${2:300},",
+      "  easing: '${3:ease-out}',",
+      "  begin: { ${4:opacity: 0} },",
+      "  end: { ${5:opacity: 1} }",
+      "})"
+    ],
+    "description": "Animate element"
+  },
+  "Event Delegation": {
+    "prefix": "delegate",
+    "body": [
+      "{{\"${1:#parent}\"}}->delegate({",
+      "  target: \"${2:.item}\",",
+      "  ${3:click}: function(e) {",
+      "    $0",
+      "  }",
+      "})"
+    ],
+    "description": "Event delegation"
+  },
+  "Config Block": {
+    "prefix": "config",
+    "body": [
+      "[Config] {",
+      "  title: \"${1:Page Title}\"",
+      "  lang: \"${2:zh-CN}\"",
+      "  $0",
+      "}"
+    ],
+    "description": "Configuration block"
+  },
+  "Info Block": {
+    "prefix": "info",
+    "body": [
+      "[Info] {",
+      "  name: \"${1:ModuleName}\"",
+      "  version: \"${2:1.0.0}\"",
+      "  description: \"${3:Module description}\"",
+      "  author: \"${4:Author}\"",
+      "  license: \"${5:MIT}\"",
+      "}"
+    ],
+    "description": "Module info block"
+  },
+  "Export Block": {
+    "prefix": "export",
+    "body": [
+      "[Export] {",
+      "  @Element ${1:ComponentName}",
+      "  @Style ${2:StyleName}",
+      "  @Var ${3:functionName}",
+      "}"
+    ],
+    "description": "Export block"
+  },
+  "For Loop": {
+    "prefix": "for",
+    "body": [
+      "@For {",
+      "  each: ${1:items}",
+      "  as: \"${2:item}\"",
+      "  children: ({ ${2:item}, ${3:index} }) => {",
+      "    $0",
+      "  }",
+      "}"
+    ],
+    "description": "For loop component"
+  },
+  "If Condition": {
+    "prefix": "if",
+    "body": [
+      "@If {",
+      "  condition: ${1:true}",
+      "  then: {",
+      "    $0",
+      "  }",
+      "  else: {",
+      "    ${2:// else content}",
+      "  }",
+      "}"
+    ],
+    "description": "If condition component"
+  }
+}

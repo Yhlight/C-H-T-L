@@ -1,0 +1,39 @@
+// 错误处理测试文件
+
+// 1. 未闭合的字符串
+div {
+    class: "container
+    id: "main"
+}
+
+// 2. 未闭合的块
+div {
+    p { "Hello"
+    span { "World" }
+
+
+// 3. 无效的Import语法
+Import Button from
+
+// 4. 重复的属性
+button {
+    id: "btn1"
+    id: "btn2"
+    "Click me"
+}
+
+// 5. 未定义的引用
+@UndefinedComponent {
+    prop: "value"
+}
+
+// 6. 语法错误
+div {
+    class "missing-colon"
+}
+
+// 7. 未闭合的注释
+/* This is an unclosed comment
+div {
+    "Content"
+}

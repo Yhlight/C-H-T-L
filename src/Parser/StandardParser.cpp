@@ -285,10 +285,12 @@ std::shared_ptr<Node> StandardParser::parseStyleBlock() {
 }
 
 void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
-    std::string cssContent;
+    std::string inlineStyles;  // 收集内联样式
     
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
+        
+        if (check(TokenType::RIGHT_BRACE)) break;
         
         // 检查@Style, @Var引用
         if (check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
@@ -299,35 +301,53 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
             continue;
         }
         
-        // 检查类选择器或ID选择器（自动化类名/ID功能）
-        if (check(TokenType::DOT) || currentToken_.value == "#") {
+        // 检查类选择器 .className
+        if (check(TokenType::DOT)) {
             parseSelectorBlock(styleNode);
             continue;
         }
         
-        // 检查&符号（上下文推导）
+        // 检查ID选择器 #id
+        if (currentToken_.value == "#") {
+            parseSelectorBlock(styleNode);
+            continue;
+        }
+        
+        // 检查&符号（仅用于伪类和伪元素）
         if (check(TokenType::AMPERSAND)) {
             parseContextSelector(styleNode);
             continue;
         }
         
-        // 普通CSS属性
-        if (checkAttribute()) {
-            parseCssProperty(cssContent);
+        // 其他都是内联样式属性
+        if (check(TokenType::IDENTIFIER)) {
+            std::string property;
+            parseCssProperty(property);
+            inlineStyles += property;
         } else {
             advance();
         }
     }
     
-    if (!cssContent.empty()) {
-        styleNode->setContent(cssContent);
+    // 将收集的内联样式设置到父元素的style属性
+    if (!inlineStyles.empty() && styleNode->getParent()) {
+        auto parent = styleNode->getParent();
+        auto existingStyle = parent->getAttribute("style");
+        if (std::holds_alternative<std::string>(existingStyle)) {
+            std::string existing = std::get<std::string>(existingStyle);
+            if (!existing.empty() && existing.back() != ';') {
+                existing += "; ";
+            }
+            inlineStyles = existing + inlineStyles;
+        }
+        parent->setAttribute("style", inlineStyles);
     }
 }
 
 void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
     std::string selector;
     
-    // 解析选择器
+    // 解析选择器（.class 或 #id）
     if (match(TokenType::DOT)) {
         selector = ".";
         auto className = consume(TokenType::IDENTIFIER, "Expected class name");
@@ -343,7 +363,7 @@ void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
         auto idName = consume(TokenType::IDENTIFIER, "Expected id name");
         selector += idName.value;
         
-        // 自动添加ID到父元素
+        // 自动设置ID到父元素
         if (auto parent = styleNode->getParent()) {
             parent->setAttribute("id", idName.value);
         }
@@ -356,12 +376,19 @@ void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
     globalStyle->setType(Style::StyleScope::GLOBAL);
     globalStyle->setSelector(selector);
     
+    // 解析样式内容
     std::string cssContent;
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        parseCssProperty(cssContent);
+        if (check(TokenType::IDENTIFIER)) {
+            parseCssProperty(cssContent);
+        } else {
+            advance();
+        }
     }
     
     globalStyle->setContent(cssContent);
+    
+    // 添加到样式节点（后续会被提升到全局）
     styleNode->addChild(globalStyle);
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
@@ -370,18 +397,62 @@ void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
 void StandardParser::parseContextSelector(std::shared_ptr<Style> styleNode) {
     consume(TokenType::AMPERSAND, "&");
     
-    std::string selector = "&";
+    // &只能后跟:hover或::before这样的伪类/伪元素
+    if (!check(TokenType::COLON)) {
+        addError("& must be followed by pseudo-class or pseudo-element");
+        skipToNextStatement();
+        return;
+    }
+    
+    std::string selector;
+    
+    // 获取父元素的类名或ID来替换&
+    if (auto parent = styleNode->getParent()) {
+        auto classes = parent->getClasses();
+        if (!classes.empty()) {
+            // 优先使用类名
+            selector = "." + classes[0];
+        } else {
+            // 其次使用ID
+            auto id = parent->getAttribute("id");
+            if (std::holds_alternative<std::string>(id)) {
+                selector = "#" + std::get<std::string>(id);
+            }
+        }
+    }
+    
+    // 如果父元素既没有类名也没有ID，需要自动生成一个类名
+    if (selector.empty()) {
+        // 基于位置生成唯一类名
+        std::string autoClass = "chtl-auto-" + 
+            std::to_string(currentToken_.line) + "-" + 
+            std::to_string(currentToken_.column);
+        
+        if (auto parent = styleNode->getParent()) {
+            parent->addClass(autoClass);
+        }
+        selector = "." + autoClass;
+    }
     
     // 解析伪类或伪元素
+    consume(TokenType::COLON, ":");
+    selector += ":";
+    
     if (match(TokenType::COLON)) {
-        selector += ":";
-        
-        if (match(TokenType::COLON)) {
-            selector += ":";  // 伪元素
+        selector += ":";  // 伪元素 ::
+    }
+    
+    auto pseudo = consume(TokenType::IDENTIFIER, "Expected pseudo-class or pseudo-element name");
+    selector += pseudo.value;
+    
+    // 检查是否有括号（如:nth-child(2)）
+    if (match(TokenType::LEFT_PAREN)) {
+        selector += "(";
+        while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+            selector += advance().value;
         }
-        
-        auto pseudo = consume(TokenType::IDENTIFIER, "Expected pseudo-class or pseudo-element");
-        selector += pseudo.value;
+        consume(TokenType::RIGHT_PAREN, ")");
+        selector += ")";
     }
     
     consume(TokenType::LEFT_BRACE, "Expected '{'");
@@ -391,12 +462,19 @@ void StandardParser::parseContextSelector(std::shared_ptr<Style> styleNode) {
     globalStyle->setType(Style::StyleScope::GLOBAL);
     globalStyle->setSelector(selector);
     
+    // 解析样式内容
     std::string cssContent;
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-        parseCssProperty(cssContent);
+        if (check(TokenType::IDENTIFIER)) {
+            parseCssProperty(cssContent);
+        } else {
+            advance();
+        }
     }
     
     globalStyle->setContent(cssContent);
+    
+    // 添加到样式节点（后续会被提升到全局）
     styleNode->addChild(globalStyle);
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");

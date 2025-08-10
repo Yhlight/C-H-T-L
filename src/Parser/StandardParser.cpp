@@ -1364,9 +1364,11 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     
     // 路径（支持字符串或标识符序列）
     std::string path;
+    bool isStringLiteral = false;
     
     if (check(TokenType::STRING_LITERAL)) {
         // 字符串路径
+        isStringLiteral = true;
         path = advance().value;
         // 移除引号
         if (path.size() >= 2 && path.front() == '"' && path.back() == '"') {
@@ -1386,12 +1388,12 @@ std::shared_ptr<Node> StandardParser::parseImport() {
                 break;
             }
         }
-    }
-    
-    // 处理路径中的.表示/
-    for (size_t i = 0; i < path.length(); ++i) {
-        if (path[i] == '.') {
-            path[i] = '/';
+        
+        // 只对标识符序列进行点号转换，不对字符串字面量进行转换
+        for (size_t i = 0; i < path.length(); ++i) {
+            if (path[i] == '.') {
+                path[i] = '/';
+            }
         }
     }
     
@@ -1401,12 +1403,6 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     if (match(TokenType::AS)) {
         auto alias = consume(TokenType::IDENTIFIER, "Expected alias").value;
         importNode->setAlias(alias);
-    }
-    
-    // inline关键字（必须在as之后）
-    if (check(TokenType::IDENTIFIER) && currentToken_.value == "inline") {
-        advance(); // 消费inline
-        importNode->setInline(true);
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");

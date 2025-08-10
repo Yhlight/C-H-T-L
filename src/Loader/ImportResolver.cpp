@@ -186,58 +186,11 @@ bool ImportResolver::fileExists(const std::string& path) const {
 std::string ImportResolver::normalizePath(const std::string& path) const {
     std::string normalized = path;
     
-    // 替换所有的.为/（除了文件扩展名中的.）
-    size_t lastDot = normalized.rfind('.');
-    size_t lastSlash = normalized.rfind('/');
-    size_t lastBackslash = normalized.rfind('\\');
-    
-    // 如果最后一个.在最后一个路径分隔符之后，且前面还有其他字符，可能是扩展名
-    bool hasExtension = false;
-    if (lastDot != std::string::npos) {
-        size_t lastSep = std::string::npos;
-        if (lastSlash != std::string::npos) lastSep = lastSlash;
-        if (lastBackslash != std::string::npos && 
-            (lastSep == std::string::npos || lastBackslash > lastSep)) {
-            lastSep = lastBackslash;
-        }
-        
-        if (lastSep == std::string::npos || lastDot > lastSep) {
-            // 检查是否是有效的扩展名（.后面有字符）
-            if (lastDot + 1 < normalized.length()) {
-                hasExtension = true;
-            }
-        }
-    }
-    
-    // 替换路径中的.为/，但保留扩展名
-    if (hasExtension) {
-        // 只替换扩展名之前的.
-        for (size_t i = 0; i < lastDot; ++i) {
-            if (normalized[i] == '.') {
-                // 确保不是相对路径的开头（如./或../）
-                if (i == 0 || (i > 0 && normalized[i-1] != '.')) {
-                    if (i + 1 >= normalized.length() || normalized[i+1] != '.') {
-                        normalized[i] = '/';
-                    }
-                }
-            }
-        }
-    } else {
-        // 没有扩展名，替换所有的.
-        for (size_t i = 0; i < normalized.length(); ++i) {
-            if (normalized[i] == '.') {
-                // 确保不是相对路径的开头（如./或../）
-                if (i == 0 || (i > 0 && normalized[i-1] != '.')) {
-                    if (i + 1 >= normalized.length() || normalized[i+1] != '.') {
-                        normalized[i] = '/';
-                    }
-                }
-            }
-        }
-    }
-    
     // 统一路径分隔符
     std::replace(normalized.begin(), normalized.end(), '\\', '/');
+    
+    // 注意：点号转换应该在解析阶段处理，而不是在这里
+    // 因为在字符串字面量中的点号（如"layout.html"）不应该被转换
     
     return normalized;
 }

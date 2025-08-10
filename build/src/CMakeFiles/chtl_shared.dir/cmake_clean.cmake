@@ -50,6 +50,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o"
   "CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o.d"
+  "CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.o"
+  "CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.o"
   "CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.o.d"
   "CMakeFiles/chtl_shared.dir/Node/Comment.cpp.o"

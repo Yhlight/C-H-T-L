@@ -33,6 +33,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Lexer/StandardLexer.cpp" "src/CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Lexer/StandardLexer.cpp.o.d"
   "/workspace/src/Loader/DependencyGraph.cpp" "src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o.d"
   "/workspace/src/Loader/ImportManager.cpp" "src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o.d"
+  "/workspace/src/Loader/ImportProcessor.cpp" "src/CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.o.d"
   "/workspace/src/Loader/ImportResolver.cpp" "src/CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Loader/ImportResolver.cpp.o.d"
   "/workspace/src/Node/Comment.cpp" "src/CMakeFiles/chtl_shared.dir/Node/Comment.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Node/Comment.cpp.o.d"
   "/workspace/src/Node/Config.cpp" "src/CMakeFiles/chtl_shared.dir/Node/Config.cpp.o" "gcc" "src/CMakeFiles/chtl_shared.dir/Node/Config.cpp.o.d"

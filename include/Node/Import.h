@@ -32,7 +32,6 @@ private:
     ImportType importType_ = ImportType::CHTL;  // 导入类型
     std::string importName_;                    // 导入项名称（对于具体的导入）
     std::string alias_;                         // 别名
-    bool inline_ = false;                       // 是否内联（inline关键字）
     
 public:
     Import(const std::string& path = "")
@@ -81,10 +80,6 @@ public:
     bool isImportAll() const { 
         return importItems_.size() == 1 && importItems_[0] == "*"; 
     }
-    
-    // 内联支持
-    void setInline(bool inlineFlag) { inline_ = inlineFlag; }
-    bool isInline() const { return inline_; }
     
     // 覆盖基类方法
     std::shared_ptr<Node> clone(bool deep = true) const override;

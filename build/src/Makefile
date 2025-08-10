@@ -864,6 +864,33 @@ Loader/ImportManager.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.s
 .PHONY : Loader/ImportManager.cpp.s
 
+Loader/ImportProcessor.o: Loader/ImportProcessor.cpp.o
+.PHONY : Loader/ImportProcessor.o
+
+# target to build an object file
+Loader/ImportProcessor.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportProcessor.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.o
+.PHONY : Loader/ImportProcessor.cpp.o
+
+Loader/ImportProcessor.i: Loader/ImportProcessor.cpp.i
+.PHONY : Loader/ImportProcessor.i
+
+# target to preprocess a source file
+Loader/ImportProcessor.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportProcessor.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.i
+.PHONY : Loader/ImportProcessor.cpp.i
+
+Loader/ImportProcessor.s: Loader/ImportProcessor.cpp.s
+.PHONY : Loader/ImportProcessor.s
+
+# target to generate assembly for a file
+Loader/ImportProcessor.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/Loader/ImportProcessor.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Loader/ImportProcessor.cpp.s
+.PHONY : Loader/ImportProcessor.cpp.s
+
 Loader/ImportResolver.o: Loader/ImportResolver.cpp.o
 .PHONY : Loader/ImportResolver.o
 
@@ -1574,6 +1601,9 @@ help:
 	@echo "... Loader/ImportManager.o"
 	@echo "... Loader/ImportManager.i"
 	@echo "... Loader/ImportManager.s"
+	@echo "... Loader/ImportProcessor.o"
+	@echo "... Loader/ImportProcessor.i"
+	@echo "... Loader/ImportProcessor.s"
 	@echo "... Loader/ImportResolver.o"
 	@echo "... Loader/ImportResolver.i"
 	@echo "... Loader/ImportResolver.s"

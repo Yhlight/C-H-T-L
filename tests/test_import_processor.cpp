@@ -4,6 +4,8 @@
 #include "Loader/ImportProcessor.h"
 #include "Context/StandardContext.h"
 #include "Node/Import.h"
+#include "Node/Origin.h"
+#include "Node/Element.h"
 
 using namespace chtl;
 namespace fs = std::filesystem;
@@ -97,26 +99,25 @@ void testImportProcessor() {
         printResult(result);
     }
     
-    // 测试4：CSS导入（内联）
+    // 测试4：CSS导入（带as）
     {
-        std::cout << "\nTest 4: CSS import (inline)\n";
+        std::cout << "\nTest 4: CSS import with 'as'\n";
         auto importNode = std::make_shared<Import>();
         importNode->setType(Import::ImportType::CSS);
         importNode->setPath("style.css");
-        importNode->setInline(true);
+        importNode->setAlias("myStyles");
         
         auto result = processor.processImport(importNode, currentFile);
         printResult(result);
     }
     
-    // 测试5：JS导入（带as和inline）
+    // 测试5：JS导入（带as）
     {
-        std::cout << "\nTest 5: JS import with 'as' and 'inline'\n";
+        std::cout << "\nTest 5: JS import with 'as'\n";
         auto importNode = std::make_shared<Import>();
         importNode->setType(Import::ImportType::JS);
         importNode->setPath("script.js");
         importNode->setAlias("myScript");
-        importNode->setInline(true);
         
         auto result = processor.processImport(importNode, currentFile);
         printResult(result);

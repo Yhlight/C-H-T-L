@@ -95,45 +95,21 @@ ImportProcessResult ImportProcessor::processCssImport(std::shared_ptr<Import> im
                                                      const std::string& resolvedPath) {
     ImportProcessResult result;
     
-    if (importNode->isInline()) {
-        // 内联模式：读取CSS内容并创建style节点
-        std::string content = readFileContent(resolvedPath);
-        if (content.empty()) {
-            result.errors.push_back("Failed to read CSS file for inline: " + resolvedPath);
-            return result;
-        }
+    // 创建link节点
+    auto linkNode = createLinkNode(resolvedPath);
+    if (linkNode) {
+        result.generatedNodes.push_back(linkNode);
+    }
+    
+    // 如果有别名，创建Origin节点（内容为@import语句）
+    if (!importNode->getAlias().empty()) {
+        std::string importContent = "@import url('" + resolvedPath + "');";
+        auto originNode = createOriginNode(Origin::OriginType::STYLE, importContent, importNode->getAlias());
+        result.generatedNodes.push_back(originNode);
         
-        auto styleNode = std::make_shared<Element>("style");
-        styleNode->setText(content);
-        result.generatedNodes.push_back(styleNode);
-        
-        // 如果有别名，创建Origin节点
-        if (!importNode->getAlias().empty()) {
-            auto originNode = createOriginNode(Origin::OriginType::STYLE, content, importNode->getAlias());
-            result.generatedNodes.push_back(originNode);
-            
-            if (context_) {
-                // TODO: 实现符号注册
-                // context_->registerSymbol(importNode->getAlias(), originNode);
-            }
-        }
-    } else {
-        // 外部链接模式：创建link节点
-        auto linkNode = createLinkNode(resolvedPath);
-        if (linkNode) {
-            result.generatedNodes.push_back(linkNode);
-        }
-        
-        // 如果有别名，创建Origin节点（内容为@import语句）
-        if (!importNode->getAlias().empty()) {
-            std::string importContent = "@import url('" + resolvedPath + "');";
-            auto originNode = createOriginNode(Origin::OriginType::STYLE, importContent, importNode->getAlias());
-            result.generatedNodes.push_back(originNode);
-            
-            if (context_) {
-                // TODO: 实现符号注册
-                // context_->registerSymbol(importNode->getAlias(), originNode);
-            }
+        if (context_) {
+            // TODO: 实现符号注册
+            // context_->registerSymbol(importNode->getAlias(), originNode);
         }
     }
     
@@ -145,46 +121,21 @@ ImportProcessResult ImportProcessor::processJsImport(std::shared_ptr<Import> imp
                                                     const std::string& resolvedPath) {
     ImportProcessResult result;
     
-    if (importNode->isInline()) {
-        // 内联模式：读取JS内容并创建script节点
-        std::string content = readFileContent(resolvedPath);
-        if (content.empty()) {
-            result.errors.push_back("Failed to read JS file for inline: " + resolvedPath);
-            return result;
-        }
+    // 创建script节点
+    auto scriptNode = createScriptNode(resolvedPath);
+    if (scriptNode) {
+        result.generatedNodes.push_back(scriptNode);
+    }
+    
+    // 如果有别名，创建Origin节点（内容为模块导入语句）
+    if (!importNode->getAlias().empty()) {
+        std::string importContent = "import * as " + importNode->getAlias() + " from '" + resolvedPath + "';";
+        auto originNode = createOriginNode(Origin::OriginType::JAVASCRIPT, importContent, importNode->getAlias());
+        result.generatedNodes.push_back(originNode);
         
-        auto scriptNode = createScriptNode("", content);
-        if (scriptNode) {
-            result.generatedNodes.push_back(scriptNode);
-        }
-        
-        // 如果有别名，创建Origin节点
-        if (!importNode->getAlias().empty()) {
-            auto originNode = createOriginNode(Origin::OriginType::JAVASCRIPT, content, importNode->getAlias());
-            result.generatedNodes.push_back(originNode);
-            
-            if (context_) {
-                // TODO: 实现符号注册
-                // context_->registerSymbol(importNode->getAlias(), originNode);
-            }
-        }
-    } else {
-        // 外部链接模式：创建script节点
-        auto scriptNode = createScriptNode(resolvedPath);
-        if (scriptNode) {
-            result.generatedNodes.push_back(scriptNode);
-        }
-        
-        // 如果有别名，创建Origin节点（内容为模块导入语句）
-        if (!importNode->getAlias().empty()) {
-            std::string importContent = "import * as " + importNode->getAlias() + " from '" + resolvedPath + "';";
-            auto originNode = createOriginNode(Origin::OriginType::JAVASCRIPT, importContent, importNode->getAlias());
-            result.generatedNodes.push_back(originNode);
-            
-            if (context_) {
-                // TODO: 实现符号注册
-                // context_->registerSymbol(importNode->getAlias(), originNode);
-            }
+        if (context_) {
+            // TODO: 实现符号注册
+            // context_->registerSymbol(importNode->getAlias(), originNode);
         }
     }
     
@@ -255,15 +206,6 @@ bool ImportProcessor::validateImportCombination(std::shared_ptr<Import> importNo
         importNode->getAlias().empty()) {
         // 这是有效的，只是会被跳过
         return true;
-    }
-    
-    // inline只对@Style和@JavaScript有效
-    if (importNode->isInline()) {
-        if (importNode->getType() != Import::ImportType::CSS &&
-            importNode->getType() != Import::ImportType::JS) {
-            context_->addError("'inline' keyword is only valid for @Style and @JavaScript imports");
-            return false;
-        }
     }
     
     return true;

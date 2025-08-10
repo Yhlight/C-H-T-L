@@ -61,6 +61,11 @@ private:
     // 验证导入类型和as的组合
     bool validateImportCombination(std::shared_ptr<Import> importNode);
     
+    // 在AST中查找指定名称和类型的节点
+    std::shared_ptr<Node> findNodeByNameAndType(std::shared_ptr<Node> root, 
+                                                const std::string& name, 
+                                                Import::ImportType type);
+    
 private:
     std::shared_ptr<BasicContext> context_;
     std::shared_ptr<ImportResolver> resolver_;

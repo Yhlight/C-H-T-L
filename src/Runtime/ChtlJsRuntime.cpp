@@ -564,12 +564,12 @@ std::string ChtlJsEnhancer::transformSingleSelector(const std::string& selector,
         // ID选择器
         result = "document.getElementById('" + selector.substr(1) + "')";
     } else {
-        // 标签选择器或ID/类名（优先查找ID）
+        // 无修饰符选择器：先尝试标签，再尝试ID，最后尝试类
         if (index.empty()) {
-            // 先尝试ID，再尝试类名，最后尝试标签
-            result = "(document.getElementById('" + selector + "') || " +
-                     "document.getElementsByClassName('" + selector + "')[0] || " +
-                     "document.getElementsByTagName('" + selector + "'))";
+            // 先尝试标签，再尝试ID，最后尝试类
+            result = "(document.getElementsByTagName('" + selector + "')[0] || " +
+                     "document.getElementById('" + selector + "') || " +
+                     "document.getElementsByClassName('" + selector + "')[0])";
         } else {
             // 有索引，肯定是标签选择器
             result = "document.getElementsByTagName('" + selector + "')[" + index + "]";

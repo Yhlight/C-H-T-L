@@ -21,8 +21,8 @@ div {
     button { class: "btn"; "按钮 3" }
     
     script {
-        // ID选择器优先
-        {{box}}->style.border = "2px solid red";  // 找到id="box"，如果没有则找class="box"
+        // 无修饰符选择器：标签 -> ID -> 类
+        {{box}}->style.border = "2px solid red";  // 先找标签<box>，再找id="box"，最后找class="box"
         
         // 明确的类选择器
         {{.box}}->style.padding = "20px";

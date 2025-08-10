@@ -173,7 +173,8 @@ std::vector<std::string> CssContext::getPropertyValues(const std::string& proper
 }
 
 void CssContext::addKeyframe(const std::string& name) {
-    // TODO: 实现关键帧管理
+    // TODO: 实现关键帧动画支持
+    (void)name; // 暂时忽略未使用的参数
 }
 
 bool CssContext::isValidSelector(const std::string& selector) const {

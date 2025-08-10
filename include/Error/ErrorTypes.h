@@ -13,13 +13,16 @@ enum class ErrorSeverity {
 
 // 错误类型
 enum class ErrorType {
-    // 词法错误 (1000-1999)
+    // 通用错误
+    GENERAL,  // 通用错误
+    
+    // 词法错误 (100-199)
+    LEXER_UNEXPECTED_CHAR = 100,
     LEXER_UNKNOWN_CHARACTER = 1000,
     LEXER_UNTERMINATED_STRING,
     LEXER_UNTERMINATED_COMMENT,
     LEXER_INVALID_NUMBER,
     LEXER_INVALID_ESCAPE_SEQUENCE,
-    LEXER_UNEXPECTED_CHARACTER,
     
     // 语法错误 (2000-2999)
     PARSER_UNEXPECTED_TOKEN = 2000,

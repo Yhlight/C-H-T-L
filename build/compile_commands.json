@@ -1,0 +1,428 @@
+[
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o -c /workspace/src/ChtlJs/ChtlJsContext.cpp",
+  "file": "/workspace/src/ChtlJs/ChtlJsContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o -c /workspace/src/CmodSystem/CmodExtractor.cpp",
+  "file": "/workspace/src/CmodSystem/CmodExtractor.cpp",
+  "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodInfo.cpp.o -c /workspace/src/CmodSystem/CmodInfo.cpp",
+  "file": "/workspace/src/CmodSystem/CmodInfo.cpp",
+  "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodInfo.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodPackager.cpp.o -c /workspace/src/CmodSystem/CmodPackager.cpp",
+  "file": "/workspace/src/CmodSystem/CmodPackager.cpp",
+  "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodPackager.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodRegistry.cpp.o -c /workspace/src/CmodSystem/CmodRegistry.cpp",
+  "file": "/workspace/src/CmodSystem/CmodRegistry.cpp",
+  "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodRegistry.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodValidator.cpp.o -c /workspace/src/CmodSystem/CmodValidator.cpp",
+  "file": "/workspace/src/CmodSystem/CmodValidator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodValidator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o -c /workspace/src/Common/GlobalMap.cpp",
+  "file": "/workspace/src/Common/GlobalMap.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Common/GlobalMap.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Common/Token.cpp.o -c /workspace/src/Common/Token.cpp",
+  "file": "/workspace/src/Common/Token.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Common/Token.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/BasicContext.cpp.o -c /workspace/src/Context/BasicContext.cpp",
+  "file": "/workspace/src/Context/BasicContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/BasicContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/ChtlContext.cpp.o -c /workspace/src/Context/ChtlContext.cpp",
+  "file": "/workspace/src/Context/ChtlContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/ChtlContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/ChtlJsContext.cpp.o -c /workspace/src/Context/ChtlJsContext.cpp",
+  "file": "/workspace/src/Context/ChtlJsContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/ChtlJsContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/ContextFactory.cpp.o -c /workspace/src/Context/ContextFactory.cpp",
+  "file": "/workspace/src/Context/ContextFactory.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/ContextFactory.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/CssContext.cpp.o -c /workspace/src/Context/CssContext.cpp",
+  "file": "/workspace/src/Context/CssContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/CssContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/EnhancedContext.cpp.o -c /workspace/src/Context/EnhancedContext.cpp",
+  "file": "/workspace/src/Context/EnhancedContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/EnhancedContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/JsContext.cpp.o -c /workspace/src/Context/JsContext.cpp",
+  "file": "/workspace/src/Context/JsContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/JsContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/NamespaceManager.cpp.o -c /workspace/src/Context/NamespaceManager.cpp",
+  "file": "/workspace/src/Context/NamespaceManager.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/NamespaceManager.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Context/StandardContext.cpp.o -c /workspace/src/Context/StandardContext.cpp",
+  "file": "/workspace/src/Context/StandardContext.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Context/StandardContext.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Css/CssAnalyzer.cpp.o -c /workspace/src/Css/CssAnalyzer.cpp",
+  "file": "/workspace/src/Css/CssAnalyzer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Css/CssAnalyzer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Css/CssBlockExtractor.cpp.o -c /workspace/src/Css/CssBlockExtractor.cpp",
+  "file": "/workspace/src/Css/CssBlockExtractor.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Css/CssBlockExtractor.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Css/CssTokenizer.cpp.o -c /workspace/src/Css/CssTokenizer.cpp",
+  "file": "/workspace/src/Css/CssTokenizer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Css/CssTokenizer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o -c /workspace/src/Error/ErrorHandler.cpp",
+  "file": "/workspace/src/Error/ErrorHandler.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o -c /workspace/src/Generator/BasicGenerator.cpp",
+  "file": "/workspace/src/Generator/BasicGenerator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o -c /workspace/src/Generator/ConfigGenerator.cpp",
+  "file": "/workspace/src/Generator/ConfigGenerator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o -c /workspace/src/Generator/Generator.cpp",
+  "file": "/workspace/src/Generator/Generator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o -c /workspace/src/Generator/HtmlGenerator.cpp",
+  "file": "/workspace/src/Generator/HtmlGenerator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o -c /workspace/src/Generator/WebGenerator.cpp",
+  "file": "/workspace/src/Generator/WebGenerator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o -c /workspace/src/Js/JsAnalyzer.cpp",
+  "file": "/workspace/src/Js/JsAnalyzer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Js/JsBlockExtractor.cpp.o -c /workspace/src/Js/JsBlockExtractor.cpp",
+  "file": "/workspace/src/Js/JsBlockExtractor.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Js/JsBlockExtractor.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Js/JsTokenizer.cpp.o -c /workspace/src/Js/JsTokenizer.cpp",
+  "file": "/workspace/src/Js/JsTokenizer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Js/JsTokenizer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o -c /workspace/src/Lexer/BasicLexer.cpp",
+  "file": "/workspace/src/Lexer/BasicLexer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Lexer/BasicLexer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Lexer/ChtlJsLexer.cpp.o -c /workspace/src/Lexer/ChtlJsLexer.cpp",
+  "file": "/workspace/src/Lexer/ChtlJsLexer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Lexer/ChtlJsLexer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o -c /workspace/src/Lexer/ConfigLexer.cpp",
+  "file": "/workspace/src/Lexer/ConfigLexer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Lexer/ConfigLexer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.o -c /workspace/src/Lexer/StandardLexer.cpp",
+  "file": "/workspace/src/Lexer/StandardLexer.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/CmodLoader.cpp.o -c /workspace/src/Loader/CmodLoader.cpp",
+  "file": "/workspace/src/Loader/CmodLoader.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/CmodLoader.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o -c /workspace/src/Loader/DependencyGraph.cpp",
+  "file": "/workspace/src/Loader/DependencyGraph.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/FileLoader.cpp.o -c /workspace/src/Loader/FileLoader.cpp",
+  "file": "/workspace/src/Loader/FileLoader.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/FileLoader.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/ImportManager.cpp.o -c /workspace/src/Loader/ImportManager.cpp",
+  "file": "/workspace/src/Loader/ImportManager.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/ImportManager.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/ImportProcessor.cpp.o -c /workspace/src/Loader/ImportProcessor.cpp",
+  "file": "/workspace/src/Loader/ImportProcessor.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/ImportProcessor.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/ImportResolver.cpp.o -c /workspace/src/Loader/ImportResolver.cpp",
+  "file": "/workspace/src/Loader/ImportResolver.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/ImportResolver.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Loader/ModuleLoader.cpp.o -c /workspace/src/Loader/ModuleLoader.cpp",
+  "file": "/workspace/src/Loader/ModuleLoader.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Loader/ModuleLoader.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Module/CmodHandler.cpp.o -c /workspace/src/Module/CmodHandler.cpp",
+  "file": "/workspace/src/Module/CmodHandler.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Module/CmodHandler.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Module/ModuleResolver.cpp.o -c /workspace/src/Module/ModuleResolver.cpp",
+  "file": "/workspace/src/Module/ModuleResolver.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Module/ModuleResolver.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Comment.cpp.o -c /workspace/src/Node/Comment.cpp",
+  "file": "/workspace/src/Node/Comment.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Comment.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Config.cpp.o -c /workspace/src/Node/Config.cpp",
+  "file": "/workspace/src/Node/Config.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Config.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Custom.cpp.o -c /workspace/src/Node/Custom.cpp",
+  "file": "/workspace/src/Node/Custom.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Custom.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Export.cpp.o -c /workspace/src/Node/Export.cpp",
+  "file": "/workspace/src/Node/Export.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Export.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Import.cpp.o -c /workspace/src/Node/Import.cpp",
+  "file": "/workspace/src/Node/Import.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Import.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Info.cpp.o -c /workspace/src/Node/Info.cpp",
+  "file": "/workspace/src/Node/Info.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Info.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Namespace.cpp.o -c /workspace/src/Node/Namespace.cpp",
+  "file": "/workspace/src/Node/Namespace.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Namespace.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Node.cpp.o -c /workspace/src/Node/Node.cpp",
+  "file": "/workspace/src/Node/Node.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Node.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Operate.cpp.o -c /workspace/src/Node/Operate.cpp",
+  "file": "/workspace/src/Node/Operate.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Operate.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Origin.cpp.o -c /workspace/src/Node/Origin.cpp",
+  "file": "/workspace/src/Node/Origin.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Origin.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Script.cpp.o -c /workspace/src/Node/Script.cpp",
+  "file": "/workspace/src/Node/Script.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Script.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Style.cpp.o -c /workspace/src/Node/Style.cpp",
+  "file": "/workspace/src/Node/Style.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Style.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Node/Template.cpp.o -c /workspace/src/Node/Template.cpp",
+  "file": "/workspace/src/Node/Template.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Node/Template.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o -c /workspace/src/Parser/BasicParser.cpp",
+  "file": "/workspace/src/Parser/BasicParser.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o -c /workspace/src/Parser/ConfigParser.cpp",
+  "file": "/workspace/src/Parser/ConfigParser.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Parser/ConfigParser.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Parser/StandardParser.cpp.o -c /workspace/src/Parser/StandardParser.cpp",
+  "file": "/workspace/src/Parser/StandardParser.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Parser/StandardParser.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Predefine/Registry.cpp.o -c /workspace/src/Predefine/Registry.cpp",
+  "file": "/workspace/src/Predefine/Registry.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Predefine/Registry.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o -c /workspace/src/Runtime/ChtlJsRuntime.cpp",
+  "file": "/workspace/src/Runtime/ChtlJsRuntime.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o -c /workspace/src/Scanner/BridgeScanner.cpp",
+  "file": "/workspace/src/Scanner/BridgeScanner.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o -c /workspace/src/Scanner/Segment.cpp",
+  "file": "/workspace/src/Scanner/Segment.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o -c /workspace/src/Script/ScriptManager.cpp",
+  "file": "/workspace/src/Script/ScriptManager.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/ChtlJsState.cpp.o -c /workspace/src/State/ChtlJsState.cpp",
+  "file": "/workspace/src/State/ChtlJsState.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/ChtlJsState.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o -c /workspace/src/State/ChtlState.cpp",
+  "file": "/workspace/src/State/ChtlState.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/CssState.cpp.o -c /workspace/src/State/CssState.cpp",
+  "file": "/workspace/src/State/CssState.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/CssState.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/JsState.cpp.o -c /workspace/src/State/JsState.cpp",
+  "file": "/workspace/src/State/JsState.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/JsState.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/StandardState.cpp.o -c /workspace/src/State/StandardState.cpp",
+  "file": "/workspace/src/State/StandardState.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/StandardState.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o -c /workspace/src/State/StateFactory.cpp",
+  "file": "/workspace/src/State/StateFactory.cpp",
+  "output": "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o -c /workspace/src/Utils/ConstraintValidator.cpp",
+  "file": "/workspace/src/Utils/ConstraintValidator.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/main.cpp.o -c /workspace/src/main.cpp",
+  "file": "/workspace/src/main.cpp",
+  "output": "CMakeFiles/chtl.dir/src/main.cpp.o"
+}
+]

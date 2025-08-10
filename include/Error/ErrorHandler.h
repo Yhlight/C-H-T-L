@@ -32,6 +32,7 @@ struct ErrorFix {
 // 错误详情
 class ErrorDetail {
 public:
+    ErrorDetail() = default;  // 默认构造函数
     ErrorDetail(ErrorType type, 
                 const std::string& message,
                 const ErrorContext& context);

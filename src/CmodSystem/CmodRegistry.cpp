@@ -317,11 +317,9 @@ bool CmodRegistry::load() {
 }
 
 bool CmodRegistry::loadFrom(const std::string& path) {
-    // TODO: 实现从JSON文件加载
-    // 这里需要JSON解析库
-    
-    isDirty_ = false;
-    return true;
+    // TODO: 实现从文件加载注册表
+    (void)path; // 暂时忽略未使用的参数
+    return false;
 }
 
 // 导出注册表信息
@@ -511,12 +509,14 @@ std::vector<std::string> CmodRegistry::getDefaultSearchPaths() const {
 // 序列化/反序列化
 std::string CmodRegistry::serializeRecord(const ModuleRecord& record) const {
     // TODO: 实现序列化
+    (void)record; // 暂时忽略未使用的参数
     return "";
 }
 
 CmodRegistry::ModuleRecord CmodRegistry::deserializeRecord(const std::string& data) const {
     // TODO: 实现反序列化
-    return ModuleRecord();
+    (void)data; // 暂时忽略未使用的参数
+    return ModuleRecord{};
 }
 
 } // namespace chtl

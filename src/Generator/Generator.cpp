@@ -1,4 +1,5 @@
 #include "Generator/Generator.h"
+#include "Runtime/ChtlJsRuntime.h"
 #include "Node/Element.h"
 #include "Node/Text.h"
 #include "Node/Custom.h"
@@ -11,6 +12,8 @@
 #include "Node/Namespace.h"
 #include <algorithm>
 #include <regex>
+#include <sstream>
+#include <set>
 
 namespace chtl {
 
@@ -35,6 +38,12 @@ Generator::Generator(const GeneratorOptions& options)
 }
 
 GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
+    if (!ast) {
+        result_.success = false;
+        result_.errors.push_back("AST is null");
+        return result_;
+    }
+    
     // 清空之前的结果
     result_ = GeneratorResult();
     htmlCollector_.clear();
@@ -43,9 +52,16 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     componentMap_.clear();
     styleMap_.clear();
     scopeStack_.clear();
+    templateDefinitions_.clear();
+    customDefinitions_.clear();
     jsRuntime_->reset();
     
-    // 访问AST
+    ast_ = ast;
+    
+    // 第一遍扫描：收集所有Template和Custom定义
+    collectDefinitions(ast);
+    
+    // 第二遍处理：生成代码
     visit(ast);
     
     // 收集结果
@@ -53,7 +69,51 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     result_.css = cssCollector_.getCode();
     result_.js = jsCollector_.getCode();
     
+    result_.success = true;
     return result_;
+}
+
+void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
+    if (!node) return;
+    
+    // 收集Template定义
+    if (auto tmpl = std::dynamic_pointer_cast<Template>(node)) {
+        std::string key;
+        switch (tmpl->getTemplateType()) {
+            case Template::TemplateType::STYLE:
+                key = "@Style " + tmpl->getTemplateName();
+                break;
+            case Template::TemplateType::ELEMENT:
+                key = "@Element " + tmpl->getTemplateName();
+                break;
+            case Template::TemplateType::VAR:
+                key = "@Var " + tmpl->getTemplateName();
+                break;
+        }
+        templateDefinitions_[key] = tmpl;
+    }
+    
+    // 收集Custom定义
+    if (auto custom = std::dynamic_pointer_cast<Custom>(node)) {
+        std::string key;
+        switch (custom->getCustomType()) {
+            case Custom::CustomType::STYLE:
+                key = "@Style " + custom->getCustomName();
+                break;
+            case Custom::CustomType::ELEMENT:
+                key = "@Element " + custom->getCustomName();
+                break;
+            case Custom::CustomType::VAR:
+                key = "@Var " + custom->getCustomName();
+                break;
+        }
+        customDefinitions_[key] = custom;
+    }
+    
+    // 递归收集子节点
+    for (const auto& child : node->getChildren()) {
+        collectDefinitions(child);
+    }
 }
 
 void Generator::visit(const std::shared_ptr<Node>& node) {
@@ -123,13 +183,19 @@ void Generator::visitText(const std::shared_ptr<Text>& text) {
 }
 
 void Generator::visitCustom(const std::shared_ptr<Custom>& custom) {
+    // 处理继承
+    resolveInheritance(custom);
+    
     // 基础实现，子类会覆盖
-    result_.warnings.push_back("Custom component not implemented: " + custom->getName());
+    result_.warnings.push_back("Custom component not implemented: " + custom->getCustomName());
 }
 
 void Generator::visitTemplate(const std::shared_ptr<Template>& tmpl) {
+    // 处理继承
+    resolveInheritance(tmpl);
+    
     // 模板定义，存储供后续使用
-    componentMap_[tmpl->getName()] = tmpl->toString();
+    componentMap_[tmpl->getTemplateName()] = tmpl->toString();
 }
 
 void Generator::visitStyle(const std::shared_ptr<Style>& style) {
@@ -251,6 +317,175 @@ std::unique_ptr<Generator> createGenerator(const std::string& platform,
         return std::make_unique<VueGenerator>(options);
     } else {
         return std::make_unique<WebGenerator>(options); // 默认使用Web生成器
+    }
+}
+
+// 添加继承解析方法
+void Generator::resolveInheritance(std::shared_ptr<Node> node) {
+    const auto& inheritances = node->getInheritances();
+    
+    for (const auto& inheritance : inheritances) {
+        // 解析继承字符串，格式如 "@Style ThemeName" 或 "[Template] @Style ThemeName"
+        std::istringstream iss(inheritance);
+        std::string type1, type2, name;
+        
+        iss >> type1;
+        if (type1 == "[Template]" || type1 == "[Custom]") {
+            iss >> type2 >> name;
+        } else {
+            type2 = type1;
+            iss >> name;
+        }
+        
+        // 根据类型查找并合并
+        if (type2 == "@Style") {
+            mergeStyleInheritance(node, name);
+        } else if (type2 == "@Element") {
+            mergeElementInheritance(node, name);
+        } else if (type2 == "@Var") {
+            mergeVarInheritance(node, name);
+        }
+    }
+}
+
+void Generator::mergeStyleInheritance(std::shared_ptr<Node> target, const std::string& sourceName) {
+    // 查找源样式定义
+    auto source = findStyleDefinition(sourceName);
+    if (!source) {
+        result_.warnings.push_back("Style inheritance source not found: " + sourceName);
+        return;
+    }
+    
+    // 合并样式属性
+    if (auto targetTemplate = std::dynamic_pointer_cast<Template>(target)) {
+        if (auto sourceTemplate = std::dynamic_pointer_cast<Template>(source)) {
+            // 合并参数
+            for (const auto& [key, value] : sourceTemplate->getParameters()) {
+                // 只添加目标中不存在的参数
+                if (targetTemplate->getParameters().find(key) == targetTemplate->getParameters().end()) {
+                    targetTemplate->setParameter(key, value);
+                }
+            }
+        }
+    } else if (auto targetCustom = std::dynamic_pointer_cast<Custom>(target)) {
+        if (auto sourceCustom = std::dynamic_pointer_cast<Custom>(source)) {
+            // 合并属性
+            for (const auto& [key, value] : sourceCustom->getProperties()) {
+                if (targetCustom->getProperties().find(key) == targetCustom->getProperties().end()) {
+                    targetCustom->setProperty(key, value);
+                }
+            }
+        }
+    }
+    
+    // 合并子节点（样式规则）
+    for (const auto& child : source->getChildren()) {
+        if (child->getType() != NodeType::DELETE) {  // 跳过删除节点
+            target->addChild(child->clone());
+        }
+    }
+}
+
+void Generator::mergeElementInheritance(std::shared_ptr<Node> target, const std::string& sourceName) {
+    auto source = findElementDefinition(sourceName);
+    if (!source) {
+        result_.warnings.push_back("Element inheritance source not found: " + sourceName);
+        return;
+    }
+    
+    // 合并元素结构 - 只添加不在删除列表中的子节点
+    std::set<std::string> deletedElements;
+    collectDeletedItems(target, deletedElements);
+    
+    for (const auto& child : source->getChildren()) {
+        if (child->getType() == NodeType::ELEMENT) {
+            auto element = std::static_pointer_cast<Element>(child);
+            if (deletedElements.find(element->getTagName()) == deletedElements.end()) {
+                target->addChild(child->clone());
+            }
+        }
+    }
+}
+
+void Generator::mergeVarInheritance(std::shared_ptr<Node> target, const std::string& sourceName) {
+    auto source = findVarDefinition(sourceName);
+    if (!source) {
+        result_.warnings.push_back("Var inheritance source not found: " + sourceName);
+        return;
+    }
+    
+    // 合并变量定义
+    if (auto targetTemplate = std::dynamic_pointer_cast<Template>(target)) {
+        if (auto sourceTemplate = std::dynamic_pointer_cast<Template>(source)) {
+            for (const auto& [key, value] : sourceTemplate->getParameters()) {
+                if (targetTemplate->getParameters().find(key) == targetTemplate->getParameters().end()) {
+                    targetTemplate->setParameter(key, value);
+                }
+            }
+        }
+    } else if (auto targetCustom = std::dynamic_pointer_cast<Custom>(target)) {
+        if (auto sourceCustom = std::dynamic_pointer_cast<Custom>(source)) {
+            for (const auto& [key, value] : sourceCustom->getProperties()) {
+                if (targetCustom->getProperties().find(key) == targetCustom->getProperties().end()) {
+                    targetCustom->setProperty(key, value);
+                }
+            }
+        }
+    }
+}
+
+std::shared_ptr<Node> Generator::findStyleDefinition(const std::string& name) {
+    // 搜索已解析的样式定义
+    for (const auto& [key, node] : templateDefinitions_) {
+        if (key == "@Style " + name) {
+            return node;
+        }
+    }
+    for (const auto& [key, node] : customDefinitions_) {
+        if (key == "@Style " + name) {
+            return node;
+        }
+    }
+    return nullptr;
+}
+
+std::shared_ptr<Node> Generator::findElementDefinition(const std::string& name) {
+    for (const auto& [key, node] : templateDefinitions_) {
+        if (key == "@Element " + name) {
+            return node;
+        }
+    }
+    for (const auto& [key, node] : customDefinitions_) {
+        if (key == "@Element " + name) {
+            return node;
+        }
+    }
+    return nullptr;
+}
+
+std::shared_ptr<Node> Generator::findVarDefinition(const std::string& name) {
+    for (const auto& [key, node] : templateDefinitions_) {
+        if (key == "@Var " + name) {
+            return node;
+        }
+    }
+    for (const auto& [key, node] : customDefinitions_) {
+        if (key == "@Var " + name) {
+            return node;
+        }
+    }
+    return nullptr;
+}
+
+void Generator::collectDeletedItems(std::shared_ptr<Node> node, std::set<std::string>& deletedItems) {
+    for (const auto& child : node->getChildren()) {
+        if (child->getType() == NodeType::DELETE) {
+            // 提取删除目标
+            auto attrs = child->getAttributes();
+            if (attrs.find("target") != attrs.end()) {
+                deletedItems.insert(attrs.at("target"));
+            }
+        }
     }
 }
 

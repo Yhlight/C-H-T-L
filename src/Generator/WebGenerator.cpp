@@ -1,12 +1,13 @@
 #include "Generator/Generator.h"
 #include "Node/Element.h"
 #include "Node/Text.h"
-#include "Node/Custom.h"
 #include "Node/Style.h"
 #include "Node/Script.h"
-#include "Node/Reference.h"
+#include "Node/Custom.h"
 #include "Node/Operate.h"
-#include <sstream>
+#include "Runtime/ChtlJsRuntime.h"
+#include <regex>
+#include <algorithm>
 #include <set>
 
 namespace chtl {
@@ -169,81 +170,216 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 }
 
 void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
-    // 检查是否是引用
-    if (custom->getDefinitionType() == Custom::DefinitionType::REFERENCE) {
-        // 查找组件定义并展开
-        processCustomComponent(custom);
-    } else {
-        // 这是组件定义，存储起来
-        componentMap_[custom->getName()] = custom->toString();
-        
-        // 如果有render内容，访问它
-        if (!custom->getChildren().empty()) {
-            for (const auto& child : custom->getChildren()) {
-                if (child->getType() == NodeType::OPERATE) {
-                    auto operate = std::static_pointer_cast<Operate>(child);
-                    if (operate->getChildren().size() > 0 && 
-                        operate->getChildren()[0]->toString() == "render") {
-                        // 这是render块，不直接生成代码
-                        continue;
-                    }
-                }
-            }
+    // 获取自定义组件名称
+    std::string componentName = custom->getCustomName();
+    if (componentName.empty()) {
+        // 尝试从属性获取
+        auto attrs = custom->getAttributes();
+        if (attrs.find("name") != attrs.end()) {
+            componentName = attrs.at("name");
         }
     }
-}
-
-void WebGenerator::processCustomComponent(const std::shared_ptr<Custom>& custom) {
-    const std::string& componentName = custom->getName();
     
     // 查找组件定义
-    auto it = componentMap_.find(componentName);
-    if (it == componentMap_.end()) {
-        // 未找到组件定义
+    auto componentDef = findComponentDefinition(componentName, custom->getCustomType());
+    if (!componentDef) {
         result_.warnings.push_back("Component not found: " + componentName);
         htmlCollector_.append("<!-- Component not found: " + componentName + " -->");
         return;
     }
     
-    // 获取属性
-    std::unordered_map<std::string, std::string> props;
-    for (const auto& child : custom->getChildren()) {
-        if (child->getType() == NodeType::OPERATE) {
-            auto operate = std::static_pointer_cast<Operate>(child);
-            if (operate->getChildren().size() >= 2) {
-                std::string key = operate->getChildren()[0]->toString();
-                std::string value = operate->getChildren()[1]->toString();
-                props[key] = value;
+    // 处理组件实例
+    processCustomComponent(custom, componentDef);
+}
+
+std::shared_ptr<Node> WebGenerator::findComponentDefinition(const std::string& name, Custom::CustomType type) {
+    std::string key;
+    switch (type) {
+        case Custom::CustomType::STYLE:
+            key = "@Style " + name;
+            break;
+        case Custom::CustomType::ELEMENT:
+            key = "@Element " + name;
+            break;
+        case Custom::CustomType::VAR:
+            key = "@Var " + name;
+            break;
+    }
+    
+    // 先在Custom定义中查找
+    auto it = customDefinitions_.find(key);
+    if (it != customDefinitions_.end()) {
+        return it->second;
+    }
+    
+    // 再在Template定义中查找
+    auto it2 = templateDefinitions_.find(key);
+    if (it2 != templateDefinitions_.end()) {
+        return it2->second;
+    }
+    
+    return nullptr;
+}
+
+void WebGenerator::processCustomComponent(const std::shared_ptr<Custom>& instance, 
+                                          const std::shared_ptr<Node>& definition) {
+    // 克隆定义以避免修改原始定义
+    auto workingCopy = definition->clone();
+    
+    // 应用实例特有的修改（删除、插入等）
+    applyInstanceModifications(workingCopy, instance);
+    
+    // 生成最终内容
+    if (instance->getCustomType() == Custom::CustomType::ELEMENT) {
+        // 对于元素类型，遍历生成子节点
+        for (const auto& child : workingCopy->getChildren()) {
+            visit(child);
+        }
+    } else if (instance->getCustomType() == Custom::CustomType::STYLE) {
+        // 对于样式类型，处理样式内容
+        visitStyle(std::static_pointer_cast<Style>(workingCopy));
+    }
+}
+
+void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target, 
+                                              const std::shared_ptr<Custom>& instance) {
+    // 收集删除目标
+    std::set<std::string> deleteTargets;
+    std::vector<std::shared_ptr<Node>> insertOperations;
+    
+    for (const auto& child : instance->getChildren()) {
+        if (child->getType() == NodeType::DELETE) {
+            auto attrs = child->getAttributes();
+            if (attrs.find("target") != attrs.end()) {
+                deleteTargets.insert(attrs.at("target"));
+            }
+        } else if (child->getType() == NodeType::OPERATE) {
+            auto op = std::static_pointer_cast<Operate>(child);
+            if (op->getOperation() == Operate::OperationType::INSERT) {
+                insertOperations.push_back(op);
             }
         }
     }
     
-    // 展开组件
-    expandComponent(componentName, props, custom->getChildren());
+    // 执行删除操作
+    if (!deleteTargets.empty()) {
+        auto& children = target->getChildren();
+        children.erase(
+            std::remove_if(children.begin(), children.end(),
+                [&deleteTargets](const std::shared_ptr<Node>& node) {
+                    if (node->getType() == NodeType::ELEMENT) {
+                        auto elem = std::static_pointer_cast<Element>(node);
+                        // 检查标签名
+                        if (deleteTargets.find(elem->getTagName()) != deleteTargets.end()) {
+                            return true;
+                        }
+                        // 检查是否是引用（如 @Element Name）
+                        if (node->getType() == NodeType::REFERENCE) {
+                            auto attrs = node->getAttributes();
+                            if (attrs.find("name") != attrs.end() &&
+                                deleteTargets.find(attrs.at("name")) != deleteTargets.end()) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }),
+            children.end()
+        );
+    }
+    
+    // 执行插入操作
+    for (const auto& insertOp : insertOperations) {
+        auto operate = std::static_pointer_cast<Operate>(insertOp);
+        executeInsertOperation(target, operate);
+    }
 }
 
-void WebGenerator::expandComponent(const std::string& componentName,
-                                   const std::unordered_map<std::string, std::string>& props,
-                                   const std::vector<std::shared_ptr<Node>>& children) {
-    // 简化实现：直接输出div包装
-    htmlCollector_.append("<div class=\"chtl-component-" + componentName + "\"");
+void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target, 
+                                          const std::shared_ptr<Operate>& insertOp) {
+    auto position = insertOp->getPosition();
+    auto insertTarget = insertOp->getTarget();
+    auto& children = target->getChildren();
     
-    // 添加data属性保存props
-    for (const auto& [key, value] : props) {
-        htmlCollector_.append(" data-" + key + "=\"" + escape(value) + "\"");
+    switch (position) {
+        case Operate::Position::AT_TOP:
+            // 插入到开头
+            for (auto it = insertOp->getChildren().rbegin(); 
+                 it != insertOp->getChildren().rend(); ++it) {
+                children.insert(children.begin(), (*it)->clone());
+            }
+            break;
+            
+        case Operate::Position::AT_BOTTOM:
+            // 插入到末尾
+            for (const auto& child : insertOp->getChildren()) {
+                children.push_back(child->clone());
+            }
+            break;
+            
+        case Operate::Position::BEFORE:
+        case Operate::Position::AFTER:
+        case Operate::Position::REPLACE:
+            {
+                // 查找目标元素
+                auto targetIt = std::find_if(children.begin(), children.end(),
+                    [&insertTarget](const std::shared_ptr<Node>& node) {
+                        if (node->getType() == NodeType::ELEMENT) {
+                            auto elem = std::static_pointer_cast<Element>(node);
+                            // 检查是否匹配 "tag[index]" 格式
+                            size_t bracketPos = insertTarget.find('[');
+                            if (bracketPos != std::string::npos) {
+                                std::string tag = insertTarget.substr(0, bracketPos);
+                                std::string indexStr = insertTarget.substr(bracketPos + 1, 
+                                    insertTarget.find(']') - bracketPos - 1);
+                                int targetIndex = std::stoi(indexStr);
+                                
+                                // 计算当前元素的索引
+                                int currentIndex = 0;
+                                for (auto it = elem->getParent()->getChildren().begin();
+                                     it != elem->getParent()->getChildren().end(); ++it) {
+                                    if ((*it)->getType() == NodeType::ELEMENT &&
+                                        std::static_pointer_cast<Element>(*it)->getTagName() == tag) {
+                                        if (*it == node && currentIndex == targetIndex) {
+                                            return true;
+                                        }
+                                        currentIndex++;
+                                    }
+                                }
+                            } else {
+                                // 简单标签匹配
+                                return elem->getTagName() == insertTarget;
+                            }
+                        }
+                        return false;
+                    });
+                
+                if (targetIt != children.end()) {
+                    if (position == Operate::Position::BEFORE) {
+                        // 在目标前插入
+                        for (const auto& child : insertOp->getChildren()) {
+                            targetIt = children.insert(targetIt, child->clone());
+                            ++targetIt;
+                        }
+                    } else if (position == Operate::Position::AFTER) {
+                        // 在目标后插入
+                        ++targetIt;
+                        for (const auto& child : insertOp->getChildren()) {
+                            targetIt = children.insert(targetIt, child->clone());
+                            ++targetIt;
+                        }
+                    } else if (position == Operate::Position::REPLACE) {
+                        // 替换目标
+                        targetIt = children.erase(targetIt);
+                        for (const auto& child : insertOp->getChildren()) {
+                            targetIt = children.insert(targetIt, child->clone());
+                            ++targetIt;
+                        }
+                    }
+                }
+            }
+            break;
     }
-    
-    htmlCollector_.append(">");
-    
-    // 处理子节点（slot内容）
-    for (const auto& child : children) {
-        // 跳过属性节点
-        if (child->getType() != NodeType::OPERATE) {
-            visit(child);
-        }
-    }
-    
-    htmlCollector_.append("</div>");
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {

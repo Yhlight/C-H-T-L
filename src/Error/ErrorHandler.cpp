@@ -397,17 +397,15 @@ std::vector<ErrorFix> ErrorHandler::generateFixes(ErrorType type, const ErrorCon
             break;
             
         case ErrorType::PARSER_EXPECTED_TOKEN:
-            // 根据消息内容生成修复建议
-            if (message_.find("Expected ':'") != std::string::npos) {
-                fixes.push_back({
-                    "Add colon",
-                    ":",
-                    context.line,
-                    context.column,
-                    context.line,
-                    context.column
-                });
-            }
+            // 生成通用的token添加建议
+            fixes.push_back({
+                "Add expected token",
+                "<token>",
+                context.line,
+                context.column,
+                context.line,
+                context.column
+            });
             break;
             
         default:

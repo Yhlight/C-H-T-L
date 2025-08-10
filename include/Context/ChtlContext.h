@@ -99,15 +99,23 @@ public:
     void reset() override;
     void printDebugInfo() const override;
     
-    // 模板查询
+    // 模板和自定义管理
     void registerTemplate(const std::string& name, const TemplateInfo& info);
+    void registerTemplate(const std::string& name, std::shared_ptr<Node> templateNode) override {
+        BasicContext::registerTemplate(name, templateNode);
+    }
+    
     bool hasTemplate(const std::string& name) const;
     TemplateInfo* getTemplate(const std::string& name);
     const TemplateInfo* getTemplateInfo(const std::string& name) const;
     std::shared_ptr<Node> getTemplate(const std::string& name) const override;
     
-    // 自定义查询
+    // 自定义
     void registerCustom(const std::string& name, const CustomInfo& info);
+    void registerCustom(const std::string& name, std::shared_ptr<Node> customNode) override {
+        BasicContext::registerCustom(name, customNode);
+    }
+    
     bool hasCustom(const std::string& name) const;
     CustomInfo* getCustom(const std::string& name);
     const CustomInfo* getCustomInfo(const std::string& name) const;

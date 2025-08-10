@@ -1,12 +1,23 @@
 #ifndef CHTL_GENERATOR_H
 #define CHTL_GENERATOR_H
 
-#include <string>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-#include <sstream>
 #include "Node/Node.h"
+#include "Node/Element.h"
+#include "Node/Text.h"
+#include "Node/Custom.h"
+#include "Node/Template.h"
+#include "Node/Style.h"
+#include "Node/Script.h"
+#include "Node/Import.h"
+#include "Node/Export.h"
+#include "Node/Config.h"
+#include "Node/Namespace.h"
+#include "Node/Operate.h"
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <sstream>
 #include "Runtime/ChtlJsRuntime.h"
 
 namespace chtl {
@@ -25,6 +36,7 @@ struct GeneratorOptions {
 
 // 生成结果
 struct GeneratorResult {
+    bool success = false;                    // 是否成功
     std::string html;                       // 生成的HTML
     std::string css;                        // 生成的CSS
     std::string js;                         // 生成的JavaScript
@@ -32,10 +44,9 @@ struct GeneratorResult {
     std::vector<std::string> warnings;      // 警告信息
     std::vector<std::string> errors;        // 错误信息
     
-    // 依赖信息
-    std::vector<std::string> externalStyles;    // 外部样式文件
-    std::vector<std::string> externalScripts;   // 外部脚本文件
-    std::vector<std::string> assets;            // 资源文件
+    // 辅助信息
+    std::unordered_map<std::string, std::string> assets;  // 生成的资源文件
+    std::unordered_map<std::string, std::string> metadata; // 元数据
 };
 
 // 代码生成器基类
@@ -89,6 +100,7 @@ protected:
     // 成员变量
     GeneratorOptions options_;
     GeneratorResult result_;
+    std::shared_ptr<Node> ast_;  // 添加AST成员变量
     CodeCollector htmlCollector_;
     CodeCollector cssCollector_;
     CodeCollector jsCollector_;
@@ -101,6 +113,21 @@ protected:
     
     // 运行时集成
     std::unique_ptr<ChtlJsRuntime> jsRuntime_;
+    
+    // 继承处理方法
+    void collectDefinitions(const std::shared_ptr<Node>& node);
+    void resolveInheritance(std::shared_ptr<Node> node);
+    void mergeStyleInheritance(std::shared_ptr<Node> target, const std::string& sourceName);
+    void mergeElementInheritance(std::shared_ptr<Node> target, const std::string& sourceName);
+    void mergeVarInheritance(std::shared_ptr<Node> target, const std::string& sourceName);
+    std::shared_ptr<Node> findStyleDefinition(const std::string& name);
+    std::shared_ptr<Node> findElementDefinition(const std::string& name);
+    std::shared_ptr<Node> findVarDefinition(const std::string& name);
+    void collectDeletedItems(std::shared_ptr<Node> node, std::set<std::string>& deletedItems);
+    
+    // 定义存储
+    std::unordered_map<std::string, std::shared_ptr<Node>> templateDefinitions_;
+    std::unordered_map<std::string, std::shared_ptr<Node>> customDefinitions_;
     
 private:
     mutable int uniqueIdCounter_ = 0;
@@ -120,12 +147,18 @@ protected:
     void visitScript(const std::shared_ptr<Script>& script) override;
     
 private:
-    void generateHTMLDocument();
+    std::string generateHTMLDocument();
     void injectRuntimeCode();
-    void processCustomComponent(const std::shared_ptr<Custom>& custom);
-    void expandComponent(const std::string& componentName, 
-                        const std::unordered_map<std::string, std::string>& props,
-                        const std::vector<std::shared_ptr<Node>>& children);
+    void processCustomComponent(const std::shared_ptr<Custom>& instance, 
+                                const std::shared_ptr<Node>& definition);
+    std::shared_ptr<Node> findComponentDefinition(const std::string& name, Custom::CustomType type);
+    void applyInstanceModifications(std::shared_ptr<Node> target, 
+                                    const std::shared_ptr<Custom>& instance);
+    void executeInsertOperation(std::shared_ptr<Node> target, 
+                                const std::shared_ptr<Operate>& insertOp);
+    void expandComponent(const std::string& componentName,
+                         const std::unordered_map<std::string, std::string>& props,
+                         const std::vector<std::shared_ptr<Node>>& children);
 };
 
 // React平台生成器

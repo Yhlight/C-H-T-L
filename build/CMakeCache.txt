@@ -14,9 +14,6 @@
 # EXTERNAL cache entries
 ########################
 
-//Build tests
-BUILD_TESTS:BOOL=ON
-
 //Value Computed by CMake
 CHTL_BINARY_DIR:STATIC=/workspace/build
 

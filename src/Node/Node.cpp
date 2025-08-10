@@ -186,6 +186,10 @@ void Element::setId(const std::string& id) {
 }
 
 void Element::addClass(const std::string& className) {
+    // 调用基类方法维护classes_
+    Node::addClass(className);
+    
+    // 同时维护classList_和attributes
     if (!className.empty() && !hasClass(className)) {
         classList_.push_back(className);
         attributes_["class"] = getClassName();
@@ -193,6 +197,10 @@ void Element::addClass(const std::string& className) {
 }
 
 void Element::removeClass(const std::string& className) {
+    // 调用基类方法维护classes_
+    Node::removeClass(className);
+    
+    // 同时维护classList_
     classList_.erase(
         std::remove(classList_.begin(), classList_.end(), className),
         classList_.end()

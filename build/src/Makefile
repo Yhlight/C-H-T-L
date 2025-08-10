@@ -216,33 +216,6 @@ ChtlJs/ChtlJsContext.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.s
 .PHONY : ChtlJs/ChtlJsContext.cpp.s
 
-ChtlJs/ChtlJsState.o: ChtlJs/ChtlJsState.cpp.o
-.PHONY : ChtlJs/ChtlJsState.o
-
-# target to build an object file
-ChtlJs/ChtlJsState.cpp.o:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.o
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsState.cpp.o
-.PHONY : ChtlJs/ChtlJsState.cpp.o
-
-ChtlJs/ChtlJsState.i: ChtlJs/ChtlJsState.cpp.i
-.PHONY : ChtlJs/ChtlJsState.i
-
-# target to preprocess a source file
-ChtlJs/ChtlJsState.cpp.i:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.i
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsState.cpp.i
-.PHONY : ChtlJs/ChtlJsState.cpp.i
-
-ChtlJs/ChtlJsState.s: ChtlJs/ChtlJsState.cpp.s
-.PHONY : ChtlJs/ChtlJsState.s
-
-# target to generate assembly for a file
-ChtlJs/ChtlJsState.cpp.s:
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.s
-	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsState.cpp.s
-.PHONY : ChtlJs/ChtlJsState.cpp.s
-
 Common/GlobalMap.o: Common/GlobalMap.cpp.o
 .PHONY : Common/GlobalMap.o
 
@@ -1215,6 +1188,33 @@ Scanner/Segment.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/Scanner/Segment.cpp.s
 .PHONY : Scanner/Segment.cpp.s
 
+State/ChtlJsState.o: State/ChtlJsState.cpp.o
+.PHONY : State/ChtlJsState.o
+
+# target to build an object file
+State/ChtlJsState.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/ChtlJsState.cpp.o
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/ChtlJsState.cpp.o
+.PHONY : State/ChtlJsState.cpp.o
+
+State/ChtlJsState.i: State/ChtlJsState.cpp.i
+.PHONY : State/ChtlJsState.i
+
+# target to preprocess a source file
+State/ChtlJsState.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/ChtlJsState.cpp.i
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/ChtlJsState.cpp.i
+.PHONY : State/ChtlJsState.cpp.i
+
+State/ChtlJsState.s: State/ChtlJsState.cpp.s
+.PHONY : State/ChtlJsState.s
+
+# target to generate assembly for a file
+State/ChtlJsState.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_core.dir/build.make src/CMakeFiles/chtl_core.dir/State/ChtlJsState.cpp.s
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/chtl_shared.dir/build.make src/CMakeFiles/chtl_shared.dir/State/ChtlJsState.cpp.s
+.PHONY : State/ChtlJsState.cpp.s
+
 State/ChtlState.o: State/ChtlState.cpp.o
 .PHONY : State/ChtlState.o
 
@@ -1367,9 +1367,6 @@ help:
 	@echo "... ChtlJs/ChtlJsContext.o"
 	@echo "... ChtlJs/ChtlJsContext.i"
 	@echo "... ChtlJs/ChtlJsContext.s"
-	@echo "... ChtlJs/ChtlJsState.o"
-	@echo "... ChtlJs/ChtlJsState.i"
-	@echo "... ChtlJs/ChtlJsState.s"
 	@echo "... Common/GlobalMap.o"
 	@echo "... Common/GlobalMap.i"
 	@echo "... Common/GlobalMap.s"
@@ -1478,6 +1475,9 @@ help:
 	@echo "... Scanner/Segment.o"
 	@echo "... Scanner/Segment.i"
 	@echo "... Scanner/Segment.s"
+	@echo "... State/ChtlJsState.o"
+	@echo "... State/ChtlJsState.i"
+	@echo "... State/ChtlJsState.s"
 	@echo "... State/ChtlState.o"
 	@echo "... State/ChtlState.i"
 	@echo "... State/ChtlState.s"

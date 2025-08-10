@@ -1,261 +1,197 @@
 #include "Css/CssAnalyzer.h"
-#include <fstream>
-#include <sstream>
-#include <algorithm>
 
 namespace chtl {
-namespace css {
 
-CssAnalyzer::CssAnalyzer() {
+// 私有实现类
+class CssAnalyzer::Impl {
+public:
+    CssAnalysisResult result;
+    
+    void reset() {
+        result = CssAnalysisResult();
+    }
+};
+
+CssAnalyzer::CssAnalyzer() 
+    : impl_(std::make_unique<Impl>()) {
 }
+
+CssAnalyzer::~CssAnalyzer() = default;
 
 CssAnalysisResult CssAnalyzer::analyze(const std::string& css) {
-    // 清空之前的结果
-    result_ = CssAnalysisResult();
+    impl_->reset();
     
-    // 基础语法验证
-    if (!validateSyntax(css)) {
-        result_.hasErrors = true;
-        return result_;
-    }
+    // 简单实现：提取基本信息
+    extractSelectors(css);
+    extractClassNames(css);
+    extractIds(css);
+    extractCustomProperties(css);
+    extractMediaQueries(css);
+    extractImports(css);
     
-    // 提取CSS块
-    result_.blocks = extractor_.extractBlocks(css);
-    
-    // 分析每个块
-    for (const auto& block : result_.blocks) {
-        analyzeBlock(block);
-    }
-    
-    // 检测现代特性
-    detectModernFeatures(css);
-    
-    // 统计信息
-    result_.ruleCount = result_.blocks.size();
-    result_.customPropertyCount = result_.customProperties.size();
-    
-    return result_;
+    return impl_->result;
 }
 
-void CssAnalyzer::detectModernFeatures(const std::string& css) {
-    // CSS Variables
-    if (css.find("--") != std::string::npos || css.find("var(") != std::string::npos) {
-        result_.modernFeatures.cssVariables = true;
-    }
+std::unordered_set<std::string> CssAnalyzer::extractSelectors(const std::string& css) {
+    std::unordered_set<std::string> selectors;
     
-    // Grid Layout
-    if (css.find("display: grid") != std::string::npos || 
-        css.find("display:grid") != std::string::npos ||
-        css.find("grid-template") != std::string::npos) {
-        result_.modernFeatures.cssGrid = true;
-    }
-    
-    // Flexbox
-    if (css.find("display: flex") != std::string::npos || 
-        css.find("display:flex") != std::string::npos ||
-        css.find("flex-") != std::string::npos) {
-        result_.modernFeatures.cssFlexbox = true;
-    }
-    
-    // Container Queries
-    if (css.find("@container") != std::string::npos) {
-        result_.modernFeatures.containerQueries = true;
-    }
-    
-    // Cascade Layers
-    if (css.find("@layer") != std::string::npos) {
-        result_.modernFeatures.cascadeLayers = true;
-    }
-    
-    // :has() selector
-    if (css.find(":has(") != std::string::npos) {
-        result_.modernFeatures.hasOperator = true;
-    }
-    
-    // :where() and :is()
-    if (css.find(":where(") != std::string::npos || css.find(":is(") != std::string::npos) {
-        result_.modernFeatures.whereIsOperator = true;
-    }
-    
-    // Logical Properties
-    std::vector<std::string> logicalProps = {
-        "margin-inline", "margin-block", "padding-inline", "padding-block",
-        "inset", "inset-inline", "inset-block"
-    };
-    for (const auto& prop : logicalProps) {
-        if (css.find(prop) != std::string::npos) {
-            result_.modernFeatures.logicalProperties = true;
-            break;
-        }
-    }
-    
-    // aspect-ratio
-    if (css.find("aspect-ratio") != std::string::npos) {
-        result_.modernFeatures.aspectRatio = true;
-    }
-    
-    // color() function
-    if (css.find("color(") != std::string::npos) {
-        result_.modernFeatures.colorFunction = true;
-    }
-    
-    // subgrid
-    if (css.find("subgrid") != std::string::npos) {
-        result_.modernFeatures.subgrid = true;
-    }
-}
-
-bool CssAnalyzer::validateSyntax(const std::string& css) {
-    // 基础括号平衡检查
-    int braceCount = 0;
-    int parenCount = 0;
-    int bracketCount = 0;
-    bool inString = false;
-    char stringChar = '\0';
-    
-    for (size_t i = 0; i < css.length(); ++i) {
-        char c = css[i];
-        
-        // 处理字符串
-        if ((c == '"' || c == '\'') && (i == 0 || css[i-1] != '\\')) {
-            if (!inString) {
-                inString = true;
-                stringChar = c;
-            } else if (c == stringChar) {
-                inString = false;
-            }
+    // 简单实现：查找选择器模式
+    size_t pos = 0;
+    while (pos < css.length()) {
+        // 跳过注释和字符串
+        if (css[pos] == '/' && pos + 1 < css.length() && css[pos + 1] == '*') {
+            pos = css.find("*/", pos + 2);
+            if (pos != std::string::npos) pos += 2;
+            else break;
             continue;
         }
         
-        if (inString) continue;
+        // 查找 { 之前的选择器
+        size_t bracePos = css.find('{', pos);
+        if (bracePos == std::string::npos) break;
         
-        // 处理注释
-        if (c == '/' && i + 1 < css.length() && css[i+1] == '*') {
-            size_t endComment = css.find("*/", i + 2);
-            if (endComment == std::string::npos) {
-                result_.errors.push_back("Unclosed comment");
-                return false;
+        // 提取选择器
+        std::string selector = css.substr(pos, bracePos - pos);
+        // 清理空白
+        selector.erase(0, selector.find_first_not_of(" \t\n\r"));
+        selector.erase(selector.find_last_not_of(" \t\n\r") + 1);
+        
+        if (!selector.empty()) {
+            selectors.insert(selector);
+            impl_->result.selectors.insert(selector);
+        }
+        
+        // 跳到下一个 }
+        pos = css.find('}', bracePos);
+        if (pos != std::string::npos) pos++;
+        else break;
+    }
+    
+    return selectors;
+}
+
+std::unordered_set<std::string> CssAnalyzer::extractClassNames(const std::string& css) {
+    std::unordered_set<std::string> classNames;
+    
+    // 查找 .className 模式
+    size_t pos = 0;
+    while ((pos = css.find('.', pos)) != std::string::npos) {
+        pos++;
+        if (pos < css.length() && (std::isalpha(css[pos]) || css[pos] == '_' || css[pos] == '-')) {
+            size_t end = pos;
+            while (end < css.length() && 
+                   (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
+                end++;
             }
-            i = endComment + 1;
-            continue;
-        }
-        
-        // 计数括号
-        switch (c) {
-            case '{': braceCount++; break;
-            case '}': braceCount--; break;
-            case '(': parenCount++; break;
-            case ')': parenCount--; break;
-            case '[': bracketCount++; break;
-            case ']': bracketCount--; break;
-        }
-        
-        // 检查负数
-        if (braceCount < 0 || parenCount < 0 || bracketCount < 0) {
-            result_.errors.push_back("Unmatched closing bracket at position " + std::to_string(i));
-            return false;
+            std::string className = css.substr(pos, end - pos);
+            classNames.insert(className);
+            impl_->result.classNames.insert(className);
+            pos = end;
         }
     }
     
-    // 检查最终平衡
-    if (braceCount != 0) {
-        result_.errors.push_back("Unmatched braces");
-        return false;
-    }
-    if (parenCount != 0) {
-        result_.errors.push_back("Unmatched parentheses");
-        return false;
-    }
-    if (bracketCount != 0) {
-        result_.errors.push_back("Unmatched brackets");
-        return false;
-    }
-    
-    return true;
+    return classNames;
 }
 
-void CssAnalyzer::analyzeBlock(std::shared_ptr<CssBlock> block) {
-    if (!block) return;
+std::unordered_set<std::string> CssAnalyzer::extractIds(const std::string& css) {
+    std::unordered_set<std::string> ids;
     
-    // 提取选择器信息
-    if (block->type == CssBlockType::RULE_SET) {
-        extractSelectorsFromBlock(block);
-        extractProperties(block);
-    } else if (block->type == CssBlockType::AT_RULE) {
-        analyzeAtRule(block);
+    // 查找 #id 模式
+    size_t pos = 0;
+    while ((pos = css.find('#', pos)) != std::string::npos) {
+        pos++;
+        if (pos < css.length() && (std::isalpha(css[pos]) || css[pos] == '_' || css[pos] == '-')) {
+            size_t end = pos;
+            while (end < css.length() && 
+                   (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
+                end++;
+            }
+            std::string id = css.substr(pos, end - pos);
+            ids.insert(id);
+            impl_->result.ids.insert(id);
+            pos = end;
+        }
     }
     
-    // 递归分析嵌套块
-    for (const auto& nested : block->nestedBlocks) {
-        analyzeBlock(nested);
-    }
+    return ids;
 }
 
-void CssAnalyzer::extractSelectorsFromBlock(std::shared_ptr<CssBlock> block) {
-    if (block->selector.empty()) return;
+std::unordered_set<std::string> CssAnalyzer::extractCustomProperties(const std::string& css) {
+    std::unordered_set<std::string> customProps;
     
-    // 添加到选择器列表
-    result_.selectors.push_back(block->selector);
-    
-    // 提取类名和ID
-    extractClassesAndIds(block->selector);
-}
-
-void CssAnalyzer::extractClassesAndIds(const std::string& selector) {
-    // 提取类名 (.class-name)
-    std::regex classRegex(R"(\.([a-zA-Z0-9_-]+))");
-    std::smatch match;
-    std::string::const_iterator searchStart(selector.cbegin());
-    
-    while (std::regex_search(searchStart, selector.cend(), match, classRegex)) {
-        result_.classNames.push_back(match[1]);
-        searchStart = match.suffix().first;
+    // 查找 --property 模式
+    size_t pos = 0;
+    while ((pos = css.find("--", pos)) != std::string::npos) {
+        size_t end = pos + 2;
+        while (end < css.length() && 
+               (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
+            end++;
+        }
+        if (end > pos + 2) {
+            std::string prop = css.substr(pos, end - pos);
+            customProps.insert(prop);
+            impl_->result.customProperties.insert(prop);
+        }
+        pos = end;
     }
     
-    // 提取ID (#id-name)
-    std::regex idRegex(R"(#([a-zA-Z0-9_-]+))");
-    searchStart = selector.cbegin();
+    return customProps;
+}
+
+std::unordered_set<std::string> CssAnalyzer::extractMediaQueries(const std::string& css) {
+    std::unordered_set<std::string> mediaQueries;
     
-    while (std::regex_search(searchStart, selector.cend(), match, idRegex)) {
-        result_.idNames.push_back(match[1]);
-        searchStart = match.suffix().first;
+    // 查找 @media 模式
+    size_t pos = 0;
+    while ((pos = css.find("@media", pos)) != std::string::npos) {
+        size_t start = pos;
+        size_t bracePos = css.find('{', pos);
+        if (bracePos != std::string::npos) {
+            std::string query = css.substr(start, bracePos - start);
+            mediaQueries.insert(query);
+            impl_->result.mediaQueries.insert(query);
+            pos = bracePos;
+        } else {
+            pos += 6;
+        }
     }
+    
+    return mediaQueries;
 }
 
-CssAnalysisResult CssAnalyzer::analyzeFile(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        result_.hasErrors = true;
-        result_.errors.push_back("Failed to open file: " + filepath);
-        return result_;
+std::unordered_set<std::string> CssAnalyzer::extractImports(const std::string& css) {
+    std::unordered_set<std::string> imports;
+    
+    // 查找 @import 模式
+    size_t pos = 0;
+    while ((pos = css.find("@import", pos)) != std::string::npos) {
+        size_t end = css.find(';', pos);
+        if (end != std::string::npos) {
+            std::string import = css.substr(pos, end - pos + 1);
+            imports.insert(import);
+            impl_->result.imports.insert(import);
+            pos = end;
+        } else {
+            pos += 7;
+        }
     }
     
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    
-    return analyze(buffer.str());
+    return imports;
 }
 
-void CssAnalyzer::extractProperties(std::shared_ptr<CssBlock> block) {
-    // TODO: 实现属性提取
+bool CssAnalyzer::validateSelector(const std::string& selector) {
+    // 简单验证
+    return !selector.empty() && selector.find_first_not_of(" \t\n\r") != std::string::npos;
 }
 
-void CssAnalyzer::analyzeAtRule(std::shared_ptr<CssBlock> block) {
-    // TODO: 实现@规则分析
+bool CssAnalyzer::validateProperty(const std::string& property) {
+    // 简单验证
+    return !property.empty();
 }
 
-std::unordered_map<std::string, std::string> CssAnalyzer::extractCssVariables(const std::string& css) {
-    std::unordered_map<std::string, std::string> variables;
-    // TODO: 实现CSS变量提取
-    return variables;
+bool CssAnalyzer::validateValue(const std::string& property, const std::string& value) {
+    // 简单验证
+    return !property.empty() && !value.empty();
 }
 
-CssModernFeatures CssAnalyzer::detectModernFeatures(const std::string& css) const {
-    CssModernFeatures features;
-    // 使用非const版本的实现
-    const_cast<CssAnalyzer*>(this)->detectModernFeatures(css);
-    return const_cast<CssAnalyzer*>(this)->result_.modernFeatures;
-}
-
-} // namespace css
 } // namespace chtl

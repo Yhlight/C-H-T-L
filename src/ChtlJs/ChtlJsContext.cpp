@@ -5,7 +5,7 @@
 namespace chtl {
 
 ChtlJsContext::ChtlJsContext() 
-    : BasicContext(),
+    : BasicContext(ContextType::CHTL_JS, "ChtlJsContext"),
       totalSelectors_(0),
       totalChtlMethods_(0),
       totalAnimations_(0) {
@@ -13,8 +13,8 @@ ChtlJsContext::ChtlJsContext()
     initializeRuntimeFunctions();
 }
 
-void ChtlJsContext::enterScope() {
-    BasicContext::enterScope();
+void ChtlJsContext::enterScope(ScopeType scopeType, const std::string& scopeName) {
+    BasicContext::enterScope(scopeType, scopeName);
     // CHTL-JS特定的作用域处理
 }
 

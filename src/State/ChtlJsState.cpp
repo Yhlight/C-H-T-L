@@ -2,7 +2,7 @@
 
 namespace chtl {
 
-bool ChtlJsState::handleChar(char c) {
+std::shared_ptr<BasicState> ChtlJsState::handleChar(char c) {
     static char prevChar = '\0';
     static char prevPrevChar = '\0';
     
@@ -49,7 +49,8 @@ bool ChtlJsState::handleChar(char c) {
     prevPrevChar = prevChar;
     prevChar = c;
     
-    return true;
+    // 返回nullptr表示继续使用当前状态
+    return nullptr;
 }
 
 bool ChtlJsState::accepts(char c) const {

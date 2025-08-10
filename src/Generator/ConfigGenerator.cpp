@@ -12,6 +12,15 @@ ConfigGenerator::ConfigGenerator()
       indentSize_(2) {
 }
 
+bool ConfigGenerator::generate(std::shared_ptr<Node> node) {
+    if (!node || node->getType() != NodeType::CONFIG) {
+        return false;
+    }
+    
+    generateNode(node);
+    return true;
+}
+
 void ConfigGenerator::generate(std::shared_ptr<Node> root, std::ostream& output) {
     if (!root) {
         return;

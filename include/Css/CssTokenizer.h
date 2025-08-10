@@ -95,6 +95,7 @@ private:
     CssToken readAtRule();
     CssToken readFunction();
     CssToken readColor();
+    CssToken readComment();
     
     bool isValidPropertyChar(char c) const;
     bool isValidSelectorChar(char c) const;

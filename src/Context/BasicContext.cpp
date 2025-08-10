@@ -217,4 +217,27 @@ void BasicContext::popContext() {
     exitScope();
 }
 
+bool BasicContext::addSymbol(const std::string& name, const SymbolInfo& info) {
+    if (scopeStack_.empty()) {
+        return false;
+    }
+    
+    auto& currentScope = scopeStack_.top();
+    currentScope->symbols[name] = info;
+    return true;
+}
+
+bool BasicContext::hasSymbol(const std::string& name) const {
+    // 从当前作用域向上查找
+    auto tempStack = scopeStack_;
+    while (!tempStack.empty()) {
+        const auto& scope = tempStack.top();
+        if (scope->symbols.find(name) != scope->symbols.end()) {
+            return true;
+        }
+        tempStack.pop();
+    }
+    return false;
+}
+
 } // namespace chtl

@@ -24,7 +24,7 @@ struct CssAnalysisResult {
 class CssAnalyzer {
 public:
     CssAnalyzer();
-    ~CssAnalyzer() = default;
+    ~CssAnalyzer();
     
     // 分析CSS代码
     CssAnalysisResult analyze(const std::string& css);

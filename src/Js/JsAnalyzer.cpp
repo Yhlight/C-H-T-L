@@ -4,412 +4,233 @@
 #include <algorithm>
 
 namespace chtl {
-namespace js {
 
-JsAnalyzer::JsAnalyzer() {
+class JsAnalyzer::Impl {
+public:
+    JsAnalysisResult result;
+    
+    void reset() {
+        result = JsAnalysisResult();
+    }
+};
+
+JsAnalyzer::JsAnalyzer() 
+    : impl_(std::make_unique<Impl>()) {
 }
+
+JsAnalyzer::~JsAnalyzer() = default;
 
 JsAnalysisResult JsAnalyzer::analyze(const std::string& js) {
-    // 清空之前的结果
-    result_ = JsAnalysisResult();
+    impl_->reset();
     
-    // 基础语法验证
-    if (!validateSyntax(js)) {
-        result_.hasErrors = true;
-        return result_;
-    }
-    
-    // 检测现代特性
+    // 简单实现：提取基本信息
+    extractFunctions(js);
+    extractClasses(js);
+    extractVariables(js);
+    extractImports(js);
+    extractExports(js);
     detectModernFeatures(js);
     
-    // 提取各种信息
-    result_.functions = extractFunctions(js);
-    result_.classes = extractClasses(js);
-    extractIdentifiers(js);
-    extractDependencies(js);
-    
-    // 计算复杂度
-    calculateComplexity(js);
-    
-    // 统计信息
-    auto stats = getStatistics(js);
-    result_.functionCount = stats.functionCount;
-    result_.classCount = stats.classCount;
-    result_.lineCount = stats.totalLines;
-    
-    return result_;
+    return impl_->result;
 }
 
-void JsAnalyzer::detectModernFeatures(const std::string& js) {
-    detectES6Features(js);
-    detectES2017Features(js);
-    detectES2020Features(js);
-    detectES2022Features(js);
-    detectProposalFeatures(js);
-}
-
-void JsAnalyzer::detectES6Features(const std::string& code) {
-    // Arrow functions
-    if (code.find("=>") != std::string::npos) {
-        result_.modernFeatures.arrowFunctions = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
+std::unordered_set<std::string> JsAnalyzer::extractFunctions(const std::string& js) {
+    std::unordered_set<std::string> functions;
     
-    // Classes
-    std::regex classRegex(R"(\bclass\s+\w+)");
-    if (std::regex_search(code, classRegex)) {
-        result_.modernFeatures.classes = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-    
-    // Template literals
-    if (code.find("`") != std::string::npos) {
-        result_.modernFeatures.templateLiterals = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-    
-    // let/const
-    std::regex letConstRegex(R"(\b(let|const)\s+)");
-    if (std::regex_search(code, letConstRegex)) {
-        result_.modernFeatures.letConst = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-    
-    // Destructuring
-    std::regex destructRegex(R"(\{[^}]*\}\s*=|\[[^\]]*\]\s*=)");
-    if (std::regex_search(code, destructRegex)) {
-        result_.modernFeatures.destructuring = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-    
-    // Rest/Spread
-    if (code.find("...") != std::string::npos) {
-        result_.modernFeatures.restSpread = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-    
-    // Modules
-    std::regex moduleRegex(R"(\b(import|export)\s+)");
-    if (std::regex_search(code, moduleRegex)) {
-        result_.modernFeatures.modules = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES6);
-    }
-}
-
-void JsAnalyzer::detectES2017Features(const std::string& code) {
-    // Async/Await
-    std::regex asyncRegex(R"(\basync\s+(function|\(|[a-zA-Z_$]))");
-    std::regex awaitRegex(R"(\bawait\s+)");
-    if (std::regex_search(code, asyncRegex) || std::regex_search(code, awaitRegex)) {
-        result_.modernFeatures.asyncAwait = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2017);
-    }
-}
-
-void JsAnalyzer::detectES2020Features(const std::string& code) {
-    // Optional chaining
-    if (code.find("?.") != std::string::npos) {
-        result_.modernFeatures.optionalChaining = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2020);
-    }
-    
-    // Nullish coalescing
-    if (code.find("??") != std::string::npos) {
-        result_.modernFeatures.nullishCoalescing = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2020);
-    }
-    
-    // BigInt
-    std::regex bigIntRegex(R"(\d+n\b)");
-    if (std::regex_search(code, bigIntRegex)) {
-        result_.modernFeatures.bigInt = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2020);
-    }
-    
-    // Dynamic import
-    std::regex dynamicImportRegex(R"(import\s*\()");
-    if (std::regex_search(code, dynamicImportRegex)) {
-        result_.modernFeatures.dynamicImport = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2020);
-    }
-}
-
-void JsAnalyzer::detectES2022Features(const std::string& code) {
-    // Top-level await
-    std::regex topLevelAwaitRegex(R"(^[^{]*\bawait\s+)", std::regex::multiline);
-    if (std::regex_search(code, topLevelAwaitRegex)) {
-        result_.modernFeatures.topLevelAwait = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2022);
-    }
-    
-    // Private fields
-    std::regex privateFieldRegex(R"(#[a-zA-Z_$][a-zA-Z0-9_$]*)");
-    if (std::regex_search(code, privateFieldRegex)) {
-        result_.modernFeatures.privateFields = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2022);
-    }
-    
-    // Static blocks
-    std::regex staticBlockRegex(R"(static\s*\{)");
-    if (std::regex_search(code, staticBlockRegex)) {
-        result_.modernFeatures.staticBlocks = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2022);
-    }
-    
-    // Error cause
-    std::regex errorCauseRegex(R"(new\s+Error\s*\([^)]*,\s*\{\s*cause\s*:)");
-    if (std::regex_search(code, errorCauseRegex)) {
-        result_.modernFeatures.errorCause = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2022);
-    }
-    
-    // Array.at()
-    std::regex arrayAtRegex(R"(\.at\s*\()");
-    if (std::regex_search(code, arrayAtRegex)) {
-        result_.modernFeatures.arrayAt = true;
-        result_.modernFeatures.highestVersionUsed = std::max(result_.modernFeatures.highestVersionUsed, EsVersion::ES2022);
-    }
-}
-
-void JsAnalyzer::detectProposalFeatures(const std::string& code) {
-    // Decorators
-    std::regex decoratorRegex(R"(@[a-zA-Z_$][a-zA-Z0-9_$]*\s*(class|\([^)]*\)\s*{))");
-    if (std::regex_search(code, decoratorRegex)) {
-        result_.modernFeatures.decorators = true;
-        result_.modernFeatures.highestVersionUsed = EsVersion::ESNEXT;
-    }
-}
-
-bool JsAnalyzer::validateSyntax(const std::string& js) {
-    // 基础括号平衡检查
-    int braceCount = 0;
-    int parenCount = 0;
-    int bracketCount = 0;
-    bool inString = false;
-    bool inTemplate = false;
-    char stringChar = '\0';
-    
-    for (size_t i = 0; i < js.length(); ++i) {
-        char c = js[i];
+    // 简单实现：查找function关键字
+    size_t pos = 0;
+    while ((pos = js.find("function", pos)) != std::string::npos) {
+        pos += 8; // 跳过"function"
         
-        // 处理字符串
-        if ((c == '"' || c == '\'') && (i == 0 || js[i-1] != '\\') && !inTemplate) {
-            if (!inString) {
-                inString = true;
-                stringChar = c;
-            } else if (c == stringChar) {
-                inString = false;
+        // 跳过空白
+        while (pos < js.length() && std::isspace(js[pos])) {
+            pos++;
+        }
+        
+        // 提取函数名
+        if (pos < js.length() && (std::isalpha(js[pos]) || js[pos] == '_')) {
+            size_t start = pos;
+            while (pos < js.length() && 
+                   (std::isalnum(js[pos]) || js[pos] == '_')) {
+                pos++;
             }
-            continue;
-        }
-        
-        // 处理模板字符串
-        if (c == '`' && (i == 0 || js[i-1] != '\\')) {
-            inTemplate = !inTemplate;
-            continue;
-        }
-        
-        if (inString || inTemplate) continue;
-        
-        // 处理注释
-        if (c == '/' && i + 1 < js.length()) {
-            if (js[i+1] == '/') {
-                // 单行注释
-                size_t endLine = js.find('\n', i);
-                if (endLine == std::string::npos) {
-                    i = js.length();
-                } else {
-                    i = endLine;
-                }
-                continue;
-            } else if (js[i+1] == '*') {
-                // 多行注释
-                size_t endComment = js.find("*/", i + 2);
-                if (endComment == std::string::npos) {
-                    result_.errors.push_back("Unclosed comment");
-                    return false;
-                }
-                i = endComment + 1;
-                continue;
-            }
-        }
-        
-        // 计数括号
-        switch (c) {
-            case '{': braceCount++; break;
-            case '}': braceCount--; break;
-            case '(': parenCount++; break;
-            case ')': parenCount--; break;
-            case '[': bracketCount++; break;
-            case ']': bracketCount--; break;
-        }
-        
-        // 检查负数
-        if (braceCount < 0 || parenCount < 0 || bracketCount < 0) {
-            result_.errors.push_back("Unmatched closing bracket at position " + std::to_string(i));
-            return false;
+            std::string funcName = js.substr(start, pos - start);
+            functions.insert(funcName);
+            impl_->result.functions.insert(funcName);
         }
     }
-    
-    // 检查最终平衡
-    if (braceCount != 0) {
-        result_.errors.push_back("Unmatched braces");
-        return false;
-    }
-    if (parenCount != 0) {
-        result_.errors.push_back("Unmatched parentheses");
-        return false;
-    }
-    if (bracketCount != 0) {
-        result_.errors.push_back("Unmatched brackets");
-        return false;
-    }
-    
-    return true;
-}
-
-std::vector<std::string> JsAnalyzer::extractFunctions(const std::string& js) {
-    std::vector<std::string> functions;
-    
-    // 函数声明
-    std::regex funcDeclRegex(R"(function\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\()");
-    std::smatch match;
-    std::string::const_iterator searchStart(js.cbegin());
-    
-    while (std::regex_search(searchStart, js.cend(), match, funcDeclRegex)) {
-        functions.push_back(match[1]);
-        searchStart = match.suffix().first;
-    }
-    
-    // 箭头函数（带名称的）
-    std::regex arrowFuncRegex(R"((?:const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)");
-    searchStart = js.cbegin();
-    
-    while (std::regex_search(searchStart, js.cend(), match, arrowFuncRegex)) {
-        functions.push_back(match[1]);
-        searchStart = match.suffix().first;
-    }
-    
-    // 方法定义（ES6类方法）
-    std::regex methodRegex(R"(([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\([^)]*\)\s*\{)");
-    searchStart = js.cbegin();
-    
-    // 需要更复杂的逻辑来区分方法和函数调用
     
     return functions;
 }
 
-std::vector<std::string> JsAnalyzer::extractClasses(const std::string& js) {
-    std::vector<std::string> classes;
+std::unordered_set<std::string> JsAnalyzer::extractClasses(const std::string& js) {
+    std::unordered_set<std::string> classes;
     
-    std::regex classRegex(R"(class\s+([a-zA-Z_$][a-zA-Z0-9_$]*))");
-    std::smatch match;
-    std::string::const_iterator searchStart(js.cbegin());
-    
-    while (std::regex_search(searchStart, js.cend(), match, classRegex)) {
-        classes.push_back(match[1]);
-        searchStart = match.suffix().first;
+    // 简单实现：查找class关键字
+    size_t pos = 0;
+    while ((pos = js.find("class", pos)) != std::string::npos) {
+        // 确保是独立的class关键字
+        if (pos > 0 && (std::isalnum(js[pos - 1]) || js[pos - 1] == '_')) {
+            pos++;
+            continue;
+        }
+        
+        pos += 5; // 跳过"class"
+        
+        // 跳过空白
+        while (pos < js.length() && std::isspace(js[pos])) {
+            pos++;
+        }
+        
+        // 提取类名
+        if (pos < js.length() && (std::isalpha(js[pos]) || js[pos] == '_')) {
+            size_t start = pos;
+            while (pos < js.length() && 
+                   (std::isalnum(js[pos]) || js[pos] == '_')) {
+                pos++;
+            }
+            std::string className = js.substr(start, pos - start);
+            classes.insert(className);
+            impl_->result.classes.insert(className);
+        }
     }
     
     return classes;
 }
 
-JsAnalysisResult JsAnalyzer::analyzeFile(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        result_.hasErrors = true;
-        result_.errors.push_back("Failed to open file: " + filepath);
-        return result_;
-    }
+std::unordered_set<std::string> JsAnalyzer::extractVariables(const std::string& js) {
+    std::unordered_set<std::string> variables;
     
-    std::stringstream buffer;
-    buffer << file.rdbuf();
+    // 简单实现：查找var, let, const
+    std::vector<std::string> keywords = {"var", "let", "const"};
     
-    return analyze(buffer.str());
-}
-
-JsAnalyzer::CodeStatistics JsAnalyzer::getStatistics(const std::string& js) {
-    CodeStatistics stats{};
-    
-    std::istringstream stream(js);
-    std::string line;
-    
-    while (std::getline(stream, line)) {
-        stats.totalLines++;
-        
-        // 去除首尾空格
-        line.erase(0, line.find_first_not_of(" \t\r\n"));
-        line.erase(line.find_last_not_of(" \t\r\n") + 1);
-        
-        if (line.empty()) {
-            stats.blankLines++;
-        } else if (line.find("//") == 0 || (line.find("/*") == 0 && line.find("*/") != std::string::npos)) {
-            stats.commentLines++;
-        } else {
-            stats.codeLines++;
+    for (const auto& keyword : keywords) {
+        size_t pos = 0;
+        while ((pos = js.find(keyword, pos)) != std::string::npos) {
+            // 确保是独立的关键字
+            if (pos > 0 && (std::isalnum(js[pos - 1]) || js[pos - 1] == '_')) {
+                pos++;
+                continue;
+            }
+            
+            pos += keyword.length();
+            
+            // 跳过空白
+            while (pos < js.length() && std::isspace(js[pos])) {
+                pos++;
+            }
+            
+            // 提取变量名
+            if (pos < js.length() && (std::isalpha(js[pos]) || js[pos] == '_')) {
+                size_t start = pos;
+                while (pos < js.length() && 
+                       (std::isalnum(js[pos]) || js[pos] == '_')) {
+                    pos++;
+                }
+                std::string varName = js.substr(start, pos - start);
+                variables.insert(varName);
+                impl_->result.variables.insert(varName);
+            }
         }
     }
     
-    stats.functionCount = extractFunctions(js).size();
-    stats.classCount = extractClasses(js).size();
-    
-    return stats;
+    return variables;
 }
 
-void JsAnalyzer::extractIdentifiers(const std::string& code) {
-    // 简单的标识符提取
-    std::regex identifierRegex(R"(\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b)");
-    std::smatch match;
-    std::string::const_iterator searchStart(code.cbegin());
+std::unordered_set<std::string> JsAnalyzer::extractImports(const std::string& js) {
+    std::unordered_set<std::string> imports;
     
-    while (std::regex_search(searchStart, code.cend(), match, identifierRegex)) {
-        result_.identifiers.insert(match[1]);
-        searchStart = match.suffix().first;
-    }
-}
-
-void JsAnalyzer::extractDependencies(const std::string& code) {
-    // 提取import语句中的依赖
-    std::regex importRegex(R"(import\s+.*?\s+from\s+['"](.*?)['"])");
-    std::smatch match;
-    std::string::const_iterator searchStart(code.cbegin());
-    
-    while (std::regex_search(searchStart, code.cend(), match, importRegex)) {
-        result_.dependencies.insert(match[1]);
-        searchStart = match.suffix().first;
-    }
-    
-    // 提取require语句中的依赖
-    std::regex requireRegex(R"(require\s*\(\s*['"](.*?)['"]\s*\))");
-    searchStart = code.cbegin();
-    
-    while (std::regex_search(searchStart, code.cend(), match, requireRegex)) {
-        result_.dependencies.insert(match[1]);
-        searchStart = match.suffix().first;
-    }
-}
-
-void JsAnalyzer::calculateComplexity(const std::string& code) {
-    // 简单的圈复杂度计算
-    result_.cyclomaticComplexity = 1; // 基础复杂度
-    
-    // 条件语句增加复杂度
-    std::vector<std::string> complexityKeywords = {
-        "\\bif\\b", "\\belse\\s+if\\b", "\\bfor\\b", "\\bwhile\\b", 
-        "\\bdo\\b", "\\bcase\\b", "\\bcatch\\b", "\\?", "&&", "\\|\\|"
-    };
-    
-    for (const auto& keyword : complexityKeywords) {
-        std::regex keywordRegex(keyword);
-        std::smatch match;
-        std::string::const_iterator searchStart(code.cbegin());
-        
-        while (std::regex_search(searchStart, code.cend(), match, keywordRegex)) {
-            result_.cyclomaticComplexity++;
-            searchStart = match.suffix().first;
+    // 简单实现：查找import语句
+    size_t pos = 0;
+    while ((pos = js.find("import", pos)) != std::string::npos) {
+        // 确保是独立的import关键字
+        if (pos > 0 && (std::isalnum(js[pos - 1]) || js[pos - 1] == '_')) {
+            pos++;
+            continue;
         }
+        
+        // 查找from
+        size_t fromPos = js.find("from", pos);
+        if (fromPos != std::string::npos) {
+            // 查找模块名
+            size_t quotePos = js.find_first_of("'\"", fromPos);
+            if (quotePos != std::string::npos) {
+                char quote = js[quotePos];
+                size_t endQuote = js.find(quote, quotePos + 1);
+                if (endQuote != std::string::npos) {
+                    std::string module = js.substr(quotePos + 1, endQuote - quotePos - 1);
+                    imports.insert(module);
+                    impl_->result.imports.insert(module);
+                }
+            }
+        }
+        
+        pos += 6;
+    }
+    
+    return imports;
+}
+
+std::unordered_set<std::string> JsAnalyzer::extractExports(const std::string& js) {
+    std::unordered_set<std::string> exports;
+    
+    // 简单实现：查找export语句
+    size_t pos = 0;
+    while ((pos = js.find("export", pos)) != std::string::npos) {
+        // 确保是独立的export关键字
+        if (pos > 0 && (std::isalnum(js[pos - 1]) || js[pos - 1] == '_')) {
+            pos++;
+            continue;
+        }
+        
+        pos += 6;
+        exports.insert("export");
+        impl_->result.exports.insert("export");
+    }
+    
+    return exports;
+}
+
+void JsAnalyzer::detectModernFeatures(const std::string& js) {
+    // 箭头函数
+    if (js.find("=>") != std::string::npos) {
+        impl_->result.hasArrowFunctions = true;
+    }
+    
+    // 类
+    if (js.find("class") != std::string::npos) {
+        impl_->result.hasClasses = true;
+    }
+    
+    // 模板字符串
+    if (js.find("`") != std::string::npos) {
+        impl_->result.hasTemplateStrings = true;
+    }
+    
+    // let/const
+    if (js.find("let") != std::string::npos || js.find("const") != std::string::npos) {
+        impl_->result.hasLetConst = true;
+    }
+    
+    // 模块
+    if (js.find("import") != std::string::npos || js.find("export") != std::string::npos) {
+        impl_->result.hasModules = true;
+    }
+    
+    // async/await
+    if (js.find("async") != std::string::npos || js.find("await") != std::string::npos) {
+        impl_->result.hasAsyncAwait = true;
+    }
+    
+    // 可选链
+    if (js.find("?.") != std::string::npos) {
+        impl_->result.hasOptionalChaining = true;
+    }
+    
+    // 空值合并
+    if (js.find("??") != std::string::npos) {
+        impl_->result.hasNullishCoalescing = true;
     }
 }
 
-} // namespace js
 } // namespace chtl

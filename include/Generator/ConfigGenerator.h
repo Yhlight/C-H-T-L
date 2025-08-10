@@ -26,7 +26,10 @@ public:
     virtual ~ConfigGenerator() = default;
     
     // 覆盖基类方法
-    void generate(std::shared_ptr<Node> root, std::ostream& output) override;
+    bool generate(std::shared_ptr<Node> node) override;
+    
+    // 扩展的生成方法
+    void generate(std::shared_ptr<Node> root, std::ostream& output);
     
     // 设置输出格式
     void setFormat(ConfigFormat format) { currentFormat_ = format; }

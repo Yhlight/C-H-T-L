@@ -1,8 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o"
   "CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o.d"
-  "CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.o"
-  "CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsState.cpp.o.d"
   "CMakeFiles/chtl_core.dir/Common/GlobalMap.cpp.o"
   "CMakeFiles/chtl_core.dir/Common/GlobalMap.cpp.o.d"
   "CMakeFiles/chtl_core.dir/Common/Token.cpp.o"
@@ -75,6 +73,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl_core.dir/Scanner/BridgeScanner.cpp.o.d"
   "CMakeFiles/chtl_core.dir/Scanner/Segment.cpp.o"
   "CMakeFiles/chtl_core.dir/Scanner/Segment.cpp.o.d"
+  "CMakeFiles/chtl_core.dir/State/ChtlJsState.cpp.o"
+  "CMakeFiles/chtl_core.dir/State/ChtlJsState.cpp.o.d"
   "CMakeFiles/chtl_core.dir/State/ChtlState.cpp.o"
   "CMakeFiles/chtl_core.dir/State/ChtlState.cpp.o.d"
   "CMakeFiles/chtl_core.dir/State/CssState.cpp.o"

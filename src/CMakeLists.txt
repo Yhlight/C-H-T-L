@@ -9,6 +9,7 @@ set(CHTL_SOURCES
     State/StandardState.cpp
     State/CssState.cpp
     State/JsState.cpp
+    State/ChtlJsState.cpp
     State/StateFactory.cpp
     
     # Context
@@ -62,7 +63,6 @@ set(CHTL_SOURCES
     Js/JsBlockExtractor.cpp
     
     # CHTL-JS (只包含实际存在的文件)
-    ChtlJs/ChtlJsState.cpp
     ChtlJs/ChtlJsContext.cpp
 )
 

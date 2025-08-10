@@ -69,6 +69,9 @@ set(CHTL_SOURCES
     # Loader
     Loader/DependencyGraph.cpp
     Loader/ImportManager.cpp
+    
+    # Utils
+    Utils/ConstraintValidator.cpp
 )
 
 # 创建静态库

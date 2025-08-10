@@ -716,6 +716,20 @@ src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.s"
 	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Loader/ImportManager.cpp -o CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.s
 
+src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o: src/CMakeFiles/chtl_core.dir/flags.make
+src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o: /workspace/src/Utils/ConstraintValidator.cpp
+src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o: src/CMakeFiles/chtl_core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building CXX object src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o -MF CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o.d -o CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o -c /workspace/src/Utils/ConstraintValidator.cpp
+
+src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.i"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/src/Utils/ConstraintValidator.cpp > CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.i
+
+src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.s"
+	cd /workspace/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/Utils/ConstraintValidator.cpp -o CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.s
+
 # Object files for target chtl_core
 chtl_core_OBJECTS = \
 "CMakeFiles/chtl_core.dir/Common/GlobalMap.cpp.o" \
@@ -763,7 +777,8 @@ chtl_core_OBJECTS = \
 "CMakeFiles/chtl_core.dir/Js/JsBlockExtractor.cpp.o" \
 "CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o" \
 "CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.o" \
-"CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o"
+"CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o" \
+"CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o"
 
 # External object files for target chtl_core
 chtl_core_EXTERNAL_OBJECTS =
@@ -814,9 +829,10 @@ src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Js/JsBlockExtractor.cpp.o
 src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/ChtlJs/ChtlJsContext.cpp.o
 src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Loader/DependencyGraph.cpp.o
 src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Loader/ImportManager.cpp.o
+src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/Utils/ConstraintValidator.cpp.o
 src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/build.make
 src/libchtl_core.a: src/CMakeFiles/chtl_core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Linking CXX static library libchtl_core.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Linking CXX static library libchtl_core.a"
 	cd /workspace/build/src && $(CMAKE_COMMAND) -P CMakeFiles/chtl_core.dir/cmake_clean_target.cmake
 	cd /workspace/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl_core.dir/link.txt --verbose=$(VERBOSE)
 

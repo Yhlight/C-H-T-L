@@ -47,6 +47,7 @@ libchtl.so: \
   CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o \
   CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o \
   CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o \
+  CMakeFiles/chtl_shared.dir/Utils/ConstraintValidator.cpp.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so \
   /lib/x86_64-linux-gnu/libm.so \
   /lib/x86_64-linux-gnu/libm.so \
@@ -169,6 +170,8 @@ CMakeFiles/chtl_shared.dir/ChtlJs/ChtlJsContext.cpp.o:
 CMakeFiles/chtl_shared.dir/Loader/DependencyGraph.cpp.o:
 
 CMakeFiles/chtl_shared.dir/Loader/ImportManager.cpp.o:
+
+CMakeFiles/chtl_shared.dir/Utils/ConstraintValidator.cpp.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/libstdc++.so:
 

@@ -1,43 +1,56 @@
-#ifndef CHTL_CHTLJS_STATE_H
-#define CHTL_CHTLJS_STATE_H
+#ifndef CHTL_CHTL_JS_STATE_H
+#define CHTL_CHTL_JS_STATE_H
 
 #include "State/BasicState.h"
 #include <memory>
 
 namespace chtl {
 
-class ChtlJsLexer;
-
-/**
- * CHTL-JS状态
- * 处理CHTL扩展的JavaScript语法
- */
+// CHTL-JS状态 - 跟踪CHTL-JS特定的语法状态
 class ChtlJsState : public BasicState {
-public:
-    explicit ChtlJsState(BasicLexer* lexer);
-    virtual ~ChtlJsState() = default;
+private:
+    // CHTL-JS特定状态
+    bool inChtlSelector_;      // 在 {{ }} 选择器中
+    bool inChtlMethod_;        // 在 -> 方法调用中
+    bool inTemplateString_;    // 在模板字符串中
+    int selectorDepth_;        // 选择器嵌套深度
+    int parenDepth_;          // 括号深度
     
-    // 实现BasicState纯虚函数
-    std::shared_ptr<BasicState> handleChar(char ch) override;
-    bool accepts(char ch) const override;
+public:
+    ChtlJsState(BasicLexer* lexer)
+        : BasicState(StateType::JS, "ChtlJsState", lexer),
+          inChtlSelector_(false),
+          inChtlMethod_(false),
+          inTemplateString_(false),
+          selectorDepth_(0),
+          parenDepth_(0) {}
+    
+    // 状态查询
+    bool isInChtlSelector() const { return inChtlSelector_; }
+    bool isInChtlMethod() const { return inChtlMethod_; }
+    bool isInTemplateString() const { return inTemplateString_; }
+    bool isInSelectorMode() const { return inChtlSelector_; } // 兼容旧接口
+    
+    // 实现基类方法
+    std::shared_ptr<BasicState> handleChar(char c) override;
+    bool accepts(char c) const override;
     void reset() override;
     
-    // CHTL-JS特有状态
-    bool isInChtlSequence() const { return inChtlSequence_; }
-    void setInChtlSequence(bool value) { inChtlSequence_ = value; }
-    
-    bool isInSelectorMode() const { return inSelectorMode_; }
-    void setInSelectorMode(bool value) { inSelectorMode_ = value; }
-    
-    bool isInMethodCall() const { return inMethodCall_; }
-    void setInMethodCall(bool value) { inMethodCall_ = value; }
-    
-private:
-    bool inChtlSequence_;
-    bool inSelectorMode_;
-    bool inMethodCall_;
+    // CHTL-JS特定方法
+    void enterChtlSelector() { inChtlSelector_ = true; selectorDepth_++; }
+    void exitChtlSelector() { 
+        selectorDepth_--;
+        if (selectorDepth_ <= 0) {
+            inChtlSelector_ = false;
+            selectorDepth_ = 0;
+        }
+    }
+    void enterChtlMethod() { inChtlMethod_ = true; }
+    void exitChtlMethod() { inChtlMethod_ = false; }
+    void enterTemplateString() { inTemplateString_ = true; }
+    void exitTemplateString() { inTemplateString_ = false; }
 };
 
 } // namespace chtl
 
-#endif // CHTL_CHTLJS_STATE_H
+#endif // CHTL_CHTL_JS_STATE_H

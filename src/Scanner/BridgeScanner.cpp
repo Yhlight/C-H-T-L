@@ -1,88 +1,86 @@
 #include "Scanner/BridgeScanner.h"
-#include <fstream>
+#include "State/ChtlJsState.h"
+#include "Context/ChtlJsContext.h"
 #include <sstream>
-#include <algorithm>
+#include <regex>
 
 namespace chtl {
 
 BridgeScanner::BridgeScanner() 
-    : config_() {
-    scanState_.currentLine = 1;
-    scanState_.currentColumn = 1;
-    scanState_.currentMode = ScanMode::AUTO;
-    scanState_.inChtlBlock = false;
+    : enabled_(true) {
+    // 初始化状态和上下文
+    chtlJsState_ = std::make_shared<ChtlJsState>(nullptr);
+    chtlJsContext_ = std::make_shared<ChtlJsContext>();
+    
+    // 设置默认配置
+    config_.splitStrategy = SplitStrategy::SYNTAX_BASED;
+    config_.maxSegmentSize = 1024 * 1024; // 1MB
+    config_.enableOptimization = true;
+    config_.cacheResults = true;
 }
 
-bool BridgeScanner::initialize(std::shared_ptr<BasicLexer> lexer,
-                             std::shared_ptr<BasicContext> context) {
-    lexer_ = lexer;
-    context_ = context;
-    
-    // 初始化CHTL-JS状态机
-    chtlJsState_ = std::make_shared<ChtlJsState>();
-    
-    return true;
-}
+BridgeScanner::~BridgeScanner() = default;
 
-BridgeScanner::ScanResult BridgeScanner::scan(const std::string& code, 
-                                             const std::string& filename) {
-    ScanResult result;
-    scanState_.currentFile = filename;
-    codeBuffer_ = code;
-    
-    try {
-        // 分割代码
-        result.segments = splitCode(code);
-        
-        // 分发到相应的处理器
-        dispatchAll(result.segments);
-        
-    } catch (const std::exception& e) {
-        result.success = false;
-        result.errors.push_back("Scanner error: " + std::string(e.what()));
+std::vector<std::shared_ptr<Segment>> BridgeScanner::scan(const std::string& code) {
+    if (!enabled_ || code.empty()) {
+        return {};
     }
     
-    return result;
-}
-
-BridgeScanner::ScanResult BridgeScanner::scanFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        ScanResult result;
-        result.success = false;
-        result.errors.push_back("Failed to open file: " + filename);
-        return result;
+    // 检查缓存
+    if (config_.cacheResults) {
+        auto it = cache_.find(code);
+        if (it != cache_.end()) {
+            return it->second;
+        }
     }
     
-    std::stringstream buffer;
-    buffer << file.rdbuf();
+    std::vector<std::shared_ptr<Segment>> segments;
     
-    return scan(buffer.str(), filename);
-}
-
-void BridgeScanner::clearHandlers() {
-    jsHandlers_.clear();
-    chtlJsHandlers_.clear();
-    errorHandler_ = nullptr;
+    switch (config_.splitStrategy) {
+        case SplitStrategy::SYNTAX_BASED:
+            segments = scanSyntaxBased(code);
+            break;
+        case SplitStrategy::LINE_BASED:
+            segments = scanLineBased(code);
+            break;
+        case SplitStrategy::BLOCK_BASED:
+            segments = scanBlockBased(code);
+            break;
+        case SplitStrategy::HYBRID:
+            segments = scanHybrid(code);
+            break;
+    }
+    
+    // 优化段
+    if (config_.enableOptimization) {
+        segments = optimizeSegments(segments);
+    }
+    
+    // 缓存结果
+    if (config_.cacheResults) {
+        cache_[code] = segments;
+    }
+    
+    return segments;
 }
 
 void BridgeScanner::dispatch(std::shared_ptr<Segment> segment) {
     if (!segment) return;
     
     switch (segment->getType()) {
-        case SegmentType::JavaScript:
+        case SegmentType::JAVASCRIPT:
             for (auto& handler : jsHandlers_) {
                 handler(segment);
             }
             break;
             
-        case SegmentType::ChtlJavaScript:
+        case SegmentType::CHTL_JAVASCRIPT:
             for (auto& handler : chtlJsHandlers_) {
                 handler(segment);
             }
             break;
             
-        case SegmentType::Mixed:
+        case SegmentType::MIXED:
             // 混合段需要进一步分割
             auto mixedSeg = std::dynamic_pointer_cast<MixedSegment>(segment);
             if (mixedSeg) {
@@ -99,269 +97,285 @@ void BridgeScanner::dispatchAll(const std::vector<std::shared_ptr<Segment>>& seg
     }
 }
 
-std::vector<std::shared_ptr<Segment>> BridgeScanner::splitCode(const std::string& code) {
-    switch (config_.strategy) {
-        case SplitStrategy::SYNTAX_BASED:
-            return splitBySyntax(code);
-        case SplitStrategy::LINE_BASED:
-            return splitByLines(code);
-        case SplitStrategy::BLOCK_BASED:
-            return splitByBlocks(code);
-        case SplitStrategy::HYBRID:
-        default:
-            return splitHybrid(code);
-    }
+void BridgeScanner::registerJavaScriptHandler(SegmentHandler handler) {
+    jsHandlers_.push_back(handler);
 }
 
-std::vector<std::shared_ptr<Segment>> BridgeScanner::splitBySyntax(const std::string& code) {
+void BridgeScanner::registerChtlJavaScriptHandler(SegmentHandler handler) {
+    chtlJsHandlers_.push_back(handler);
+}
+
+void BridgeScanner::enable(bool enabled) {
+    enabled_ = enabled;
+}
+
+void BridgeScanner::reset() {
+    if (chtlJsState_) {
+        chtlJsState_->reset();
+    }
+    if (chtlJsContext_) {
+        chtlJsContext_->reset();
+    }
+    clearCache();
+}
+
+void BridgeScanner::clearCache() {
+    cache_.clear();
+}
+
+std::vector<std::shared_ptr<Segment>> BridgeScanner::scanSyntaxBased(const std::string& code) {
     std::vector<std::shared_ptr<Segment>> segments;
+    std::vector<BoundaryInfo> boundaries = findBoundaries(code);
     
-    // 使用状态机扫描代码
-    chtlJsState_->reset();
+    if (boundaries.empty()) {
+        // 没有边界，整个代码是一个段
+        auto type = detectSegmentType(code);
+        segments.push_back(createSegment(type, code));
+        return segments;
+    }
     
-    size_t start = 0;
-    size_t current = 0;
-    bool inChtlSyntax = false;
-    std::vector<BlockBoundary> boundaries;
-    
-    // 逐字符扫描
-    for (size_t i = 0; i < code.length(); ++i) {
-        char c = code[i];
-        chtlJsState_->processChar(c);
-        
-        // 检测CHTL语法边界
-        if (!inChtlSyntax && chtlJsState_->isInChtlSelector()) {
-            // 进入CHTL选择器
-            if (i > start) {
-                BlockBoundary boundary;
-                boundary.start = start;
-                boundary.end = i - 1;  // {{ 之前
-                boundary.type = SegmentType::JavaScript;
-                boundary.reason = "Before CHTL selector";
-                boundaries.push_back(boundary);
-            }
-            start = i - 1;  // 包含 {{
-            inChtlSyntax = true;
-        } else if (inChtlSyntax && !chtlJsState_->isInChtlSelector() && 
-                   !chtlJsState_->isInChtlMethod()) {
-            // 离开CHTL语法
-            BlockBoundary boundary;
-            boundary.start = start;
-            boundary.end = i;
-            boundary.type = SegmentType::ChtlJavaScript;
-            boundary.reason = "CHTL syntax block";
-            boundaries.push_back(boundary);
-            start = i + 1;
-            inChtlSyntax = false;
+    // 根据边界分割代码
+    size_t lastPos = 0;
+    for (const auto& boundary : boundaries) {
+        if (boundary.position > lastPos) {
+            // 创建从lastPos到boundary.position的段
+            std::string segmentCode = code.substr(lastPos, boundary.position - lastPos);
+            segments.push_back(createSegment(boundary.type, segmentCode));
         }
-        
-        // 检测animate调用
-        if (i >= 7 && code.substr(i - 7, 7) == "animate" && 
-            (i + 1 < code.length() && code[i + 1] == '(')) {
-            if (!inChtlSyntax && i - 7 > start) {
-                BlockBoundary boundary;
-                boundary.start = start;
-                boundary.end = i - 8;
-                boundary.type = SegmentType::JavaScript;
-                boundary.reason = "Before animate call";
-                boundaries.push_back(boundary);
-            }
-            start = i - 7;
-            inChtlSyntax = true;
-        }
+        lastPos = boundary.position;
     }
     
     // 处理最后一段
-    if (start < code.length()) {
-        BlockBoundary boundary;
-        boundary.start = start;
-        boundary.end = code.length() - 1;
-        boundary.type = inChtlSyntax ? SegmentType::ChtlJavaScript : SegmentType::JavaScript;
-        boundary.reason = "End of code";
-        boundaries.push_back(boundary);
+    if (lastPos < code.length()) {
+        std::string segmentCode = code.substr(lastPos);
+        auto type = detectSegmentType(segmentCode);
+        segments.push_back(createSegment(type, segmentCode));
     }
     
-    // 创建段
-    for (const auto& boundary : boundaries) {
-        auto segment = createSegmentFromBoundary(code, boundary);
-        if (segment) {
-            segments.push_back(segment);
+    return segments;
+}
+
+std::vector<std::shared_ptr<Segment>> BridgeScanner::scanLineBased(const std::string& code) {
+    std::vector<std::shared_ptr<Segment>> segments;
+    std::istringstream stream(code);
+    std::string line;
+    std::string currentSegment;
+    SegmentType currentType = SegmentType::UNKNOWN;
+    
+    while (std::getline(stream, line)) {
+        auto lineType = detectLineType(line);
+        
+        if (lineType != currentType && !currentSegment.empty()) {
+            // 类型改变，保存当前段
+            segments.push_back(createSegment(currentType, currentSegment));
+            currentSegment.clear();
+        }
+        
+        currentType = lineType;
+        currentSegment += line + "\n";
+    }
+    
+    // 保存最后一段
+    if (!currentSegment.empty()) {
+        segments.push_back(createSegment(currentType, currentSegment));
+    }
+    
+    return segments;
+}
+
+std::vector<std::shared_ptr<Segment>> BridgeScanner::scanBlockBased(const std::string& code) {
+    // 基于块的扫描（如函数、类等）
+    std::vector<std::shared_ptr<Segment>> segments;
+    
+    // 简单实现：寻找大括号平衡的块
+    size_t pos = 0;
+    while (pos < code.length()) {
+        size_t blockStart = pos;
+        size_t blockEnd = findBlockEnd(code, pos);
+        
+        if (blockEnd > blockStart) {
+            std::string blockCode = code.substr(blockStart, blockEnd - blockStart);
+            auto type = detectSegmentType(blockCode);
+            segments.push_back(createSegment(type, blockCode));
+            pos = blockEnd;
+        } else {
+            pos++;
         }
     }
     
     return segments;
 }
 
-std::vector<std::shared_ptr<Segment>> BridgeScanner::splitHybrid(const std::string& code) {
-    // 混合策略：结合语法和启发式方法
-    auto syntaxSegments = splitBySyntax(code);
-    
-    // 对每个段进行进一步检查
-    std::vector<std::shared_ptr<Segment>> refinedSegments;
+std::vector<std::shared_ptr<Segment>> BridgeScanner::scanHybrid(const std::string& code) {
+    // 混合策略：结合语法和块扫描
+    auto syntaxSegments = scanSyntaxBased(code);
+    std::vector<std::shared_ptr<Segment>> finalSegments;
     
     for (const auto& segment : syntaxSegments) {
-        // 如果段太大，考虑进一步分割
-        if (segment->getCode().length() > config_.maxSegmentSize) {
+        if (segment->getContent().length() > config_.maxSegmentSize) {
+            // 大段进一步分割
             auto subSegments = splitLargeSegment(segment);
-            refinedSegments.insert(refinedSegments.end(), 
-                                 subSegments.begin(), 
-                                 subSegments.end());
+            finalSegments.insert(finalSegments.end(), subSegments.begin(), subSegments.end());
         } else {
-            refinedSegments.push_back(segment);
+            finalSegments.push_back(segment);
         }
     }
     
-    return refinedSegments;
+    return finalSegments;
 }
 
-bool BridgeScanner::isChtlSyntax(const std::string& code, size_t pos) {
-    // 检查CHTL选择器 {{
-    if (pos + 1 < code.length() && code[pos] == '{' && code[pos + 1] == '{') {
-        return true;
+std::vector<BridgeScanner::BoundaryInfo> BridgeScanner::findBoundaries(const std::string& code) {
+    std::vector<BoundaryInfo> boundaries;
+    bool inChtlSyntax = false;
+    size_t pos = 0;
+    
+    while (pos < code.length()) {
+        char c = code[pos];
+        
+        // 使用状态机检测CHTL语法
+        if (chtlJsState_) {
+            chtlJsState_->handleChar(c);
+        }
+        
+        // 检测CHTL选择器开始 {{
+        if (!inChtlSyntax && pos + 1 < code.length() && 
+            c == '{' && code[pos + 1] == '{') {
+            // 确保不是模板字符串
+            if (!isInTemplateString(code, pos)) {
+                inChtlSyntax = true;
+                BoundaryInfo boundary;
+                boundary.position = pos;
+                boundary.type = SegmentType::JAVASCRIPT;
+                boundary.reason = "CHTL selector start";
+                boundaries.push_back(boundary);
+                pos += 2;
+                continue;
+            }
+        }
+        
+        // 检测CHTL选择器结束 }}
+        else if (inChtlSyntax && pos + 1 < code.length() && 
+                 c == '}' && code[pos + 1] == '}') {
+            pos += 2;
+            BoundaryInfo boundary;
+            boundary.position = pos;
+            boundary.type = SegmentType::CHTL_JAVASCRIPT;
+            boundary.reason = "CHTL selector end";
+            boundaries.push_back(boundary);
+            inChtlSyntax = false;
+            continue;
+        }
+        
+        // 检测CHTL方法调用 ->
+        else if (!inChtlSyntax && pos + 1 < code.length() && 
+                 c == '-' && code[pos + 1] == '>') {
+            // 确保是CHTL方法调用，不是箭头函数
+            if (isChtlMethodCall(code, pos)) {
+                BoundaryInfo boundary;
+                boundary.position = pos;
+                boundary.type = SegmentType::JAVASCRIPT;
+                boundary.reason = "CHTL method call";
+                boundaries.push_back(boundary);
+                
+                // 标记方法调用区域
+                size_t methodEnd = findMethodCallEnd(code, pos + 2);
+                if (methodEnd > pos + 2) {
+                    BoundaryInfo endBoundary;
+                    endBoundary.position = methodEnd;
+                    endBoundary.type = SegmentType::CHTL_JAVASCRIPT;
+                    endBoundary.reason = "CHTL method call end";
+                    boundaries.push_back(endBoundary);
+                }
+            }
+        }
+        
+        pos++;
     }
     
-    // 检查CHTL箭头 ->
-    if (pos > 0 && code[pos - 1] == '-' && code[pos] == '>') {
-        // 确保不是箭头函数
-        return !isArrowFunction(code, pos);
+    // 确保最后的边界
+    if (!boundaries.empty()) {
+        auto lastBoundary = boundaries.back();
+        if (lastBoundary.position < code.length()) {
+            BoundaryInfo finalBoundary;
+            finalBoundary.position = code.length();
+            finalBoundary.type = inChtlSyntax ? SegmentType::CHTL_JAVASCRIPT : SegmentType::JAVASCRIPT;
+            finalBoundary.reason = "End of code";
+            boundaries.push_back(finalBoundary);
+        }
     }
     
-    // 检查animate函数
-    if (pos + 7 < code.length() && code.substr(pos, 7) == "animate") {
-        return isAnimateCall(code, pos);
-    }
-    
-    return false;
+    return boundaries;
 }
 
 SegmentType BridgeScanner::detectSegmentType(const std::string& code) {
-    bool hasJavaScript = false;
-    bool hasChtlJs = false;
-    
-    // 快速扫描特征
-    if (code.find("{{") != std::string::npos) {
-        hasChtlJs = true;
+    // 简单检测：如果包含CHTL特定语法，则为CHTL_JAVASCRIPT
+    if (code.find("{{") != std::string::npos && code.find("}}") != std::string::npos) {
+        return SegmentType::CHTL_JAVASCRIPT;
     }
     
     if (code.find("->") != std::string::npos) {
-        // 需要更精确的检查
-        size_t pos = 0;
-        while ((pos = code.find("->", pos)) != std::string::npos) {
-            if (!isArrowFunction(code, pos + 1)) {
-                hasChtlJs = true;
-                break;
-            }
-            pos += 2;
+        // 需要更精确的检测，避免箭头函数误判
+        if (hasChtlMethodCall(code)) {
+            return SegmentType::CHTL_JAVASCRIPT;
         }
     }
     
-    if (code.find("animate(") != std::string::npos ||
-        code.find("animate (") != std::string::npos) {
-        hasChtlJs = true;
-    }
-    
-    // 检查标准JavaScript特征
-    if (code.find("function") != std::string::npos ||
-        code.find("var ") != std::string::npos ||
-        code.find("let ") != std::string::npos ||
-        code.find("const ") != std::string::npos) {
-        hasJavaScript = true;
-    }
-    
-    if (hasChtlJs && hasJavaScript) {
-        return SegmentType::Mixed;
-    } else if (hasChtlJs) {
-        return SegmentType::ChtlJavaScript;
-    } else {
-        return SegmentType::JavaScript;
-    }
+    return SegmentType::JAVASCRIPT;
 }
 
-std::shared_ptr<Segment> BridgeScanner::createSegmentFromBoundary(
-    const std::string& code, 
-    const BlockBoundary& boundary) {
+SegmentType BridgeScanner::detectLineType(const std::string& line) {
+    // 基于行的类型检测
+    std::string trimmed = line;
+    trimmed.erase(0, trimmed.find_first_not_of(" \t"));
+    trimmed.erase(trimmed.find_last_not_of(" \t") + 1);
     
-    std::string segmentCode = code.substr(boundary.start, 
-                                        boundary.end - boundary.start + 1);
-    
-    std::shared_ptr<Segment> segment;
-    
-    switch (boundary.type) {
-        case SegmentType::JavaScript:
-            segment = std::make_shared<JavaScriptSegment>(segmentCode);
-            break;
-            
-        case SegmentType::ChtlJavaScript:
-            segment = std::make_shared<ChtlJavaScriptSegment>(segmentCode);
-            break;
-            
-        case SegmentType::Mixed:
-            segment = std::make_shared<MixedSegment>(segmentCode);
-            break;
+    if (trimmed.find("{{") != std::string::npos) {
+        return SegmentType::MIXED;
+    }
+    if (trimmed.find("->") != std::string::npos && hasChtlMethodCall(trimmed)) {
+        return SegmentType::CHTL_JAVASCRIPT;
     }
     
-    if (segment) {
-        // 计算行列信息
-        int startLine = 1, startCol = 1;
-        int endLine = 1, endCol = 1;
-        
-        for (size_t i = 0; i < boundary.start; ++i) {
-            if (code[i] == '\n') {
-                startLine++;
-                startCol = 1;
-            } else {
-                startCol++;
-            }
-        }
-        
-        endLine = startLine;
-        endCol = startCol;
-        
-        for (size_t i = boundary.start; i <= boundary.end; ++i) {
-            if (code[i] == '\n') {
-                endLine++;
-                endCol = 1;
-            } else {
-                endCol++;
-            }
-        }
-        
-        updateSourceInfo(segment, startLine, startCol, endLine, endCol);
+    return SegmentType::JAVASCRIPT;
+}
+
+std::shared_ptr<Segment> BridgeScanner::createSegment(SegmentType type, const std::string& content) {
+    return SegmentFactory::create(type, content);
+}
+
+bool BridgeScanner::isChtlMethodCall(const std::string& code, size_t pos) {
+    if (pos == 0 || pos + 1 >= code.length()) return false;
+    
+    // 检查前面是否是有效的表达式结束
+    size_t prevPos = pos - 1;
+    while (prevPos > 0 && std::isspace(code[prevPos])) {
+        prevPos--;
     }
     
-    return segment;
-}
-
-void BridgeScanner::updateSourceInfo(std::shared_ptr<Segment> segment,
-                                   int startLine, int startCol,
-                                   int endLine, int endCol) {
-    if (!segment) return;
+    char prevChar = code[prevPos];
+    // 有效的前导字符：标识符、), ], }
+    if (!std::isalnum(prevChar) && prevChar != '_' && prevChar != '$' &&
+        prevChar != ')' && prevChar != ']' && prevChar != '}') {
+        return false;
+    }
     
-    segment->setSourceInfo(scanState_.currentFile, startLine, startCol, endLine, endCol);
-}
-
-void BridgeScanner::reportError(const std::string& error) {
-    if (errorHandler_) {
-        errorHandler_(error);
+    // 检查后面是否是方法名
+    size_t nextPos = pos + 2;
+    while (nextPos < code.length() && std::isspace(code[nextPos])) {
+        nextPos++;
     }
-}
-
-void BridgeScanner::reportWarning(const std::string& warning) {
-    // 可以有单独的警告处理器
-    if (errorHandler_) {
-        errorHandler_("Warning: " + warning);
+    
+    if (nextPos >= code.length() || !std::isalpha(code[nextPos])) {
+        return false;
     }
+    
+    return true;
 }
 
-// CHTL特性检测实现
-bool BridgeScanner::hasChtlSelector(const std::string& code) {
-    return code.find("{{") != std::string::npos;
-}
-
-bool BridgeScanner::hasChtlArrowOperator(const std::string& code) {
+bool BridgeScanner::hasChtlMethodCall(const std::string& code) {
     size_t pos = 0;
     while ((pos = code.find("->", pos)) != std::string::npos) {
-        if (!isArrowFunction(code, pos + 1)) {
+        if (isChtlMethodCall(code, pos)) {
             return true;
         }
         pos += 2;
@@ -369,63 +383,225 @@ bool BridgeScanner::hasChtlArrowOperator(const std::string& code) {
     return false;
 }
 
-bool BridgeScanner::hasChtlListen(const std::string& code) {
-    return code.find("->listen") != std::string::npos;
-}
-
-bool BridgeScanner::hasChtlDelegate(const std::string& code) {
-    return code.find("->delegate") != std::string::npos;
-}
-
-bool BridgeScanner::hasChtlAnimate(const std::string& code) {
-    return code.find("animate(") != std::string::npos;
-}
-
-// 辅助函数
-bool BridgeScanner::isArrowFunction(const std::string& code, size_t arrowPos) {
-    // 检查是否是箭头函数 =>
-    if (arrowPos > 0 && code[arrowPos - 1] == '=' && code[arrowPos] == '>') {
-        return true;
+bool BridgeScanner::isInTemplateString(const std::string& code, size_t pos) {
+    // 简单检测：计算反引号数量
+    int backtickCount = 0;
+    for (size_t i = 0; i < pos && i < code.length(); i++) {
+        if (code[i] == '`') {
+            // 检查是否被转义
+            if (i == 0 || code[i-1] != '\\') {
+                backtickCount++;
+            }
+        }
     }
-    return false;
+    return backtickCount % 2 == 1;
 }
 
-bool BridgeScanner::isAnimateCall(const std::string& code, size_t pos) {
-    // animate前面应该没有对象或this
-    if (pos > 0) {
-        char prev = code[pos - 1];
-        if (prev == '.' || prev == '>') {
-            return false;  // object.animate 或 ->animate
+size_t BridgeScanner::findMethodCallEnd(const std::string& code, size_t start) {
+    // 找到方法调用的结束位置
+    size_t pos = start;
+    
+    // 跳过方法名
+    while (pos < code.length() && (std::isalnum(code[pos]) || code[pos] == '_')) {
+        pos++;
+    }
+    
+    // 跳过空格
+    while (pos < code.length() && std::isspace(code[pos])) {
+        pos++;
+    }
+    
+    // 如果有括号，找到匹配的右括号
+    if (pos < code.length() && code[pos] == '(') {
+        int parenCount = 1;
+        pos++;
+        while (pos < code.length() && parenCount > 0) {
+            if (code[pos] == '(') parenCount++;
+            else if (code[pos] == ')') parenCount--;
+            pos++;
         }
     }
     
-    // 后面应该有括号
-    size_t nextPos = pos + 7;
-    while (nextPos < code.length() && std::isspace(code[nextPos])) {
-        nextPos++;
+    return pos;
+}
+
+size_t BridgeScanner::findBlockEnd(const std::string& code, size_t start) {
+    // 找到代码块的结束位置
+    int braceCount = 0;
+    bool inString = false;
+    bool inComment = false;
+    char stringChar = 0;
+    
+    for (size_t i = start; i < code.length(); i++) {
+        char c = code[i];
+        char next = (i + 1 < code.length()) ? code[i + 1] : 0;
+        
+        // 处理注释
+        if (!inString && !inComment && c == '/' && next == '/') {
+            // 单行注释，跳到行尾
+            while (i < code.length() && code[i] != '\n') {
+                i++;
+            }
+            continue;
+        }
+        if (!inString && !inComment && c == '/' && next == '*') {
+            inComment = true;
+            i++;
+            continue;
+        }
+        if (inComment && c == '*' && next == '/') {
+            inComment = false;
+            i++;
+            continue;
+        }
+        
+        if (inComment) continue;
+        
+        // 处理字符串
+        if (!inString && (c == '"' || c == '\'' || c == '`')) {
+            inString = true;
+            stringChar = c;
+        } else if (inString && c == stringChar && (i == 0 || code[i-1] != '\\')) {
+            inString = false;
+            stringChar = 0;
+        }
+        
+        if (inString) continue;
+        
+        // 计算大括号
+        if (c == '{') {
+            braceCount++;
+        } else if (c == '}') {
+            braceCount--;
+            if (braceCount == 0 && i > start) {
+                return i + 1;
+            }
+        }
     }
     
-    return nextPos < code.length() && code[nextPos] == '(';
+    return code.length();
 }
 
-std::vector<std::shared_ptr<Segment>> BridgeScanner::splitMixedSegment(
-    std::shared_ptr<MixedSegment> mixed) {
+std::vector<std::shared_ptr<Segment>> BridgeScanner::splitMixedSegment(std::shared_ptr<MixedSegment> mixed) {
+    if (!mixed) return {};
     
-    // 对混合段进行更细粒度的分割
-    return splitBySyntax(mixed->getCode());
+    // 如果已经有子段，直接返回
+    if (!mixed->getSubSegments().empty()) {
+        return mixed->getSubSegments();
+    }
+    
+    // 否则，分析并分割
+    return scanSyntaxBased(mixed->getContent());
 }
 
-std::vector<std::shared_ptr<Segment>> BridgeScanner::splitLargeSegment(
-    std::shared_ptr<Segment> segment) {
+std::vector<std::shared_ptr<Segment>> BridgeScanner::splitLargeSegment(std::shared_ptr<Segment> segment) {
+    if (!segment) return {};
     
-    // 对大段进行分割
     std::vector<std::shared_ptr<Segment>> result;
+    const std::string& content = segment->getContent();
+    const size_t maxSize = config_.maxSegmentSize;
     
-    // 简单策略：按函数边界分割
-    // TODO: 实现更智能的分割策略
+    if (content.length() <= maxSize) {
+        result.push_back(segment);
+        return result;
+    }
     
-    result.push_back(segment);
+    // 按语法边界分割
+    size_t start = 0;
+    while (start < content.length()) {
+        size_t end = std::min(start + maxSize, content.length());
+        
+        // 尝试在语法边界处分割
+        if (end < content.length()) {
+            // 寻找最近的语句结束
+            size_t boundaryPos = findNearestBoundary(content, end);
+            if (boundaryPos > start && boundaryPos < end + maxSize / 4) {
+                end = boundaryPos;
+            }
+        }
+        
+        std::string subContent = content.substr(start, end - start);
+        result.push_back(createSegment(segment->getType(), subContent));
+        start = end;
+    }
+    
     return result;
+}
+
+size_t BridgeScanner::findNearestBoundary(const std::string& code, size_t pos) {
+    // 向后查找最近的语句边界
+    for (size_t i = pos; i < std::min(pos + 1000, code.length()); i++) {
+        if (code[i] == ';' || code[i] == '\n') {
+            // 确保不在字符串中
+            if (!isInString(code, i)) {
+                return i + 1;
+            }
+        }
+    }
+    
+    // 向前查找
+    for (size_t i = pos; i > 0 && i > pos - 1000; i--) {
+        if (code[i] == ';' || code[i] == '\n') {
+            if (!isInString(code, i)) {
+                return i + 1;
+            }
+        }
+    }
+    
+    return pos;
+}
+
+bool BridgeScanner::isInString(const std::string& code, size_t pos) {
+    // 简单的字符串检测
+    bool inSingle = false;
+    bool inDouble = false;
+    bool inTemplate = false;
+    
+    for (size_t i = 0; i < pos && i < code.length(); i++) {
+        char c = code[i];
+        if (i > 0 && code[i-1] == '\\') continue;
+        
+        if (c == '\'' && !inDouble && !inTemplate) inSingle = !inSingle;
+        else if (c == '"' && !inSingle && !inTemplate) inDouble = !inDouble;
+        else if (c == '`' && !inSingle && !inDouble) inTemplate = !inTemplate;
+    }
+    
+    return inSingle || inDouble || inTemplate;
+}
+
+std::vector<std::shared_ptr<Segment>> BridgeScanner::optimizeSegments(
+    const std::vector<std::shared_ptr<Segment>>& segments) {
+    
+    if (!config_.enableOptimization || segments.size() < 2) {
+        return segments;
+    }
+    
+    std::vector<std::shared_ptr<Segment>> optimized;
+    std::shared_ptr<Segment> current = nullptr;
+    
+    for (const auto& segment : segments) {
+        if (!current) {
+            current = segment;
+            continue;
+        }
+        
+        // 尝试合并相同类型的小段
+        if (current->getType() == segment->getType() &&
+            current->getContent().length() + segment->getContent().length() < config_.maxSegmentSize / 2) {
+            // 合并
+            std::string combined = current->getContent() + segment->getContent();
+            current = createSegment(current->getType(), combined);
+        } else {
+            optimized.push_back(current);
+            current = segment;
+        }
+    }
+    
+    if (current) {
+        optimized.push_back(current);
+    }
+    
+    return optimized;
 }
 
 } // namespace chtl

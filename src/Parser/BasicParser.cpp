@@ -68,13 +68,10 @@ std::shared_ptr<Node> BasicParser::parseString(const std::string& content) {
 Token BasicParser::getNextToken() {
     if (hasLookahead_) {
         hasLookahead_ = false;
-        previousToken_ = currentToken_;
         return currentToken_;
     }
     
-    previousToken_ = currentToken_;
-    currentToken_ = lexer_->getNextToken();
-    return currentToken_;
+    return lexer_->getNextToken();
 }
 
 Token BasicParser::peekNextToken() {

@@ -281,16 +281,10 @@ std::shared_ptr<Node> StandardParser::parseText() {
 bool StandardParser::checkAttribute() {
     if (!check(TokenType::IDENTIFIER)) return false;
     
-    // 预读下一个token
-    Token savedCurrent = currentToken_;
-    Token savedPrevious = previousToken_;
-    advance();
-    bool isAttr = check(TokenType::COLON) || check(TokenType::EQUALS);
-    // 恢复状态
-    currentToken_ = savedCurrent;
-    previousToken_ = savedPrevious;
-    
-    return isAttr;
+    // 保存当前lexer位置，而不是修改parser状态
+    // 直接查看下一个token而不消费它
+    Token nextToken = peekNextToken();
+    return nextToken.type == TokenType::COLON || nextToken.type == TokenType::EQUALS;
 }
 
 void StandardParser::parseAttributes(std::shared_ptr<Node> element) {
@@ -797,20 +791,29 @@ void StandardParser::parseCustomStyleContent(std::shared_ptr<Custom> customNode)
         
         // 检查是否有值
         if (match(TokenType::COLON) || match(TokenType::EQUALS)) {
+            // 收集值直到分号或逗号
             std::string value;
-            auto valueToken = advance();
-            if (valueToken.type == TokenType::STRING_LITERAL ||
-                valueToken.type == TokenType::UNQUOTED_LITERAL ||
-                valueToken.type == TokenType::IDENTIFIER ||
-                valueToken.type == TokenType::NUMBER) {
-                value = valueToken.value;
+            while (!check(TokenType::SEMICOLON) && !check(TokenType::COMMA) && 
+                   !check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+                auto token = advance();
+                if (!value.empty() && token.value != " ") {
+                    value += " ";
+                }
+                value += token.value;
             }
+            
+            // 去除尾部空格
+            while (!value.empty() && value.back() == ' ') {
+                value.pop_back();
+            }
+            
             customNode->addProperty(nameToken.value, value);
         } else {
             // 无值属性
             customNode->addProperty(nameToken.value, "");
         }
         
+        // 消费分号或逗号
         if (check(TokenType::COMMA)) {
             advance();
         } else if (check(TokenType::SEMICOLON)) {
@@ -851,18 +854,34 @@ void StandardParser::parseCustomVarContent(std::shared_ptr<Custom> customNode) {
             continue;
         }
         
-        // 其他内容作为var内容 - 直接作为文本值
-        std::string varValue;
-        while (!check(TokenType::RIGHT_BRACE) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
-            varValue += advance().value + " ";
-        }
-        
-        if (!varValue.empty()) {
+        // 解析变量定义: name: value;
+        if (check(TokenType::IDENTIFIER)) {
+            auto nameToken = advance();
+            consume(TokenType::COLON, "Expected ':' after variable name");
+            
+            // 收集值直到分号
+            std::string value;
+            while (!check(TokenType::SEMICOLON) && !check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+                value += advance().value;
+                if (!check(TokenType::SEMICOLON) && !check(TokenType::RIGHT_BRACE)) {
+                    value += " ";
+                }
+            }
+            
             // 去除尾部空格
-            varValue.pop_back();
-            auto textNode = std::make_shared<Text>();
-            textNode->setData(varValue);
-            customNode->addChild(textNode);
+            while (!value.empty() && value.back() == ' ') {
+                value.pop_back();
+            }
+            
+            customNode->addProperty(nameToken.value, value);
+            
+            // 消费分号（如果有）
+            if (check(TokenType::SEMICOLON)) {
+                advance();
+            }
+        } else {
+            addError("Expected variable name");
+            skipToNextStatement();
         }
     }
 }

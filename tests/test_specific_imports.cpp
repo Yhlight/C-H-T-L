@@ -190,7 +190,7 @@ div {
     std::cout << output.str() << "\n";
     
     // 清理测试文件
-    fs::remove("components.chtl");
+    // fs::remove("components.chtl");
 }
 
 int main() {

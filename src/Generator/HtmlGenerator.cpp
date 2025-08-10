@@ -1,7 +1,15 @@
 #include "Generator/HtmlGenerator.h"
-#include "Node/Node.h"
 #include "Node/Comment.h"
+#include "Node/Template.h"
+#include "Node/Custom.h"
+#include "Node/Style.h"
+#include "Node/Config.h"
+#include "Node/Import.h"
+#include "Node/Namespace.h"
+#include "Node/Operate.h"
+#include "Node/Origin.h"
 #include <algorithm>
+#include <sstream>
 
 namespace chtl {
 
@@ -121,13 +129,65 @@ void HtmlGenerator::generateComment(std::shared_ptr<Node> node) {
         return;
     }
     
-    // CHTL的 -- 注释应该在生成的HTML中保持原样
+    // CHTL的 -- 注释根据上下文生成不同格式的注释
     // 根据语法文档："使用--代表会被生成器识别的注释"
-    // 这意味着这种注释应该被保留在输出中
-    write("-- ");
-    write(comment->getContent());
-    if (!comment->getContent().empty() && comment->getContent().back() != '\n') {
-        write("\n");  // 确保注释独占一行
+    
+    // 检查当前上下文
+    std::string commentFormat;
+    
+    // 查找父节点确定上下文
+    auto parent = node->getParent().lock();
+    while (parent) {
+        std::string parentTag = parent->getTagName();
+        
+        // 在<style>标签或局部style块中
+        if (parentTag == "style" || parent->getType() == NodeType::STYLE) {
+            commentFormat = "css";
+            break;
+        }
+        // 在<script>标签中
+        else if (parentTag == "script") {
+            commentFormat = "js";
+            break;
+        }
+        // 在[Origin] @Style块中
+        else if (parent->getType() == NodeType::ORIGIN) {
+            auto origin = std::dynamic_pointer_cast<Origin>(parent);
+            if (origin && origin->getOriginType() == Origin::OriginType::STYLE) {
+                commentFormat = "css";
+                break;
+            } else if (origin && origin->getOriginType() == Origin::OriginType::JAVASCRIPT) {
+                commentFormat = "js";
+                break;
+            }
+        }
+        
+        parent = parent->getParent().lock();
+    }
+    
+    // 默认为HTML注释
+    if (commentFormat.empty()) {
+        commentFormat = "html";
+    }
+    
+    // 根据格式生成对应的注释
+    if (commentFormat == "css") {
+        write("/* ");
+        write(comment->getContent());
+        write(" */");
+    } else if (commentFormat == "js") {
+        write("// ");
+        write(comment->getContent());
+    } else {
+        // HTML注释
+        write("<!-- ");
+        write(comment->getContent());
+        write(" -->");
+    }
+    
+    // 如果配置了格式化输出，添加换行
+    if (config_.prettyPrint && !config_.minify) {
+        writeLine();
     }
 }
 

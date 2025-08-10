@@ -1,2 +1,0 @@
-/usr/bin/ar qc libchtl_loader.a CMakeFiles/chtl_loader.dir/__/src/Loader/FileLoader.cpp.o CMakeFiles/chtl_loader.dir/__/src/Loader/ModuleLoader.cpp.o CMakeFiles/chtl_loader.dir/__/src/Loader/CmodLoader.cpp.o
-/usr/bin/ranlib libchtl_loader.a

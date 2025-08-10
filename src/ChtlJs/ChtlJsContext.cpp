@@ -286,4 +286,10 @@ void ChtlJsContext::initializeRuntimeFunctions() {
     // 这些会根据实际使用情况动态添加
 }
 
+bool ChtlJsContext::validate() {
+    // ChtlJsContext 继承自 BasicContext，不实现额外的验证
+    // 具体的验证逻辑应该在使用时通过其他上下文类完成
+    return true;
+}
+
 } // namespace chtl

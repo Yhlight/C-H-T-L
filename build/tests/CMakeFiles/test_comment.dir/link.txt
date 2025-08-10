@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_comment.dir/link.d CMakeFiles/test_comment.dir/test_comment.cpp.o -o test_comment  ../src/libchtl_core.a

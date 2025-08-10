@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_bridge_scanner.dir/link.d CMakeFiles/test_bridge_scanner.dir/test_bridge_scanner.cpp.o -o test_bridge_scanner  ../src/libchtl_core.a

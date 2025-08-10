@@ -129,21 +129,24 @@ int main(int argc, char* argv[]) {
     
     // 词法分析
     std::cout << "Lexing...\n";
-    chtl::StandardLexer lexer(input, context);
-    auto tokens = lexer.tokenize();
+    auto lexer = std::make_shared<chtl::StandardLexer>();
     
-    if (context->hasErrors()) {
-        std::cerr << "\n" << context->formatErrors() << "\n";
-        std::cerr << context->formatSummary() << "\n";
+    // 初始化词法分析器
+    std::unique_ptr<std::istream> stream = std::make_unique<std::istringstream>(input);
+    if (!lexer->initialize(std::move(stream), inputFile)) {
+        std::cerr << "Failed to initialize lexer\n";
         return 1;
     }
     
+    // 设置上下文
+    lexer->setContext(context);
+    
     // 语法分析
     std::cout << "Parsing...\n";
-    chtl::StandardParser parser(std::make_shared<chtl::StandardLexer>(lexer), context);
+    chtl::StandardParser parser(lexer, context);
     
     // 检测是否是CMOD文件并设置模式
-    bool isCmod = FileUtils::isCmodFile(inputFile);
+    bool isCmod = chtl::FileUtils::isCmodFile(inputFile);
     parser.setCmodMode(isCmod);
     
     if (isCmod) {

@@ -54,7 +54,7 @@ std::shared_ptr<BasicState> ChtlJsState::handleChar(char c) {
 }
 
 bool ChtlJsState::accepts(char c) const {
-    // CHTL-JS状态接受所有字符
+    (void)c; // CHTL-JS状态接受所有字符
     return true;
 }
 

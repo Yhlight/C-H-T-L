@@ -1,0 +1,41 @@
+// 测试 CHTL 编译器
+html {
+    head {
+        title { text { "CHTL 测试页面" } }
+        style {
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+        }
+    }
+    body {
+        div {
+            id: "app";
+            style {
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                &:hover {
+                    background-color: #f0f0f0;
+                }
+            }
+            h1 { 
+                text { "欢迎使用 CHTL！" }
+            }
+            p {
+                text { "这是一个使用 CHTL 创建的测试页面。" }
+            }
+            
+            script {
+                console.log("CHTL JS 正在工作！");
+                
+                // 测试增强选择器
+                {{#app}}->addEventListener('click', function() {
+                    alert('你点击了应用容器！');
+                });
+            }
+        }
+    }
+}

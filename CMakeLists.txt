@@ -76,10 +76,9 @@ foreach(MODULE_DIR ${MODULE_DIRS})
             # 添加自定义命令来打包CMOD
             add_custom_command(
                 OUTPUT ${CMAKE_BINARY_DIR}/module/${MODULE_NAME}.cmod
-                COMMAND chtl --pack-cmod ${MODULE_DIR}
-                COMMAND ${CMAKE_COMMAND} -E rename ${MODULE_NAME}.cmod ${CMAKE_BINARY_DIR}/module/${MODULE_NAME}.cmod
-                DEPENDS chtl ${MODULE_DIR}
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMAND $<TARGET_FILE:chtl> --pack-cmod ${MODULE_DIR} -o ${CMAKE_BINARY_DIR}/module
+                DEPENDS chtl
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 COMMENT "Packing CMOD module: ${MODULE_NAME}"
             )
             

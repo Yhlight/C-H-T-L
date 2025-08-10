@@ -205,4 +205,12 @@ ErrorContext EnhancedContext::buildErrorContext(int line, int column) const {
     return context;
 }
 
+std::string EnhancedContext::formatSummary() const {
+    return errorHandler_->formatSummary();
+}
+
+std::shared_ptr<EnhancedContext> createEnhancedContext() {
+    return std::make_shared<EnhancedContext>();
+}
+
 } // namespace chtl

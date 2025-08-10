@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/test_context_aware_comments.dir/link.d CMakeFiles/test_context_aware_comments.dir/test_context_aware_comments.cpp.o -o test_context_aware_comments  ../src/libchtl_core.a

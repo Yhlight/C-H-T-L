@@ -16,6 +16,7 @@ set(CHTL_SOURCES
     Context/BasicContext.cpp
     Context/ChtlContext.cpp
     Context/StandardContext.cpp
+    Context/EnhancedContext.cpp
     Context/CssContext.cpp
     Context/JsContext.cpp
     Context/ContextFactory.cpp
@@ -40,12 +41,20 @@ set(CHTL_SOURCES
     Node/Style.cpp
     Node/Config.cpp
     Node/Import.cpp
+    Node/Export.cpp
     Node/Namespace.cpp
     Node/Operate.cpp
     Node/Origin.cpp
+    Node/Info.cpp
+    Node/Script.cpp
+    Node/Delete.cpp
     
     # Generator
     Generator/BasicGenerator.cpp
+    Generator/Generator.cpp
+    Generator/WebGenerator.cpp
+    Generator/ReactGenerator.cpp
+    Generator/VueGenerator.cpp
     Generator/ConfigGenerator.cpp
     Generator/HtmlGenerator.cpp
     
@@ -71,9 +80,26 @@ set(CHTL_SOURCES
     Loader/ImportManager.cpp
     Loader/ImportResolver.cpp
     Loader/ImportProcessor.cpp
+    Loader/FileLoader.cpp
+    Loader/CmodLoader.cpp
+    
+    # Runtime
+    Runtime/ChtlJsRuntime.cpp
+    
+    # Error
+    Error/ErrorHandler.cpp
+    
+    # Module
+    Module/CmodHandler.cpp
+    
+    # Script
+    Script/ScriptManager.cpp
     
     # Utils
     Utils/ConstraintValidator.cpp
+    
+    # Cmod
+    Cmod/CmodPacker.cpp
 )
 
 # 创建静态库

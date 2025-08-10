@@ -421,6 +421,7 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
     std::string scriptContent;
     int braceDepth = 1;
     bool inDoubleLeftBrace = false;
+    (void)inDoubleLeftBrace; // TODO: 未来可能用于更复杂的语法分析
     
     while (!isAtEnd() && braceDepth > 0) {
         Token token = currentToken_;
@@ -1566,6 +1567,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         namespaceName = consume(TokenType::IDENTIFIER, "Expected namespace name").value;
         importNode->setNamespaceImport(true);
         importNode->setTargetNamespace(namespaceName);
+        (void)isFromNamespace; // 标记已设置
     } else {
         // 解析文件路径
         auto pathToken = consume(TokenType::STRING_LITERAL, "Expected file path");

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libchtl_predefine.a CMakeFiles/chtl_predefine.dir/__/src/Predefine/Registry.cpp.o
-/usr/bin/ranlib libchtl_predefine.a

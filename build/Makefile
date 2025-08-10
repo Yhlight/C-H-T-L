@@ -474,30 +474,6 @@ src/Context/ChtlContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Context/ChtlContext.cpp.s
 .PHONY : src/Context/ChtlContext.cpp.s
 
-src/Context/ChtlJsContext.o: src/Context/ChtlJsContext.cpp.o
-.PHONY : src/Context/ChtlJsContext.o
-
-# target to build an object file
-src/Context/ChtlJsContext.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Context/ChtlJsContext.cpp.o
-.PHONY : src/Context/ChtlJsContext.cpp.o
-
-src/Context/ChtlJsContext.i: src/Context/ChtlJsContext.cpp.i
-.PHONY : src/Context/ChtlJsContext.i
-
-# target to preprocess a source file
-src/Context/ChtlJsContext.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Context/ChtlJsContext.cpp.i
-.PHONY : src/Context/ChtlJsContext.cpp.i
-
-src/Context/ChtlJsContext.s: src/Context/ChtlJsContext.cpp.s
-.PHONY : src/Context/ChtlJsContext.s
-
-# target to generate assembly for a file
-src/Context/ChtlJsContext.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Context/ChtlJsContext.cpp.s
-.PHONY : src/Context/ChtlJsContext.cpp.s
-
 src/Context/ContextFactory.o: src/Context/ContextFactory.cpp.o
 .PHONY : src/Context/ContextFactory.o
 
@@ -857,6 +833,54 @@ src/Generator/HtmlGenerator.s: src/Generator/HtmlGenerator.cpp.s
 src/Generator/HtmlGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/HtmlGenerator.cpp.s
 .PHONY : src/Generator/HtmlGenerator.cpp.s
+
+src/Generator/ReactGenerator.o: src/Generator/ReactGenerator.cpp.o
+.PHONY : src/Generator/ReactGenerator.o
+
+# target to build an object file
+src/Generator/ReactGenerator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o
+.PHONY : src/Generator/ReactGenerator.cpp.o
+
+src/Generator/ReactGenerator.i: src/Generator/ReactGenerator.cpp.i
+.PHONY : src/Generator/ReactGenerator.i
+
+# target to preprocess a source file
+src/Generator/ReactGenerator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.i
+.PHONY : src/Generator/ReactGenerator.cpp.i
+
+src/Generator/ReactGenerator.s: src/Generator/ReactGenerator.cpp.s
+.PHONY : src/Generator/ReactGenerator.s
+
+# target to generate assembly for a file
+src/Generator/ReactGenerator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.s
+.PHONY : src/Generator/ReactGenerator.cpp.s
+
+src/Generator/VueGenerator.o: src/Generator/VueGenerator.cpp.o
+.PHONY : src/Generator/VueGenerator.o
+
+# target to build an object file
+src/Generator/VueGenerator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o
+.PHONY : src/Generator/VueGenerator.cpp.o
+
+src/Generator/VueGenerator.i: src/Generator/VueGenerator.cpp.i
+.PHONY : src/Generator/VueGenerator.i
+
+# target to preprocess a source file
+src/Generator/VueGenerator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.i
+.PHONY : src/Generator/VueGenerator.cpp.i
+
+src/Generator/VueGenerator.s: src/Generator/VueGenerator.cpp.s
+.PHONY : src/Generator/VueGenerator.s
+
+# target to generate assembly for a file
+src/Generator/VueGenerator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.s
+.PHONY : src/Generator/VueGenerator.cpp.s
 
 src/Generator/WebGenerator.o: src/Generator/WebGenerator.cpp.o
 .PHONY : src/Generator/WebGenerator.o
@@ -1337,6 +1361,30 @@ src/Node/Custom.s: src/Node/Custom.cpp.s
 src/Node/Custom.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Node/Custom.cpp.s
 .PHONY : src/Node/Custom.cpp.s
+
+src/Node/Delete.o: src/Node/Delete.cpp.o
+.PHONY : src/Node/Delete.o
+
+# target to build an object file
+src/Node/Delete.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Node/Delete.cpp.o
+.PHONY : src/Node/Delete.cpp.o
+
+src/Node/Delete.i: src/Node/Delete.cpp.i
+.PHONY : src/Node/Delete.i
+
+# target to preprocess a source file
+src/Node/Delete.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Node/Delete.cpp.i
+.PHONY : src/Node/Delete.cpp.i
+
+src/Node/Delete.s: src/Node/Delete.cpp.s
+.PHONY : src/Node/Delete.s
+
+# target to generate assembly for a file
+src/Node/Delete.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Node/Delete.cpp.s
+.PHONY : src/Node/Delete.cpp.s
 
 src/Node/Export.o: src/Node/Export.cpp.o
 .PHONY : src/Node/Export.o
@@ -2011,9 +2059,6 @@ help:
 	@echo "... src/Context/ChtlContext.o"
 	@echo "... src/Context/ChtlContext.i"
 	@echo "... src/Context/ChtlContext.s"
-	@echo "... src/Context/ChtlJsContext.o"
-	@echo "... src/Context/ChtlJsContext.i"
-	@echo "... src/Context/ChtlJsContext.s"
 	@echo "... src/Context/ContextFactory.o"
 	@echo "... src/Context/ContextFactory.i"
 	@echo "... src/Context/ContextFactory.s"
@@ -2059,6 +2104,12 @@ help:
 	@echo "... src/Generator/HtmlGenerator.o"
 	@echo "... src/Generator/HtmlGenerator.i"
 	@echo "... src/Generator/HtmlGenerator.s"
+	@echo "... src/Generator/ReactGenerator.o"
+	@echo "... src/Generator/ReactGenerator.i"
+	@echo "... src/Generator/ReactGenerator.s"
+	@echo "... src/Generator/VueGenerator.o"
+	@echo "... src/Generator/VueGenerator.i"
+	@echo "... src/Generator/VueGenerator.s"
 	@echo "... src/Generator/WebGenerator.o"
 	@echo "... src/Generator/WebGenerator.i"
 	@echo "... src/Generator/WebGenerator.s"
@@ -2119,6 +2170,9 @@ help:
 	@echo "... src/Node/Custom.o"
 	@echo "... src/Node/Custom.i"
 	@echo "... src/Node/Custom.s"
+	@echo "... src/Node/Delete.o"
+	@echo "... src/Node/Delete.i"
+	@echo "... src/Node/Delete.s"
 	@echo "... src/Node/Export.o"
 	@echo "... src/Node/Export.i"
 	@echo "... src/Node/Export.s"

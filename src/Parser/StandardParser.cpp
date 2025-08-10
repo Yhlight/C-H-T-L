@@ -794,10 +794,18 @@ void StandardParser::parseCustomVarContent(std::shared_ptr<Custom> customNode) {
             continue;
         }
         
-        // 其他内容作为var内容
-        auto varNode = parseTextContent();
-        if (varNode) {
-            customNode->addChild(varNode);
+        // 其他内容作为var内容 - 直接作为文本值
+        std::string varValue;
+        while (!check(TokenType::RIGHT_BRACE) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
+            varValue += advance().value + " ";
+        }
+        
+        if (!varValue.empty()) {
+            // 去除尾部空格
+            varValue.pop_back();
+            auto textNode = std::make_shared<Text>();
+            textNode->setData(varValue);
+            customNode->addChild(textNode);
         }
     }
 }
@@ -902,7 +910,7 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
         
         // delete操作
         if (match(TokenType::DELETE_KW)) {
-            parseDelete();
+            parseDelete(refNode);
             continue;
         }
         
@@ -927,7 +935,7 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
     }
 }
 
-void StandardParser::parseDelete() {
+void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
     // [Delete]已经被消费
     
     // 解析删除列表
@@ -954,17 +962,20 @@ void StandardParser::parseDelete() {
     for (const auto& item : deleteItems) {
         auto deleteNode = std::make_shared<Element>("delete");
         deleteNode->setAttribute("target", item);
-        // 将删除节点添加到当前上下文
-        if (currentNode_) {
-            currentNode_->addChild(deleteNode);
+        // 将删除节点添加到引用节点
+        if (refNode) {
+            refNode->addChild(deleteNode);
         }
     }
 }
 
 std::shared_ptr<Node> StandardParser::parseOperation() {
     if (match(TokenType::DELETE_KW)) {
-        parseDelete();
-        return nullptr;
+        // delete在操作上下文中需要一个临时父节点
+        auto tempNode = std::make_shared<Element>("temp");
+        parseDelete(tempNode);
+        // 返回第一个delete节点
+        return tempNode->getChildren().empty() ? nullptr : tempNode->getChildren()[0];
     }
     
     if (match(TokenType::INSERT)) {

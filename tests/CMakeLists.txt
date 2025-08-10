@@ -20,6 +20,7 @@ set(TEST_SOURCES
     test_style_tokens.cpp
     test_simple_style.cpp
     test_template_parsing.cpp
+    test_specialization.cpp
 )
 
 # 为每个测试文件创建单独的可执行文件

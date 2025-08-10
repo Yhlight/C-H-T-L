@@ -25,46 +25,18 @@ enum class ConfigFormat {
  * 专门用于解析 [Configuration] 块中的各种配置格式
  */
 class ConfigParser : public BasicParser {
-private:
-    // 配置解析状态
-    enum class ConfigParseState {
-        INITIAL,
-        EXPECT_CONFIGURATION,
-        EXPECT_NAME_OR_BRACE,
-        IN_CONFIG_BLOCK,
-        PARSING_KEY,
-        PARSING_VALUE,
-        PARSING_ARRAY,
-        COMPLETE
+public:
+    // 配置格式
+    enum class ConfigFormat {
+        JSON,
+        YAML,
+        INI,
+        TOML,
+        XML,
+        CHTL  // 默认CHTL格式
     };
     
-    ConfigParseState configState_;
-    std::shared_ptr<Config> currentConfig_;
-    std::string currentKey_;
-    std::vector<std::string> currentArray_;
-    
-    // 当前格式
-    ConfigFormat currentFormat_;
-    
-    // 当前配置节点
-    std::shared_ptr<Config> currentConfig_;
-    
-    // 辅助方法
-    void parseConfigContent(std::shared_ptr<Config> configNode);
-    void parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName);
-    void parseConfigItem(std::shared_ptr<Config> configNode, const std::string& groupPrefix = "");
-    std::string parseConfigValue();
-    void skipToNextStatement();
-    
-    // 格式检测
-    ConfigFormat detectFormat();
-    
-    // 有效的配置键
-    static const std::unordered_set<std::string> VALID_CONFIG_KEYS;
-    static const std::unordered_set<std::string> ARRAY_CONFIG_KEYS;
-    
-public:
-    ConfigParser();
+    ConfigParser() = default;
     virtual ~ConfigParser() = default;
     
     // 覆盖基类方法

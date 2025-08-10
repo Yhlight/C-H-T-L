@@ -396,6 +396,19 @@ test_template_parsing/fast:
 .PHONY : test_template_parsing/fast
 
 #=============================================================================
+# Target rules for targets named test_specialization
+
+# Build rule for target.
+test_specialization: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_specialization
+.PHONY : test_specialization
+
+# fast build rule for target.
+test_specialization/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_specialization.dir/build.make tests/CMakeFiles/test_specialization.dir/build
+.PHONY : test_specialization/fast
+
+#=============================================================================
 # Target rules for targets named check
 
 # Build rule for target.
@@ -478,6 +491,7 @@ help:
 	@echo "... test_parser"
 	@echo "... test_simple_parser"
 	@echo "... test_simple_style"
+	@echo "... test_specialization"
 	@echo "... test_style_parsing"
 	@echo "... test_style_tokens"
 	@echo "... test_template_parsing"

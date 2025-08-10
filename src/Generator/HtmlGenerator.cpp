@@ -121,16 +121,13 @@ void HtmlGenerator::generateComment(std::shared_ptr<Node> node) {
         return;
     }
     
-    // CHTL的 -- 注释生成为HTML注释
-    // CHTL: -- 这是注释
-    // HTML: <!-- 这是注释 -->
-    write("<!-- ");
+    // CHTL的 -- 注释应该在生成的HTML中保持原样
+    // 根据语法文档："使用--代表会被生成器识别的注释"
+    // 这意味着这种注释应该被保留在输出中
+    write("-- ");
     write(comment->getContent());
-    write(" -->");
-    
-    // 如果配置了格式化输出，添加换行
-    if (config_.prettyPrint && !config_.minify) {
-        writeLine();
+    if (!comment->getContent().empty() && comment->getContent().back() != '\n') {
+        write("\n");  // 确保注释独占一行
     }
 }
 

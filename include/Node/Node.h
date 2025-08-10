@@ -1,13 +1,13 @@
 #ifndef CHTL_NODE_H
 #define CHTL_NODE_H
 
-#include <string>
-#include <vector>
 #include <memory>
+#include <vector>
+#include <string>
 #include <unordered_map>
+#include <algorithm>
 #include <variant>
-#include <functional>
-#include "Common/Token.h"
+#include "Common/Config.h"
 
 namespace chtl {
 
@@ -58,6 +58,7 @@ protected:
     std::vector<std::string> inheritances_;  // 继承列表
     std::vector<std::string> exports_;  // 导出列表
     std::string text_;  // 文本内容（用于文本节点）
+    std::vector<std::string> classes_;          // 类名列表
     
 public:
     Node(NodeType type, const std::string& name = "")
@@ -92,16 +93,22 @@ public:
     const std::string& getText() const { return text_; }
     void setText(const std::string& text) { text_ = text; }
     
-    // Class管理（通用接口）
+    // 类名管理
     void addClass(const std::string& className) {
-        // 简单实现，后续可以优化
-        std::string current = "";
-        if (auto classAttr = getAttribute("class"); std::holds_alternative<std::string>(classAttr)) {
-            current = std::get<std::string>(classAttr);
+        if (std::find(classes_.begin(), classes_.end(), className) == classes_.end()) {
+            classes_.push_back(className);
         }
-        if (!current.empty()) current += " ";
-        current += className;
-        setAttribute("class", current);
+    }
+    
+    void removeClass(const std::string& className) {
+        classes_.erase(
+            std::remove(classes_.begin(), classes_.end(), className), 
+            classes_.end()
+        );
+    }
+    
+    const std::vector<std::string>& getClasses() const {
+        return classes_;
     }
     
     // 约束管理（CHTL except）

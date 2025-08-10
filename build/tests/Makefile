@@ -372,6 +372,20 @@ test_template_parsing/fast:
 .PHONY : test_template_parsing/fast
 
 # Convenience name for target.
+tests/CMakeFiles/test_specialization.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_specialization.dir/rule
+.PHONY : tests/CMakeFiles/test_specialization.dir/rule
+
+# Convenience name for target.
+test_specialization: tests/CMakeFiles/test_specialization.dir/rule
+.PHONY : test_specialization
+
+# fast build rule for target.
+test_specialization/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_specialization.dir/build.make tests/CMakeFiles/test_specialization.dir/build
+.PHONY : test_specialization/fast
+
+# Convenience name for target.
 tests/CMakeFiles/check.dir/rule:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/check.dir/rule
 .PHONY : tests/CMakeFiles/check.dir/rule
@@ -673,6 +687,30 @@ test_simple_style.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_simple_style.dir/build.make tests/CMakeFiles/test_simple_style.dir/test_simple_style.cpp.s
 .PHONY : test_simple_style.cpp.s
 
+test_specialization.o: test_specialization.cpp.o
+.PHONY : test_specialization.o
+
+# target to build an object file
+test_specialization.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_specialization.dir/build.make tests/CMakeFiles/test_specialization.dir/test_specialization.cpp.o
+.PHONY : test_specialization.cpp.o
+
+test_specialization.i: test_specialization.cpp.i
+.PHONY : test_specialization.i
+
+# target to preprocess a source file
+test_specialization.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_specialization.dir/build.make tests/CMakeFiles/test_specialization.dir/test_specialization.cpp.i
+.PHONY : test_specialization.cpp.i
+
+test_specialization.s: test_specialization.cpp.s
+.PHONY : test_specialization.s
+
+# target to generate assembly for a file
+test_specialization.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_specialization.dir/build.make tests/CMakeFiles/test_specialization.dir/test_specialization.cpp.s
+.PHONY : test_specialization.cpp.s
+
 test_style_parsing.o: test_style_parsing.cpp.o
 .PHONY : test_style_parsing.o
 
@@ -770,6 +808,7 @@ help:
 	@echo "... test_parser"
 	@echo "... test_simple_parser"
 	@echo "... test_simple_style"
+	@echo "... test_specialization"
 	@echo "... test_style_parsing"
 	@echo "... test_style_tokens"
 	@echo "... test_template_parsing"
@@ -809,6 +848,9 @@ help:
 	@echo "... test_simple_style.o"
 	@echo "... test_simple_style.i"
 	@echo "... test_simple_style.s"
+	@echo "... test_specialization.o"
+	@echo "... test_specialization.i"
+	@echo "... test_specialization.s"
 	@echo "... test_style_parsing.o"
 	@echo "... test_style_parsing.i"
 	@echo "... test_style_parsing.s"

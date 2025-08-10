@@ -86,6 +86,7 @@ tests/CMakeFiles/check: /workspace/tests/test_style_parsing.cpp
 tests/CMakeFiles/check: /workspace/tests/test_style_tokens.cpp
 tests/CMakeFiles/check: /workspace/tests/test_simple_style.cpp
 tests/CMakeFiles/check: /workspace/tests/test_template_parsing.cpp
+tests/CMakeFiles/check: /workspace/tests/test_specialization.cpp
 	/usr/bin/ctest --verbose
 
 tests/CMakeFiles/check.dir/codegen:

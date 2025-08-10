@@ -13,6 +13,8 @@
 #include "Node/Namespace.h"
 #include "Node/Operate.h"
 #include "Node/Origin.h"
+#include "Node/Info.h"
+#include "Node/Export.h"
 #include <algorithm>
 #include <cctype>
 
@@ -1671,16 +1673,62 @@ std::shared_ptr<Node> StandardParser::parseInfo() {
     // [Info]已经被消费
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    auto infoNode = std::make_shared<Element>("info");
+    auto infoNode = std::make_shared<Info>();
     
-    // 解析Info内容
+    // 解析Info内容 - 键值对格式
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         
-        if (checkAttribute()) {
-            parseAttributes(infoNode);
-        } else {
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 解析键名
+        if (!check(TokenType::IDENTIFIER)) {
+            addError("Expected property name in [Info] block");
+            skipToNextStatement();
+            continue;
+        }
+        
+        std::string key = currentToken_.value;
+        advance();
+        
+        // 期望冒号
+        consume(TokenType::COLON, "Expected ':' after property name");
+        
+        // 解析值（字符串字面量或无引号字面量）
+        std::string value;
+        if (check(TokenType::STRING_LITERAL)) {
+            value = currentToken_.value;
             advance();
+        } else if (check(TokenType::IDENTIFIER) || check(TokenType::NUMBER)) {
+            // 无引号的值
+            value = currentToken_.value;
+            advance();
+            
+            // 继续读取直到遇到逗号、分号或右大括号
+            while (!isAtEnd() && 
+                   !check(TokenType::COMMA) && 
+                   !check(TokenType::SEMICOLON) &&
+                   !check(TokenType::RIGHT_BRACE)) {
+                if (check(TokenType::DOT) || check(TokenType::HYPHEN) || 
+                    check(TokenType::IDENTIFIER) || check(TokenType::NUMBER)) {
+                    value += currentToken_.value;
+                    advance();
+                } else {
+                    break;
+                }
+            }
+        } else {
+            addError("Expected value after ':' in [Info] block");
+            skipToNextStatement();
+            continue;
+        }
+        
+        // 设置属性
+        infoNode->setProperty(key, value);
+        
+        // 可选的逗号或分号
+        if (match(TokenType::COMMA) || match(TokenType::SEMICOLON)) {
+            // 已消费
         }
     }
     
@@ -1691,27 +1739,109 @@ std::shared_ptr<Node> StandardParser::parseInfo() {
 
 std::shared_ptr<Node> StandardParser::parseExport() {
     // [Export]已经被消费
+    
+    auto exportNode = std::make_shared<Export>();
+    
+    // 检查是否有 from namespace 语法
+    if (check(TokenType::IDENTIFIER) && currentToken_.value == "from") {
+        advance(); // 消费 'from'
+        
+        if (check(TokenType::IDENTIFIER)) {
+            exportNode->setFromNamespace(currentToken_.value);
+            advance();
+        } else {
+            addError("Expected namespace name after 'from'");
+        }
+    }
+    
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
-    auto exportNode = std::make_shared<Element>("export");
-
     // 解析Export内容
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         
-        if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
-            auto type = advance();
-            
-            // 收集名称列表
-            do {
-                auto name = consume(TokenType::IDENTIFIER, "Expected export name");
-                exportNode->addExport(type.value + " " + name.value);
-            } while (match(TokenType::COMMA));
-            
-            consume(TokenType::SEMICOLON, "Expected ';'");
-        } else {
-            advance();
+        if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查通配符导出
+        if (match(TokenType::WILDCARD)) {
+            exportNode->addExportItem(Export::ExportType::ALL, "*");
+            // 可选的逗号或分号
+            match(TokenType::COMMA) || match(TokenType::SEMICOLON);
+            continue;
         }
+        
+        // 解析导出类型
+        Export::ExportType exportType;
+        if (match(TokenType::AT_ELEMENT)) {
+            exportType = Export::ExportType::ELEMENT;
+        } else if (match(TokenType::AT_STYLE)) {
+            exportType = Export::ExportType::STYLE;
+        } else if (match(TokenType::AT_VAR)) {
+            exportType = Export::ExportType::VAR;
+        } else if (check(TokenType::IDENTIFIER) && currentToken_.value == "namespace") {
+            advance(); // 消费 'namespace'
+            exportType = Export::ExportType::NAMESPACE;
+        } else {
+            addError("Expected export type (@Element, @Style, @Var, namespace, or *)");
+            skipToNextStatement();
+            continue;
+        }
+        
+        // 解析名称和可选的别名
+        if (!check(TokenType::IDENTIFIER)) {
+            addError("Expected identifier after export type");
+            skipToNextStatement();
+            continue;
+        }
+        
+        std::string name = currentToken_.value;
+        advance();
+        
+        std::string alias;
+        // 检查 'as' 别名语法
+        if (check(TokenType::AS)) {
+            advance(); // 消费 'as'
+            if (check(TokenType::IDENTIFIER)) {
+                alias = currentToken_.value;
+                advance();
+            } else {
+                addError("Expected alias name after 'as'");
+            }
+        }
+        
+        exportNode->addExportItem(exportType, name, alias);
+        
+        // 处理逗号分隔的多个导出项
+        if (match(TokenType::COMMA)) {
+            // 如果是逗号，继续解析同类型的导出项
+            while (!isAtEnd() && !check(TokenType::RIGHT_BRACE)) {
+                if (!check(TokenType::IDENTIFIER)) {
+                    addError("Expected identifier after ','");
+                    break;
+                }
+                
+                name = currentToken_.value;
+                advance();
+                
+                alias = "";
+                if (check(TokenType::AS)) {
+                    advance();
+                    if (check(TokenType::IDENTIFIER)) {
+                        alias = currentToken_.value;
+                        advance();
+                    }
+                }
+                
+                exportNode->addExportItem(exportType, name, alias);
+                
+                if (!match(TokenType::COMMA)) {
+                    break;
+                }
+            }
+        }
+        
+        // 可选的分号
+        match(TokenType::SEMICOLON);
     }
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");

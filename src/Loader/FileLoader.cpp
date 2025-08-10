@@ -1,25 +1,24 @@
 #include "Loader/FileLoader.h"
 #include "Parser/StandardParser.h"
 #include "Lexer/StandardLexer.h"
-#include "Context/StandardContext.h"
-#include "Node/Node.h"
-#include <filesystem>
+#include "Context/ChtlContext.h"
 #include <fstream>
+#include <filesystem>
+#include <algorithm>
 #include <sstream>
-#include <regex>
-#include <chrono>
 
 namespace chtl {
 
 namespace fs = std::filesystem;
 
 FileLoader::FileLoader() {
-    // 初始化解析器将在需要时进行
+    // 默认构造函数
 }
 
-FileLoader::~FileLoader() = default;
+FileLoader::~FileLoader() {
+    // 默认析构函数
+}
 
-// 加载文件
 bool FileLoader::loadFile(const std::string& filePath) {
     // 检查文件是否已加载
     if (isFileLoaded(filePath)) {
@@ -28,46 +27,22 @@ bool FileLoader::loadFile(const std::string& filePath) {
     
     // 检查文件是否存在
     if (!fs::exists(filePath)) {
-        FileInfo info;
-        info.path = filePath;
-        info.isLoaded = false;
-        info.isParsed = false;
-        info.error = "File not found: " + filePath;
-        files_[filePath] = info;
         return false;
     }
     
-    // 检查是否为CHTL文件
+    // 检查是否是有效的CHTL文件
     if (!isValidChtlFile(filePath)) {
-        FileInfo info;
-        info.path = filePath;
-        info.isLoaded = false;
-        info.isParsed = false;
-        info.error = "Not a CHTL file: " + filePath;
-        files_[filePath] = info;
         return false;
     }
     
     // 检查文件大小
     if (!checkFileSize(filePath)) {
-        FileInfo info;
-        info.path = filePath;
-        info.isLoaded = false;
-        info.isParsed = false;
-        info.error = "File too large: " + filePath;
-        files_[filePath] = info;
         return false;
     }
     
     // 读取文件内容
     std::string content = readFile(filePath);
     if (content.empty() && fs::file_size(filePath) > 0) {
-        FileInfo info;
-        info.path = filePath;
-        info.isLoaded = false;
-        info.isParsed = false;
-        info.error = "Failed to read file: " + filePath;
-        files_[filePath] = info;
         return false;
     }
     
@@ -79,12 +54,13 @@ bool FileLoader::loadFile(const std::string& filePath) {
     info.isParsed = false;
     info.dependencies = scanDependencies(content);
     
+    // 存储文件信息
+    files_[filePath] = info;
+    
     // 记录文件修改时间
     auto ftime = fs::last_write_time(filePath);
-    fileModTimes_[filePath] = std::chrono::system_clock::to_time_t(
-        std::chrono::system_clock::now());
+    fileModTimes_[filePath] = decltype(ftime)::clock::to_time_t(ftime);
     
-    files_[filePath] = info;
     return true;
 }
 
@@ -117,27 +93,40 @@ bool FileLoader::loadDirectory(const std::string& dirPath, bool recursive) {
     return loadFiles(files);
 }
 
-// 解析文件
 bool FileLoader::parseFile(const std::string& filePath) {
     auto it = files_.find(filePath);
-    if (it == files_.end() || !it->second.isLoaded) {
+    if (it == files_.end()) {
         return false;
     }
     
-    auto& info = it->second;
-    if (info.isParsed) {
-        return true;
-    }
+    FileInfo& info = it->second;
     
-    // 创建解析器组件
-    auto context = std::make_shared<StandardContext>();
+    // 创建解析器
     auto lexer = std::make_shared<StandardLexer>();
-    parser_ = std::make_unique<StandardParser>(lexer, context);
+    auto stream = std::make_unique<std::istringstream>(info.content);
+    lexer->initialize(std::move(stream), filePath);
     
-    // TODO: 设置lexer输入并解析
-    // 暂时标记为已解析
-    info.isParsed = true;
-    info.ast = std::make_shared<Element>("document");
+    auto context = std::make_shared<ChtlContext>();
+    StandardParser parser(lexer, context);
+    
+    try {
+        info.ast = parser.parse();
+        info.isParsed = true;
+        
+        // 收集错误
+        auto errors = parser.getErrors();
+        if (!errors.empty()) {
+            std::stringstream ss;
+            for (const auto& error : errors) {
+                ss << "Line " << error.line << ": " << error.message << "\n";
+            }
+            info.error = ss.str();
+        }
+    } catch (const std::exception& e) {
+        info.error = std::string("Parse error: ") + e.what();
+        info.isParsed = false;
+        return false;
+    }
     
     return true;
 }
@@ -154,10 +143,9 @@ bool FileLoader::parseAllFiles() {
     return allSuccess;
 }
 
-// 获取文件信息
 const FileLoader::FileInfo* FileLoader::getFileInfo(const std::string& filePath) const {
     auto it = files_.find(filePath);
-    return it != files_.end() ? &it->second : nullptr;
+    return (it != files_.end()) ? &it->second : nullptr;
 }
 
 std::shared_ptr<Node> FileLoader::getAST(const std::string& filePath) const {
@@ -170,15 +158,24 @@ std::string FileLoader::getContent(const std::string& filePath) const {
     return info ? info->content : "";
 }
 
-// 检查文件状态
+std::vector<std::string> FileLoader::getLoadedFiles() const {
+    std::vector<std::string> result;
+    for (const auto& [path, info] : files_) {
+        if (info.isLoaded) {
+            result.push_back(path);
+        }
+    }
+    return result;
+}
+
 bool FileLoader::isFileLoaded(const std::string& filePath) const {
-    auto info = getFileInfo(filePath);
-    return info && info->isLoaded;
+    auto it = files_.find(filePath);
+    return (it != files_.end()) && it->second.isLoaded;
 }
 
 bool FileLoader::isFileParsed(const std::string& filePath) const {
-    auto info = getFileInfo(filePath);
-    return info && info->isParsed;
+    auto it = files_.find(filePath);
+    return (it != files_.end()) && it->second.isParsed;
 }
 
 bool FileLoader::hasErrors() const {
@@ -190,7 +187,6 @@ bool FileLoader::hasErrors() const {
     return false;
 }
 
-// 获取错误信息
 std::vector<std::string> FileLoader::getErrors() const {
     std::vector<std::string> errors;
     for (const auto& [path, info] : files_) {
@@ -206,78 +202,48 @@ std::string FileLoader::getFileError(const std::string& filePath) const {
     return info ? info->error : "";
 }
 
-// 依赖管理
 std::vector<std::string> FileLoader::getDependencies(const std::string& filePath) const {
     auto info = getFileInfo(filePath);
     return info ? info->dependencies : std::vector<std::string>{};
 }
 
 std::vector<std::string> FileLoader::getAllDependencies() const {
-    std::vector<std::string> allDeps;
+    std::set<std::string> allDeps;
     for (const auto& [path, info] : files_) {
-        allDeps.insert(allDeps.end(), info.dependencies.begin(), info.dependencies.end());
+        allDeps.insert(info.dependencies.begin(), info.dependencies.end());
     }
-    
-    // 去重
-    std::sort(allDeps.begin(), allDeps.end());
-    allDeps.erase(std::unique(allDeps.begin(), allDeps.end()), allDeps.end());
-    
-    return allDeps;
+    return std::vector<std::string>(allDeps.begin(), allDeps.end());
 }
 
 bool FileLoader::resolveDependencies() {
+    // 简单实现：加载所有依赖文件
     auto deps = getAllDependencies();
-    bool allResolved = true;
-    
-    for (const auto& dep : deps) {
-        if (!isFileLoaded(dep)) {
-            if (!loadFile(dep)) {
-                allResolved = false;
-            }
-        }
-    }
-    
-    return allResolved;
+    return loadFiles(deps);
 }
 
-// 文件监控
 bool FileLoader::hasFileChanged(const std::string& filePath) const {
-    if (!fs::exists(filePath)) {
-        return false;
-    }
-    
     auto it = fileModTimes_.find(filePath);
     if (it == fileModTimes_.end()) {
         return false;
     }
     
-    auto currentTime = fs::last_write_time(filePath);
-    auto recordedTime = it->second;
-    
-    // TODO: 实际比较文件修改时间
-    return false;
+    try {
+        auto currentTime = fs::last_write_time(filePath);
+        auto storedTime = it->second;
+        return decltype(currentTime)::clock::to_time_t(currentTime) != storedTime;
+    } catch (...) {
+        return false;
+    }
 }
 
 std::vector<std::string> FileLoader::getChangedFiles() const {
     std::vector<std::string> changed;
-    
-    for (const auto& [path, info] : files_) {
+    for (const auto& [path, modTime] : fileModTimes_) {
         if (hasFileChanged(path)) {
             changed.push_back(path);
         }
     }
-    
     return changed;
-}
-
-std::vector<std::string> FileLoader::getLoadedFiles() const {
-    std::vector<std::string> files;
-    
-    for (const auto& [path, info] : files_) {
-        files.push_back(path);
-    }
-    
-    return files;
 }
 
 bool FileLoader::reloadChangedFiles() {
@@ -294,7 +260,6 @@ bool FileLoader::reloadChangedFiles() {
     return allSuccess;
 }
 
-// 清理
 void FileLoader::clearFile(const std::string& filePath) {
     files_.erase(filePath);
     fileModTimes_.erase(filePath);
@@ -305,38 +270,26 @@ void FileLoader::clearAllFiles() {
     fileModTimes_.clear();
 }
 
-// 获取统计信息
 size_t FileLoader::getLoadedFileCount() const {
-    size_t count = 0;
-    for (const auto& [path, info] : files_) {
-        if (info.isLoaded) {
-            count++;
-        }
-    }
-    return count;
+    return std::count_if(files_.begin(), files_.end(),
+        [](const auto& pair) { return pair.second.isLoaded; });
 }
 
 size_t FileLoader::getParsedFileCount() const {
-    size_t count = 0;
-    for (const auto& [path, info] : files_) {
-        if (info.isParsed) {
-            count++;
-        }
-    }
-    return count;
+    return std::count_if(files_.begin(), files_.end(),
+        [](const auto& pair) { return pair.second.isParsed; });
 }
 
 size_t FileLoader::getTotalFileSize() const {
-    size_t totalSize = 0;
+    size_t total = 0;
     for (const auto& [path, info] : files_) {
-        totalSize += info.content.size();
+        total += info.content.size();
     }
-    return totalSize;
+    return total;
 }
 
-// 私有方法实现
 std::string FileLoader::readFile(const std::string& filePath) {
-    std::ifstream file(filePath, std::ios::binary);
+    std::ifstream file(filePath);
     if (!file.is_open()) {
         return "";
     }
@@ -349,34 +302,40 @@ std::string FileLoader::readFile(const std::string& filePath) {
 std::vector<std::string> FileLoader::scanDependencies(const std::string& content) {
     std::vector<std::string> deps;
     
-    // 扫描[Import]语句
-    std::regex importRegex(R"(\[Import\]\s*@\w+\s+from\s+([^\s;]+))");
-    std::smatch match;
-    std::string::const_iterator searchStart(content.cbegin());
-    
-    while (std::regex_search(searchStart, content.cend(), match, importRegex)) {
-        std::string moduleName = match[1];
-        // 将模块名转换为文件路径
-        std::string filePath = moduleName + ".chtl";
-        deps.push_back(filePath);
-        searchStart = match.suffix().first;
+    // 简单扫描Import语句
+    size_t pos = 0;
+    while ((pos = content.find("Import", pos)) != std::string::npos) {
+        // 查找 from 后的路径
+        size_t fromPos = content.find("from", pos);
+        if (fromPos != std::string::npos) {
+            size_t pathStart = content.find_first_of("\"'", fromPos);
+            if (pathStart != std::string::npos) {
+                size_t pathEnd = content.find_first_of("\"'", pathStart + 1);
+                if (pathEnd != std::string::npos) {
+                    std::string path = content.substr(pathStart + 1, pathEnd - pathStart - 1);
+                    deps.push_back(path);
+                }
+            }
+        }
+        pos += 6; // "Import"的长度
     }
     
     return deps;
 }
 
 bool FileLoader::isValidChtlFile(const std::string& filePath) const {
-    fs::path path(filePath);
-    return path.extension() == ".chtl";
+    // 检查文件扩展名
+    return filePath.ends_with(".chtl") || 
+           filePath.ends_with(".chtm") ||
+           filePath.ends_with(".cmod");
 }
 
 bool FileLoader::checkFileSize(const std::string& filePath) const {
-    if (!fs::exists(filePath)) {
+    try {
+        return fs::file_size(filePath) <= maxFileSize_;
+    } catch (...) {
         return false;
     }
-    
-    size_t fileSize = fs::file_size(filePath);
-    return fileSize <= maxFileSize_;
 }
 
 void FileLoader::loadDirectoryRecursive(const std::string& dirPath, 
@@ -384,13 +343,10 @@ void FileLoader::loadDirectoryRecursive(const std::string& dirPath,
     for (const auto& entry : fs::recursive_directory_iterator(dirPath)) {
         if (entry.is_regular_file()) {
             std::string path = entry.path().string();
-            
-            // 处理符号链接
-            if (entry.is_symlink() && !followSymlinks_) {
-                continue;
-            }
-            
             if (isValidChtlFile(path)) {
+                if (!followSymlinks_ && entry.is_symlink()) {
+                    continue;
+                }
                 files.push_back(path);
             }
         }

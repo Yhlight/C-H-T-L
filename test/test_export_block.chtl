@@ -1,0 +1,35 @@
+// 测试[Export]块解析
+
+// 简单导出
+[Export] {
+    @Element Button, Card, Modal
+    @Style primary, secondary
+    @Var theme-color, font-size
+}
+
+// 导出所有
+[Export] {
+    *
+}
+
+// 带别名的导出
+[Export] {
+    @Element MyButton as Button
+    @Style custom-theme as theme
+    @Var main-color as primaryColor
+}
+
+// 从命名空间导出
+[Export] from MyNamespace {
+    @Element Container
+    @Style layout
+    namespace Utils
+}
+
+// 混合导出
+[Export] {
+    @Element Header, Footer;
+    @Style reset, base;
+    @Var colors, spacing;
+    namespace Components, Utilities
+}

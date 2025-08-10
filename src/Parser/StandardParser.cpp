@@ -1352,15 +1352,58 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
     }
     advance(); // 消费 'from'
     
-    // 解析模块路径
-    if (!check(TokenType::STRING_LITERAL)) {
-        addError("Expected module path string after 'from'");
+    // 解析模块路径 - 支持字符串字面量或无引号的标识符路径
+    std::string modulePath;
+    
+    if (check(TokenType::STRING_LITERAL)) {
+        // 带引号的路径: "path/to/module"
+        modulePath = currentToken_.value;
+        advance();
+    } else if (check(TokenType::IDENTIFIER)) {
+        // 无引号的路径: path/to/module 或 Chtholly.Space
+        modulePath = currentToken_.value;
+        advance();
+        
+        // 继续读取路径的其余部分（处理 . 和 / 分隔符）
+        while (!isAtEnd()) {
+            if (check(TokenType::DOT)) {
+                // 检查是否是通配符 (.*)
+                if (peekNext() == TokenType::WILDCARD) {
+                    break; // 这是通配符后缀，不是路径的一部分
+                }
+                // 否则是路径的一部分，如 Chtholly.Space
+                advance(); // 消费点
+                modulePath += ".";
+                
+                if (check(TokenType::IDENTIFIER)) {
+                    modulePath += currentToken_.value;
+                    advance();
+                } else {
+                    addError("Expected identifier after '.' in module path");
+                    break;
+                }
+            } else if (check(TokenType::SLASH)) {
+                // 路径分隔符
+                advance();
+                modulePath += "/";
+                
+                if (check(TokenType::IDENTIFIER)) {
+                    modulePath += currentToken_.value;
+                    advance();
+                } else {
+                    addError("Expected identifier after '/' in module path");
+                    break;
+                }
+            } else {
+                // 路径结束
+                break;
+            }
+        }
+    } else {
+        addError("Expected module path after 'from'");
         skipToNextStatement();
         return nullptr;
     }
-    
-    std::string modulePath = currentToken_.value;
-    advance();
     
     // 检查是否有通配符后缀 (.*) 
     bool isWildcard = false;

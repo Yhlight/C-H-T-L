@@ -21,7 +21,15 @@ void printNode(std::shared_ptr<Node> node, int indent = 0) {
     
     if (node->getType() == NodeType::IMPORT) {
         auto importNode = std::static_pointer_cast<Import>(node);
-        std::cout << " Path: " << importNode->getPath();
+        std::cout << "\n" << prefix << "  → Type: ";
+        switch (importNode->getType()) {
+            case Import::ImportType::CHTL: std::cout << "CHTL"; break;
+            case Import::ImportType::CSS: std::cout << "CSS"; break;
+            case Import::ImportType::HTML: std::cout << "HTML"; break;
+            case Import::ImportType::JS: std::cout << "JS"; break;
+            default: std::cout << "OTHER"; break;
+        }
+        std::cout << ", Path: \"" << importNode->getPath() << "\"";
         if (importNode->isImportAll()) {
             std::cout << " [WILDCARD]";
         }
@@ -37,7 +45,7 @@ void printNode(std::shared_ptr<Node> node, int indent = 0) {
 
 int main() {
     // Read test file
-    std::ifstream file("/workspace/test/test_wildcard_import.chtl");
+    std::ifstream file("/workspace/test/test_unquoted_paths.chtl");
     if (!file.is_open()) {
         std::cerr << "Failed to open test file" << std::endl;
         return 1;

@@ -86,6 +86,8 @@ set(CMAKE_DEPEND_INFO_FILES
   "tests/CMakeFiles/test_simple_style.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_template_parsing.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_specialization.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_context_aware_comments.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_compilation.dir/DependInfo.cmake"
   "tests/CMakeFiles/check.dir/DependInfo.cmake"
   "Predefine/CMakeFiles/chtl_predefine.dir/DependInfo.cmake"
   "Loader/CMakeFiles/chtl_loader.dir/DependInfo.cmake"

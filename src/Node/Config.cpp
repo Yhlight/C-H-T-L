@@ -5,90 +5,104 @@ namespace chtl {
 
 std::string Config::getConfig(const std::string& key) const {
     auto it = configItems_.find(key);
-    return it != configItems_.end() ? it->second : "";
+    if (it != configItems_.end()) {
+        // 如果是字符串，返回字符串
+        if (std::holds_alternative<std::string>(it->second)) {
+            return std::get<std::string>(it->second);
+        }
+        // 如果是数组，返回第一个元素
+        else if (std::holds_alternative<std::vector<std::string>>(it->second)) {
+            const auto& vec = std::get<std::vector<std::string>>(it->second);
+            return vec.empty() ? "" : vec[0];
+        }
+    }
+    return "";
 }
 
 void Config::addArrayConfigItem(const std::string& key, const std::string& value) {
-    arrayItems_[key].push_back(value);
+    auto it = configItems_.find(key);
+    if (it != configItems_.end() && std::holds_alternative<std::vector<std::string>>(it->second)) {
+        std::get<std::vector<std::string>>(it->second).push_back(value);
+    } else {
+        // 创建新的数组
+        configItems_[key] = std::vector<std::string>{value};
+    }
 }
 
 std::vector<std::string> Config::getArrayConfig(const std::string& key) const {
-    auto it = arrayItems_.find(key);
-    return it != arrayItems_.end() ? it->second : std::vector<std::string>();
+    auto it = configItems_.find(key);
+    if (it != configItems_.end() && std::holds_alternative<std::vector<std::string>>(it->second)) {
+        return std::get<std::vector<std::string>>(it->second);
+    }
+    return std::vector<std::string>();
+}
+
+bool Config::hasArrayConfig(const std::string& key) const {
+    auto it = configItems_.find(key);
+    return it != configItems_.end() && std::holds_alternative<std::vector<std::string>>(it->second);
 }
 
 void Config::mergeConfig(const Config& other) {
-    // 合并普通配置项
+    // 合并配置项
     for (const auto& [key, value] : other.configItems_) {
         configItems_[key] = value;
-    }
-    
-    // 合并数组配置项
-    for (const auto& [key, values] : other.arrayItems_) {
-        if (arrayItems_.find(key) != arrayItems_.end()) {
-            // 如果键已存在，追加值
-            arrayItems_[key].insert(arrayItems_[key].end(), values.begin(), values.end());
-        } else {
-            // 如果键不存在，直接赋值
-            arrayItems_[key] = values;
-        }
     }
 }
 
 std::shared_ptr<Node> Config::clone(bool deep) const {
-    (void)deep; // Config节点通常不包含子节点
     auto cloned = std::make_shared<Config>(configName_);
     cloned->configItems_ = configItems_;
-    cloned->arrayItems_ = arrayItems_;
+    
+    if (deep) {
+        for (const auto& child : children_) {
+            cloned->appendChild(child->clone(deep));
+        }
+    }
+    
     return cloned;
 }
 
 std::string Config::toString() const {
     std::stringstream ss;
-    ss << "[Configuration]";
+    ss << "[Configuration] {\n";
     
-    if (!configName_.empty()) {
-        ss << " " << configName_;
-    }
-    
-    ss << "\n{";
-    
-    // 输出普通配置项
+    // 输出配置项
     for (const auto& [key, value] : configItems_) {
-        ss << "\n  " << key << ": ";
+        ss << "  " << key << " = ";
         
-        // 检查是否需要引号
-        if (value.find(' ') != std::string::npos || value.empty()) {
-            ss << "\"" << value << "\"";
-        } else {
-            ss << value;
-        }
-        ss << ";";
-    }
-    
-    // 输出数组配置项
-    for (const auto& [key, values] : arrayItems_) {
-        ss << "\n  " << key << ": [";
-        for (size_t i = 0; i < values.size(); ++i) {
-            if (i > 0) ss << ", ";
-            
-            // 检查是否需要引号
-            if (values[i].find(' ') != std::string::npos || values[i].empty()) {
-                ss << "\"" << values[i] << "\"";
+        // 处理不同类型的值
+        if (std::holds_alternative<std::string>(value)) {
+            const auto& str = std::get<std::string>(value);
+            // 如果包含空格或为空，添加引号
+            if (str.find(' ') != std::string::npos || str.empty()) {
+                ss << "\"" << str << "\"";
             } else {
-                ss << values[i];
+                ss << str;
             }
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            ss << "[";
+            for (size_t i = 0; i < vec.size(); ++i) {
+                if (i > 0) ss << ", ";
+                if (vec[i].find(' ') != std::string::npos || vec[i].empty()) {
+                    ss << "\"" << vec[i] << "\"";
+                } else {
+                    ss << vec[i];
+                }
+            }
+            ss << "]";
         }
-        ss << "];";
+        
+        ss << ";\n";
     }
     
-    ss << "\n}";
-    
+    ss << "}";
     return ss.str();
 }
 
 void Config::accept(Visitor* visitor) {
-    // 基础Visitor不支持Config，需要使用ExtendedVisitor
+    // Visitor模式的基类不支持Config节点
+    // 需要使用扩展的访问者或在基类中添加visitConfig方法
     (void)visitor;
 }
 

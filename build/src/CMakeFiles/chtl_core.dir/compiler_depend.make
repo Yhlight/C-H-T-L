@@ -3230,7 +3230,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/stdlib.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
-  /usr/include/wctype.h \
   /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
   /usr/include/x86_64-linux-gnu/asm/errno.h \
   /usr/include/x86_64-linux-gnu/asm/posix_types.h \
@@ -3295,7 +3294,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
@@ -3303,18 +3301,18 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
   /usr/include/c++/14/bits/allocator.h \
   /usr/include/c++/14/bits/atomic_base.h \
   /usr/include/c++/14/bits/atomic_lockfree_defines.h \
-  /usr/include/c++/14/bits/basic_ios.h \
-  /usr/include/c++/14/bits/basic_ios.tcc \
   /usr/include/c++/14/bits/basic_string.h \
   /usr/include/c++/14/bits/basic_string.tcc \
   /usr/include/c++/14/bits/char_traits.h \
@@ -3334,12 +3332,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/bits/hashtable.h \
   /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
-  /usr/include/c++/14/bits/ios_base.h \
-  /usr/include/c++/14/bits/istream.tcc \
-  /usr/include/c++/14/bits/locale_classes.h \
-  /usr/include/c++/14/bits/locale_classes.tcc \
-  /usr/include/c++/14/bits/locale_facets.h \
-  /usr/include/c++/14/bits/locale_facets.tcc \
   /usr/include/c++/14/bits/localefwd.h \
   /usr/include/c++/14/bits/memory_resource.h \
   /usr/include/c++/14/bits/memoryfwd.h \
@@ -3347,7 +3339,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/bits/nested_exception.h \
   /usr/include/c++/14/bits/new_allocator.h \
   /usr/include/c++/14/bits/node_handle.h \
-  /usr/include/c++/14/bits/ostream.tcc \
   /usr/include/c++/14/bits/ostream_insert.h \
   /usr/include/c++/14/bits/parse_numbers.h \
   /usr/include/c++/14/bits/postypes.h \
@@ -3361,10 +3352,12 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/bits/shared_ptr_base.h \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
   /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
@@ -3373,10 +3366,9 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/bits/stl_tempbuf.h \
   /usr/include/c++/14/bits/stl_uninitialized.h \
   /usr/include/c++/14/bits/stl_vector.h \
-  /usr/include/c++/14/bits/streambuf.tcc \
-  /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
@@ -3393,7 +3385,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/cstdio \
   /usr/include/c++/14/cstdlib \
   /usr/include/c++/14/cwchar \
-  /usr/include/c++/14/cwctype \
   /usr/include/c++/14/debug/assertions.h \
   /usr/include/c++/14/debug/debug.h \
   /usr/include/c++/14/exception \
@@ -3406,21 +3397,15 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/c++/14/ext/type_traits.h \
   /usr/include/c++/14/functional \
   /usr/include/c++/14/initializer_list \
-  /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
-  /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
-  /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
-  /usr/include/c++/14/stdexcept \
-  /usr/include/c++/14/streambuf \
   /usr/include/c++/14/string \
   /usr/include/c++/14/string_view \
-  /usr/include/c++/14/system_error \
   /usr/include/c++/14/tuple \
   /usr/include/c++/14/type_traits \
   /usr/include/c++/14/typeinfo \
@@ -3432,9 +3417,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
-  /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
-  /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
-  /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/gthr-default.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
@@ -3451,8 +3433,6 @@ src/CMakeFiles/chtl_core.dir/Node/Comment.cpp.o: /workspace/src/Node/Comment.cpp
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Comment.h \
   /workspace/include/Node/Node.h
 
@@ -3556,10 +3536,12 @@ src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o: /workspace/src/Node/Config.cpp \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
@@ -3615,10 +3597,12 @@ src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o: /workspace/src/Node/Config.cpp \
   /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
   /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
@@ -3631,6 +3615,7 @@ src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o: /workspace/src/Node/Config.cpp \
   /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
@@ -3662,12 +3647,13 @@ src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o: /workspace/src/Node/Config.cpp \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
+  /usr/include/c++/14/optional \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/sstream \
@@ -3706,8 +3692,6 @@ src/CMakeFiles/chtl_core.dir/Node/Config.cpp.o: /workspace/src/Node/Config.cpp \
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Config.h \
   /workspace/include/Node/Node.h
 
@@ -3922,7 +3906,6 @@ src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o: /workspace/src/Node/Custom.cpp \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
@@ -3967,8 +3950,6 @@ src/CMakeFiles/chtl_core.dir/Node/Custom.cpp.o: /workspace/src/Node/Custom.cpp \
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Custom.h \
   /workspace/include/Node/Node.h
 
@@ -4693,7 +4674,6 @@ src/CMakeFiles/chtl_core.dir/Node/Node.cpp.o: /workspace/src/Node/Node.cpp \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
@@ -4738,8 +4718,6 @@ src/CMakeFiles/chtl_core.dir/Node/Node.cpp.o: /workspace/src/Node/Node.cpp \
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Node.h
 
 src/CMakeFiles/chtl_core.dir/Node/Operate.cpp.o: /workspace/src/Node/Operate.cpp \
@@ -5101,10 +5079,12 @@ src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o: /workspace/src/Node/Style.cpp \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
@@ -5160,10 +5140,12 @@ src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o: /workspace/src/Node/Style.cpp \
   /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
   /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
@@ -5176,6 +5158,7 @@ src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o: /workspace/src/Node/Style.cpp \
   /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
@@ -5207,12 +5190,12 @@ src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o: /workspace/src/Node/Style.cpp \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/sstream \
@@ -5251,8 +5234,6 @@ src/CMakeFiles/chtl_core.dir/Node/Style.cpp.o: /workspace/src/Node/Style.cpp \
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Node.h \
   /workspace/include/Node/Style.h
 
@@ -5356,10 +5337,12 @@ src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o: /workspace/src/Node/Template.c
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
@@ -5415,10 +5398,12 @@ src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o: /workspace/src/Node/Template.c
   /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
   /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
@@ -5431,6 +5416,7 @@ src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o: /workspace/src/Node/Template.c
   /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
@@ -5462,12 +5448,12 @@ src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o: /workspace/src/Node/Template.c
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/sstream \
@@ -5506,8 +5492,6 @@ src/CMakeFiles/chtl_core.dir/Node/Template.cpp.o: /workspace/src/Node/Template.c
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/Common/Token.h \
-  /workspace/include/Common/TokenType.h \
   /workspace/include/Node/Node.h \
   /workspace/include/Node/Template.h
 
@@ -5611,10 +5595,12 @@ src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: /workspace/src/Parser/Bas
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
@@ -5673,6 +5659,7 @@ src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: /workspace/src/Parser/Bas
   /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
@@ -5694,6 +5681,7 @@ src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: /workspace/src/Parser/Bas
   /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/unordered_set.h \
@@ -5734,6 +5722,7 @@ src/CMakeFiles/chtl_core.dir/Parser/BasicParser.cpp.o: /workspace/src/Parser/Bas
   /usr/include/c++/14/new \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/queue \
@@ -5889,10 +5878,12 @@ src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o: /workspace/src/Parser/Co
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/algorithm \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/align.h \
   /usr/include/c++/14/bits/alloc_traits.h \
   /usr/include/c++/14/bits/allocated_ptr.h \
@@ -5948,9 +5939,9 @@ src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o: /workspace/src/Parser/Co
   /usr/include/c++/14/bits/shared_ptr.h \
   /usr/include/c++/14/bits/shared_ptr_atomic.h \
   /usr/include/c++/14/bits/shared_ptr_base.h \
-  /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
   /usr/include/c++/14/bits/std_function.h \
+  /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
@@ -5972,6 +5963,7 @@ src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o: /workspace/src/Parser/Co
   /usr/include/c++/14/bits/streambuf_iterator.h \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
   /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/unordered_set.h \
@@ -6010,12 +6002,13 @@ src/CMakeFiles/chtl_core.dir/Parser/ConfigParser.cpp.o: /workspace/src/Parser/Co
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
+  /usr/include/c++/14/optional \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
+  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/queue \
-  /usr/include/c++/14/sstream \
   /usr/include/c++/14/stack \
   /usr/include/c++/14/stdexcept \
   /usr/include/c++/14/streambuf \
@@ -6294,6 +6287,7 @@ src/CMakeFiles/chtl_core.dir/Parser/StandardParser.cpp.o: /workspace/src/Parser/
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
+  /usr/include/c++/14/optional \
   /usr/include/c++/14/ostream \
   /usr/include/c++/14/pstl/execution_defs.h \
   /usr/include/c++/14/pstl/glue_algorithm_defs.h \
@@ -8156,6 +8150,8 @@ src/CMakeFiles/chtl_core.dir/State/StateFactory.cpp.o: /workspace/src/State/Stat
 /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/c++/14/optional:
 
 /usr/include/c++/14/bits/atomic_base.h:
 

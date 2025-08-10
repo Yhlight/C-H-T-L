@@ -136,7 +136,7 @@ void HtmlGenerator::generateComment(std::shared_ptr<Node> node) {
     std::string commentFormat;
     
     // 查找父节点确定上下文
-    auto parent = node->getParent().lock();
+    auto parent = node->getParent();
     while (parent) {
         std::string parentTag = parent->getTagName();
         
@@ -162,7 +162,7 @@ void HtmlGenerator::generateComment(std::shared_ptr<Node> node) {
             }
         }
         
-        parent = parent->getParent().lock();
+        parent = parent->getParent();
     }
     
     // 默认为HTML注释

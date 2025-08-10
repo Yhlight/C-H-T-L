@@ -409,6 +409,32 @@ test_specialization/fast:
 .PHONY : test_specialization/fast
 
 #=============================================================================
+# Target rules for targets named test_context_aware_comments
+
+# Build rule for target.
+test_context_aware_comments: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_context_aware_comments
+.PHONY : test_context_aware_comments
+
+# fast build rule for target.
+test_context_aware_comments/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_context_aware_comments.dir/build.make tests/CMakeFiles/test_context_aware_comments.dir/build
+.PHONY : test_context_aware_comments/fast
+
+#=============================================================================
+# Target rules for targets named test_compilation
+
+# Build rule for target.
+test_compilation: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_compilation
+.PHONY : test_compilation
+
+# fast build rule for target.
+test_compilation/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_compilation.dir/build.make tests/CMakeFiles/test_compilation.dir/build
+.PHONY : test_compilation/fast
+
+#=============================================================================
 # Target rules for targets named check
 
 # Build rule for target.
@@ -483,6 +509,8 @@ help:
 	@echo "... test_chtl_js"
 	@echo "... test_chtl_nodes"
 	@echo "... test_comment"
+	@echo "... test_compilation"
+	@echo "... test_context_aware_comments"
 	@echo "... test_html_parsing"
 	@echo "... test_import_namespace"
 	@echo "... test_lexer"

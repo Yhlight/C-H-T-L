@@ -1,66 +1,41 @@
 #include "Generator/ConfigGenerator.h"
+#include "Node/Config.h"
 #include <algorithm>
 #include <sstream>
 
 namespace chtl {
 
-ConfigGenerator::ConfigGenerator(ConfigFormat format)
+ConfigGenerator::ConfigGenerator() 
     : BasicGenerator(),
-      format_(format),
-      sortKeys_(false),
-      includeComments_(true),
-      maxLineLength_(120) {
+      sortKeys_(true),
+      prettyPrint_(true),
+      indentSize_(2) {
 }
 
-bool ConfigGenerator::generate(std::shared_ptr<Node> node) {
-    if (!node) {
-        reportError("Cannot generate from null node");
-        return false;
+void ConfigGenerator::generate(std::shared_ptr<Node> root, std::ostream& output) {
+    if (!root) {
+        return;
     }
     
-    if (node->getType() != NodeType::CONFIG) {
-        reportError("ConfigGenerator can only generate Config nodes");
-        return false;
+    output_ = &output;
+    currentIndent_ = 0;
+    
+    generateNode(root);
+}
+
+void ConfigGenerator::generateNode(std::shared_ptr<Node> node) {
+    if (!node || !output_) {
+        return;
     }
     
-    auto configNode = std::dynamic_pointer_cast<Config>(node);
-    if (!configNode) {
-        reportError("Failed to cast node to Config");
-        return false;
-    }
-    
-    beginGeneration();
-    
-    bool success = false;
-    switch (format_) {
-        case ConfigFormat::JSON:
-            success = generateJson(configNode);
-            break;
-        case ConfigFormat::YAML:
-            success = generateYaml(configNode);
-            break;
-        case ConfigFormat::INI:
-            success = generateIni(configNode);
-            break;
-        case ConfigFormat::XML:
-            success = generateXml(configNode);
-            break;
-        case ConfigFormat::PROPERTIES:
-            success = generateProperties(configNode);
-            break;
-        case ConfigFormat::TOML:
-            success = generateToml(configNode);
-            break;
-        case ConfigFormat::CHTL:
-            success = generateChtl(configNode);
+    switch (node->getType()) {
+        case NodeType::CONFIG:
+            generateConfig(node);
             break;
         default:
-            reportError("Unknown config format");
+            // ConfigGenerator只处理Config节点
             break;
     }
-    
-    endGeneration();
-    return success;
 }
 
 void ConfigGenerator::generateElement(std::shared_ptr<Node> node) {
@@ -75,6 +50,24 @@ void ConfigGenerator::generateText(std::shared_ptr<Node> node) {
     (void)node;
 }
 
+void ConfigGenerator::generateTemplate(std::shared_ptr<Node> node) {
+    // ConfigGenerator不处理模板节点
+    reportWarning("ConfigGenerator does not handle template nodes");
+    (void)node;
+}
+
+void ConfigGenerator::generateCustom(std::shared_ptr<Node> node) {
+    // ConfigGenerator不处理自定义节点
+    reportWarning("ConfigGenerator does not handle custom nodes");
+    (void)node;
+}
+
+void ConfigGenerator::generateStyle(std::shared_ptr<Node> node) {
+    // ConfigGenerator不处理样式节点
+    reportWarning("ConfigGenerator does not handle style nodes");
+    (void)node;
+}
+
 void ConfigGenerator::generateComment(std::shared_ptr<Node> node) {
     // ConfigGenerator不处理注释节点
     reportWarning("ConfigGenerator does not handle comment nodes");
@@ -82,236 +75,276 @@ void ConfigGenerator::generateComment(std::shared_ptr<Node> node) {
 }
 
 void ConfigGenerator::generateConfig(std::shared_ptr<Node> node) {
-    // 委托给generate方法
-    generate(node);
+    auto config = std::dynamic_pointer_cast<Config>(node);
+    if (!config) {
+        return;
+    }
+    
+    // 根据当前格式生成配置
+    std::string content;
+    switch (currentFormat_) {
+        case ConfigFormat::JSON:
+            content = generateJSON(config);
+            break;
+        case ConfigFormat::YAML:
+            content = generateYAML(config);
+            break;
+        case ConfigFormat::INI:
+            content = generateINI(config);
+            break;
+        case ConfigFormat::TOML:
+            content = generateTOML(config);
+            break;
+        case ConfigFormat::XML:
+            content = generateXML(config);
+            break;
+        case ConfigFormat::CHTL:
+        default:
+            content = generateCHTL(config);
+            break;
+    }
+    
+    write(content);
 }
 
-bool ConfigGenerator::generateJson(std::shared_ptr<Config> config) {
-    write("{");
-    if (!config_.minify) writeLine();
-    increaseIndent();
+std::string ConfigGenerator::generateJSON(std::shared_ptr<Config> config) {
+    std::stringstream ss;
+    ss << "{\n";
     
-    auto configs = config->getConfigs();
-    auto sortedKeys = sortKeys_ ? getSortedKeys(configs) : std::vector<std::string>();
-    
-    bool first = true;
-    
-    // 输出普通配置项
-    if (sortKeys_) {
-        for (const auto& key : sortedKeys) {
-            if (!first) {
-                write(",");
-                if (!config_.minify) writeLine();
-            }
-            first = false;
-            
-            writeIndent();
-            write("\"" + key + "\": ");
-            writeJsonValue(configs[key]);
-        }
-    } else {
-        for (const auto& [key, value] : configs) {
-            if (!first) {
-                write(",");
-                if (!config_.minify) writeLine();
-            }
-            first = false;
-            
-            writeIndent();
-            write("\"" + key + "\": ");
-            writeJsonValue(value);
-        }
-    }
-    
-    // 输出数组配置项
-    // TODO: 实现数组配置项的JSON输出
-    
-    decreaseIndent();
-    if (!config_.minify) {
-        writeLine();
-        writeIndent();
-    }
-    write("}");
-    
-    return true;
-}
-
-bool ConfigGenerator::generateYaml(std::shared_ptr<Config> config) {
-    if (yamlConfig_.explicitStart) {
-        writeLine("---");
-    }
-    
-    auto configs = config->getConfigs();
-    
-    // 输出配置名称（如果有）
-    if (!config->getConfigName().empty()) {
-        writeYamlComment("Configuration: " + config->getConfigName());
-    }
-    
-    // 输出普通配置项
-    for (const auto& [key, value] : configs) {
-        writeYamlValue(key, value);
-    }
-    
-    // TODO: 输出数组配置项
-    
-    if (yamlConfig_.explicitEnd) {
-        writeLine("...");
-    }
-    
-    return true;
-}
-
-bool ConfigGenerator::generateIni(std::shared_ptr<Config> config) {
-    // 写入节名称
-    if (!config->getConfigName().empty()) {
-        writeIniSection(config->getConfigName());
-    } else {
-        writeIniSection("Configuration");
-    }
-    
-    auto configs = config->getConfigs();
-    
-    // 输出配置项
-    for (const auto& [key, value] : configs) {
-        writeIniKeyValue(key, value);
-    }
-    
-    return true;
-}
-
-bool ConfigGenerator::generateChtl(std::shared_ptr<Config> config) {
-    // 生成CHTL原生格式
-    write("[Configuration]");
-    
-    if (!config->getConfigName().empty()) {
-        write(" " + config->getConfigName());
-    }
-    
-    writeLine();
-    writeLine("{");
-    increaseIndent();
-    
-    auto configs = config->getConfigs();
-    
-    // 输出普通配置项
-    for (const auto& [key, value] : configs) {
-        writeIndent();
-        write(key + ": ");
-        
-        // 检查是否需要引号
-        if (value.find(' ') != std::string::npos || value.empty()) {
-            write("\"" + value + "\"");
-        } else {
-            write(value);
-        }
-        writeLine(";");
-    }
-    
-    // TODO: 输出数组配置项
-    
-    decreaseIndent();
-    writeIndent();
-    writeLine("}");
-    
-    return true;
-}
-
-// 占位实现
-bool ConfigGenerator::generateXml(std::shared_ptr<Config> config) {
-    (void)config;
-    reportError("XML format not yet implemented");
-    return false;
-}
-
-bool ConfigGenerator::generateProperties(std::shared_ptr<Config> config) {
-    (void)config;
-    reportError("Properties format not yet implemented");
-    return false;
-}
-
-bool ConfigGenerator::generateToml(std::shared_ptr<Config> config) {
-    (void)config;
-    reportError("TOML format not yet implemented");
-    return false;
-}
-
-// 辅助方法实现
-void ConfigGenerator::writeJsonValue(const std::string& value, bool isLast) {
-    if (needsQuoting(value, ConfigFormat::JSON)) {
-        write("\"" + escapeJavaScript(value) + "\"");
-    } else {
-        write(value);
-    }
-    
-    if (!isLast && jsonConfig_.trailingComma) {
-        write(",");
-    }
-}
-
-void ConfigGenerator::writeYamlValue(const std::string& key, const std::string& value) {
-    writeIndent();
-    write(key + ": ");
-    
-    if (needsQuoting(value, ConfigFormat::YAML)) {
-        write("\"" + value + "\"");
-    } else {
-        write(value);
-    }
-    writeLine();
-}
-
-void ConfigGenerator::writeYamlComment(const std::string& comment) {
-    if (includeComments_) {
-        writeIndent();
-        writeLine("# " + comment);
-    }
-}
-
-void ConfigGenerator::writeIniSection(const std::string& section) {
-    writeLine("[" + section + "]");
-}
-
-void ConfigGenerator::writeIniKeyValue(const std::string& key, const std::string& value) {
-    writeIndent();
-    writeLine(key + " = " + value);
-}
-
-void ConfigGenerator::writeIniComment(const std::string& comment) {
-    if (includeComments_) {
-        writeLine("; " + comment);
-    }
-}
-
-std::vector<std::string> ConfigGenerator::getSortedKeys(
-    const std::unordered_map<std::string, std::string>& map) {
+    auto configs = config->getConfigItems();
     std::vector<std::string> keys;
-    keys.reserve(map.size());
     
-    for (const auto& [key, value] : map) {
+    // 收集所有键
+    for (const auto& [key, value] : configs) {
         keys.push_back(key);
     }
     
-    std::sort(keys.begin(), keys.end());
+    // 排序键（如果启用）
+    if (sortKeys_) {
+        std::sort(keys.begin(), keys.end());
+    }
+    
+    // 生成JSON
+    bool first = true;
+    for (const auto& key : keys) {
+        if (!first) {
+            ss << ",\n";
+        }
+        first = false;
+        
+        ss << "  \"" << key << "\": ";
+        
+        auto value = configs.at(key);
+        if (std::holds_alternative<std::string>(value)) {
+            ss << "\"" << escapeJSON(std::get<std::string>(value)) << "\"";
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            ss << "[";
+            for (size_t i = 0; i < vec.size(); ++i) {
+                if (i > 0) ss << ", ";
+                ss << "\"" << escapeJSON(vec[i]) << "\"";
+            }
+            ss << "]";
+        }
+    }
+    
+    ss << "\n}";
+    return ss.str();
+}
+
+std::string ConfigGenerator::generateYAML(std::shared_ptr<Config> config) {
+    std::stringstream ss;
+    
+    auto configs = config->getConfigItems();
+    
+    for (const auto& [key, value] : configs) {
+        ss << key << ": ";
+        
+        if (std::holds_alternative<std::string>(value)) {
+            const auto& str = std::get<std::string>(value);
+            if (str.find('\n') != std::string::npos || str.find('"') != std::string::npos) {
+                ss << "|\n  " << str;
+            } else {
+                ss << str;
+            }
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            ss << "\n";
+            for (const auto& item : vec) {
+                ss << "  - " << item << "\n";
+            }
+        }
+        
+        ss << "\n";
+    }
+    
+    return ss.str();
+}
+
+std::string ConfigGenerator::generateINI(std::shared_ptr<Config> config) {
+    std::stringstream ss;
+    
+    auto configs = config->getConfigItems();
+    
+    for (const auto& [key, value] : configs) {
+        ss << key << " = ";
+        
+        if (std::holds_alternative<std::string>(value)) {
+            ss << std::get<std::string>(value);
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            // INI不支持数组，使用逗号分隔
+            for (size_t i = 0; i < vec.size(); ++i) {
+                if (i > 0) ss << ", ";
+                ss << vec[i];
+            }
+        }
+        
+        ss << "\n";
+    }
+    
+    return ss.str();
+}
+
+std::string ConfigGenerator::generateTOML(std::shared_ptr<Config> config) {
+    std::stringstream ss;
+    
+    auto configs = config->getConfigItems();
+    
+    for (const auto& [key, value] : configs) {
+        ss << key << " = ";
+        
+        if (std::holds_alternative<std::string>(value)) {
+            const auto& str = std::get<std::string>(value);
+            // TOML字符串需要引号
+            ss << "\"" << str << "\"";
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            ss << "[";
+            for (size_t i = 0; i < vec.size(); ++i) {
+                if (i > 0) ss << ", ";
+                ss << "\"" << vec[i] << "\"";
+            }
+            ss << "]";
+        }
+        
+        ss << "\n";
+    }
+    
+    return ss.str();
+}
+
+std::string ConfigGenerator::generateXML(std::shared_ptr<Config> config) {
+    std::stringstream ss;
+    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    ss << "<configuration>\n";
+    
+    auto configs = config->getConfigItems();
+    
+    for (const auto& [key, value] : configs) {
+        if (std::holds_alternative<std::string>(value)) {
+            ss << "  <" << key << ">" << escapeXML(std::get<std::string>(value)) 
+               << "</" << key << ">\n";
+        } else if (std::holds_alternative<std::vector<std::string>>(value)) {
+            const auto& vec = std::get<std::vector<std::string>>(value);
+            ss << "  <" << key << ">\n";
+            for (const auto& item : vec) {
+                ss << "    <item>" << escapeXML(item) << "</item>\n";
+            }
+            ss << "  </" << key << ">\n";
+        }
+    }
+    
+    ss << "</configuration>";
+    return ss.str();
+}
+
+std::string ConfigGenerator::generateCHTL(std::shared_ptr<Config> config) {
+    // 使用Config节点自己的toString方法
+    return config->toString();
+}
+
+void ConfigGenerator::write(const std::string& str) {
+    if (output_) {
+        *output_ << str;
+    }
+}
+
+void ConfigGenerator::writeLine(const std::string& str) {
+    write(str);
+    write("\n");
+}
+
+void ConfigGenerator::writeIndent() {
+    if (prettyPrint_) {
+        write(std::string(currentIndent_ * indentSize_, ' '));
+    }
+}
+
+void ConfigGenerator::increaseIndent() {
+    currentIndent_++;
+}
+
+void ConfigGenerator::decreaseIndent() {
+    if (currentIndent_ > 0) {
+        currentIndent_--;
+    }
+}
+
+std::string ConfigGenerator::escapeJSON(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        switch (c) {
+            case '"': result += "\\\""; break;
+            case '\\': result += "\\\\"; break;
+            case '\b': result += "\\b"; break;
+            case '\f': result += "\\f"; break;
+            case '\n': result += "\\n"; break;
+            case '\r': result += "\\r"; break;
+            case '\t': result += "\\t"; break;
+            default:
+                if (c >= 0x20 && c <= 0x7E) {
+                    result += c;
+                } else {
+                    // Unicode转义
+                    char buf[7];
+                    std::snprintf(buf, sizeof(buf), "\\u%04x", static_cast<unsigned char>(c));
+                    result += buf;
+                }
+        }
+    }
+    return result;
+}
+
+std::string ConfigGenerator::escapeXML(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        switch (c) {
+            case '<': result += "&lt;"; break;
+            case '>': result += "&gt;"; break;
+            case '&': result += "&amp;"; break;
+            case '\'': result += "&apos;"; break;
+            case '"': result += "&quot;"; break;
+            default: result += c;
+        }
+    }
+    return result;
+}
+
+std::vector<std::string> ConfigGenerator::getSortedKeys(const std::unordered_map<std::string, ConfigValue>& map) {
+    std::vector<std::string> keys;
+    for (const auto& [key, value] : map) {
+        keys.push_back(key);
+    }
+    if (sortKeys_) {
+        std::sort(keys.begin(), keys.end());
+    }
     return keys;
 }
 
-bool ConfigGenerator::needsQuoting(const std::string& value, ConfigFormat format) {
-    if (value.empty()) return true;
-    
-    switch (format) {
-        case ConfigFormat::JSON:
-            // JSON需要引号的情况：非数字、非布尔值
-            return !(value == "true" || value == "false" || value == "null" ||
-                    std::all_of(value.begin(), value.end(), ::isdigit));
-                    
-        case ConfigFormat::YAML:
-            // YAML需要引号的情况：包含特殊字符
-            return value.find_first_of(":{}[]!&*#?|-<>=") != std::string::npos;
-            
-        default:
-            return false;
-    }
+void ConfigGenerator::reportWarning(const std::string& message) {
+    // 简单实现，可以后续改进
+    std::cerr << "ConfigGenerator Warning: " << message << std::endl;
 }
 
 } // namespace chtl

@@ -4,25 +4,14 @@
 #include "Parser/BasicParser.h"
 #include "Node/Config.h"
 #include <unordered_set>
+#include <optional>
 
 namespace chtl {
 
-class ConfigLexer;
 class Config;
 
-// 配置格式枚举
-enum class ConfigFormat {
-    CHTL,    // 默认CHTL格式
-    JSON,
-    YAML,
-    INI,
-    TOML,
-    XML
-};
-
 /**
- * 配置解析器
- * 专门用于解析 [Configuration] 块中的各种配置格式
+ * ConfigParser - 专门用于解析 [Configuration] 块
  */
 class ConfigParser : public BasicParser {
 public:
@@ -39,52 +28,46 @@ public:
     ConfigParser() = default;
     virtual ~ConfigParser() = default;
     
-    // 覆盖基类方法
-    std::shared_ptr<Node> parse() override;
-    
-    // 配置特定的解析方法
+    // 解析配置块
     std::shared_ptr<Config> parseConfiguration();
-    std::shared_ptr<Config> parseConfigurationFromFile(const std::string& filename);
-    std::shared_ptr<Config> parseConfigurationFromString(const std::string& content);
     
-    // 获取最后解析的配置
-    std::shared_ptr<Config> getLastConfig() const { return currentConfig_; }
-    
-    // 导出功能
-    void exportConfig(std::shared_ptr<Config> configNode, ConfigFormat format, const std::string& filename);
-    
-protected:
-    // 覆盖基类初始化方法
-    void initializeParser() override;
-    void finalizeParser() override;
+    // 导出配置
+    bool exportConfig(std::shared_ptr<Config> config, 
+                     const std::string& filename,
+                     ConfigFormat format = ConfigFormat::CHTL);
     
 private:
-    // 解析辅助方法
-    bool parseConfigurationBlock();
-    bool parseConfigKey();
-
-    bool parseConfigArray();
-    bool parseStringValue(std::string& result);
-    bool parseArrayElement(std::string& result);
+    // 辅助方法
+    bool check(TokenType type);
+    bool match(TokenType type);
+    Token advance();
+    void addError(const std::string& message);
+    bool isAtEnd();
     
-    // 验证方法
-    bool isValidConfigKey(const std::string& key) const;
-    bool isArrayConfigKey(const std::string& key) const;
-    bool validateConfigValue(const std::string& key, const std::string& value);
-    bool validateArrayValues(const std::string& key, const std::vector<std::string>& values);
+    // 解析方法
+    void parseConfigContent(std::shared_ptr<Config> configNode);
+    void parseConfigGroup(std::shared_ptr<Config> configNode, const std::string& groupName);
+    void parseConfigItem(std::shared_ptr<Config> configNode, const std::string& groupPrefix = "");
+    std::optional<ConfigValue> parseConfigValue();
+    void skipToNextStatement();
     
-    // 特殊配置处理
-    void applySpecialConfigurations();
-    void applyKeywordAliases();
-    void applyImportPaths();
-
     // 导出方法
-    std::string exportToJSON(std::shared_ptr<Config> configNode);
-    std::string exportToYAML(std::shared_ptr<Config> configNode);
-    std::string exportToINI(std::shared_ptr<Config> configNode);
-    std::string exportToTOML(std::shared_ptr<Config> configNode);
-    std::string exportToXML(std::shared_ptr<Config> configNode);
-    std::string exportToCHTL(std::shared_ptr<Config> configNode);
+    std::string exportToJSON(std::shared_ptr<Config> config);
+    std::string exportToYAML(std::shared_ptr<Config> config);
+    std::string exportToINI(std::shared_ptr<Config> config);
+    std::string exportToTOML(std::shared_ptr<Config> config);
+    std::string exportToXML(std::shared_ptr<Config> config);
+    std::string exportToCHTL(std::shared_ptr<Config> config);
+    
+    // 格式检测
+    ConfigFormat detectFormat(const std::string& content);
+    
+    // 当前格式和配置
+    ConfigFormat currentFormat_;
+    std::shared_ptr<Config> currentConfig_;
+    
+    // 有效的配置键
+    static const std::unordered_set<std::string> VALID_CONFIG_KEYS;
 };
 
 } // namespace chtl

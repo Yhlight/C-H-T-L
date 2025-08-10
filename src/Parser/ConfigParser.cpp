@@ -4,6 +4,37 @@
 
 namespace chtl {
 
+// 辅助方法实现
+bool ConfigParser::check(TokenType type) {
+    if (!lexer_) return false;
+    Token token = lexer_->peekNextToken();
+    return token.type == type;
+}
+
+bool ConfigParser::match(TokenType type) {
+    if (check(type)) {
+        advance();
+        return true;
+    }
+    return false;
+}
+
+Token ConfigParser::advance() {
+    if (!lexer_) return Token(TokenType::EOF_TOKEN, "", 0, 0);
+    return lexer_->getNextToken();
+}
+
+void ConfigParser::addError(const std::string& message) {
+    if (context_) {
+        context_->addError(message);
+    }
+}
+
+bool ConfigParser::isAtEnd() {
+    if (!lexer_) return true;
+    return lexer_->peekNextToken().type == TokenType::EOF_TOKEN;
+}
+
 std::shared_ptr<Config> ConfigParser::parseConfiguration() {
     auto configNode = std::make_shared<Config>();
     currentConfig_ = configNode;
@@ -146,12 +177,11 @@ std::optional<ConfigValue> ConfigParser::parseConfigValue() {
                 arrayValues.push_back(advance().value);
             } else if (check(TokenType::NUMBER)) {
                 arrayValues.push_back(advance().value);
-            } else if (check(TokenType::AT_PREFIX)) {
+            } else if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
+                       check(TokenType::AT_VAR) || check(TokenType::AT_HTML) || 
+                       check(TokenType::AT_JAVASCRIPT) || check(TokenType::AT_CHTL)) {
                 // 处理 @Style 等
                 std::string atValue = advance().value;
-                if (check(TokenType::IDENTIFIER)) {
-                    atValue += " " + advance().value;
-                }
                 arrayValues.push_back(atValue);
             }
             
@@ -182,11 +212,10 @@ std::optional<ConfigValue> ConfigParser::parseConfigValue() {
         value = advance().value;
     }
     // @前缀值
-    else if (check(TokenType::AT_PREFIX)) {
+    else if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || 
+             check(TokenType::AT_VAR) || check(TokenType::AT_HTML) || 
+             check(TokenType::AT_JAVASCRIPT) || check(TokenType::AT_CHTL)) {
         std::string atValue = advance().value;
-        if (check(TokenType::IDENTIFIER)) {
-            atValue += " " + advance().value;
-        }
         value = atValue;
     }
     else {
@@ -280,7 +309,7 @@ std::string ConfigParser::exportToCHTL(std::shared_ptr<Config> config) {
     return "[Configuration]\n{\n  // CHTL export not implemented yet\n}\n";
 }
 
-ConfigFormat ConfigParser::detectFormat(const std::string& content) {
+ConfigParser::ConfigFormat ConfigParser::detectFormat(const std::string& content) {
     // 简单的格式检测
     if (content.find("[Configuration]") != std::string::npos) {
         return ConfigFormat::CHTL;

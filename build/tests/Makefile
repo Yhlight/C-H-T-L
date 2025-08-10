@@ -386,6 +386,34 @@ test_specialization/fast:
 .PHONY : test_specialization/fast
 
 # Convenience name for target.
+tests/CMakeFiles/test_context_aware_comments.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_context_aware_comments.dir/rule
+.PHONY : tests/CMakeFiles/test_context_aware_comments.dir/rule
+
+# Convenience name for target.
+test_context_aware_comments: tests/CMakeFiles/test_context_aware_comments.dir/rule
+.PHONY : test_context_aware_comments
+
+# fast build rule for target.
+test_context_aware_comments/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_context_aware_comments.dir/build.make tests/CMakeFiles/test_context_aware_comments.dir/build
+.PHONY : test_context_aware_comments/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_compilation.dir/rule:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_compilation.dir/rule
+.PHONY : tests/CMakeFiles/test_compilation.dir/rule
+
+# Convenience name for target.
+test_compilation: tests/CMakeFiles/test_compilation.dir/rule
+.PHONY : test_compilation
+
+# fast build rule for target.
+test_compilation/fast:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_compilation.dir/build.make tests/CMakeFiles/test_compilation.dir/build
+.PHONY : test_compilation/fast
+
+# Convenience name for target.
 tests/CMakeFiles/check.dir/rule:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/check.dir/rule
 .PHONY : tests/CMakeFiles/check.dir/rule
@@ -494,6 +522,54 @@ test_comment.s: test_comment.cpp.s
 test_comment.cpp.s:
 	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_comment.dir/build.make tests/CMakeFiles/test_comment.dir/test_comment.cpp.s
 .PHONY : test_comment.cpp.s
+
+test_compilation.o: test_compilation.cpp.o
+.PHONY : test_compilation.o
+
+# target to build an object file
+test_compilation.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_compilation.dir/build.make tests/CMakeFiles/test_compilation.dir/test_compilation.cpp.o
+.PHONY : test_compilation.cpp.o
+
+test_compilation.i: test_compilation.cpp.i
+.PHONY : test_compilation.i
+
+# target to preprocess a source file
+test_compilation.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_compilation.dir/build.make tests/CMakeFiles/test_compilation.dir/test_compilation.cpp.i
+.PHONY : test_compilation.cpp.i
+
+test_compilation.s: test_compilation.cpp.s
+.PHONY : test_compilation.s
+
+# target to generate assembly for a file
+test_compilation.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_compilation.dir/build.make tests/CMakeFiles/test_compilation.dir/test_compilation.cpp.s
+.PHONY : test_compilation.cpp.s
+
+test_context_aware_comments.o: test_context_aware_comments.cpp.o
+.PHONY : test_context_aware_comments.o
+
+# target to build an object file
+test_context_aware_comments.cpp.o:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_context_aware_comments.dir/build.make tests/CMakeFiles/test_context_aware_comments.dir/test_context_aware_comments.cpp.o
+.PHONY : test_context_aware_comments.cpp.o
+
+test_context_aware_comments.i: test_context_aware_comments.cpp.i
+.PHONY : test_context_aware_comments.i
+
+# target to preprocess a source file
+test_context_aware_comments.cpp.i:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_context_aware_comments.dir/build.make tests/CMakeFiles/test_context_aware_comments.dir/test_context_aware_comments.cpp.i
+.PHONY : test_context_aware_comments.cpp.i
+
+test_context_aware_comments.s: test_context_aware_comments.cpp.s
+.PHONY : test_context_aware_comments.s
+
+# target to generate assembly for a file
+test_context_aware_comments.cpp.s:
+	cd /workspace/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_context_aware_comments.dir/build.make tests/CMakeFiles/test_context_aware_comments.dir/test_context_aware_comments.cpp.s
+.PHONY : test_context_aware_comments.cpp.s
 
 test_html_parsing.o: test_html_parsing.cpp.o
 .PHONY : test_html_parsing.o
@@ -800,6 +876,8 @@ help:
 	@echo "... test_chtl_js"
 	@echo "... test_chtl_nodes"
 	@echo "... test_comment"
+	@echo "... test_compilation"
+	@echo "... test_context_aware_comments"
 	@echo "... test_html_parsing"
 	@echo "... test_import_namespace"
 	@echo "... test_lexer"
@@ -824,6 +902,12 @@ help:
 	@echo "... test_comment.o"
 	@echo "... test_comment.i"
 	@echo "... test_comment.s"
+	@echo "... test_compilation.o"
+	@echo "... test_compilation.i"
+	@echo "... test_compilation.s"
+	@echo "... test_context_aware_comments.o"
+	@echo "... test_context_aware_comments.i"
+	@echo "... test_context_aware_comments.s"
 	@echo "... test_html_parsing.o"
 	@echo "... test_html_parsing.i"
 	@echo "... test_html_parsing.s"

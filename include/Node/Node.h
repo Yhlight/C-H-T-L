@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <variant>
-#include "Common/Config.h"
+#include <functional>
 
 namespace chtl {
 

@@ -22,6 +22,7 @@ set(TEST_SOURCES
     test_template_parsing.cpp
     test_specialization.cpp
     test_context_aware_comments.cpp
+    test_compilation.cpp
 )
 
 # 为每个测试文件创建单独的可执行文件

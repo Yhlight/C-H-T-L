@@ -147,29 +147,53 @@ Import @Chtl from "Chtholly.Core.*"
         disabled: boolean = false
     }
     
-    lifecycle: {
-        onMount: () => {
-            if (!props.disabled) {
-                this.container = document.querySelector(props.to) || document.body
-                this.el = document.createElement('div')
-                this.el.className = 'chtl-portal'
-                this.container.appendChild(this.el)
-            }
-        }
-        
-        onUnmount: () => {
-            if (this.el && this.container) {
-                this.container.removeChild(this.el)
-            }
-        }
+    state: {
+        mounted: boolean = false
+        portalId: string = ""
     }
     
     render: {
-        if (!props.disabled && this.el) {
-            // 将children渲染到portal容器中
-            ReactDOM.createPortal([children], this.el)
-        } else {
-            [children]
+        div {
+            id: state.portalId || "portal-" + Math.random().toString(36).substr(2, 9)
+            style: { display: "none" }
+            
+            script {
+                // 生成唯一ID
+                if (!this.state.portalId) {
+                    this.state.portalId = {{&}}.id;
+                }
+                
+                if (!{{props.disabled}}) {
+                    // 创建portal容器
+                    const container = document.querySelector("{{props.to}}") || document.body;
+                    const portalEl = document.createElement('div');
+                    portalEl.className = 'chtl-portal';
+                    portalEl.setAttribute('data-portal-id', this.state.portalId);
+                    
+                    // 将内容移动到portal
+                    const content = {{&}}.innerHTML;
+                    portalEl.innerHTML = content;
+                    container.appendChild(portalEl);
+                    
+                    // 清理原始内容
+                    {{&}}.innerHTML = '';
+                    
+                    // 组件卸载时清理
+                    {{&}}.setAttribute('data-portal-cleanup', 'true');
+                    
+                    // 监听自定义卸载事件
+                    window.addEventListener('beforeunload', () => {
+                        const portal = document.querySelector(`[data-portal-id="${this.state.portalId}"]`);
+                        if (portal) {
+                            portal.remove();
+                        }
+                    });
+                }
+            }
+            
+            if (!props.disabled) {
+                [children]
+            }
         }
     }
 }
@@ -246,21 +270,78 @@ Import @Chtl from "Chtholly.Core.*"
         children: any
     }
     
-    methods: {
-        copy: async () => {
-            try {
-                await navigator.clipboard.writeText(props.text)
-                props.onCopy?.(props.text)
-            } catch (error) {
-                props.onError?.(error)
-            }
-        }
+    state: {
+        copied: boolean = false
     }
     
     render: {
         div {
-            onclick: this.copy
-            style: { cursor: "pointer" }
+            class: ["chtl-copy-wrapper", state.copied ? "copied" : ""]
+            style: { cursor: "pointer", position: "relative" }
+            
+            script {
+                {{&}}->listen({
+                    click: async function(e) {
+                        e.preventDefault();
+                        try {
+                            await navigator.clipboard.writeText({{props.text}});
+                            
+                            // 显示复制成功反馈
+                            {{&}}.classList.add('copied');
+                            this.state.copied = true;
+                            
+                            // 创建提示
+                            const tooltip = document.createElement('span');
+                            tooltip.className = 'chtl-copy-tooltip';
+                            tooltip.textContent = '已复制!';
+                            {{&}}.appendChild(tooltip);
+                            
+                            // 动画
+                            tooltip->animate({
+                                duration: 300,
+                                easing: 'ease-out',
+                                begin: {
+                                    opacity: 0,
+                                    transform: 'translateY(10px)'
+                                },
+                                end: {
+                                    opacity: 1,
+                                    transform: 'translateY(0)'
+                                }
+                            });
+                            
+                            // 2秒后移除
+                            setTimeout(() => {
+                                tooltip->animate({
+                                    duration: 200,
+                                    easing: 'ease-in',
+                                    begin: { opacity: 1 },
+                                    end: { opacity: 0 },
+                                    callback: () => {
+                                        tooltip.remove();
+                                        {{&}}.classList.remove('copied');
+                                        this.state.copied = false;
+                                    }
+                                });
+                            }, 2000);
+                            
+                            {{props.onCopy}}?.({{props.text}});
+                        } catch (error) {
+                            console.error('复制失败:', error);
+                            {{props.onError}}?.(error);
+                            
+                            // 显示错误提示
+                            const errorTip = document.createElement('span');
+                            errorTip.className = 'chtl-copy-error';
+                            errorTip.textContent = '复制失败';
+                            {{&}}.appendChild(errorTip);
+                            
+                            setTimeout(() => errorTip.remove(), 2000);
+                        }
+                    }
+                });
+            }
+            
             [children]
         }
     }
@@ -278,43 +359,71 @@ Import @Chtl from "Chtholly.Core.*"
     
     state: {
         isVisible: boolean = false
-    }
-    
-    lifecycle: {
-        onMount: () => {
-            this.observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach(entry => {
-                        const isVisible = entry.isIntersecting
-                        this.setState({ isVisible })
-                        
-                        if (isVisible) {
-                            props.onVisible?.()
-                            if (props.once) {
-                                this.observer.disconnect()
-                            }
-                        } else {
-                            props.onHidden?.()
-                        }
-                    })
-                },
-                {
-                    threshold: props.threshold,
-                    rootMargin: props.rootMargin
-                }
-            )
-            
-            this.observer.observe(this.ref)
-        }
-        
-        onUnmount: () => {
-            this.observer?.disconnect()
-        }
+        hasBeenVisible: boolean = false
     }
     
     render: {
         div {
-            ref: (el) => this.ref = el
+            class: ["chtl-visibility-observer", state.isVisible ? "is-visible" : ""]
+            
+            script {
+                // 创建IntersectionObserver
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach(entry => {
+                            const wasVisible = this.state.isVisible;
+                            const isVisible = entry.isIntersecting;
+                            
+                            this.state.isVisible = isVisible;
+                            {{&}}.classList.toggle('is-visible', isVisible);
+                            
+                            if (isVisible && !wasVisible) {
+                                {{props.onVisible}}?.();
+                                this.state.hasBeenVisible = true;
+                                
+                                // 添加动画类
+                                {{&}}.classList.add('animate-in');
+                                
+                                if ({{props.once}} && !this.observerDisconnected) {
+                                    observer.disconnect();
+                                    this.observerDisconnected = true;
+                                }
+                            } else if (!isVisible && wasVisible) {
+                                {{props.onHidden}}?.();
+                            }
+                        });
+                    },
+                    {
+                        threshold: {{props.threshold}},
+                        rootMargin: "{{props.rootMargin}}"
+                    }
+                );
+                
+                // 开始观察
+                observer.observe({{&}});
+                
+                // 清理函数
+                this.cleanup = () => {
+                    observer.disconnect();
+                };
+                
+                // 监听元素移除
+                const mutationObserver = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        mutation.removedNodes.forEach((node) => {
+                            if (node === {{&}}) {
+                                this.cleanup();
+                                mutationObserver.disconnect();
+                            }
+                        });
+                    });
+                });
+                
+                if ({{&}}.parentNode) {
+                    mutationObserver.observe({{&}}.parentNode, { childList: true });
+                }
+            }
+            
             [children]
         }
     }
@@ -346,6 +455,80 @@ Import @Chtl from "Chtholly.Core.*"
     .chtl-portal {
         position: absolute;
         z-index: 9999;
+    }
+    
+    // 复制组件样式
+    .chtl-copy-wrapper {
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .chtl-copy-wrapper:hover {
+        opacity: 0.8;
+    }
+    
+    .chtl-copy-wrapper:active {
+        transform: scale(0.95);
+    }
+    
+    .chtl-copy-tooltip {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #67C3CC;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    
+    .chtl-copy-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 4px solid transparent;
+        border-top-color: #67C3CC;
+    }
+    
+    .chtl-copy-error {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #FF6B6B;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    
+    // 可见性观察组件样式
+    .chtl-visibility-observer {
+        transition: all 0.6s ease;
+    }
+    
+    .chtl-visibility-observer.animate-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 }
 

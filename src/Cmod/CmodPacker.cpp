@@ -184,6 +184,7 @@ bool CmodPacker::shouldExclude(const std::filesystem::path& path) {
 bool CmodPacker::generateExportList(const std::filesystem::path& moduleDir) {
     // TODO: 实现自动扫描和生成导出列表
     // 这需要解析CHTL文件并提取可导出的定义
+    (void)moduleDir; // Suppress unused parameter warning
     return true;
 }
 

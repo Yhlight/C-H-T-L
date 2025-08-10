@@ -112,7 +112,7 @@ public:
     
 private:
     // 计算校验和
-    uint32_t calculateChecksum(const uint8_t* data, size_t size);
+    uint32_t calculateChecksum(const uint8_t* data, size_t size) const;
     
     // 压缩/解压缩（未来实现）
     std::vector<uint8_t> compress(const std::vector<uint8_t>& data);

@@ -216,6 +216,7 @@ std::string ScriptManager::createExecutionEnvironment() {
 
 std::string ScriptManager::wrapScriptCode(std::shared_ptr<Script> script,
                                          std::shared_ptr<ScriptContext> context) {
+    (void)context; // Suppress unused parameter warning
     std::stringstream wrapped;
     
     // 根据执行时机包装代码

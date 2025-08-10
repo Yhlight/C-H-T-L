@@ -42,8 +42,9 @@ public:
     virtual ~ChtlJsLexer() = default;
     
     // 初始化
-    void initialize(std::shared_ptr<ChtlJsState> state = nullptr,
-                   std::shared_ptr<ChtlJsContext> context = nullptr);
+    void initializeChtlJs(std::shared_ptr<ChtlJsState> state = nullptr,
+                          std::shared_ptr<ChtlJsContext> context = nullptr);
+    using BasicLexer::initialize; // Bring base class methods into scope
     
     // 重写BasicLexer方法
     Token getNextToken() override;
@@ -76,7 +77,7 @@ protected:
     // 位置管理
     void advanceChar();
     char currentChar() const;
-    char peekChar() const;
+    char peekChar() override;
     char peekChar(int offset) const;
     std::string readWhile(std::function<bool(char)> predicate);
     

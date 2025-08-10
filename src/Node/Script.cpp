@@ -1,5 +1,5 @@
 #include "Node/Script.h"
-#include "Visitor/Visitor.h"
+// #include "Visitor/Visitor.h" // Not implemented yet
 #include "Runtime/ChtlJsRuntime.h"
 #include <sstream>
 
@@ -89,9 +89,7 @@ std::shared_ptr<Node> Script::clone(bool deep) const {
     
     // 复制基类属性
     cloned->setTagName(getTagName());
-    for (const auto& [key, value] : getAttributes()) {
-        cloned->setAttribute(key, value);
-    }
+    // Script nodes don't have attributes like Element nodes
     
     // Script节点通常没有子节点
     if (deep) {
@@ -167,7 +165,9 @@ std::string Script::toString() const {
 }
 
 void Script::accept(Visitor* visitor) {
-    visitor->visit(this);
+    (void)visitor; // Suppress unused parameter warning
+    // TODO: Implement when Visitor class is added
+    // visitor->visit(this);
 }
 
 } // namespace chtl

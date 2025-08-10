@@ -7,6 +7,12 @@
 },
 {
   "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o -c /workspace/src/Cmod/CmodPacker.cpp",
+  "file": "/workspace/src/Cmod/CmodPacker.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o"
+},
+{
+  "directory": "/workspace/build",
   "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o -c /workspace/src/CmodSystem/CmodExtractor.cpp",
   "file": "/workspace/src/CmodSystem/CmodExtractor.cpp",
   "output": "CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o"
@@ -136,6 +142,12 @@
   "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o -c /workspace/src/Generator/ConfigGenerator.cpp",
   "file": "/workspace/src/Generator/ConfigGenerator.cpp",
   "output": "CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o"
+},
+{
+  "directory": "/workspace/build",
+  "command": "/usr/bin/c++  -I/workspace/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror -o CMakeFiles/chtl.dir/src/Generator/ConfigManager.cpp.o -c /workspace/src/Generator/ConfigManager.cpp",
+  "file": "/workspace/src/Generator/ConfigManager.cpp",
+  "output": "CMakeFiles/chtl.dir/src/Generator/ConfigManager.cpp.o"
 },
 {
   "directory": "/workspace/build",

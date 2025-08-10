@@ -6,7 +6,7 @@
 #include "Node/Custom.h"
 #include "Node/Operate.h"
 #include "Node/Template.h"
-#include "Node/Reference.h"
+// #include "Node/Reference.h" // Not implemented yet
 #include "Node/Origin.h" // Added for Origin node
 #include "Runtime/ChtlJsRuntime.h"
 #include <regex>
@@ -30,10 +30,10 @@ GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
     return result_;
 }
 
-void WebGenerator::generateHTMLDocument() {
+std::string WebGenerator::generateHTMLDocument() {
     // 如果已经有html标签，不需要包装
     if (result_.html.find("<html") != std::string::npos) {
-        return;
+        return result_.html;
     }
     
     std::stringstream doc;
@@ -54,7 +54,8 @@ void WebGenerator::generateHTMLDocument() {
             doc << "  </style>\n";
         } else {
             // 生成外部CSS文件引用
-            result_.externalStyles.push_back("styles.css");
+            // TODO: Handle external styles
+            // result_.externalStyles.push_back("styles.css");
             doc << "  <link rel=\"stylesheet\" href=\"styles.css\">\n";
         }
     }
@@ -73,7 +74,8 @@ void WebGenerator::generateHTMLDocument() {
             doc << "  </script>\n";
         } else {
             // 生成外部JS文件引用
-            result_.externalScripts.push_back("app.js");
+            // TODO: Handle external scripts
+            // result_.externalScripts.push_back("app.js");
             doc << "  <script src=\"app.js\"></script>\n";
         }
     }
@@ -82,6 +84,7 @@ void WebGenerator::generateHTMLDocument() {
     doc << "</html>\n";
     
     result_.html = doc.str();
+    return result_.html;
 }
 
 void WebGenerator::injectRuntimeCode() {
@@ -98,7 +101,8 @@ void WebGenerator::visit(const std::shared_ptr<Node>& node) {
     if (!node) return;
     
     // 检查父节点的约束
-    if (node->getParent() && !checkConstraints(node, node->getParent())) {
+    auto parent = node->getParent();
+    if (parent && !checkConstraints(node, parent.get())) {
         // 约束违反，跳过此节点
         result_.warnings.push_back("Constraint violation: " + node->toString() + " not allowed in parent");
         return;
@@ -178,6 +182,8 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
     }
     
     // 引用约束（如 "@Element Box"）
+    // TODO: Implement when REFERENCE node type is added
+    /*
     if (node->getType() == NodeType::REFERENCE) {
         auto attrs = node->getAttributes();
         if (attrs.find("name") != attrs.end()) {
@@ -188,12 +194,13 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
             }
         }
     }
+    */
     
     return false;
 }
 
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
-    const std::string& tag = element->getTag();
+    const std::string& tag = element->getTagName();
     
     // 生成开始标签
     htmlCollector_.append("<" + tag);
@@ -221,7 +228,9 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         elementId = generateUniqueId("element");
         htmlCollector_.append(" id=\"" + elementId + "\"");
     } else if (attributes.find("id") != attributes.end()) {
-        elementId = attributes.at("id");
+        if (std::holds_alternative<std::string>(attributes.at("id"))) {
+            elementId = std::get<std::string>(attributes.at("id"));
+        }
     }
     
     // 输出所有属性
@@ -229,17 +238,30 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         // 处理特殊属性
         if (key == "class") {
             // 处理类名数组
-            std::string classValue = value;
+            std::string classValue;
+            if (std::holds_alternative<std::string>(value)) {
+                classValue = std::get<std::string>(value);
+            }
             if (!currentScope_.empty() && options_.scopeStyles) {
                 classValue = currentScope_ + " " + classValue;
             }
             htmlCollector_.append(" class=\"" + escape(classValue) + "\"");
         } else if (key == "style") {
             // 处理内联样式对象
-            htmlCollector_.append(" style=\"" + escape(value) + "\"");
+            if (std::holds_alternative<std::string>(value)) {
+                htmlCollector_.append(" style=\"" + escape(std::get<std::string>(value)) + "\"");
+            }
         } else {
             // 普通属性
-            htmlCollector_.append(" " + key + "=\"" + escape(value) + "\"");
+            if (std::holds_alternative<std::string>(value)) {
+                htmlCollector_.append(" " + key + "=\"" + escape(std::get<std::string>(value)) + "\"");
+            } else if (std::holds_alternative<int>(value)) {
+                htmlCollector_.append(" " + key + "=\"" + std::to_string(std::get<int>(value)) + "\"");
+            } else if (std::holds_alternative<double>(value)) {
+                htmlCollector_.append(" " + key + "=\"" + std::to_string(std::get<double>(value)) + "\"");
+            } else if (std::holds_alternative<bool>(value)) {
+                htmlCollector_.append(" " + key + "=\"" + (std::get<bool>(value) ? "true" : "false") + "\"");
+            }
         }
     }
     
@@ -277,10 +299,11 @@ void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
     std::string componentName = custom->getCustomName();
     if (componentName.empty()) {
         // 尝试从属性获取
-        auto attrs = custom->getAttributes();
-        if (attrs.find("name") != attrs.end()) {
-            componentName = attrs.at("name");
-        }
+        // TODO: Custom nodes don't have attributes yet
+        // auto attrs = custom->getAttributes();
+        // if (attrs.find("name") != attrs.end()) {
+        //     componentName = attrs.at("name");
+        // }
     }
     
     // 查找组件定义
@@ -352,10 +375,8 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
     
     for (const auto& child : instance->getChildren()) {
         if (child->getType() == NodeType::DELETE) {
-            auto attrs = child->getAttributes();
-            if (attrs.find("target") != attrs.end()) {
-                deleteTargets.insert(attrs.at("target"));
-            }
+            // TODO: Need to implement proper delete target extraction
+            // For now, just mark as delete operation
         } else if (child->getType() == NodeType::OPERATE) {
             auto op = std::static_pointer_cast<Operate>(child);
             if (op->getOperation() == Operate::OperationType::INSERT) {
@@ -377,6 +398,8 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
                             return true;
                         }
                         // 检查是否是引用（如 @Element Name）
+                        // TODO: Implement when REFERENCE node type is added
+                        /*
                         if (node->getType() == NodeType::REFERENCE) {
                             auto attrs = node->getAttributes();
                             if (attrs.find("name") != attrs.end() &&
@@ -384,6 +407,7 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
                                 return true;
                             }
                         }
+                        */
                     }
                     return false;
                 }),
@@ -405,6 +429,8 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
     auto& children = target->getChildren();
     
     switch (position) {
+        default:
+            // Handle all cases to avoid warning
         case Operate::Position::AT_TOP:
             // 插入到开头
             for (auto it = insertOp->getChildren().rbegin(); 
@@ -488,7 +514,7 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
     // 检查是否是局部样式
     bool isScoped = false;
-    Node* parent = style->getParent();
+    auto parent = style->getParent();
     if (parent && parent->getType() == NodeType::ELEMENT) {
         isScoped = true;
         
@@ -652,12 +678,14 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
         std::string elementId = script->getScope();
         if (elementId.empty()) {
             // 如果没有作用域，尝试从父节点获取
-            Node* parent = script->getParent();
+            auto parent = script->getParent();
             if (parent && parent->getType() == NodeType::ELEMENT) {
-                auto element = static_cast<Element*>(parent);
+                auto element = std::static_pointer_cast<Element>(parent);
                 auto attrs = element->getAttributes();
                 if (attrs.find("id") != attrs.end()) {
-                    elementId = attrs.at("id");
+                    if (std::holds_alternative<std::string>(attrs.at("id"))) {
+                        elementId = std::get<std::string>(attrs.at("id"));
+                    }
                 } else {
                     elementId = generateUniqueId("element");
                 }
@@ -724,6 +752,8 @@ void WebGenerator::visitOrigin(const std::shared_ptr<Origin>& origin) {
     }
 }
 
+// TODO: Implement when Reference node type is added
+/*
 void WebGenerator::visitReference(const std::shared_ptr<Reference>& ref) {
     // 检查是否是原始嵌入的引用
     std::string refType = ref->getReferenceType();
@@ -755,6 +785,7 @@ void WebGenerator::visitReference(const std::shared_ptr<Reference>& ref) {
         Generator::visit(ref);
     }
 }
+*/
 
 std::string WebGenerator::generateOriginKey(Origin::OriginType type, const std::string& name) {
     switch (type) {

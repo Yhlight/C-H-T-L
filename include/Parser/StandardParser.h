@@ -35,17 +35,18 @@ private:
     // 解析状态
     Token currentToken_;
     Token previousToken_;
-    int currentIndent_;
-    int expectIndent_;
+    // TODO: Remove unused fields if not needed later
+    // int currentIndent_;
+    // int expectIndent_;
     
     // 解析标志
-    bool inAttribute_;
-    bool inStyleBlock_;
-    bool inTextBlock_;
-    bool inTemplateBlock_;
-    bool inCustomBlock_;
-    bool inConfigBlock_;
-    bool inOriginBlock_;
+    // bool inAttribute_;
+    // bool inStyleBlock_;
+    // bool inTextBlock_;
+    // bool inTemplateBlock_;
+    // bool inCustomBlock_;
+    // bool inConfigBlock_;
+    // bool inOriginBlock_;
     
     // CMOD模式标志
     bool isCmodMode_ = false;
@@ -145,14 +146,15 @@ private:
     // 错误处理
     void addError(const std::string& message) {
         if (context_) {
-            context_->reportError(message, currentToken_.line, currentToken_.column);
+            context_->addError(message + " at line " + std::to_string(currentToken_.line) + 
+                              ", column " + std::to_string(currentToken_.column));
         }
-        errorCount_++;
     }
     
     void addWarning(const std::string& message) {
         if (context_) {
-            context_->reportWarning(message, currentToken_.line, currentToken_.column);
+            context_->addWarning(message + " at line " + std::to_string(currentToken_.line) + 
+                                ", column " + std::to_string(currentToken_.column));
         }
     }
 };

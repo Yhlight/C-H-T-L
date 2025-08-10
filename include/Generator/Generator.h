@@ -15,7 +15,7 @@
 #include "Node/Namespace.h"
 #include "Node/Operate.h"
 #include "Node/Origin.h"
-#include "Node/Reference.h"
+// #include "Node/Reference.h" // Not implemented yet
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -122,7 +122,7 @@ protected:
     std::unordered_map<std::string, std::string> styleMap_;      // 样式映射
     
     // 运行时集成
-    std::unique_ptr<ChtlJsRuntime> jsRuntime_;
+    ChtlJsRuntime* jsRuntime_;
     
     // 继承处理方法
     void scanConfiguration(const std::shared_ptr<Node>& node);
@@ -157,9 +157,8 @@ protected:
     void visitCustom(const std::shared_ptr<Custom>& custom) override;
     void visitStyle(const std::shared_ptr<Style>& style) override;
     void visitScript(const std::shared_ptr<Script>& script) override;
-    void visitComment(const std::shared_ptr<Comment>& comment) override;
-    void visitOrigin(const std::shared_ptr<Origin>& origin) override;
-    void visitReference(const std::shared_ptr<Reference>& ref) override;
+    virtual void visitComment(const std::shared_ptr<Comment>& comment);
+    virtual void visitOrigin(const std::shared_ptr<Origin>& origin);
     void visitImport(const std::shared_ptr<Import>& import) override;
     void visitExport(const std::shared_ptr<Export>& export_) override;
     

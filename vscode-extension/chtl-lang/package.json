@@ -51,8 +51,23 @@
       "properties": {
         "chtl.compiler.path": {
           "type": "string",
-          "default": "chtl",
-          "description": "Path to CHTL compiler executable"
+          "default": "",
+          "description": "Path to CHTL compiler executable (leave empty to use bundled compiler)"
+        },
+        "chtl.compiler.outputDirectory": {
+          "type": "string",
+          "default": "dist",
+          "description": "Output directory for compiled files"
+        },
+        "chtl.compiler.debugMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for compiler"
+        },
+        "chtl.compiler.moduleSearchPaths": {
+          "type": "array",
+          "default": ["./module", "./src/Module"],
+          "description": "Additional paths to search for CHTL modules"
         },
         "chtl.format.enable": {
           "type": "boolean",

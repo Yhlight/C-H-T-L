@@ -3,15 +3,20 @@
   "name": "CHTL",
   "patterns": [
     { "include": "#comments" },
+    { "include": "#configuration" },
     { "include": "#imports" },
     { "include": "#exports" },
-    { "include": "#config" },
+    { "include": "#namespace" },
     { "include": "#info" },
+    { "include": "#origin" },
     { "include": "#custom" },
     { "include": "#template" },
     { "include": "#style-block" },
     { "include": "#script-block" },
+    { "include": "#text-block" },
     { "include": "#elements" },
+    { "include": "#operations" },
+    { "include": "#references" },
     { "include": "#strings" },
     { "include": "#numbers" },
     { "include": "#keywords" }
@@ -27,25 +32,115 @@
           "name": "comment.block.chtl",
           "begin": "/\\*",
           "end": "\\*/"
+        },
+        {
+          "name": "comment.line.generator.chtl",
+          "match": "--.*$"
+        }
+      ]
+    },
+    "configuration": {
+      "patterns": [
+        {
+          "begin": "\\[Configuration\\]\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.configuration.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.configuration.chtl",
+          "patterns": [
+            { "include": "#config-items" },
+            { "include": "#name-block" },
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "config-items": {
+      "patterns": [
+        {
+          "match": "(\\w+)\\s*=\\s*([^;]+);",
+          "captures": {
+            "1": { "name": "variable.other.config.chtl" },
+            "2": { "name": "string.unquoted.chtl" }
+          }
+        }
+      ]
+    },
+    "name-block": {
+      "patterns": [
+        {
+          "begin": "\\[Name\\]\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.name.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.name.chtl",
+          "patterns": [
+            {
+              "match": "(\\w+)\\s*=\\s*\\[([^\\]]+)\\];",
+              "captures": {
+                "1": { "name": "variable.other.alias.chtl" },
+                "2": { "name": "string.unquoted.chtl" }
+              }
+            },
+            {
+              "match": "(\\w+)\\s*=\\s*([^;]+);",
+              "captures": {
+                "1": { "name": "variable.other.alias.chtl" },
+                "2": { "name": "string.unquoted.chtl" }
+              }
+            }
+          ]
         }
       ]
     },
     "imports": {
       "patterns": [
         {
-          "name": "keyword.control.import.chtl",
-          "match": "\\b(Import)\\b",
+          "begin": "\\[Import\\]\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.import.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.import.chtl",
+          "patterns": [
+            { "include": "#import-items" },
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "import-items": {
+      "patterns": [
+        {
+          "match": "(@\\w+)\\s+(\\w+)\\s+(from)\\s+(namespace)\\s+(\\w+)(?:\\s+(as)\\s+(\\w+))?;",
           "captures": {
-            "1": { "name": "keyword.control.import.chtl" }
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.import.chtl" },
+            "3": { "name": "keyword.control.from.chtl" },
+            "4": { "name": "keyword.control.namespace.chtl" },
+            "5": { "name": "entity.name.namespace.chtl" },
+            "6": { "name": "keyword.control.as.chtl" },
+            "7": { "name": "entity.name.alias.chtl" }
           }
         },
         {
-          "match": "(Import)\\s+(@\\w+)\\s+(from)\\s+(\"[^\"]*\")",
+          "match": "(@\\w+)\\s+(\\w+)\\s+(from)\\s+(\"[^\"]*\")(?:\\s+(as)\\s+(\\w+))?;",
           "captures": {
-            "1": { "name": "keyword.control.import.chtl" },
-            "2": { "name": "variable.other.chtl" },
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.import.chtl" },
             "3": { "name": "keyword.control.from.chtl" },
-            "4": { "name": "string.quoted.double.chtl" }
+            "4": { "name": "string.quoted.double.chtl" },
+            "5": { "name": "keyword.control.as.chtl" },
+            "6": { "name": "entity.name.alias.chtl" }
+          }
+        },
+        {
+          "match": "\\*\\s+(from)\\s+(\"[^\"]*\");",
+          "captures": {
+            "1": { "name": "keyword.control.from.chtl" },
+            "2": { "name": "string.quoted.double.chtl" }
           }
         }
       ]
@@ -53,71 +148,196 @@
     "exports": {
       "patterns": [
         {
-          "begin": "\\[Export\\]",
+          "begin": "\\[Export\\]\\s*(?:(from)\\s+(namespace)\\s+(\\w+)\\s*)?\\{",
           "beginCaptures": {
-            "0": { "name": "keyword.control.export.chtl" }
+            "0": { "name": "keyword.control.export.chtl" },
+            "1": { "name": "keyword.control.from.chtl" },
+            "2": { "name": "keyword.control.namespace.chtl" },
+            "3": { "name": "entity.name.namespace.chtl" }
           },
-          "end": "(?=\\{)",
-          "name": "meta.export.chtl"
+          "end": "\\}",
+          "name": "meta.export.chtl",
+          "patterns": [
+            { "include": "#export-items" },
+            { "include": "#comments" }
+          ]
         }
       ]
     },
-    "config": {
+    "export-items": {
       "patterns": [
         {
-          "begin": "\\[Config\\]",
+          "match": "(@\\w+)\\s+(\\w+)(?:\\s+(as)\\s+(\\w+))?;",
+          "captures": {
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.export.chtl" },
+            "3": { "name": "keyword.control.as.chtl" },
+            "4": { "name": "entity.name.alias.chtl" }
+          }
+        },
+        {
+          "match": "\\*;",
+          "name": "keyword.operator.wildcard.chtl"
+        }
+      ]
+    },
+    "namespace": {
+      "patterns": [
+        {
+          "begin": "\\[Namespace\\]\\s+(\\w+)\\s*\\{",
           "beginCaptures": {
-            "0": { "name": "keyword.control.config.chtl" }
+            "0": { "name": "keyword.control.namespace.chtl" },
+            "1": { "name": "entity.name.namespace.chtl" }
           },
-          "end": "(?=\\{)",
-          "name": "meta.config.chtl"
+          "end": "\\}",
+          "name": "meta.namespace.chtl",
+          "patterns": [
+            { "include": "$self" }
+          ]
         }
       ]
     },
     "info": {
       "patterns": [
         {
-          "begin": "\\[Info\\]",
+          "begin": "\\[Info\\]\\s*\\{",
           "beginCaptures": {
             "0": { "name": "keyword.control.info.chtl" }
           },
-          "end": "(?=\\{)",
-          "name": "meta.info.chtl"
+          "end": "\\}",
+          "name": "meta.info.chtl",
+          "patterns": [
+            { "include": "#config-items" },
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "origin": {
+      "patterns": [
+        {
+          "begin": "\\[Origin\\]\\s+(@\\w+)\\s+(\\w+)\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.origin.chtl" },
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.origin.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.origin.chtl",
+          "patterns": [
+            { "include": "#origin-content" }
+          ]
+        },
+        {
+          "match": "\\[Origin\\]\\s+(@\\w+)\\s+(\\w+);",
+          "captures": {
+            "0": { "name": "keyword.control.origin.chtl" },
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.origin.chtl" }
+          }
+        }
+      ]
+    },
+    "origin-content": {
+      "patterns": [
+        {
+          "match": ".*",
+          "name": "string.unquoted.raw.chtl"
         }
       ]
     },
     "custom": {
       "patterns": [
         {
-          "match": "\\[(Custom|Template|Style|Script|Namespace)\\]\\s+(@\\w+)\\s+(\\w+)",
-          "captures": {
-            "1": { "name": "storage.type.chtl" },
-            "2": { "name": "storage.modifier.chtl" },
-            "3": { "name": "entity.name.type.chtl" }
-          }
-        },
-        {
-          "match": "@(Element|Style|Var|Function)\\s+(\\w+)",
-          "captures": {
+          "begin": "\\[Custom\\]\\s+(@\\w+)\\s+(\\w+)\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "storage.type.custom.chtl" },
             "1": { "name": "storage.modifier.chtl" },
             "2": { "name": "entity.name.type.chtl" }
-          }
-        },
-        {
-          "match": "@\\w+",
-          "name": "variable.other.chtl"
+          },
+          "end": "\\}",
+          "name": "meta.custom.chtl",
+          "patterns": [
+            { "include": "#inheritance" },
+            { "include": "#operations" },
+            { "include": "#constraints" },
+            { "include": "$self" }
+          ]
         }
       ]
     },
     "template": {
       "patterns": [
         {
-          "begin": "\\[Template\\]",
+          "begin": "\\[Template\\]\\s+(@\\w+)\\s+(\\w+)\\s*\\{",
           "beginCaptures": {
-            "0": { "name": "storage.type.template.chtl" }
+            "0": { "name": "storage.type.template.chtl" },
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.type.chtl" }
           },
-          "end": "(?=\\{)",
-          "name": "meta.template.chtl"
+          "end": "\\}",
+          "name": "meta.template.chtl",
+          "patterns": [
+            { "include": "#inheritance" },
+            { "include": "#constraints" },
+            { "include": "$self" }
+          ]
+        }
+      ]
+    },
+    "inheritance": {
+      "patterns": [
+        {
+          "match": "(inherit)\\s+(?:\\[(\\w+)\\]\\s+)?(@\\w+)\\s+(\\w+);",
+          "captures": {
+            "1": { "name": "keyword.control.inherit.chtl" },
+            "2": { "name": "storage.type.chtl" },
+            "3": { "name": "storage.modifier.chtl" },
+            "4": { "name": "entity.name.type.chtl" }
+          }
+        },
+        {
+          "match": "(inherit)\\s+(@\\w+)\\s+(\\w+);",
+          "captures": {
+            "1": { "name": "keyword.control.inherit.chtl" },
+            "2": { "name": "storage.modifier.chtl" },
+            "3": { "name": "entity.name.type.chtl" }
+          }
+        }
+      ]
+    },
+    "operations": {
+      "patterns": [
+        {
+          "match": "(delete)\\s+([^;]+);",
+          "captures": {
+            "1": { "name": "keyword.control.delete.chtl" },
+            "2": { "name": "variable.other.chtl" }
+          }
+        },
+        {
+          "begin": "(insert)\\s+(after|before|replace|at\\s+top|at\\s+bottom)\\s+([^{]+)\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.insert.chtl" },
+            "2": { "name": "keyword.control.position.chtl" },
+            "3": { "name": "variable.other.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.insert.chtl",
+          "patterns": [
+            { "include": "$self" }
+          ]
+        }
+      ]
+    },
+    "constraints": {
+      "patterns": [
+        {
+          "match": "(except)\\s+([^;]+);",
+          "captures": {
+            "1": { "name": "keyword.control.except.chtl" },
+            "2": { "name": "variable.other.chtl" }
+          }
         }
       ]
     },
@@ -131,17 +351,33 @@
           "end": "\\}",
           "name": "meta.embedded.block.css",
           "patterns": [
-            { "include": "source.css" }
+            { "include": "#css-with-chtl" }
           ]
+        }
+      ]
+    },
+    "css-with-chtl": {
+      "patterns": [
+        {
+          "match": "&(?=::|:)",
+          "name": "variable.language.chtl"
         },
         {
-          "begin": "\\[Style\\]",
-          "beginCaptures": {
-            "0": { "name": "storage.type.style.chtl" }
-          },
-          "end": "(?=\\{)",
-          "name": "meta.style.chtl"
-        }
+          "match": "@(Style|Var)\\s+(\\w+);",
+          "captures": {
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.type.chtl" }
+          }
+        },
+        {
+          "match": "(\\w+)\\((\\w+)(?:\\s*=\\s*([^)]+))?\\)",
+          "captures": {
+            "1": { "name": "entity.name.function.chtl" },
+            "2": { "name": "variable.parameter.chtl" },
+            "3": { "name": "string.unquoted.chtl" }
+          }
+        },
+        { "include": "source.css" }
       ]
     },
     "script-block": {
@@ -152,54 +388,115 @@
             "0": { "name": "keyword.control.script.chtl" }
           },
           "end": "\\}",
-          "name": "meta.embedded.block.javascript",
+          "name": "meta.embedded.block.js",
           "patterns": [
-            { "include": "#chtl-js-syntax" },
-            { "include": "source.js" }
+            { "include": "#js-with-chtl" }
           ]
-        },
-        {
-          "begin": "\\[Script\\]",
-          "beginCaptures": {
-            "0": { "name": "storage.type.script.chtl" }
-          },
-          "end": "(?=\\{)",
-          "name": "meta.script.chtl"
         }
       ]
     },
-    "chtl-js-syntax": {
+    "js-with-chtl": {
       "patterns": [
         {
           "match": "\\{\\{&\\}\\}",
-          "name": "variable.language.this.chtl"
+          "name": "variable.language.chtl"
         },
         {
-          "match": "\\{\\{[#.]?[\\w\\s\\[\\]]+\\}\\}",
-          "name": "variable.other.selector.chtl"
+          "match": "\\{\\{([^}]+)\\}\\}",
+          "captures": {
+            "0": { "name": "meta.selector.chtl" },
+            "1": { "name": "string.other.selector.chtl" }
+          }
         },
         {
           "match": "->",
           "name": "keyword.operator.chtl"
         },
         {
-          "match": "\\b(listen|animate|delegate)\\b",
+          "match": "\\b(listen|delegate|animate)\\b",
           "name": "support.function.chtl"
+        },
+        { "include": "source.js" }
+      ]
+    },
+    "text-block": {
+      "patterns": [
+        {
+          "begin": "\\btext\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.text.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.text.chtl",
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#unquoted-text" }
+          ]
         }
       ]
     },
     "elements": {
       "patterns": [
         {
-          "match": "\\b(div|span|p|a|img|ul|ol|li|h[1-6]|button|input|form|table|tr|td|th|header|footer|main|nav|section|article)\\b\\s*(?=\\{)",
-          "captures": {
+          "begin": "\\b(html|head|body|div|span|p|a|img|button|input|form|table|tr|td|th|ul|ol|li|h[1-6]|nav|header|footer|section|article|aside|main|canvas|svg|video|audio|iframe|label|select|option|textarea|br|hr|meta|link|title|style|script)\\b\\s*\\{",
+          "beginCaptures": {
             "1": { "name": "entity.name.tag.html.chtl" }
+          },
+          "end": "\\}",
+          "name": "meta.element.chtl",
+          "patterns": [
+            { "include": "#attributes" },
+            { "include": "$self" }
+          ]
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "match": "(id|class|href|src|alt|title|type|name|value|placeholder|disabled|checked|selected|readonly|required|multiple|autofocus|autocomplete|min|max|step|pattern|maxlength|rows|cols|style)\\s*[:=]\\s*([^;]+);",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.unquoted.chtl" }
           }
         },
         {
-          "match": "\\b(id|class|style|href|src|alt|type|name|value|placeholder|disabled|checked)\\s*:",
+          "match": "(\\w+)\\s*[:=]\\s*\"([^\"]*)\";",
           "captures": {
-            "1": { "name": "entity.other.attribute-name.chtl" }
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.quoted.double.chtl" }
+          }
+        },
+        {
+          "match": "(\\w+)\\s*[:=]\\s*'([^']*)';",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.quoted.single.chtl" }
+          }
+        },
+        {
+          "match": "(\\w+)\\s*[:=]\\s*([^;]+);",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.unquoted.chtl" }
+          }
+        }
+      ]
+    },
+    "references": {
+      "patterns": [
+        {
+          "match": "(@\\w+)\\s+(\\w+)\\s*\\{",
+          "captures": {
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.reference.chtl" }
+          }
+        },
+        {
+          "match": "(@\\w+)\\s+(\\w+);",
+          "captures": {
+            "1": { "name": "storage.modifier.chtl" },
+            "2": { "name": "entity.name.reference.chtl" }
           }
         }
       ]
@@ -227,21 +524,14 @@
               "match": "\\\\."
             }
           ]
-        },
+        }
+      ]
+    },
+    "unquoted-text": {
+      "patterns": [
         {
-          "name": "string.template.chtl",
-          "begin": "`",
-          "end": "`",
-          "patterns": [
-            {
-              "name": "constant.character.escape.chtl",
-              "match": "\\\\."
-            },
-            {
-              "name": "variable.interpolation.chtl",
-              "match": "\\$\\{[^}]+\\}"
-            }
-          ]
+          "match": "[^{}\"']+",
+          "name": "string.unquoted.chtl"
         }
       ]
     },
@@ -257,15 +547,7 @@
       "patterns": [
         {
           "name": "keyword.control.chtl",
-          "match": "\\b(if|else|for|while|return|break|continue|function|const|let|var|true|false|null|undefined)\\b"
-        },
-        {
-          "name": "keyword.other.chtl",
-          "match": "\\b(from|as|export|import)\\b"
-        },
-        {
-          "name": "storage.type.chtl",
-          "match": "\\b(string|number|boolean|array|object|any)\\b"
+          "match": "\\b(from|as|inherit|delete|insert|after|before|replace|at|top|bottom|except|namespace)\\b"
         }
       ]
     }

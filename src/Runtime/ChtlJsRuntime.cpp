@@ -580,6 +580,7 @@ std::string ChtlJsEnhancer::transformSingleSelector(const std::string& selector,
 }
 
 std::string ChtlJsEnhancer::wrapLocalScript(const std::string& code, const std::string& elementId) {
+    (void)elementId; // TODO: Use elementId for scoping
     // 局部script已经在runtime中处理
     return code;
 }
@@ -674,14 +675,15 @@ size_t ChtlJsEnhancer::findMatchingBrace(const std::string& code, size_t startPo
 std::string ChtlJsEnhancer::findNearestSelector(const std::string& code) {
     // 从后向前查找最近的选择器
     std::regex selectorRegex(R"((\{\{[^}]+\}\})\s*(?:->|\.))");
-    std::smatch match;
-    std::string::const_reverse_iterator searchStart(code.crbegin());
+    std::sregex_iterator it(code.begin(), code.end(), selectorRegex);
+    std::sregex_iterator end;
     
-    if (std::regex_search(searchStart, code.crend(), match, selectorRegex)) {
-        return match[1].str();
+    std::string lastMatch;
+    for (; it != end; ++it) {
+        lastMatch = (*it)[1].str();
     }
     
-    return "";
+    return lastMatch;
 }
 
 } // namespace chtl

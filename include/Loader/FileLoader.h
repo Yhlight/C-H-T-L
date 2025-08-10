@@ -64,7 +64,6 @@ public:
     
     // 文件监控
     bool hasFileChanged(const std::string& filePath) const;
-    std::vector<std::string> getChangedFiles() const;
     bool reloadChangedFiles();
     
     // 清理

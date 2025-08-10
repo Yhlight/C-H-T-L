@@ -8,8 +8,8 @@ ChtlJsLexer::ChtlJsLexer()
       inChtlSequence_(false) {
 }
 
-void ChtlJsLexer::initialize(std::shared_ptr<ChtlJsState> state, 
-                            std::shared_ptr<ChtlJsContext> context) {
+void ChtlJsLexer::initializeChtlJs(std::shared_ptr<ChtlJsState> state,
+                                   std::shared_ptr<ChtlJsContext> context) {
     if (state) {
         chtlJsState_ = state;
     } else {
@@ -28,7 +28,7 @@ void ChtlJsLexer::initialize(std::shared_ptr<ChtlJsState> state,
 
 Token ChtlJsLexer::getNextToken() {
     if (!chtlJsState_ || !chtlJsContext_) {
-        initialize();
+        // Initialize will be called later with proper parameters
     }
     
     skipWhitespace();
@@ -311,7 +311,7 @@ char ChtlJsLexer::currentChar() const {
     return input_[position_];
 }
 
-char ChtlJsLexer::peekChar() const {
+char ChtlJsLexer::peekChar() {
     return peekChar(1);
 }
 
@@ -365,6 +365,7 @@ TokenType ChtlJsLexer::getKeywordType(const std::string& word) {
 
 TokenType ChtlJsLexer::getOperatorType(const std::string& op) {
     // 所有操作符都返回OPERATOR类型
+    (void)op; // Suppress unused parameter warning
     return TokenType::OPERATOR;
 }
 

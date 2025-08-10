@@ -94,7 +94,7 @@ void CmodHandler::addFile(const std::string& path, const std::vector<uint8_t>& d
     entry.flags = 0;
     
     // 判断文件类型
-    if (path.ends_with(".chtl")) {
+    if (path.size() >= 5 && path.substr(path.size() - 5) == ".chtl") {
         entry.flags |= cmod::FILE_CHTL;
     }
     
@@ -176,7 +176,7 @@ bool CmodHandler::verify() const {
     return true;
 }
 
-uint32_t CmodHandler::calculateChecksum(const uint8_t* data, size_t size) {
+uint32_t CmodHandler::calculateChecksum(const uint8_t* data, size_t size) const {
     // 简单的CRC32实现（可以替换为更复杂的算法）
     uint32_t crc = 0xFFFFFFFF;
     for (size_t i = 0; i < size; ++i) {

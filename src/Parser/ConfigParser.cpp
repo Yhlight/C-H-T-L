@@ -280,31 +280,37 @@ bool ConfigParser::exportConfig(std::shared_ptr<Config> config,
 }
 
 std::string ConfigParser::exportToJSON(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现JSON导出
     return "{\n  // JSON export not implemented yet\n}\n";
 }
 
 std::string ConfigParser::exportToYAML(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现YAML导出
     return "# YAML export not implemented yet\n";
 }
 
 std::string ConfigParser::exportToINI(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现INI导出
     return "; INI export not implemented yet\n";
 }
 
 std::string ConfigParser::exportToTOML(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现TOML导出
     return "# TOML export not implemented yet\n";
 }
 
 std::string ConfigParser::exportToXML(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现XML导出
     return "<!-- XML export not implemented yet -->\n<config>\n</config>\n";
 }
 
 std::string ConfigParser::exportToCHTL(std::shared_ptr<Config> config) {
+    (void)config; // Suppress unused parameter warning
     // TODO: 实现CHTL导出
     return "[Configuration]\n{\n  // CHTL export not implemented yet\n}\n";
 }

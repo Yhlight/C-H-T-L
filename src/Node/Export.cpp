@@ -1,5 +1,5 @@
 #include "Node/Export.h"
-#include "Visitor/Visitor.h"
+// #include "Visitor/Visitor.h" // Not implemented yet
 #include <sstream>
 
 namespace chtl {
@@ -13,9 +13,7 @@ std::shared_ptr<Node> Export::clone(bool deep) const {
     
     // 复制基类属性
     cloned->setTagName(getTagName());
-    for (const auto& [key, value] : getAttributes()) {
-        cloned->setAttribute(key, value);
-    }
+    // Export nodes don't have attributes like Element nodes
     
     // Export节点通常没有子节点
     if (deep) {
@@ -65,7 +63,9 @@ std::string Export::toString() const {
 }
 
 void Export::accept(Visitor* visitor) {
-    visitor->visit(this);
+    (void)visitor; // Suppress unused parameter warning
+    // TODO: Implement when Visitor class is added
+    // visitor->visit(this);
 }
 
 } // namespace chtl

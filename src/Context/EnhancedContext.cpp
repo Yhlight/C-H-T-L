@@ -68,12 +68,12 @@ void EnhancedContext::clearAll() {
 }
 
 void EnhancedContext::reportError(const ErrorDetail& error) {
-    errorHandler_->reportError(error);
+    errorHandler_->reportError(error.getType(), error.getMessage(), error.getContext());
     updateStringCaches();
 }
 
 void EnhancedContext::reportWarning(const ErrorDetail& warning) {
-    errorHandler_->reportError(warning);
+    errorHandler_->reportWarning(warning.getMessage(), warning.getContext());
     updateStringCaches();
 }
 

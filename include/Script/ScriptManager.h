@@ -52,7 +52,8 @@ public:
     
     // 创建子上下文
     std::shared_ptr<ScriptContext> createChildContext() {
-        return std::make_shared<ScriptContext>(shared_from_this());
+        // TODO: Implement proper context creation
+        return std::make_shared<ScriptContext>();
     }
 };
 

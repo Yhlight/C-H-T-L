@@ -63,7 +63,7 @@ private:
     ConfigFormat detectFormat(const std::string& content);
     
     // 当前格式和配置
-    ConfigFormat currentFormat_;
+    // ConfigFormat currentFormat_; // TODO: Remove if not needed
     std::shared_ptr<Config> currentConfig_;
     
     // 有效的配置键

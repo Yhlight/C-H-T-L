@@ -184,6 +184,32 @@ chtl/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/build
 .PHONY : chtl/fast
 
+#=============================================================================
+# Target rules for targets named pack_Chtholly_cmod
+
+# Build rule for target.
+pack_Chtholly_cmod: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pack_Chtholly_cmod
+.PHONY : pack_Chtholly_cmod
+
+# fast build rule for target.
+pack_Chtholly_cmod/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pack_Chtholly_cmod.dir/build.make CMakeFiles/pack_Chtholly_cmod.dir/build
+.PHONY : pack_Chtholly_cmod/fast
+
+#=============================================================================
+# Target rules for targets named pack_all_cmods
+
+# Build rule for target.
+pack_all_cmods: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pack_all_cmods
+.PHONY : pack_all_cmods
+
+# fast build rule for target.
+pack_all_cmods/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pack_all_cmods.dir/build.make CMakeFiles/pack_all_cmods.dir/build
+.PHONY : pack_all_cmods/fast
+
 src/ChtlJs/ChtlJsContext.o: src/ChtlJs/ChtlJsContext.cpp.o
 .PHONY : src/ChtlJs/ChtlJsContext.o
 
@@ -207,6 +233,30 @@ src/ChtlJs/ChtlJsContext.s: src/ChtlJs/ChtlJsContext.cpp.s
 src/ChtlJs/ChtlJsContext.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.s
 .PHONY : src/ChtlJs/ChtlJsContext.cpp.s
+
+src/Cmod/CmodPacker.o: src/Cmod/CmodPacker.cpp.o
+.PHONY : src/Cmod/CmodPacker.o
+
+# target to build an object file
+src/Cmod/CmodPacker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o
+.PHONY : src/Cmod/CmodPacker.cpp.o
+
+src/Cmod/CmodPacker.i: src/Cmod/CmodPacker.cpp.i
+.PHONY : src/Cmod/CmodPacker.i
+
+# target to preprocess a source file
+src/Cmod/CmodPacker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.i
+.PHONY : src/Cmod/CmodPacker.cpp.i
+
+src/Cmod/CmodPacker.s: src/Cmod/CmodPacker.cpp.s
+.PHONY : src/Cmod/CmodPacker.s
+
+# target to generate assembly for a file
+src/Cmod/CmodPacker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.s
+.PHONY : src/Cmod/CmodPacker.cpp.s
 
 src/CmodSystem/CmodExtractor.o: src/CmodSystem/CmodExtractor.cpp.o
 .PHONY : src/CmodSystem/CmodExtractor.o
@@ -735,6 +785,30 @@ src/Generator/ConfigGenerator.s: src/Generator/ConfigGenerator.cpp.s
 src/Generator/ConfigGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.s
 .PHONY : src/Generator/ConfigGenerator.cpp.s
+
+src/Generator/ConfigManager.o: src/Generator/ConfigManager.cpp.o
+.PHONY : src/Generator/ConfigManager.o
+
+# target to build an object file
+src/Generator/ConfigManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigManager.cpp.o
+.PHONY : src/Generator/ConfigManager.cpp.o
+
+src/Generator/ConfigManager.i: src/Generator/ConfigManager.cpp.i
+.PHONY : src/Generator/ConfigManager.i
+
+# target to preprocess a source file
+src/Generator/ConfigManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigManager.cpp.i
+.PHONY : src/Generator/ConfigManager.cpp.i
+
+src/Generator/ConfigManager.s: src/Generator/ConfigManager.cpp.s
+.PHONY : src/Generator/ConfigManager.s
+
+# target to generate assembly for a file
+src/Generator/ConfigManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Generator/ConfigManager.cpp.s
+.PHONY : src/Generator/ConfigManager.cpp.s
 
 src/Generator/Generator.o: src/Generator/Generator.cpp.o
 .PHONY : src/Generator/Generator.o
@@ -1901,10 +1975,15 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... pack_Chtholly_cmod"
+	@echo "... pack_all_cmods"
 	@echo "... chtl"
 	@echo "... src/ChtlJs/ChtlJsContext.o"
 	@echo "... src/ChtlJs/ChtlJsContext.i"
 	@echo "... src/ChtlJs/ChtlJsContext.s"
+	@echo "... src/Cmod/CmodPacker.o"
+	@echo "... src/Cmod/CmodPacker.i"
+	@echo "... src/Cmod/CmodPacker.s"
 	@echo "... src/CmodSystem/CmodExtractor.o"
 	@echo "... src/CmodSystem/CmodExtractor.i"
 	@echo "... src/CmodSystem/CmodExtractor.s"
@@ -1971,6 +2050,9 @@ help:
 	@echo "... src/Generator/ConfigGenerator.o"
 	@echo "... src/Generator/ConfigGenerator.i"
 	@echo "... src/Generator/ConfigGenerator.s"
+	@echo "... src/Generator/ConfigManager.o"
+	@echo "... src/Generator/ConfigManager.i"
+	@echo "... src/Generator/ConfigManager.s"
 	@echo "... src/Generator/Generator.o"
 	@echo "... src/Generator/Generator.i"
 	@echo "... src/Generator/Generator.s"

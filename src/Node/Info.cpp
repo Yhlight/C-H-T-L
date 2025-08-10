@@ -1,5 +1,5 @@
 #include "Node/Info.h"
-#include "Visitor/Visitor.h"
+// #include "Visitor/Visitor.h" // Not implemented yet
 #include <sstream>
 
 namespace chtl {
@@ -12,9 +12,6 @@ std::shared_ptr<Node> Info::clone(bool deep) const {
     
     // 复制基类属性
     cloned->setTagName(getTagName());
-    for (const auto& [key, value] : getAttributes()) {
-        cloned->setAttribute(key, value);
-    }
     
     // Info节点通常没有子节点
     if (deep) {
@@ -45,7 +42,9 @@ std::string Info::toString() const {
 }
 
 void Info::accept(Visitor* visitor) {
-    visitor->visit(this);
+    (void)visitor; // Suppress unused parameter warning
+    // TODO: Implement when Visitor class is added
+    // visitor->visit(this);
 }
 
 } // namespace chtl

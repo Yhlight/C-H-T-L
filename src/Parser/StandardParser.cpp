@@ -25,9 +25,6 @@ namespace chtl {
 
 StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context)
     : BasicParser(),
-      currentIndent_(0),
-      expectIndent_(0),
-      inAttribute_(false),
       currentToken_(TokenType::EOF_TOKEN, "", 1, 1),
       previousToken_(TokenType::EOF_TOKEN, "", 1, 1) {
     // 初始化lexer和context
@@ -412,7 +409,8 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
     std::string elementId;
     if (context_) {
         // 从上下文获取当前元素ID（如果有的话）
-        elementId = context_->getCurrentElementId();
+        // TODO: Get element ID from context if available
+        // elementId = context_->getCurrentElementId();
     }
     if (elementId.empty()) {
         auto& runtime = ChtlJsRuntime::getInstance();
@@ -1539,7 +1537,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
             importType = Import::ImportType::TEMPLATE_VAR;
             importName = consume(TokenType::IDENTIFIER, "Expected template var name").value;
         }
-    } else if (match(TokenType::STAR)) {
+    } else if (match(TokenType::ASTERISK)) {
         // 通配符导入
         importType = Import::ImportType::ALL;
         importNode->addImportItem("*");
@@ -2021,8 +2019,8 @@ std::shared_ptr<Node> StandardParser::parseScript() {
     std::string scriptContent;
     int braceDepth = 1;
     bool inString = false;
-    char stringChar = '\0';
-    bool escaped = false;
+    // char stringChar = '\0';
+    // bool escaped = false;
     
     while (!isAtEnd() && braceDepth > 0) {
         Token token = currentToken_;

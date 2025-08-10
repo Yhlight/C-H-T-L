@@ -11,7 +11,7 @@ namespace chtl {
 
 // 前向声明
 class CmodRegistry;
-class CmodInfo;
+struct CmodInfo;
 struct CmodStructure;
 class Node;
 

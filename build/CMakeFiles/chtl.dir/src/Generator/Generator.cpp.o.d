@@ -219,16 +219,17 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/array \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/compare \
   /workspace/include/Node/Element.h /workspace/include/Node/Text.h \
-  /workspace/include/Node/Custom.h /workspace/include/Node/Template.h \
-  /workspace/include/Node/Style.h /workspace/include/Node/Script.h \
-  /workspace/include/Node/Import.h /workspace/include/Node/Export.h \
-  /workspace/include/Node/Config.h \
+  /workspace/include/Node/Comment.h /workspace/include/Node/Custom.h \
+  /workspace/include/Node/Template.h /workspace/include/Node/Style.h \
+  /workspace/include/Node/Script.h /workspace/include/Node/Import.h \
+  /workspace/include/Node/Export.h /workspace/include/Node/Config.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/optional \
   /workspace/include/Node/Namespace.h /workspace/include/Node/Operate.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/set \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_tree.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_set.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multiset.h \
+  /workspace/include/Node/Origin.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/sstream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/istream \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/ios \
@@ -255,6 +256,7 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
   /workspace/include/Runtime/ChtlJsRuntime.h \
+  /workspace/include/Generator/ConfigManager.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/regex \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bitset \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/locale \

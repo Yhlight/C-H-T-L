@@ -450,7 +450,7 @@ const char* errorTypeToString(ErrorType type) {
         case ErrorType::LEXER_UNTERMINATED_COMMENT: return "LEXER_UNTERMINATED_COMMENT";
         case ErrorType::LEXER_INVALID_NUMBER: return "LEXER_INVALID_NUMBER";
         case ErrorType::LEXER_INVALID_ESCAPE_SEQUENCE: return "LEXER_INVALID_ESCAPE_SEQUENCE";
-        case ErrorType::LEXER_UNEXPECTED_CHARACTER: return "LEXER_UNEXPECTED_CHARACTER";
+        case ErrorType::LEXER_UNEXPECTED_CHAR: return "LEXER_UNEXPECTED_CHAR";
         
         case ErrorType::PARSER_UNEXPECTED_TOKEN: return "PARSER_UNEXPECTED_TOKEN";
         case ErrorType::PARSER_EXPECTED_TOKEN: return "PARSER_EXPECTED_TOKEN";

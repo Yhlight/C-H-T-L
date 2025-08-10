@@ -99,6 +99,8 @@ CmodLoader::LoadResult CmodLoader::loadFromPath(const std::string& modulePath,
 CmodLoader::LoadResult CmodLoader::loadFromPackage(const std::string& cmodFilePath,
                                                   const LoadOptions& options) {
     LoadResult result{false, "", {}, nullptr, nullptr};
+    (void)cmodFilePath; // Suppress unused parameter warning
+    (void)options; // Suppress unused parameter warning
     
     // TODO: 实现从.cmod包文件加载
     result.error = "Loading from package not yet implemented";
@@ -197,6 +199,7 @@ CmodLoader::LoadResult CmodLoader::loadModuleInternal(const std::string& moduleP
                                                      const std::string& moduleName,
                                                      const LoadOptions& options) {
     // 内部加载实现
+    (void)moduleName; // Suppress unused parameter warning
     return loadFromPath(modulePath, options);
 }
 
@@ -217,6 +220,7 @@ bool CmodLoader::loadDependencies(const std::string& dependencies,
 
 std::shared_ptr<Node> CmodLoader::parseModuleFile(const std::string& filePath) {
     // TODO: 实际解析模块文件
+    (void)filePath; // Suppress unused parameter warning
     return std::make_shared<Element>("module-file");
 }
 

@@ -142,6 +142,7 @@ public:
     
     // 子节点管理
     const std::vector<std::shared_ptr<Node>>& getChildren() const { return children_; }
+    std::vector<std::shared_ptr<Node>>& getChildren() { return children_; }
     void appendChild(const std::shared_ptr<Node>& child) {
         children_.push_back(child);
         child->setParent(shared_from_this());

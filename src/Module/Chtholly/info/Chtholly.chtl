@@ -1,0 +1,29 @@
+[Info] {
+    name = "Chtholly";
+    version = "1.0.0";
+    description = "珂朵莉主题模块 - 世界上最幸福的女孩";
+    author = "CHTL Team";
+    license = "MIT";
+    dependencies = "";
+    category = "theme";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
+}
+
+[Export] {
+    @Style ChthollyStyle;
+    @Style ChthollyCard;
+    @Style ChthollyButton;
+    @Style ChthollyHeader;
+    @Style ChthollyFooter;
+    @Element ChthollyPage;
+    @Element ChthollySection;
+    @Element ChthollyNav;
+    @Element ChthollyModal;
+    @Element ChthollyGallery;
+    @Var ChthollyColors;
+    @Var ChthollyFonts;
+    @Var ChthollySpacing;
+    @Var ChthollyBreakpoints;
+    @Var ChthollyAnimations;
+}

@@ -59,3 +59,55 @@ message(STATUS "CHTL version: ${PROJECT_VERSION}")
 message(STATUS "C++ standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+
+# 创建module输出目录
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/module)
+
+# 自动扫描和打包src/Module中的CMOD模块
+file(GLOB MODULE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src/Module/*")
+foreach(MODULE_DIR ${MODULE_DIRS})
+    if(IS_DIRECTORY ${MODULE_DIR})
+        get_filename_component(MODULE_NAME ${MODULE_DIR} NAME)
+        
+        # 检查是否是有效的CMOD结构（包含info目录）
+        if(EXISTS "${MODULE_DIR}/info")
+            message(STATUS "Found CMOD module: ${MODULE_NAME}")
+            
+            # 添加自定义命令来打包CMOD
+            add_custom_command(
+                OUTPUT ${CMAKE_BINARY_DIR}/module/${MODULE_NAME}.cmod
+                COMMAND chtl --pack-cmod ${MODULE_DIR}
+                COMMAND ${CMAKE_COMMAND} -E rename ${MODULE_NAME}.cmod ${CMAKE_BINARY_DIR}/module/${MODULE_NAME}.cmod
+                DEPENDS chtl ${MODULE_DIR}
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "Packing CMOD module: ${MODULE_NAME}"
+            )
+            
+            # 添加自定义目标
+            add_custom_target(pack_${MODULE_NAME}_cmod ALL
+                DEPENDS ${CMAKE_BINARY_DIR}/module/${MODULE_NAME}.cmod
+            )
+        endif()
+    endif()
+endforeach()
+
+# 添加一个总的打包目标
+add_custom_target(pack_all_cmods
+    COMMENT "Packing all CMOD modules"
+)
+
+# 将所有模块打包目标添加为依赖
+foreach(MODULE_DIR ${MODULE_DIRS})
+    if(IS_DIRECTORY ${MODULE_DIR})
+        get_filename_component(MODULE_NAME ${MODULE_DIR} NAME)
+        if(EXISTS "${MODULE_DIR}/info")
+            add_dependencies(pack_all_cmods pack_${MODULE_NAME}_cmod)
+        endif()
+    endif()
+endforeach()
+
+# 安装CMOD模块
+install(DIRECTORY ${CMAKE_BINARY_DIR}/module/
+    DESTINATION share/chtl/module
+    FILES_MATCHING PATTERN "*.cmod"
+)

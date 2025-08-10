@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <memory>
 #include <filesystem>
+#include <memory>
 #include "Lexer/StandardLexer.h"
 #include "Parser/StandardParser.h"
 #include "Generator/Generator.h"
@@ -10,6 +10,7 @@
 #include "Context/EnhancedContext.h"
 #include "Error/ErrorHandler.h"
 #include "Utils/FileUtils.h"
+#include "Cmod/CmodPacker.h"
 
 namespace fs = std::filesystem;
 
@@ -23,6 +24,7 @@ void printUsage(const std::string& programName) {
     std::cout << "  --no-scope-styles       Disable CSS scoping\n";
     std::cout << "  --minify                Minify output\n";
     std::cout << "  --source-map            Generate source maps\n";
+    std::cout << "  --pack-cmod <dir>       Pack a directory as CMOD module\n";
     std::cout << "  -h, --help              Show this help message\n";
 }
 
@@ -33,9 +35,9 @@ int main(int argc, char* argv[]) {
     }
     
     // 解析命令行参数
-    std::string inputFile;
     chtl::GeneratorOptions options;
-    options.outputPath = "./dist";
+    std::string inputFile;
+    std::string packCmodDir;
     
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -43,6 +45,13 @@ int main(int argc, char* argv[]) {
         if (arg == "-h" || arg == "--help") {
             printUsage(argv[0]);
             return 0;
+        } else if (arg == "--pack-cmod") {
+            if (i + 1 < argc) {
+                packCmodDir = argv[++i];
+            } else {
+                std::cerr << "Error: Missing directory for --pack-cmod\n";
+                return 1;
+            }
         } else if (arg == "-o" || arg == "--output") {
             if (i + 1 < argc) {
                 options.outputPath = argv[++i];
@@ -79,6 +88,26 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error: No input file specified\n";
         printUsage(argv[0]);
         return 1;
+    }
+    
+    // 如果是打包CMOD模式
+    if (!packCmodDir.empty()) {
+        chtl::CmodPackOptions packOptions;
+        packOptions.verbose = true;
+        
+        chtl::CmodPacker packer(packOptions);
+        auto result = packer.pack(packCmodDir);
+        
+        if (result.success) {
+            std::cout << "Successfully created CMOD: " << result.outputFile << "\n";
+            std::cout << "Files packed: " << result.fileCount << "\n";
+            std::cout << "Size: " << result.compressedSize << " bytes\n";
+        } else {
+            std::cerr << "Error: " << result.errorMessage << "\n";
+            return 1;
+        }
+        
+        return 0;
     }
     
     // 读取输入文件

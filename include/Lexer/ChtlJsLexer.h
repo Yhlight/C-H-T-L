@@ -17,8 +17,8 @@ namespace chtl {
 class ChtlJsLexer : public BasicLexer {
 private:
     // CHTL-JS状态管理
-    std::shared_ptr<chtl_js::ChtlJsState> chtlJsState_;
-    std::shared_ptr<chtl_js::ChtlJsContext> chtlJsContext_;
+    std::shared_ptr<ChtlJsState> chtlJsState_;
+    std::shared_ptr<ChtlJsContext> chtlJsContext_;
     
     // Token缓冲
     std::vector<Token> tokenBuffer_;
@@ -48,7 +48,7 @@ public:
     // 重写BasicLexer方法
     Token getNextToken() override;
     Token peekNextToken() override;
-    void reset() override;
+    void reset();
     
     // CHTL-JS特有方法
     bool isInChtlMode() const;
@@ -56,7 +56,7 @@ public:
     
 protected:
     // Token识别
-    Token recognizeToken() override;
+    Token recognizeToken();
     
     // CHTL特有token识别
     Token recognizeChtlSelector();      // {{selector}}
@@ -82,6 +82,10 @@ protected:
     // 辅助方法
     bool checkChtlSequence(const std::string& sequence);
     void skipWhitespace();
+    void skipComment();
+    std::string consumeWhile(std::function<bool(char)> predicate);
+    TokenType getKeywordType(const std::string& word);
+    TokenType getOperatorType(const std::string& op);
 };
 
 } // namespace chtl

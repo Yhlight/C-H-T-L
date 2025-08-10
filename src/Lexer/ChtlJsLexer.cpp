@@ -154,7 +154,7 @@ Token ChtlJsLexer::recognizeChtlMethod() {
         return std::isalnum(c) || c == '_';
     });
     
-    return Token(TokenType::IDENTIFIER, method, line_, column_);
+    return Token(TokenType::IDENTIFIER, method, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::recognizeJsIdentifier() {
@@ -165,15 +165,15 @@ Token ChtlJsLexer::recognizeJsIdentifier() {
     // 检查是否是关键字
     TokenType type = getKeywordType(identifier);
     if (type != TokenType::IDENTIFIER) {
-        return Token(type, identifier, line_, column_);
+        return Token(type, identifier, currentLine_, currentColumn_);
     }
     
     // 检查是否是CHTL-JS特殊方法
     if (identifier == "animate" || identifier == "listen" || identifier == "delegate") {
-        return Token(TokenType::IDENTIFIER, identifier, line_, column_);
+        return Token(TokenType::IDENTIFIER, identifier, currentLine_, currentColumn_);
     }
     
-    return Token(TokenType::IDENTIFIER, identifier, line_, column_);
+    return Token(TokenType::IDENTIFIER, identifier, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::recognizeJsNumber() {
@@ -182,7 +182,7 @@ Token ChtlJsLexer::recognizeJsNumber() {
                c == 'x' || c == 'X' || c == '_' || c == 'n';
     });
     
-    return Token(TokenType::NUMBER, number, line_, column_);
+    return Token(TokenType::NUMBER, number, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::recognizeJsString() {
@@ -209,8 +209,8 @@ Token ChtlJsLexer::recognizeJsString() {
         advanceChar(); // 跳过结束引号
     }
     
-    TokenType type = (quote == '`') ? TokenType::TEMPLATE_LITERAL : TokenType::STRING;
-    return Token(type, str, line_, column_);
+    TokenType type = (quote == '`') ? TokenType::TEMPLATE_LITERAL : TokenType::STRING_LITERAL;
+    return Token(type, str, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::recognizeJsOperator() {
@@ -246,19 +246,19 @@ Token ChtlJsLexer::recognizeJsOperator() {
         }
     }
     
-    return Token(getOperatorType(op), op, line_, column_);
+    return Token(getOperatorType(op), op, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::createChtlToken(TokenType type, const std::string& value) {
-    return Token(type, value, line_, column_);
+    return Token(type, value, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::createSelectorToken(const std::string& selector) {
-    return Token(TokenType::CHTL_SELECTOR, selector, line_, column_);
+    return Token(TokenType::CHTL_SELECTOR, selector, currentLine_, currentColumn_);
 }
 
 Token ChtlJsLexer::createMethodToken(const std::string& method) {
-    return Token(TokenType::CHTL_METHOD, method, line_, column_);
+    return Token(TokenType::CHTL_METHOD, method, currentLine_, currentColumn_);
 }
 
 bool ChtlJsLexer::checkChtlSequence(const std::string& sequence) {
@@ -276,14 +276,8 @@ bool ChtlJsLexer::checkChtlSequence(const std::string& sequence) {
 }
 
 void ChtlJsLexer::skipWhitespace() {
-    while (position_ < input_.size() && std::isspace(currentChar())) {
-        if (currentChar() == '\n') {
-            line_++;
-            column_ = 1;
-        } else {
-            column_++;
-        }
-        position_++;
+    while (position_ < input_.size() && isWhitespace(currentChar())) {
+        advanceChar();
     }
 }
 
@@ -325,13 +319,10 @@ char ChtlJsLexer::peekChar(int offset) const {
     return input_[pos];
 }
 
-std::string ChtlJsLexer::readUntil(const std::string& delimiter) {
+std::string ChtlJsLexer::readWhile(std::function<bool(char)> predicate) {
     std::string result;
     
-    while (position_ < input_.size()) {
-        if (checkChtlSequence(delimiter)) {
-            break;
-        }
+    while (position_ < input_.length() && predicate(currentChar())) {
         result += currentChar();
         advanceChar();
     }
@@ -339,15 +330,38 @@ std::string ChtlJsLexer::readUntil(const std::string& delimiter) {
     return result;
 }
 
-std::string ChtlJsLexer::readWhile(std::function<bool(char)> predicate) {
-    std::string result;
+TokenType ChtlJsLexer::getKeywordType(const std::string& word) {
+    static std::unordered_map<std::string, TokenType> keywords = {
+        {"var", TokenType::VAR},
+        {"let", TokenType::LET},
+        {"const", TokenType::CONST},
+        {"function", TokenType::FUNCTION},
+        {"class", TokenType::CLASS},
+        {"if", TokenType::IF},
+        {"else", TokenType::ELSE},
+        {"for", TokenType::FOR},
+        {"while", TokenType::WHILE},
+        {"return", TokenType::RETURN},
+        {"true", TokenType::TRUE},
+        {"false", TokenType::FALSE},
+        {"null", TokenType::NULL_LITERAL},
+        {"undefined", TokenType::UNDEFINED},
+        {"new", TokenType::NEW},
+        {"this", TokenType::THIS},
+        {"async", TokenType::ASYNC},
+        {"await", TokenType::AWAIT},
+        {"import", TokenType::IMPORT},
+        {"export", TokenType::EXPORT_KW},
+        {"from", TokenType::FROM}
+    };
     
-    while (position_ < input_.size() && predicate(currentChar())) {
-        result += currentChar();
-        advanceChar();
-    }
-    
-    return result;
+    auto it = keywords.find(word);
+    return (it != keywords.end()) ? it->second : TokenType::IDENTIFIER;
+}
+
+TokenType ChtlJsLexer::getOperatorType(const std::string& op) {
+    // 所有操作符都返回OPERATOR类型
+    return TokenType::OPERATOR;
 }
 
 } // namespace chtl

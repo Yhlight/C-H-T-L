@@ -260,12 +260,24 @@ bool FileLoader::hasFileChanged(const std::string& filePath) const {
 
 std::vector<std::string> FileLoader::getChangedFiles() const {
     std::vector<std::string> changed;
+    
     for (const auto& [path, info] : files_) {
         if (hasFileChanged(path)) {
             changed.push_back(path);
         }
     }
+    
     return changed;
+}
+
+std::vector<std::string> FileLoader::getLoadedFiles() const {
+    std::vector<std::string> files;
+    
+    for (const auto& [path, info] : files_) {
+        files.push_back(path);
+    }
+    
+    return files;
 }
 
 bool FileLoader::reloadChangedFiles() {

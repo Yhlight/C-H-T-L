@@ -45,6 +45,8 @@ public:
     const FileInfo* getFileInfo(const std::string& filePath) const;
     std::shared_ptr<Node> getAST(const std::string& filePath) const;
     std::string getContent(const std::string& filePath) const;
+    std::vector<std::string> getChangedFiles() const;
+    std::vector<std::string> getLoadedFiles() const;
     
     // 检查文件状态
     bool isFileLoaded(const std::string& filePath) const;

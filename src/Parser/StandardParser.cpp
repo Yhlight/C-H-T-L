@@ -1072,42 +1072,42 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     auto importNode = std::make_shared<Import>();
     
     // 解析导入类型
-    ImportType importType = ImportType::CHTL;
+    Import::ImportType importType = Import::ImportType::CHTL;
     std::string importName;
     
     if (match(TokenType::WILDCARD)) {
         // 通配导入
-        importType = ImportType::ALL;
+        importType = Import::ImportType::ALL;
     } else if (match(TokenType::AT_HTML)) {
-        importType = ImportType::HTML;
+        importType = Import::ImportType::HTML;
     } else if (match(TokenType::AT_STYLE)) {
-        importType = ImportType::CSS;
+        importType = Import::ImportType::CSS;
     } else if (match(TokenType::AT_JAVASCRIPT)) {
-        importType = ImportType::JS;
+        importType = Import::ImportType::JS;
     } else if (match(TokenType::AT_CHTL)) {
-        importType = ImportType::CHTL;
+        importType = Import::ImportType::CHTL;
     } else if (match(TokenType::CUSTOM)) {
         // [Custom] @Type Name
         if (match(TokenType::AT_ELEMENT)) {
-            importType = ImportType::CUSTOM_ELEMENT;
+            importType = Import::ImportType::CUSTOM_ELEMENT;
             importName = consume(TokenType::IDENTIFIER, "Expected custom element name").value;
         } else if (match(TokenType::AT_STYLE)) {
-            importType = ImportType::CUSTOM_STYLE;
+            importType = Import::ImportType::CUSTOM_STYLE;
             importName = consume(TokenType::IDENTIFIER, "Expected custom style name").value;
         } else if (match(TokenType::AT_VAR)) {
-            importType = ImportType::CUSTOM_VAR;
+            importType = Import::ImportType::CUSTOM_VAR;
             importName = consume(TokenType::IDENTIFIER, "Expected custom var name").value;
         }
     } else if (match(TokenType::TEMPLATE)) {
         // [Template] @Type Name
         if (match(TokenType::AT_ELEMENT)) {
-            importType = ImportType::TEMPLATE_ELEMENT;
+            importType = Import::ImportType::TEMPLATE_ELEMENT;
             importName = consume(TokenType::IDENTIFIER, "Expected template element name").value;
         } else if (match(TokenType::AT_STYLE)) {
-            importType = ImportType::TEMPLATE_STYLE;
+            importType = Import::ImportType::TEMPLATE_STYLE;
             importName = consume(TokenType::IDENTIFIER, "Expected template style name").value;
         } else if (match(TokenType::AT_VAR)) {
-            importType = ImportType::TEMPLATE_VAR;
+            importType = Import::ImportType::TEMPLATE_VAR;
             importName = consume(TokenType::IDENTIFIER, "Expected template var name").value;
         }
     }

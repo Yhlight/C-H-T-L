@@ -68,9 +68,10 @@ public:
     virtual ~ChtlJsContext() = default;
     
     // 实现BasicContext接口
-    void enterScope() override;
+    void enterScope(ScopeType scopeType, const std::string& scopeName = "") override;
     void exitScope() override;
     void reset() override;
+    bool validate() override;
     
     // 选择器管理
     void registerSelector(const std::string& selector, size_t location);

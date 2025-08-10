@@ -8,6 +8,7 @@
 #include "Parser/StandardParser.h"
 #include "Lexer/StandardLexer.h"
 #include "Context/StandardContext.h"
+#include <iostream> // Added for debug output
 
 namespace chtl {
 
@@ -186,11 +187,11 @@ ImportProcessResult ImportProcessor::processChtlImport(std::shared_ptr<Import> i
         // 解析CHTL文件
         auto lexer = std::make_shared<StandardLexer>();
         auto parseContext = std::make_shared<StandardContext>();
-        StandardParser parser(lexer, parseContext);
         
         auto input = std::make_unique<std::istringstream>(content);
         lexer->initialize(std::move(input), resolvedPath);
         
+        StandardParser parser(lexer, parseContext);
         auto ast = parser.parse();
         if (!ast || parseContext->hasErrors()) {
             result.errors.push_back("Failed to parse CHTL file: " + resolvedPath);

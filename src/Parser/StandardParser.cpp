@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cctype>
 
+
 namespace chtl {
 
 StandardParser::StandardParser(std::shared_ptr<BasicLexer> lexer, std::shared_ptr<BasicContext> context)
@@ -233,6 +234,7 @@ std::shared_ptr<Node> StandardParser::parseNode() {
     
     // 普通元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
+        advance();  // 消费元素名
         return parseElement();
     }
     

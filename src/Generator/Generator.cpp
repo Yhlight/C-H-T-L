@@ -1,5 +1,6 @@
 #include "Generator/Generator.h"
 #include "Runtime/ChtlJsRuntime.h"
+#include "Generator/ConfigManager.h"
 #include "Node/Element.h"
 #include "Node/Text.h"
 #include "Node/Custom.h"
@@ -34,7 +35,9 @@ void Generator::CodeCollector::appendLine(const std::string& code) {
 
 // Generator 实现
 Generator::Generator(const GeneratorOptions& options) 
-    : options_(options), jsRuntime_(std::make_unique<ChtlJsRuntime>()) {
+    : options_(options), 
+      jsRuntime_(std::make_unique<ChtlJsRuntime>()),
+      configManager_(std::make_unique<ConfigManager>()) {
 }
 
 GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
@@ -58,7 +61,8 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     
     ast_ = ast;
     
-    // 第一遍扫描：收集所有Template和Custom定义
+    // 第一遍扫描：收集配置和定义
+    scanConfiguration(ast);
     collectDefinitions(ast);
     
     // 第二遍处理：生成代码
@@ -71,6 +75,26 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     
     result_.success = true;
     return result_;
+}
+
+void Generator::scanConfiguration(const std::shared_ptr<Node>& node) {
+    if (!node) return;
+    
+    // 查找[Configuration]节点
+    if (node->getType() == NodeType::CONFIG) {
+        auto config = std::static_pointer_cast<Config>(node);
+        configManager_->loadFromConfig(config);
+        
+        // 如果启用调试模式，输出配置信息
+        if (configManager_->isDebugMode()) {
+            result_.warnings.push_back("Debug mode enabled");
+        }
+    }
+    
+    // 递归扫描子节点
+    for (const auto& child : node->getChildren()) {
+        scanConfiguration(child);
+    }
 }
 
 void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {

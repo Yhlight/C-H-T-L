@@ -7,6 +7,7 @@
 #include "Node/Operate.h"
 #include "Node/Template.h"
 #include "Node/Reference.h"
+#include "Node/Origin.h" // Added for Origin node
 #include "Runtime/ChtlJsRuntime.h"
 #include <regex>
 #include <algorithm>
@@ -672,6 +673,130 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
             jsCollector_.appendLine(wrappedCode);
         }
     }
+}
+
+void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
+    // 生成器识别的注释会被输出到HTML中
+    std::string content = comment->getContent();
+    
+    // 去除开头的 "--"（如果有的话）
+    if (content.substr(0, 2) == "--") {
+        content = content.substr(2);
+    }
+    
+    // 去除首尾空格
+    content = trim(content);
+    
+    // 生成HTML注释
+    htmlCollector_.append("<!-- ");
+    htmlCollector_.append(escape(content));
+    htmlCollector_.append(" -->");
+}
+
+void WebGenerator::visitOrigin(const std::shared_ptr<Origin>& origin) {
+    std::string content = origin->getContent();
+    std::string name = origin->getOriginName();
+    
+    // 如果有名称，存储以供后续引用
+    if (!name.empty()) {
+        std::string key = generateOriginKey(origin->getOriginType(), name);
+        originDefinitions_[key] = origin;
+        
+        // 如果是内联形式（有分号），不生成内容
+        if (origin->isInline()) {
+            return;
+        }
+    }
+    
+    // 根据类型生成相应的内容
+    switch (origin->getOriginType()) {
+        case Origin::OriginType::HTML:
+            htmlCollector_.appendLine(content);
+            break;
+            
+        case Origin::OriginType::STYLE:
+            cssCollector_.appendLine(content);
+            break;
+            
+        case Origin::OriginType::JAVASCRIPT:
+            jsCollector_.appendLine(content);
+            break;
+    }
+}
+
+void WebGenerator::visitReference(const std::shared_ptr<Reference>& ref) {
+    // 检查是否是原始嵌入的引用
+    std::string refType = ref->getReferenceType();
+    std::string refName = ref->getReferenceName();
+    
+    if (refType == "@Html" || refType == "@Style" || refType == "@JavaScript") {
+        // 查找原始嵌入定义
+        auto origin = findOriginDefinition(refType, refName);
+        if (origin) {
+            // 生成原始内容
+            switch (origin->getOriginType()) {
+                case Origin::OriginType::HTML:
+                    htmlCollector_.appendLine(origin->getContent());
+                    break;
+                    
+                case Origin::OriginType::STYLE:
+                    cssCollector_.appendLine(origin->getContent());
+                    break;
+                    
+                case Origin::OriginType::JAVASCRIPT:
+                    jsCollector_.appendLine(origin->getContent());
+                    break;
+            }
+        } else {
+            result_.warnings.push_back("Origin not found: " + refType + " " + refName);
+        }
+    } else {
+        // 处理其他类型的引用（样式、元素、变量等）
+        Generator::visit(ref);
+    }
+}
+
+std::string WebGenerator::generateOriginKey(Origin::OriginType type, const std::string& name) {
+    switch (type) {
+        case Origin::OriginType::HTML:
+            return "@Html " + name;
+        case Origin::OriginType::STYLE:
+            return "@Style " + name;
+        case Origin::OriginType::JAVASCRIPT:
+            return "@JavaScript " + name;
+        default:
+            return name;
+    }
+}
+
+std::shared_ptr<Origin> WebGenerator::findOriginDefinition(const std::string& type, const std::string& name) {
+    std::string key;
+    
+    if (type == "@Html") {
+        key = "@Html " + name;
+    } else if (type == "@Style") {
+        key = "@Style " + name;
+    } else if (type == "@JavaScript") {
+        key = "@JavaScript " + name;
+    } else {
+        return nullptr;
+    }
+    
+    auto it = originDefinitions_.find(key);
+    if (it != originDefinitions_.end()) {
+        return it->second;
+    }
+    
+    return nullptr;
+}
+
+// 辅助函数：去除首尾空格
+std::string WebGenerator::trim(const std::string& str) {
+    size_t first = str.find_first_not_of(" \t\n\r");
+    if (first == std::string::npos) return "";
+    
+    size_t last = str.find_last_not_of(" \t\n\r");
+    return str.substr(first, (last - first + 1));
 }
 
 } // namespace chtl

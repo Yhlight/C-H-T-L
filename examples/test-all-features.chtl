@@ -1,0 +1,143 @@
+// 测试配置、注释、原始嵌入等功能
+
+-- 这是一个生成器识别的注释，会输出到HTML中
+
+[Configuration] {
+    DEBUG_MODE = true;
+    INDEX_INITIAL_COUNT = 1;
+    DISABLE_NAME_GROUP = false;
+    
+    [Name] {
+        // 自定义关键字别名
+        CUSTOM_STYLE = [@Style, @样式, @CSS];
+        TEMPLATE_ELEMENT = [@Element, @组件];
+        KEYWORD_TEXT = [text, 文本];
+        OPTION_COUNT = 3;
+    }
+}
+
+-- 测试原始嵌入命名功能
+
+// 定义命名的CSS代码
+[Origin] @Style reset {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+}
+
+// 定义命名的JavaScript代码
+[Origin] @JavaScript utils {
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+}
+
+// 定义命名的HTML片段
+[Origin] @Html analytics {
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+}
+
+-- 测试使用别名关键字
+
+// 使用别名定义样式
+[Template] @样式 基础文本样式 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+// 使用别名定义元素
+[Template] @组件 卡片 {
+    div {
+        class: "card";
+        style {
+            @样式 基础文本样式;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        h3 {
+            // 使用别名的text
+            文本 { "卡片标题" }
+        }
+        
+        p {
+            文本 { "这是卡片内容" }
+        }
+    }
+}
+
+html {
+    head {
+        title {
+            text { "CHTL All Features Test" }
+        }
+        
+        -- 引用命名的原始嵌入
+        [Origin] @Style reset;  // 引用reset样式
+        
+        style {
+            // 额外的样式
+            body {
+                padding: 40px;
+                background-color: #f5f5f5;
+            }
+        }
+    }
+    
+    body {
+        -- 页面主要内容开始
+        
+        h1 {
+            text { "CHTL功能测试" }
+            style {
+                margin-bottom: 30px;
+                color: #2c3e50;
+            }
+        }
+        
+        -- 测试自定义元素
+        @组件 卡片;
+        
+        -- 测试约束和变量组
+        section {
+            except span;  // 禁止使用span
+            
+            div {
+                class: "demo";
+                p {
+                    text { "这是允许的段落" }
+                }
+                
+                // 这会被跳过
+                span {
+                    text { "这不应该出现" }
+                }
+            }
+        }
+        
+        -- 引用JavaScript工具函数
+        script {
+            // 引用命名的JavaScript
+            [Origin] @JavaScript utils;
+            
+            // 使用工具函数
+            const searchInput = document.querySelector('#search');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(function(e) {
+                    console.log('Search:', e.target.value);
+                }, 300));
+            }
+        }
+        
+        -- 引用分析代码
+        [Origin] @Html analytics;
+    }
+}

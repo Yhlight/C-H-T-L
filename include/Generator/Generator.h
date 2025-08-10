@@ -4,6 +4,7 @@
 #include "Node/Node.h"
 #include "Node/Element.h"
 #include "Node/Text.h"
+#include "Node/Comment.h"
 #include "Node/Custom.h"
 #include "Node/Template.h"
 #include "Node/Style.h"
@@ -13,14 +14,20 @@
 #include "Node/Config.h"
 #include "Node/Namespace.h"
 #include "Node/Operate.h"
+#include "Node/Origin.h"
+#include "Node/Reference.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <sstream>
 #include "Runtime/ChtlJsRuntime.h"
+#include "Generator/ConfigManager.h"
 
 namespace chtl {
+
+// 前向声明
+class ChtlJsRuntime;
 
 // 生成选项
 struct GeneratorOptions {
@@ -105,6 +112,9 @@ protected:
     CodeCollector cssCollector_;
     CodeCollector jsCollector_;
     
+    // 配置管理器
+    std::unique_ptr<ConfigManager> configManager_;
+    
     // 上下文信息
     std::string currentScope_;                     // 当前作用域
     std::vector<std::string> scopeStack_;          // 作用域栈
@@ -115,6 +125,7 @@ protected:
     std::unique_ptr<ChtlJsRuntime> jsRuntime_;
     
     // 继承处理方法
+    void scanConfiguration(const std::shared_ptr<Node>& node);
     void collectDefinitions(const std::shared_ptr<Node>& node);
     void resolveInheritance(std::shared_ptr<Node> node);
     void mergeStyleInheritance(std::shared_ptr<Node> target, const std::string& sourceName);
@@ -146,8 +157,14 @@ protected:
     void visitCustom(const std::shared_ptr<Custom>& custom) override;
     void visitStyle(const std::shared_ptr<Style>& style) override;
     void visitScript(const std::shared_ptr<Script>& script) override;
+    void visitComment(const std::shared_ptr<Comment>& comment) override;
+    void visitOrigin(const std::shared_ptr<Origin>& origin) override;
+    void visitReference(const std::shared_ptr<Reference>& ref) override;
     
 private:
+    // 原始嵌入定义存储
+    std::unordered_map<std::string, std::shared_ptr<Origin>> originDefinitions_;
+    
     std::string generateHTMLDocument();
     void injectRuntimeCode();
     void processCustomComponent(const std::shared_ptr<Custom>& instance, 
@@ -170,6 +187,13 @@ private:
     std::string findVarValue(const std::string& varGroupName, const std::string& propertyName);
     void processStyleContent(const std::shared_ptr<Style>& style);
     std::string expandVarGroup(const std::string& varGroupName);
+    
+    // 原始嵌入处理
+    std::string generateOriginKey(Origin::OriginType type, const std::string& name);
+    std::shared_ptr<Origin> findOriginDefinition(const std::string& type, const std::string& name);
+    
+    // 工具函数
+    std::string trim(const std::string& str);
 };
 
 // React平台生成器

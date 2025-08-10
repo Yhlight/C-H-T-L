@@ -36,15 +36,21 @@ std::shared_ptr<Node> StandardParser::parse() {
     currentToken_ = getNextToken();
     
     try {
+        std::cout << "[DEBUG] parse: starting main loop\n";
         while (!isAtEnd()) {
             skipWhitespaceAndComments();
             if (isAtEnd()) break;
             
+            std::cout << "[DEBUG] parse: calling parseTopLevel\n";
             auto node = parseTopLevel();
             if (node) {
+                std::cout << "[DEBUG] parse: got node, adding to root\n";
                 root->addChild(node);
+            } else {
+                std::cout << "[DEBUG] parse: parseTopLevel returned null\n";
             }
         }
+        std::cout << "[DEBUG] parse: finished main loop\n";
     } catch (const std::exception& e) {
         addError("Parse error: " + std::string(e.what()));
     }
@@ -53,7 +59,45 @@ std::shared_ptr<Node> StandardParser::parse() {
 }
 
 std::shared_ptr<Node> StandardParser::parseTopLevel() {
-    // 检查特殊标记
+    std::cout << "[DEBUG] parseTopLevel: currentToken type=" << static_cast<int>(currentToken_.type) 
+              << " value='" << currentToken_.value << "'\n";
+    
+    // 检查特殊标记token（词法分析器已经识别为完整token）
+    if (currentToken_.type == TokenType::CUSTOM) {
+        advance();
+        return parseCustom();
+    }
+    if (currentToken_.type == TokenType::TEMPLATE) {
+        advance();
+        return parseTemplate();
+    }
+    if (currentToken_.type == TokenType::ORIGIN) {
+        advance();
+        return parseOrigin();
+    }
+    if (currentToken_.type == TokenType::CONFIGURATION) {
+        advance();
+        return parseConfiguration();
+    }
+    if (currentToken_.type == TokenType::IMPORT) {
+        std::cout << "[DEBUG] Found IMPORT token\n";
+        advance();
+        return parseImport();
+    }
+    if (currentToken_.type == TokenType::NAMESPACE_KW) {
+        advance();
+        return parseNamespace();
+    }
+    if (currentToken_.type == TokenType::INFO) {
+        advance();
+        return parseInfo();
+    }
+    if (currentToken_.type == TokenType::EXPORT) {
+        advance();
+        return parseExport();
+    }
+    
+    // 检查特殊标记（以[开头）- 备用方案
     if (currentToken_.type == TokenType::LEFT_BRACKET) {
         return parseSpecialBlock();
     }
@@ -1277,6 +1321,8 @@ std::shared_ptr<Node> StandardParser::parseImportStatement() {
 std::shared_ptr<Node> StandardParser::parseImport() {
     // [Import]已经被消费
     
+    std::cout << "[DEBUG] parseImport called\n";
+    
     auto importNode = std::make_shared<Import>();
     
     // 解析导入类型
@@ -1328,16 +1374,39 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     // from子句
     consume(TokenType::FROM, "Expected 'from'");
     
-    // 路径（支持.代替/）
+    // 路径（支持字符串或标识符序列）
     std::string path;
-    while (!check(TokenType::AS) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
-        auto token = advance();
-        if (token.type == TokenType::DOT) {
-            path += "/";
-        } else {
-            path += token.value;
+    
+    if (check(TokenType::STRING_LITERAL)) {
+        // 字符串路径
+        path = advance().value;
+        // 移除引号
+        if (path.size() >= 2 && path.front() == '"' && path.back() == '"') {
+            path = path.substr(1, path.size() - 2);
+        }
+    } else {
+        // 标识符序列（支持.代替/）
+        while (!check(TokenType::AS) && !check(TokenType::SEMICOLON) && !isAtEnd()) {
+            if (match(TokenType::DOT)) {
+                path += "/";
+            } else if (check(TokenType::IDENTIFIER)) {
+                if (!path.empty() && path.back() != '/') {
+                    path += "/";
+                }
+                path += advance().value;
+            } else {
+                break;
+            }
         }
     }
+    
+    // 处理路径中的.表示/
+    for (size_t i = 0; i < path.length(); ++i) {
+        if (path[i] == '.') {
+            path[i] = '/';
+        }
+    }
+    
     importNode->setPath(path);
     
     // as子句（可选）

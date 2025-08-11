@@ -1,0 +1,72 @@
+[Import] @CJmod Reactive from "builtin:reactive";
+
+div {
+    h1 { "Reactive Counter Example" }
+    
+    p {
+        "Count: "
+        span #count-display { "0" }
+    }
+    
+    p {
+        "Doubled: "
+        span #doubled-display { "0" }
+    }
+    
+    button #increment { "Increment" }
+    button #decrement { "Decrement" }
+    
+    script {
+        // 使用 CJmod 响应式语法
+        count := 0;
+        doubled => count.value * 2;
+        
+        // 监听变化
+        watch count {
+            {{#count-display}}.textContent = count.value;
+        }
+        
+        watch doubled {
+            {{#doubled-display}}.textContent = doubled.value;
+        }
+        
+        // 按钮事件
+        {{#increment}}->onclick = () => {
+            count = count.value + 1;  // 会被转换为 count.value = count.value + 1
+        };
+        
+        {{#decrement}}->onclick = () => {
+            count = count.value - 1;
+        };
+    }
+}
+
+// 测试样式
+[Style] {
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    button {
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+    
+    button:hover {
+        background: #0056b3;
+    }
+    
+    #count-display, #doubled-display {
+        font-weight: bold;
+        color: #007bff;
+        font-size: 1.2em;
+    }
+}

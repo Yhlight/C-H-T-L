@@ -1623,7 +1623,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     } else if (checkIdentifier("@CJmod")) {
         advance(); // 消费 @CJmod
         importType = Import::ImportType::CJMOD;
-        // CJmod 名称直接在 @CJmod 后面
+        // CJmod 名称在 @CJmod 后面
         if (check(TokenType::IDENTIFIER)) {
             importName = advance().value;
         } else {
@@ -1670,14 +1670,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         }
     }
     
-    // CJmod 不需要 'from' 关键字
-    if (importType == Import::ImportType::CJMOD) {
-        // CJmod 直接结束，可选分号
-        match(TokenType::SEMICOLON);
-        return importNode;
-    }
-    
-    // 其他导入类型期望 'from' 关键字
+    // 期望 'from' 关键字
     if (!matchIdentifier("from")) {
         addError("Expected 'from' in import statement");
         skipToNextStatement();

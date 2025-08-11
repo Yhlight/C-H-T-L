@@ -9,6 +9,7 @@
 // #include "Node/Reference.h" // Not implemented yet
 #include "Node/Origin.h" // Added for Origin node
 #include "Runtime/ChtlJsRuntime.h"
+#include "CJmod/CJmodCorrect.h"
 #include <regex>
 #include <algorithm>
 #include <set>
@@ -27,6 +28,11 @@ GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
     
     // 注入运行时代码
     injectRuntimeCode();
+    
+    // 注入 CJmod 运行时（如果有）
+    if (currentContext_ && currentContext_->hasCJmodImports()) {
+        injectCJmodRuntime();
+    }
     
     return result_;
 }
@@ -883,6 +889,10 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
         // 全局脚本
         std::string wrappedCode = script->generateWrappedCode();
         if (!wrappedCode.empty()) {
+            // 应用 CJmod 处理
+            if (currentContext_ && currentContext_->hasCJmodImports()) {
+                wrappedCode = processJavaScriptWithCJmod(wrappedCode);
+            }
             jsCollector_.appendLine(wrappedCode);
         }
     }
@@ -1396,6 +1406,39 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     } else if (type == "@Style") {
         // 样式引用直接访问
         visit(definition);
+    }
+}
+
+std::string WebGenerator::processJavaScriptWithCJmod(const std::string& jsCode) {
+    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+        return jsCode;
+    }
+    
+    // 获取激活的 CJmod 模块列表
+    std::set<std::string> activeModules = currentContext_->getCJmodImports();
+    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
+    
+    // 使用 CJmod 处理器处理 JavaScript 代码
+    auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    return processor.processJavaScript(jsCode, moduleVector);
+}
+
+void WebGenerator::injectCJmodRuntime() {
+    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+        return;
+    }
+    
+    // 获取激活的 CJmod 模块列表
+    std::set<std::string> activeModules = currentContext_->getCJmodImports();
+    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
+    
+    // 生成 CJmod 运行时代码
+    auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    std::string runtime = processor.getCombinedRuntime(moduleVector);
+    
+    if (!runtime.empty()) {
+        // 在用户代码之前注入 CJmod 运行时
+        result_.js = runtime + "\n\n" + result_.js;
     }
 }
 

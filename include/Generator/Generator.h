@@ -69,6 +69,9 @@ public:
     void setOptions(const GeneratorOptions& options) { options_ = options; }
     const GeneratorOptions& getOptions() const { return options_; }
     
+    // 设置上下文
+    void setContext(std::shared_ptr<ChtlContext> context) { currentContext_ = context; }
+    
 protected:
     // 访问者方法
     virtual void visit(const std::shared_ptr<Node>& node);
@@ -123,6 +126,9 @@ protected:
     
     // 运行时集成
     ChtlJsRuntime* jsRuntime_;
+    
+    // 当前编译上下文
+    std::shared_ptr<ChtlContext> currentContext_;
     
     // 继承处理方法
     void scanConfiguration(const std::shared_ptr<Node>& node);
@@ -206,6 +212,10 @@ private:
     
     // 工具函数
     std::string trim(const std::string& str);
+    
+    // CJmod 集成
+    std::string processJavaScriptWithCJmod(const std::string& jsCode);
+    void injectCJmodRuntime();
 };
 
 // React平台生成器

@@ -1,4 +1,6 @@
 #include "CJmod/CJmodLoader.h"
+#include "CJmod/CJmodCorrect.h"
+#include "CJmod/CJmodSubmodule.h"
 #include "Loader/ImportResolver.h"
 #include <iostream>
 #include <fstream>

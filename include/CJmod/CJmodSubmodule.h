@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include "CJmod/CJmodCorrect.h"
 
@@ -94,8 +95,8 @@ public:
         return injections;
     }
     
-    std::unordered_map<std::string, std::string> getOverrides() const override {
-        auto overrides = mainModule_->getOverrides();
+    std::map<std::string, std::string> getOverrides() const override {
+        std::map<std::string, std::string> overrides = mainModule_->getOverrides();
         
         // 子模块的覆盖可能会覆盖主模块的
         for (const auto& [name, submodule] : submodules_) {
@@ -129,7 +130,7 @@ public:
     // 子类需要实现具体的规则和注入
     virtual std::vector<ScanCutRule> getScanCutRules() const override = 0;
     virtual std::vector<RuntimeInjection> getRuntimeInjections() const override = 0;
-    virtual std::unordered_map<std::string, std::string> getOverrides() const override {
+    virtual std::map<std::string, std::string> getOverrides() const override {
         return {};
     }
 };

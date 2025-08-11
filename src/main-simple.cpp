@@ -3,7 +3,7 @@
 #include <memory>
 #include "Lexer/StandardLexer.h"
 #include "Parser/StandardParser.h"
-#include "Generator/WebGenerator.h"
+#include "Generator/HtmlGenerator.h"
 #include "Context/ChtlContext.h"
 
 using namespace chtl;
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
         }
         
         // 生成代码
-        WebGenerator generator;
+        HtmlGenerator generator;
         generator.setContext(context);
         auto result = generator.generate(ast);
         

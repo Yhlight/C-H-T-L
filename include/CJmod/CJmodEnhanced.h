@@ -123,7 +123,7 @@ public:
     
 private:
     std::string cachedCode_;
-    std::vector<RuleMatch> cachedMatches_;
+    std::vector<SinglePassProcessor::RuleMatch> cachedMatches_;
 };
 
 // 8. 并行处理器（用于大文件）

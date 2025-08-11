@@ -1,0 +1,35 @@
+// Test CJmod import and usage
+[Import] @CJmod from "reactive";
+[Import] @CJmod from "animation";
+
+// Test reactive syntax from CJmod
+div
+{
+    id: "counter";
+    @reactive {
+        count: 0
+    }
+    
+    button {
+        @click: "count++"
+        text { "Click me: {{ count }}" }
+    }
+}
+
+// Test animation syntax from CJmod  
+div
+{
+    class: "animated-box";
+    style {
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+    
+    @animate {
+        duration: 1000
+        from { transform: "scale(1)" }
+        to { transform: "scale(1.5)" }
+        loop: infinite
+    }
+}

@@ -1,0 +1,60 @@
+// Test corrected delete syntax
+[Template] @Style WhiteText
+{
+    color: white;
+    font-size: 16px;
+    line-height: 1.6;
+    border: 1px black solid;
+}
+
+[Custom] @Style YellowText
+{
+    @Style WhiteText
+    {
+        delete line-height, border;
+    }
+    color: yellow;
+}
+
+div
+{
+    style
+    {
+        @Style YellowText
+        {
+            delete color;
+        }
+    }
+}
+
+// Test delete for elements
+[Custom] @Element Box
+{
+    div { id: "box1"; }
+    div { id: "box2"; }
+    span { }
+}
+
+body
+{
+    @Element Box
+    {
+        delete span;
+        delete div[1];
+    }
+}
+
+// Test delete for references
+[Custom] @Element Container
+{
+    @Element Box;
+    text { "content" }
+}
+
+section
+{
+    [Custom] @Element Container
+    {
+        delete @Element Box;
+    }
+}

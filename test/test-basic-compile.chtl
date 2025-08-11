@@ -1,0 +1,40 @@
+// Basic CHTL compilation test
+[Template] @Style MainStyle
+{
+    color: #333;
+    font-size: 16px;
+}
+
+[Custom] @Element Card
+{
+    div
+    {
+        class: "card";
+        style
+        {
+            @Style MainStyle;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        h2 { text { "Card Title" } }
+        p { text { "Card content goes here" } }
+    }
+}
+
+body
+{
+    @Element Card;
+    
+    div
+    {
+        id: "footer";
+        style
+        {
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        text { "© 2024 CHTL Test" }
+    }
+}

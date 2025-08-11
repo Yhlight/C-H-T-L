@@ -1,0 +1,11 @@
+// Reactive CJmod module
+{
+    "name": "reactive",
+    "version": "1.0.0",
+    "transforms": {
+        ":=": {
+            "pattern": "(\\w+)\\s*:=\\s*(.+)",
+            "replacement": "const $1 = reactive($2)"
+        }
+    }
+}

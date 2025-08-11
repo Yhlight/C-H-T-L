@@ -1,0 +1,7 @@
+// UI Module (chtl format - should not be used)
+[Template] @Element Button {
+    button {
+        class: "ui-button-chtl";
+        text { "CHTL Button" }
+    }
+}

@@ -1360,27 +1360,22 @@ std::string StandardParser::parseDeleteTarget() {
 void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
     // [Delete]已经被消费
     
-    // 解析删除列表
+    // 解析删除列表 - 必须有括号
+    consume(TokenType::LEFT_PAREN, "Expected '(' after [Delete]");
+    
     std::vector<std::string> deleteItems;
     
-    if (match(TokenType::LEFT_PAREN)) {
-        // [Delete] (item1, item2, ...)
-        while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
-            std::string item = parseDeleteTarget();
-            deleteItems.push_back(item);
-            
-            if (!match(TokenType::COMMA)) {
-                break;
-            }
+    // [Delete] (item1, item2, ...)
+    while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+        std::string item = parseDeleteTarget();
+        deleteItems.push_back(item);
+        
+        if (!match(TokenType::COMMA)) {
+            break;
         }
-        consume(TokenType::RIGHT_PAREN, "Expected ')'");
-    } else {
-        // 解析删除项（支持逗号分隔）
-        do {
-            std::string item = parseDeleteTarget();
-            deleteItems.push_back(item);
-        } while (match(TokenType::COMMA));
     }
+    
+    consume(TokenType::RIGHT_PAREN, "Expected ')' to close [Delete]");
     
     // 创建Delete节点
     for (const auto& item : deleteItems) {

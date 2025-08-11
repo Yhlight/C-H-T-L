@@ -14,7 +14,7 @@
 #include <set>
 #include <variant>
 #include <tuple>
-#include <iostream>
+
 
 namespace chtl {
 
@@ -207,7 +207,7 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 
     // 特殊处理引用节点
     if (tag == "reference") {
-        std::cout << "DEBUG: Found reference node" << std::endl;
+
         processReference(element);
         return;
     }
@@ -1017,7 +1017,7 @@ void WebGenerator::mergeElement(std::shared_ptr<Node> target,
 
 // 处理引用节点
 void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
-    std::cout << "DEBUG processReference called" << std::endl;
+
     auto attributes = refNode->getAttributes();
     
     // 获取引用信息
@@ -1073,13 +1073,13 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     
     if (!definition) {
         // 未找到定义，生成警告注释
-        std::cout << "DEBUG: Definition not found for " << name << std::endl;
+
         htmlCollector_.append("<!-- Warning: Component '" + name + 
             (kind.empty() ? "" : " [" + kind + "]") + "' not found -->");
         return;
     }
     
-    std::cout << "DEBUG: Found definition for " << name << std::endl;
+
     
         // 处理组件实例（对于元素引用）
     if (type == "@Element") {
@@ -1088,6 +1088,7 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         
         // 应用实例修改（如果有特例化内容）
         if (!refNode->getChildren().empty()) {
+
             applyReferenceModifications(cloned, refNode);
         }
         

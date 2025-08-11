@@ -8,7 +8,7 @@
 #include "Node/Template.h"
 #include "Node/Custom.h"
 #include "Node/Style.h"
-#include <iostream>
+
 #include "Node/Config.h"
 #include "Node/Import.h"
 #include "Node/Namespace.h"
@@ -48,14 +48,7 @@ std::shared_ptr<Node> StandardParser::parse() {
             auto node = parseTopLevel();
 
             if (node) {
-                std::cout << "DEBUG: Adding node to root" << std::endl;
-                if (node->getType() == NodeType::ELEMENT) {
-                    auto elem = std::static_pointer_cast<Element>(node);
-                    std::cout << "  Element tag: " << elem->getTagName() << std::endl;
-                } else if (node->getType() == NodeType::CUSTOM) {
-                    auto custom = std::static_pointer_cast<Custom>(node);
-                    std::cout << "  Custom name: " << custom->getCustomName() << std::endl;
-                }
+
                 root->addChild(node);
             }
         }
@@ -138,13 +131,11 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     if (currentToken_.type == TokenType::AT_ELEMENT || 
         currentToken_.type == TokenType::AT_STYLE || 
         currentToken_.type == TokenType::AT_VAR) {
-
         return parseReference();
     }
     
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
-
         try {
             return parseNode();  // parseNode 会处理元素
         } catch (const std::exception& e) {
@@ -201,6 +192,7 @@ std::shared_ptr<Node> StandardParser::parseSpecialBlock() {
         }
         
         consume(TokenType::SEMICOLON, "Expected ';'");
+
         return refNode;
     }
     
@@ -1149,7 +1141,7 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     auto typeToken = advance(); // @Style, @Element, or @Var
     auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
     
-    std::cout << "DEBUG parseReference: type=" << typeToken.value << ", name=" << nameToken.value << std::endl;
+
     
     auto refNode = std::make_shared<Element>("reference");
     refNode->setAttribute("type", typeToken.value);
@@ -1157,7 +1149,7 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     
     // 检查是否有特例化块
     if (check(TokenType::LEFT_BRACE)) {
-        std::cout << "DEBUG parseReference: Has specialization block" << std::endl;
+
         consume(TokenType::LEFT_BRACE, "Expected '{'");
         parseSpecialization(refNode);
         consume(TokenType::RIGHT_BRACE, "Expected '}'");
@@ -1333,9 +1325,25 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
         
         // 检查是否有索引
         if (match(TokenType::LEFT_BRACKET)) {
-            auto indexToken = consume(TokenType::NUMBER, "Expected index");
-            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-            item += "[" + indexToken.value + "]";
+            // 尝试解析索引
+            if (currentToken_.type == TokenType::NUMBER) {
+                auto indexToken = advance();
+                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+                item += "[" + indexToken.value + "]";
+            } else if (currentToken_.type == TokenType::IDENTIFIER && 
+                      (currentToken_.value == "0" || currentToken_.value == "1" || 
+                       currentToken_.value == "2" || currentToken_.value == "3" ||
+                       currentToken_.value == "4" || currentToken_.value == "5" ||
+                       currentToken_.value == "6" || currentToken_.value == "7" ||
+                       currentToken_.value == "8" || currentToken_.value == "9")) {
+                // 处理数字被误识别为标识符的情况
+                auto indexToken = advance();
+                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+                item += "[" + indexToken.value + "]";
+            } else {
+                // 如果不是数字，报错
+                throw std::runtime_error("Expected numeric index after '['");
+            }
         }
         
         deleteItems.push_back(item);

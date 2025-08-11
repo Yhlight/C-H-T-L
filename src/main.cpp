@@ -88,19 +88,22 @@ int main(int argc, char* argv[]) {
         }
     }
     
-    if (inputFile.empty()) {
-        std::cerr << "Error: No input file specified\n";
-        printUsage(argv[0]);
-        return 1;
-    }
-    
     // 如果是打包CMOD模式
     if (!packCmodDir.empty()) {
         chtl::CmodPackOptions packOptions;
         packOptions.verbose = true;
         
         chtl::CmodPacker packer(packOptions);
-        auto result = packer.pack(packCmodDir);
+        
+        // 构建输出文件路径
+        std::filesystem::path outputFile;
+        if (!options.outputPath.empty()) {
+            std::filesystem::path outputDir(options.outputPath);
+            std::filesystem::path modulePath(packCmodDir);
+            outputFile = outputDir / (modulePath.filename().string() + ".cmod");
+        }
+        
+        auto result = packer.pack(packCmodDir, outputFile);
         
         if (result.success) {
             std::cout << "Successfully created CMOD: " << result.outputFile << "\n";
@@ -112,6 +115,13 @@ int main(int argc, char* argv[]) {
         }
         
         return 0;
+    }
+    
+    // 检查输入文件（只有在非pack-cmod模式下才需要）
+    if (inputFile.empty()) {
+        std::cerr << "Error: No input file specified\n";
+        printUsage(argv[0]);
+        return 1;
     }
     
     // 读取输入文件

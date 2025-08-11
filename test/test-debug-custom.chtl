@@ -1,0 +1,27 @@
+// Debug test for Custom element
+
+[Custom] @Element TestCard
+{
+    div
+    {
+        style
+        {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        
+        text
+        {
+            "Test Card Content"
+        }
+    }
+}
+
+// Direct usage
+@Element TestCard;
+
+// In body
+body
+{
+    @Element TestCard;
+}

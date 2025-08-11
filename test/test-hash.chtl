@@ -1,0 +1,13 @@
+// Test hash parsing
+
+div
+{
+    style
+    {
+        // First try with space
+        # myid
+        {
+            color: red;
+        }
+    }
+}

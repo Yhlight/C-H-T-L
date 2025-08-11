@@ -279,6 +279,28 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
                 }
                 inlineStyles += css;
             }
+            
+            // 处理样式节点的子节点（全局样式如.class, #id, &:hover）
+            for (const auto& styleChild : styleNode->getChildren()) {
+                if (styleChild->getType() == NodeType::STYLE) {
+                    auto globalStyle = std::static_pointer_cast<Style>(styleChild);
+                    if (globalStyle->isGlobal()) {
+                        // 收集全局样式
+                        std::string selector = globalStyle->getSelector();
+                        std::string content = globalStyle->getCssContent();
+                        if (!selector.empty() && !content.empty()) {
+                            // 处理变量组引用
+                            content = processVarReferences(content);
+                            cssCollector_.appendLine(selector + " {");
+                            cssCollector_.appendLine(content);
+                            cssCollector_.appendLine("}");
+                        }
+                    }
+                } else if (styleChild->getType() == NodeType::ELEMENT) {
+                    // 可能是引用节点，需要处理
+                    visit(styleChild);
+                }
+            }
         }
     }
     
@@ -361,6 +383,12 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
                 // 设置作用域ID
                 script->setScope(elementId);
             }
+            // Scripts 在后面单独处理，这里跳过
+            continue;
+        }
+        if (child->getType() == NodeType::STYLE) {
+            // Style 已经在前面处理过了，跳过
+            continue;
         }
         visit(child);
     }

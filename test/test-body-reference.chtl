@@ -1,0 +1,31 @@
+// Minimal test for body-level @Element reference
+
+[Custom] @Element SimpleCard
+{
+    div
+    {
+        text
+        {
+            "Simple Card"
+        }
+    }
+}
+
+// Top-level reference works
+@Element SimpleCard;
+
+// Body-level reference doesn't work
+body
+{
+    text
+    {
+        "Before Card"
+    }
+    
+    @Element SimpleCard;
+    
+    text
+    {
+        "After Card"
+    }
+}

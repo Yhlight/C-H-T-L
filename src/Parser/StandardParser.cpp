@@ -310,6 +310,11 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         else {
             auto child = parseNode();
             if (child) {
+                // 如果是style节点，设置为局部样式
+                if (child->getType() == NodeType::STYLE) {
+                    auto styleChild = std::static_pointer_cast<Style>(child);
+                    styleChild->setType(Style::StyleScope::LOCAL);
+                }
                 element->addChild(child);
             }
         }
@@ -441,7 +446,10 @@ std::shared_ptr<Node> StandardParser::parseStyleBlock() {
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
     auto styleNode = std::make_shared<Style>();
-    styleNode->setType(Style::StyleScope::LOCAL);
+    
+    // 顶层样式块默认是全局的，元素内的样式块是局部的
+    // 这里默认设置为全局，如果后续被添加到元素中会在元素处理时改变
+    styleNode->setType(Style::StyleScope::GLOBAL);
     
     parseStyleContent(styleNode);
     
@@ -748,21 +756,50 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     cssContent += propertyName.value + ": ";
     
     // 收集属性值直到分号
+    bool lastWasNumber = false;
     while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
         auto token = advance();
-        // 对于数字后面的单位，不添加空格
-        if (token.type == TokenType::NUMBER && 
-            !isAtEnd() && 
-            peek().type == TokenType::IDENTIFIER &&
-            (peek().value == "px" || peek().value == "em" || 
-             peek().value == "rem" || peek().value == "%")) {
-            cssContent += token.value;
-        } else {
-            cssContent += token.value;
-            if (!check(TokenType::SEMICOLON) && !isAtEnd()) {
-                cssContent += " ";
+        
+        // 检查是否需要在token之前添加空格
+        bool needSpace = false;
+        if (!cssContent.empty() && cssContent.back() != ' ' && cssContent.back() != ':') {
+            // 数字后面跟单位不需要空格
+            if (lastWasNumber && token.type == TokenType::IDENTIFIER &&
+                (token.value == "px" || token.value == "em" || 
+                 token.value == "rem" || token.value == "%" ||
+                 token.value == "vh" || token.value == "vw" ||
+                 token.value == "pt" || token.value == "cm" ||
+                 token.value == "mm" || token.value == "in" ||
+                 token.value == "pc" || token.value == "ex" ||
+                 token.value == "ch" || token.value == "deg" ||
+                 token.value == "rad" || token.value == "turn" ||
+                 token.value == "s" || token.value == "ms")) {
+                needSpace = false;
+            }
+            // 逗号后面需要空格
+            else if (cssContent.back() == ',') {
+                needSpace = true;
+            }
+            // 括号内不需要空格
+            else if (token.value == "(" || cssContent.back() == '(') {
+                needSpace = false;
+            }
+            // 右括号前不需要空格
+            else if (token.value == ")") {
+                needSpace = false;
+            }
+            // 其他情况根据token类型决定
+            else if (token.type != TokenType::COMMA && token.type != TokenType::SEMICOLON) {
+                needSpace = true;
             }
         }
+        
+        if (needSpace) {
+            cssContent += " ";
+        }
+        
+        cssContent += token.value;
+        lastWasNumber = (token.type == TokenType::NUMBER);
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");

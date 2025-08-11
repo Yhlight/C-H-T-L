@@ -327,15 +327,60 @@ std::shared_ptr<BasicState> ChtlState::handleAtPrefix(char ch) {
 }
 
 std::shared_ptr<BasicState> ChtlState::handleSpecialMarker(char ch) {
+    // 检查是否是预定义的特殊标记开始
+    if (buffer_.length() == 1 && ch != ']') {
+        // 检查第二个字符是否可能是特殊标记的一部分
+        std::string potentialMarker = buffer_ + ch;
+        bool couldBeSpecialMarker = false;
+        
+        // 检查是否可能是特殊标记的前缀
+        if (potentialMarker == "[C" || potentialMarker == "[T" || 
+            potentialMarker == "[S" || potentialMarker == "[O" ||
+            potentialMarker == "[I" || potentialMarker == "[N" ||
+            potentialMarker == "[E" || potentialMarker == "[D") {
+            couldBeSpecialMarker = true;
+        }
+        
+        if (!couldBeSpecialMarker) {
+            // 不是特殊标记，是普通的左括号
+            emitToken(TokenType::LEFT_BRACKET);
+            buffer_.clear();
+            subState_ = SubState::INITIAL;
+            return handleInitial(ch);  // 重新处理当前字符
+        }
+    }
+    
     buffer_ += ch;
     if (ch == ']') {
         // 特殊标记结束
         TokenType type = GlobalMap::getSpecialMarkerType(buffer_);
         if (type == TokenType::UNKNOWN) {
-            // 不是预定义的特殊标记，可能是数组索引
-            type = TokenType::LEFT_BRACKET; // 先发送左括号
-            emitToken(type);
-            // TODO: 处理括号内的内容
+            // 不是预定义的特殊标记，是数组索引
+            // 只发送左括号，内容已经被跳过了，需要重新处理
+            emitToken(TokenType::LEFT_BRACKET);
+            
+            // 提取括号内的内容
+            std::string content = buffer_.substr(1, buffer_.length() - 2);
+            if (!content.empty()) {
+                // 如果内容是数字，发送NUMBER token
+                bool isNumber = true;
+                for (char c : content) {
+                    if (!std::isdigit(c)) {
+                        isNumber = false;
+                        break;
+                    }
+                }
+                
+                if (isNumber) {
+                    buffer_ = content;
+                    emitToken(TokenType::NUMBER);
+                } else {
+                    // 其他内容作为标识符
+                    buffer_ = content;
+                    emitToken(TokenType::IDENTIFIER);
+                }
+            }
+            
             buffer_ = "]";
             emitTokenAndReset(TokenType::RIGHT_BRACKET);
         } else {

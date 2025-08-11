@@ -1181,7 +1181,10 @@ std::shared_ptr<Node> StandardParser::parseReference() {
         }
     }
     
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    // 分号对于带特例化的引用是可选的
+    if (check(TokenType::SEMICOLON)) {
+        advance();
+    }
     
     return refNode;
 }
@@ -1267,9 +1270,17 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
         
         if (check(TokenType::RIGHT_BRACE)) break;
         
+
+        
         // delete操作
         if (match(TokenType::DELETE_KW)) {
+
             parseDelete(refNode);
+            
+            // 消耗可选的分号
+            if (check(TokenType::SEMICOLON)) {
+                advance();
+            }
             continue;
         }
         
@@ -1290,6 +1301,13 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
             if (checkAttribute()) {
                 parseAttributes(refNode);
             }
+        }
+        
+        // 如果没有匹配任何模式，跳过当前token避免无限循环
+        if (!match(TokenType::DELETE_KW) && !checkAttribute() && 
+            currentToken_.type != TokenType::RIGHT_BRACE) {
+
+            advance();
         }
     }
 }
@@ -1325,25 +1343,9 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
         
         // 检查是否有索引
         if (match(TokenType::LEFT_BRACKET)) {
-            // 尝试解析索引
-            if (currentToken_.type == TokenType::NUMBER) {
-                auto indexToken = advance();
-                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-                item += "[" + indexToken.value + "]";
-            } else if (currentToken_.type == TokenType::IDENTIFIER && 
-                      (currentToken_.value == "0" || currentToken_.value == "1" || 
-                       currentToken_.value == "2" || currentToken_.value == "3" ||
-                       currentToken_.value == "4" || currentToken_.value == "5" ||
-                       currentToken_.value == "6" || currentToken_.value == "7" ||
-                       currentToken_.value == "8" || currentToken_.value == "9")) {
-                // 处理数字被误识别为标识符的情况
-                auto indexToken = advance();
-                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-                item += "[" + indexToken.value + "]";
-            } else {
-                // 如果不是数字，报错
-                throw std::runtime_error("Expected numeric index after '['");
-            }
+            auto indexToken = consume(TokenType::NUMBER, "Expected index");
+            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+            item += "[" + indexToken.value + "]";
         }
         
         deleteItems.push_back(item);

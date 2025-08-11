@@ -1,0 +1,35 @@
+[Custom] @Element DigitTest {
+    div {
+        span { text { "Span 0" } }
+        span { text { "Span 1" } }
+        span { text { "Span 2" } }
+        span { text { "Span 3" } }
+        span { text { "Span 4" } }
+        span { text { "Span 5" } }
+        span { text { "Span 6" } }
+        span { text { "Span 7" } }
+        span { text { "Span 8" } }
+        span { text { "Span 9" } }
+    }
+}
+
+// 测试删除每个数字索引
+body {
+    h2 { text { "删除偶数索引" } }
+    @Element DigitTest {
+        delete span[0];
+        delete span[2];
+        delete span[4];
+        delete span[6];
+        delete span[8];
+    }
+    
+    h2 { text { "删除奇数索引" } }
+    @Element DigitTest {
+        delete span[1];
+        delete span[3];
+        delete span[5];
+        delete span[7];
+        delete span[9];
+    }
+}

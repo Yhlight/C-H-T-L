@@ -1,0 +1,65 @@
+// 全面测试所有修复的功能
+
+[Custom] @Element ComplexList {
+    div {
+        class: "list-container";
+        ul {
+            li { text { "Item 0" } }
+            li { text { "Item 1" } }
+            li { text { "Item 2" } }
+            li { text { "Item 3" } }
+            li { text { "Item 4" } }
+            li { text { "Item 5" } }
+            li { text { "Item 6" } }
+            li { text { "Item 7" } }
+            li { text { "Item 8" } }
+            li { text { "Item 9" } }
+        }
+    }
+}
+
+// 测试各种数字的索引删除
+div {
+    h1 { text { "索引删除测试" } }
+    
+    // 删除索引 0
+    @Element ComplexList {
+        delete li[0];
+    }
+    
+    // 删除索引 5
+    @Element ComplexList {
+        delete li[5];
+    }
+    
+    // 删除多个索引
+    @Element ComplexList {
+        delete li[1];
+        delete li[3];
+        delete li[5];
+    }
+    
+    // 测试两位数索引
+    @Element ComplexList {
+        delete li[10];  // 应该无效，因为只有10个元素
+    }
+}
+
+// 测试嵌套的删除
+[Custom] @Element NestedComponent {
+    div {
+        div {
+            p { text { "Level 2 - P1" } }
+            div {
+                p { text { "Level 3 - P1" } }
+                p { text { "Level 3 - P2" } }
+            }
+            p { text { "Level 2 - P2" } }
+        }
+    }
+}
+
+@Element NestedComponent {
+    delete p[0];  // 删除第一个 p
+    delete div[0];  // 删除第一个内部 div
+}

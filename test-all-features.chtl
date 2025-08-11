@@ -1,0 +1,343 @@
+// CHTL 功能完整性测试
+// 测试所有主要功能是否正常工作
+
+// ========== 1. 导入测试 ==========
+
+// 标准库导入
+[Import] @Element Button from "std:ui/button";
+[Import] @Style Theme from "std:style/theme";
+[Import] @Var Colors from "std:style/colors";
+
+// 内置 CJmod 导入
+[Import] @CJmod reactive from "builtin:reactive";
+[Import] @CJmod animate from "builtin:animate";
+
+// 文件导入
+[Import] @Element Header from "./components/header.chtl";
+[Import] @Style Layout from "file:./styles/layout.chtl";
+
+// NPM 包导入（假设存在）
+[Import] @Element Card from "npm:@awesome/ui/card";
+
+// 相对路径导入
+[Import] @Var Config from "../config/app.chtl";
+
+// ========== 2. 配置测试 ==========
+[Configuration] AppConfig {
+    Language: zh-CN;
+    Theme: dark;
+    Version: 1.0.0;
+}
+
+// ========== 3. 命名空间测试 ==========
+[Namespace] MyApp {
+    // 在命名空间内定义模板
+    [Template] @Element Container {
+        div {
+            class: "container";
+            slot { name: "content"; }
+        }
+    }
+    
+    [Template] @Style BaseStyle {
+        .base {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}
+
+// ========== 4. 模板定义测试 ==========
+[Template] @Element TodoItem {
+    li {
+        class: "todo-item";
+        
+        input {
+            type: "checkbox";
+            bind: "completed";
+        }
+        
+        span {
+            class: "todo-text";
+            text { slot { name: "text"; } }
+        }
+        
+        button {
+            class: "delete-btn";
+            text { "删除" }
+        }
+    }
+}
+
+[Template] @Style TodoStyle {
+    .todo-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .todo-text {
+        flex: 1;
+        margin: 0 10px;
+    }
+}
+
+[Template] @Var AppColors {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+    danger: #dc3545;
+    warning: #ffc107;
+    info: #17a2b8;
+}
+
+// ========== 5. 自定义组件测试 ==========
+[Custom] @Element EnhancedButton {
+    inherit @Element Button;
+    
+    button {
+        // 局部样式块
+        style {
+            .enhanced-btn {
+                background: AppColors(primary);
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            
+            &:hover {
+                background: AppColors(primary = #0056b3);
+                transform: translateY(-2px);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }
+            
+            &:active {
+                transform: translateY(0);
+            }
+        }
+        
+        // 插槽
+        slot { 
+            name: "icon";
+            default: "";
+        }
+        
+        slot { 
+            name: "text";
+            default: "点击";
+        }
+        
+        // CHTL JS 脚本
+        script {
+            // 响应式计数器
+            clickCount := 0;
+            
+            // 事件处理
+            {{&}}->listen("click", (e) => {
+                clickCount.value++;
+                console.log(`按钮被点击了 ${clickCount.value} 次`);
+                
+                // 动画效果
+                {{&}}->animate({
+                    scale: [1, 1.1, 1],
+                    duration: 300
+                });
+            });
+        }
+    }
+}
+
+// ========== 6. 主应用 ==========
+html {
+    head {
+        title { text { "CHTL 功能测试" } }
+        meta { charset: "UTF-8"; }
+        
+        // 应用样式模板
+        @Style Theme;
+        @Style Layout;
+        @Style TodoStyle;
+    }
+    
+    body {
+        // 全局样式
+        style {
+            font-family: "Arial, sans-serif";
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        // 使用命名空间组件
+        @Element MyApp:Container {
+            // 头部
+            @Element Header {
+                title: "CHTL 功能演示";
+            }
+            
+            // 主内容区
+            main {
+                h1 { 
+                    text { "待办事项应用" }
+                    style {
+                        color: AppColors(primary);
+                        text-align: center;
+                    }
+                }
+                
+                // 输入区域
+                div {
+                    class: "input-area";
+                    style {
+                        .input-area {
+                            display: flex;
+                            margin-bottom: 20px;
+                        }
+                    }
+                    
+                    input {
+                        id: "new-todo";
+                        type: "text";
+                        placeholder: "添加新任务...";
+                        style {
+                            flex: 1;
+                            padding: 10px;
+                            font-size: 16px;
+                        }
+                        
+                        script {
+                            // 响应式输入
+                            newTodoText := "";
+                            {{&}}->bind("newTodoText");
+                        }
+                    }
+                    
+                    // 使用自定义按钮
+                    @Element EnhancedButton {
+                        icon: "➕";
+                        text: "添加";
+                        
+                        script {
+                            {{&}}->listen("click", () => {
+                                if (newTodoText.value.trim()) {
+                                    addTodo(newTodoText.value);
+                                    newTodoText.value = "";
+                                    {{#new-todo}}.focus();
+                                }
+                            });
+                        }
+                    }
+                }
+                
+                // 任务列表
+                ul {
+                    id: "todo-list";
+                    style {
+                        list-style: none;
+                        padding: 0;
+                        background: white;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+                    
+                    script {
+                        // 响应式任务数组
+                        todos := [];
+                        
+                        // 添加任务
+                        function addTodo(text) {
+                            todos.value = [...todos.value, {
+                                id: Date.now(),
+                                text: text,
+                                completed: false
+                            }];
+                        }
+                        
+                        // 删除任务
+                        function deleteTodo(id) {
+                            todos.value = todos.value.filter(t => t.id !== id);
+                        }
+                        
+                        // 切换完成状态
+                        function toggleTodo(id) {
+                            todos.value = todos.value.map(todo => 
+                                todo.id === id 
+                                    ? { ...todo, completed: !todo.completed }
+                                    : todo
+                            );
+                        }
+                        
+                        // 监听变化并渲染
+                        watch todos -> {
+                            renderTodos();
+                        };
+                        
+                        function renderTodos() {
+                            {{&}}.innerHTML = todos.value.map(todo => {
+                                // 使用模板字符串创建 TodoItem
+                                return `
+                                    <li class="todo-item">
+                                        <input 
+                                            type="checkbox" 
+                                            ${todo.completed ? 'checked' : ''}
+                                            onchange="toggleTodo(${todo.id})"
+                                        />
+                                        <span class="todo-text ${todo.completed ? 'completed' : ''}">
+                                            ${todo.text}
+                                        </span>
+                                        <button onclick="deleteTodo(${todo.id})">删除</button>
+                                    </li>
+                                `;
+                            }).join('');
+                        }
+                    }
+                }
+                
+                // 统计信息
+                div {
+                    class: "stats";
+                    style {
+                        .stats {
+                            margin-top: 20px;
+                            text-align: center;
+                            color: #666;
+                        }
+                    }
+                    
+                    script {
+                        // 计算属性
+                        totalCount => todos.value.length;
+                        completedCount => todos.value.filter(t => t.completed).length;
+                        
+                        // 更新统计
+                        watch todos -> {
+                            {{&}}.textContent = `总计: ${totalCount.value} | 已完成: ${completedCount.value}`;
+                        };
+                    }
+                }
+            }
+        }
+        
+        // 全局脚本
+        script {
+            // 初始化一些示例数据
+            addTodo("学习 CHTL 基础语法");
+            addTodo("掌握模板系统");
+            addTodo("使用 CJmod 扩展");
+            
+            console.log("CHTL 应用初始化完成！");
+        }
+    }
+}
+
+// ========== 7. 导出测试 ==========
+[Export] {
+    @Element TodoItem;
+    @Element EnhancedButton as SuperButton;
+    @Style TodoStyle;
+    @Var AppColors as DefaultColors;
+}

@@ -1,0 +1,453 @@
+#include "Loader/ImportResolver.h"
+#include <filesystem>
+#include <algorithm>
+#include <iostream>
+
+namespace fs = std::filesystem;
+
+namespace chtl {
+
+// 修复后的导入解析实现
+class ImportResolverFixed {
+public:
+    // 导入路径协议
+    enum class ImportProtocol {
+        STD,        // std: - 标准库
+        BUILTIN,    // builtin: - 内置模块
+        FILE,       // file: - 文件路径
+        NPM,        // npm: - npm 包
+        HTTP,       // http:// 或 https:// - 网络资源
+        RELATIVE,   // ./ 或 ../ - 相对路径
+        ABSOLUTE,   // / 开头 - 绝对路径
+        MODULE      // 无协议 - 模块名
+    };
+    
+    struct ResolveResult {
+        bool success = false;
+        std::string resolvedPath;
+        std::string errorMessage;
+        ImportProtocol protocol;
+        
+        // 额外信息
+        std::string moduleName;
+        std::string subPath;
+        bool isWildcard = false;
+        std::vector<std::string> wildcardResults;
+    };
+    
+    // 解析导入路径
+    static ResolveResult resolve(const std::string& importPath, 
+                               Import::ImportType type,
+                               const std::string& currentFilePath) {
+        ResolveResult result;
+        
+        // 解析协议
+        auto [protocol, path] = parseProtocol(importPath);
+        result.protocol = protocol;
+        
+        switch (protocol) {
+            case ImportProtocol::STD:
+                return resolveStdImport(path, type);
+                
+            case ImportProtocol::BUILTIN:
+                return resolveBuiltinImport(path, type);
+                
+            case ImportProtocol::FILE:
+                return resolveFileImport(path, type, currentFilePath);
+                
+            case ImportProtocol::NPM:
+                return resolveNpmImport(path, type);
+                
+            case ImportProtocol::HTTP:
+                return resolveHttpImport(importPath, type);
+                
+            case ImportProtocol::RELATIVE:
+                return resolveRelativeImport(path, type, currentFilePath);
+                
+            case ImportProtocol::ABSOLUTE:
+                return resolveAbsoluteImport(path, type);
+                
+            case ImportProtocol::MODULE:
+                return resolveModuleImport(path, type, currentFilePath);
+        }
+        
+        result.errorMessage = "Unknown import protocol";
+        return result;
+    }
+    
+private:
+    // 解析协议前缀
+    static std::pair<ImportProtocol, std::string> parseProtocol(const std::string& path) {
+        // std: 标准库
+        if (path.find("std:") == 0) {
+            return {ImportProtocol::STD, path.substr(4)};
+        }
+        
+        // builtin: 内置模块
+        if (path.find("builtin:") == 0) {
+            return {ImportProtocol::BUILTIN, path.substr(8)};
+        }
+        
+        // file: 文件路径
+        if (path.find("file:") == 0) {
+            return {ImportProtocol::FILE, path.substr(5)};
+        }
+        
+        // npm: npm 包
+        if (path.find("npm:") == 0) {
+            return {ImportProtocol::NPM, path.substr(4)};
+        }
+        
+        // http:// 或 https://
+        if (path.find("http://") == 0 || path.find("https://") == 0) {
+            return {ImportProtocol::HTTP, path};
+        }
+        
+        // 相对路径
+        if (path.find("./") == 0 || path.find("../") == 0) {
+            return {ImportProtocol::RELATIVE, path};
+        }
+        
+        // 绝对路径
+        if (path.find("/") == 0 || (path.length() > 2 && path[1] == ':')) {
+            return {ImportProtocol::ABSOLUTE, path};
+        }
+        
+        // 默认为模块名
+        return {ImportProtocol::MODULE, path};
+    }
+    
+    // 解析标准库导入 (std:ui/button)
+    static ResolveResult resolveStdImport(const std::string& path, Import::ImportType type) {
+        ResolveResult result;
+        
+        // 分解路径 (ui/button -> ui 和 button)
+        size_t slashPos = path.find('/');
+        std::string category, module;
+        
+        if (slashPos != std::string::npos) {
+            category = path.substr(0, slashPos);
+            module = path.substr(slashPos + 1);
+        } else {
+            category = "core";  // 默认类别
+            module = path;
+        }
+        
+        result.moduleName = module;
+        result.subPath = category;
+        
+        // 获取 CHTL 安装目录
+        fs::path chtlRoot = getChtlRootPath();
+        fs::path stdPath = chtlRoot / "modules" / "std" / category;
+        
+        // 查找模块文件
+        std::vector<std::string> extensions = getExtensionsForType(type);
+        
+        for (const auto& ext : extensions) {
+            fs::path filePath = stdPath / (module + ext);
+            if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+                result.success = true;
+                result.resolvedPath = filePath.string();
+                return result;
+            }
+        }
+        
+        // 检查是否是目录（包含 index 文件）
+        fs::path moduleDir = stdPath / module;
+        if (fs::exists(moduleDir) && fs::is_directory(moduleDir)) {
+            for (const auto& ext : extensions) {
+                fs::path indexPath = moduleDir / ("index" + ext);
+                if (fs::exists(indexPath) && fs::is_regular_file(indexPath)) {
+                    result.success = true;
+                    result.resolvedPath = indexPath.string();
+                    return result;
+                }
+            }
+        }
+        
+        result.errorMessage = "Standard library module not found: std:" + path;
+        return result;
+    }
+    
+    // 解析内置模块导入 (builtin:reactive)
+    static ResolveResult resolveBuiltinImport(const std::string& path, Import::ImportType type) {
+        ResolveResult result;
+        
+        // 内置 CJmod 模块列表
+        static const std::unordered_set<std::string> builtinModules = {
+            "reactive",
+            "animate", 
+            "delegate",
+            "timetravel",
+            "pipeline",
+            "async-flow",
+            "query",
+            "validate"
+        };
+        
+        if (type != Import::ImportType::CJMOD) {
+            result.errorMessage = "builtin: protocol only supports CJmod imports";
+            return result;
+        }
+        
+        if (builtinModules.find(path) == builtinModules.end()) {
+            result.errorMessage = "Unknown builtin module: " + path;
+            return result;
+        }
+        
+        result.success = true;
+        result.moduleName = path;
+        result.resolvedPath = "builtin:" + path;  // 特殊标记，编译器内部处理
+        return result;
+    }
+    
+    // 解析文件导入 (file:./components/button.chtl)
+    static ResolveResult resolveFileImport(const std::string& path, 
+                                         Import::ImportType type,
+                                         const std::string& currentFilePath) {
+        ResolveResult result;
+        
+        fs::path currentDir = fs::path(currentFilePath).parent_path();
+        fs::path filePath = currentDir / path;
+        
+        // 规范化路径
+        filePath = filePath.lexically_normal();
+        
+        if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+            result.success = true;
+            result.resolvedPath = filePath.string();
+            return result;
+        }
+        
+        // 如果没有扩展名，尝试添加
+        if (!hasExtension(path)) {
+            std::vector<std::string> extensions = getExtensionsForType(type);
+            for (const auto& ext : extensions) {
+                fs::path testPath = fs::path(filePath.string() + ext);
+                if (fs::exists(testPath) && fs::is_regular_file(testPath)) {
+                    result.success = true;
+                    result.resolvedPath = testPath.string();
+                    return result;
+                }
+            }
+        }
+        
+        result.errorMessage = "File not found: " + filePath.string();
+        return result;
+    }
+    
+    // 解析 npm 包导入 (npm:@org/package)
+    static ResolveResult resolveNpmImport(const std::string& path, Import::ImportType type) {
+        ResolveResult result;
+        
+        // 查找 node_modules
+        fs::path nodeModules = findNodeModules(fs::current_path());
+        
+        if (nodeModules.empty()) {
+            result.errorMessage = "Cannot find node_modules directory";
+            return result;
+        }
+        
+        // 解析包名和子路径
+        std::string packageName = path;
+        std::string subPath;
+        
+        // 处理作用域包 (@org/package/subpath)
+        size_t slashPos = path.find('/');
+        if (path[0] == '@' && slashPos != std::string::npos) {
+            size_t secondSlash = path.find('/', slashPos + 1);
+            if (secondSlash != std::string::npos) {
+                packageName = path.substr(0, secondSlash);
+                subPath = path.substr(secondSlash + 1);
+            }
+        } else if (slashPos != std::string::npos) {
+            packageName = path.substr(0, slashPos);
+            subPath = path.substr(slashPos + 1);
+        }
+        
+        fs::path packagePath = nodeModules / packageName;
+        
+        // 读取 package.json
+        fs::path packageJson = packagePath / "package.json";
+        if (!fs::exists(packageJson)) {
+            result.errorMessage = "Package not found: " + packageName;
+            return result;
+        }
+        
+        // TODO: 解析 package.json 找到入口文件
+        // 这里简化处理
+        
+        fs::path targetPath;
+        if (subPath.empty()) {
+            // 查找主入口
+            targetPath = packagePath / "index.chtl";
+            if (!fs::exists(targetPath)) {
+                targetPath = packagePath / "index.cmod";
+            }
+        } else {
+            targetPath = packagePath / subPath;
+        }
+        
+        if (fs::exists(targetPath) && fs::is_regular_file(targetPath)) {
+            result.success = true;
+            result.resolvedPath = targetPath.string();
+            return result;
+        }
+        
+        result.errorMessage = "Cannot resolve npm package: " + path;
+        return result;
+    }
+    
+    // 获取文件扩展名列表
+    static std::vector<std::string> getExtensionsForType(Import::ImportType type) {
+        switch (type) {
+            case Import::ImportType::HTML:
+                return {".html", ".htm"};
+            case Import::ImportType::CSS:
+                return {".css", ".scss", ".sass", ".less"};
+            case Import::ImportType::JS:
+                return {".js", ".mjs", ".jsx", ".ts", ".tsx"};
+            case Import::ImportType::CJMOD:
+                return {".cjmod"};
+            default:
+                return {".cmod", ".chtl"};
+        }
+    }
+    
+    // 获取 CHTL 安装根目录
+    static fs::path getChtlRootPath() {
+        // 1. 环境变量
+        if (const char* envPath = std::getenv("CHTL_ROOT")) {
+            return fs::path(envPath);
+        }
+        
+        // 2. 相对于可执行文件
+        // TODO: 获取可执行文件路径
+        
+        // 3. 默认位置
+        return fs::path("/usr/local/chtl");
+    }
+    
+    // 查找 node_modules 目录
+    static fs::path findNodeModules(fs::path startPath) {
+        fs::path current = startPath;
+        
+        while (!current.empty() && current != current.root_path()) {
+            fs::path nodeModules = current / "node_modules";
+            if (fs::exists(nodeModules) && fs::is_directory(nodeModules)) {
+                return nodeModules;
+            }
+            current = current.parent_path();
+        }
+        
+        return fs::path();
+    }
+    
+    // 检查是否有扩展名
+    static bool hasExtension(const std::string& path) {
+        return path.find('.') != std::string::npos && 
+               path.find('.') > path.find_last_of("/\\");
+    }
+    
+    // 解析相对路径导入
+    static ResolveResult resolveRelativeImport(const std::string& path,
+                                              Import::ImportType type,
+                                              const std::string& currentFilePath) {
+        // 使用 file: 协议的逻辑
+        return resolveFileImport(path, type, currentFilePath);
+    }
+    
+    // 解析绝对路径导入
+    static ResolveResult resolveAbsoluteImport(const std::string& path,
+                                              Import::ImportType type) {
+        ResolveResult result;
+        
+        fs::path filePath(path);
+        
+        if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+            result.success = true;
+            result.resolvedPath = filePath.string();
+            return result;
+        }
+        
+        result.errorMessage = "File not found: " + path;
+        return result;
+    }
+    
+    // 解析模块名导入 (button 或 ui/button)
+    static ResolveResult resolveModuleImport(const std::string& path,
+                                           Import::ImportType type,
+                                           const std::string& currentFilePath) {
+        ResolveResult result;
+        
+        // 搜索顺序：
+        // 1. 当前目录的 modules 文件夹
+        // 2. 项目根目录的 modules 文件夹
+        // 3. 当前目录
+        // 4. 标准库（作为 std: 的简写）
+        
+        fs::path currentDir = fs::path(currentFilePath).parent_path();
+        
+        std::vector<fs::path> searchPaths = {
+            currentDir / "modules",
+            findProjectRoot(currentDir) / "modules",
+            currentDir
+        };
+        
+        std::vector<std::string> extensions = getExtensionsForType(type);
+        
+        for (const auto& searchPath : searchPaths) {
+            if (!fs::exists(searchPath)) continue;
+            
+            for (const auto& ext : extensions) {
+                fs::path filePath = searchPath / (path + ext);
+                if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+                    result.success = true;
+                    result.resolvedPath = filePath.string();
+                    return result;
+                }
+            }
+        }
+        
+        // 最后尝试标准库
+        auto stdResult = resolveStdImport(path, type);
+        if (stdResult.success) {
+            return stdResult;
+        }
+        
+        result.errorMessage = "Module not found: " + path;
+        return result;
+    }
+    
+    // 查找项目根目录
+    static fs::path findProjectRoot(fs::path startPath) {
+        fs::path current = startPath;
+        
+        while (!current.empty() && current != current.root_path()) {
+            // 查找项目标识文件
+            if (fs::exists(current / "chtl.config.json") ||
+                fs::exists(current / "package.json") ||
+                fs::exists(current / ".chtl")) {
+                return current;
+            }
+            current = current.parent_path();
+        }
+        
+        return startPath;  // 默认返回起始目录
+    }
+    
+    // 解析 HTTP 导入
+    static ResolveResult resolveHttpImport(const std::string& url, Import::ImportType type) {
+        ResolveResult result;
+        
+        // TODO: 实现 HTTP 导入
+        // 1. 检查缓存
+        // 2. 下载文件
+        // 3. 验证安全性
+        
+        result.errorMessage = "HTTP imports are not yet implemented";
+        return result;
+    }
+};
+
+} // namespace chtl

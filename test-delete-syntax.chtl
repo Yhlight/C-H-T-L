@@ -1,0 +1,66 @@
+// 测试 CHTL delete 语法
+
+// 测试1: 删除样式属性
+[Template] @Style WhiteText {
+    color: white;
+    font-size: 16px;
+    line-height: 1.6;
+    border: 1px black solid;
+}
+
+[Custom] @Style YellowText {
+    @Style WhiteText {
+        delete line-height, border;
+    }
+    color: yellow;
+}
+
+// 测试2: 删除元素
+[Custom] @Element List {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+[Custom] @Element ShortList {
+    @Element List {
+        delete li[1];
+    }
+}
+
+// 测试3: 多重删除
+[Custom] @Element Container {
+    div {
+        p { text { "P1" } }
+        p { text { "P2" } }
+        p { text { "P3" } }
+        span { text { "S1" } }
+        span { text { "S2" } }
+    }
+}
+
+body {
+    // 使用样式
+    div {
+        style {
+            @Style YellowText {
+                delete color;
+            }
+        }
+        text { "测试样式删除" }
+    }
+    
+    // 使用元素
+    h2 { text { "原始列表" } }
+    @Element List;
+    
+    h2 { text { "短列表" } }
+    @Element ShortList;
+    
+    h2 { text { "容器删除测试" } }
+    @Element Container {
+        delete p[0], p[2], span[1];
+    }
+}

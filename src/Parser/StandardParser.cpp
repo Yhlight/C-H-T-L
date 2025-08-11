@@ -1274,12 +1274,20 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
         
         // delete操作
         if (match(TokenType::DELETE_KW)) {
-
             parseDelete(refNode);
             
             // 消耗可选的分号
             if (check(TokenType::SEMICOLON)) {
                 advance();
+            }
+            continue;
+        }
+        
+        // insert操作
+        if (match(TokenType::INSERT)) {
+            auto insertOp = parseInsert();
+            if (insertOp) {
+                refNode->addChild(insertOp);
             }
             continue;
         }
@@ -1315,67 +1323,62 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
 std::string StandardParser::parseDeleteTarget() {
     std::string target;
     
-    // 检查是否是 [Custom] 或 [Template]
-    if (match(TokenType::LEFT_BRACKET)) {
-        auto blockType = consume(TokenType::IDENTIFIER, "Expected block type").value;
-        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-        target = "[" + blockType + "] ";
-    }
-    
-    // 检查是否是 Custom 或 Template 关键字
-    if (currentToken_.type == TokenType::IDENTIFIER && 
-        (currentToken_.value == "Custom" || currentToken_.value == "Template")) {
-        target += currentToken_.value + " ";
+    // 在样式上下文中，可能是属性名（包含连字符）
+    if (currentToken_.type == TokenType::IDENTIFIER) {
+        target = currentToken_.value;
         advance();
+        
+        // 处理连字符属性名（如 line-height）
+        while (match(TokenType::HYPHEN)) {
+            target += "-";
+            if (currentToken_.type == TokenType::IDENTIFIER) {
+                target += currentToken_.value;
+                advance();
+            }
+        }
+        
+        // 检查是否有索引
+        if (match(TokenType::LEFT_BRACKET)) {
+            auto indexToken = consume(TokenType::NUMBER, "Expected index");
+            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+            target += "[" + indexToken.value + "]";
+        }
     }
-    
     // 检查是否是 @Element, @Style, @Var
-    if (currentToken_.type == TokenType::AT_ELEMENT || 
-        currentToken_.type == TokenType::AT_STYLE || 
-        currentToken_.type == TokenType::AT_VAR) {
-        target += currentToken_.value + " ";
+    else if (currentToken_.type == TokenType::AT_ELEMENT || 
+             currentToken_.type == TokenType::AT_STYLE || 
+             currentToken_.type == TokenType::AT_VAR) {
+        target = currentToken_.value + " ";
         advance();
         
         // 获取名称
         auto nameToken = consume(TokenType::IDENTIFIER, "Expected name");
         target += nameToken.value;
-    } else if (currentToken_.type == TokenType::IDENTIFIER) {
-        // 普通标识符
-        target += currentToken_.value;
-        advance();
+        
+        // 检查是否有索引
+        if (match(TokenType::LEFT_BRACKET)) {
+            auto indexToken = consume(TokenType::NUMBER, "Expected index");
+            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+            target += "[" + indexToken.value + "]";
+        }
     } else {
         throw std::runtime_error("Expected delete target");
-    }
-    
-    // 检查是否有索引
-    if (match(TokenType::LEFT_BRACKET)) {
-        auto indexToken = consume(TokenType::NUMBER, "Expected index");
-        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-        target += "[" + indexToken.value + "]";
     }
     
     return target;
 }
 
 void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
-    // [Delete]已经被消费
+    // delete 关键字已经被消费
     
-    // 解析删除列表 - 必须有括号
-    consume(TokenType::LEFT_PAREN, "Expected '(' after [Delete]");
-    
+    // 解析删除列表 - 支持逗号分隔
     std::vector<std::string> deleteItems;
     
-    // [Delete] (item1, item2, ...)
-    while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
+    // delete item1, item2, ...
+    do {
         std::string item = parseDeleteTarget();
         deleteItems.push_back(item);
-        
-        if (!match(TokenType::COMMA)) {
-            break;
-        }
-    }
-    
-    consume(TokenType::RIGHT_PAREN, "Expected ')' to close [Delete]");
+    } while (match(TokenType::COMMA));
     
     // 创建Delete节点
     for (const auto& item : deleteItems) {

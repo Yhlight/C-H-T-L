@@ -1,0 +1,16 @@
+// 测试1: 基本组件
+[Custom] @Element Simple {
+    div { text { "Simple" } }
+}
+
+body {
+    h1 { text { "测试" } }
+    
+    // 步骤1: 基本引用
+    @Element Simple;
+    
+    // 步骤2: 带删除的引用
+    @Element Simple {
+        delete div[0];
+    }
+}

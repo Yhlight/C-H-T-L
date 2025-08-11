@@ -1,12 +1,16 @@
-[Custom] @Element L {
-    ul {
-        li { text { "A" } }
-        li { text { "B" } }
+[Custom] @Element Box {
+    div {
+        p { text { "P1" } }
+        p { text { "P2" } }
     }
 }
 
-div {
-    @Element L {
-        delete li[0];
+body {
+    h1 { text { "删除测试" } }
+    
+    @Element Box;
+    
+    @Element Box {
+        delete p[0];
     }
 }

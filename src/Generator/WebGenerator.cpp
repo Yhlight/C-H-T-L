@@ -14,6 +14,7 @@
 #include <set>
 #include <variant>
 #include <tuple>
+#include <iostream>
 
 namespace chtl {
 
@@ -206,6 +207,7 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 
     // 特殊处理引用节点
     if (tag == "reference") {
+        std::cout << "DEBUG: Found reference node" << std::endl;
         processReference(element);
         return;
     }
@@ -213,7 +215,6 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         // 特殊处理文档根节点
     if (tag == "document") {
         // 只处理子节点，不生成 document 标签
-
         for (const auto& child : element->getChildren()) {
             visit(child);
         }
@@ -891,8 +892,20 @@ void WebGenerator::applyReferenceModifications(std::shared_ptr<Node> target,
     for (const auto& child : refNode->getChildren()) {
         if (child->getType() == NodeType::ELEMENT) {
             auto element = std::static_pointer_cast<Element>(child);
-            // 查找目标中对应的元素并合并属性和子节点
-            mergeElement(target, element);
+            
+            // 特殊处理 delete 元素
+            if (element->getTagName() == "delete") {
+                // 提取删除目标
+                auto attrs = element->getAttributes();
+                if (attrs.find("target") != attrs.end() && 
+                    std::holds_alternative<std::string>(attrs.at("target"))) {
+                    std::string deleteTarget = std::get<std::string>(attrs.at("target"));
+                    deleteFromNode(target, deleteTarget);
+                }
+            } else {
+                // 查找目标中对应的元素并合并属性和子节点
+                mergeElement(target, element);
+            }
         } else if (child->getType() == NodeType::OPERATE) {
             auto op = std::static_pointer_cast<Operate>(child);
             if (op->getOperationType() == Operate::OperationType::DELETE) {
@@ -1004,7 +1017,7 @@ void WebGenerator::mergeElement(std::shared_ptr<Node> target,
 
 // 处理引用节点
 void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
-
+    std::cout << "DEBUG processReference called" << std::endl;
     auto attributes = refNode->getAttributes();
     
     // 获取引用信息
@@ -1017,6 +1030,8 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     std::string kind = attributes.find("kind") != attributes.end() && 
         std::holds_alternative<std::string>(attributes.at("kind"))
         ? std::get<std::string>(attributes.at("kind")) : "";
+    
+
     
 
     
@@ -1058,10 +1073,13 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     
     if (!definition) {
         // 未找到定义，生成警告注释
+        std::cout << "DEBUG: Definition not found for " << name << std::endl;
         htmlCollector_.append("<!-- Warning: Component '" + name + 
             (kind.empty() ? "" : " [" + kind + "]") + "' not found -->");
         return;
     }
+    
+    std::cout << "DEBUG: Found definition for " << name << std::endl;
     
         // 处理组件实例（对于元素引用）
     if (type == "@Element") {

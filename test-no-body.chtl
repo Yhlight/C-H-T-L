@@ -1,0 +1,14 @@
+// 定义
+[Custom] @Element MyList {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+// 顶级引用
+@Element MyList;
+
+// 另一个顶级元素
+p { text { "Top level paragraph" } }

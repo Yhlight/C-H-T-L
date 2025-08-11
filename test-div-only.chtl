@@ -1,0 +1,5 @@
+div {
+    @Element L {
+        delete li[0];
+    }
+}

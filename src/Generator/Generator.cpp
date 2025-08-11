@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <regex>
 #include <sstream>
+#include <iostream>
 #include <set>
 
 
@@ -147,6 +148,11 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
 
 void Generator::visit(const std::shared_ptr<Node>& node) {
     if (!node) return;
+    
+    if (node->getType() == NodeType::ELEMENT) {
+        auto elem = std::static_pointer_cast<Element>(node);
+        std::cout << "DEBUG Generator::visit Element, tag=" << elem->getTagName() << std::endl;
+    }
     
     switch (node->getType()) {
         case NodeType::ELEMENT:

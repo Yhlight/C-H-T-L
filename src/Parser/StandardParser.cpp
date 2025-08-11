@@ -8,7 +8,7 @@
 #include "Node/Template.h"
 #include "Node/Custom.h"
 #include "Node/Style.h"
-
+#include <iostream>
 #include "Node/Config.h"
 #include "Node/Import.h"
 #include "Node/Namespace.h"
@@ -42,10 +42,20 @@ std::shared_ptr<Node> StandardParser::parse() {
     try {
         while (!isAtEnd()) {
             skipWhitespaceAndComments();
+
             if (isAtEnd()) break;
             
             auto node = parseTopLevel();
+
             if (node) {
+                std::cout << "DEBUG: Adding node to root" << std::endl;
+                if (node->getType() == NodeType::ELEMENT) {
+                    auto elem = std::static_pointer_cast<Element>(node);
+                    std::cout << "  Element tag: " << elem->getTagName() << std::endl;
+                } else if (node->getType() == NodeType::CUSTOM) {
+                    auto custom = std::static_pointer_cast<Custom>(node);
+                    std::cout << "  Custom name: " << custom->getCustomName() << std::endl;
+                }
                 root->addChild(node);
             }
         }
@@ -58,6 +68,8 @@ std::shared_ptr<Node> StandardParser::parse() {
 
 std::shared_ptr<Node> StandardParser::parseTopLevel() {
     skipWhitespaceAndComments();
+    
+
     
     if (isAtEnd()) return nullptr;
     
@@ -132,6 +144,7 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
+
         try {
             return parseNode();  // parseNode 会处理元素
         } catch (const std::exception& e) {
@@ -154,6 +167,9 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         return parseComment();
     }
     
+
+    
+    // 跳过无法处理的 token 以避免无限循环
     advance();
     return nullptr;
 }
@@ -1133,12 +1149,15 @@ std::shared_ptr<Node> StandardParser::parseReference() {
     auto typeToken = advance(); // @Style, @Element, or @Var
     auto nameToken = consume(TokenType::IDENTIFIER, "Expected reference name");
     
+    std::cout << "DEBUG parseReference: type=" << typeToken.value << ", name=" << nameToken.value << std::endl;
+    
     auto refNode = std::make_shared<Element>("reference");
     refNode->setAttribute("type", typeToken.value);
     refNode->setAttribute("name", nameToken.value);
     
     // 检查是否有特例化块
     if (check(TokenType::LEFT_BRACE)) {
+        std::cout << "DEBUG parseReference: Has specialization block" << std::endl;
         consume(TokenType::LEFT_BRACE, "Expected '{'");
         parseSpecialization(refNode);
         consume(TokenType::RIGHT_BRACE, "Expected '}'");

@@ -13,6 +13,12 @@ let client: LanguageClient;
 export function activate(context: vscode.ExtensionContext) {
     console.log('CHTL extension is now active!');
 
+    // 保存 context 供全局使用
+    (globalThis as any).__extensionContext = context;
+
+    // 显示扩展信息
+    showExtensionInfo(context);
+
     // 初始化内置模块
     initializeBuiltinModules(context);
 
@@ -43,9 +49,14 @@ function registerCommands(context: vscode.ExtensionContext) {
             await document.save();
 
             const terminal = vscode.window.createTerminal('CHTL Compiler');
-            const compilerPath = vscode.workspace.getConfiguration('chtl').get<string>('compiler.path', 'chtl');
+            const compilerPath = getCompilerPath(context);
             const outputDir = vscode.workspace.getConfiguration('chtl').get<string>('compiler.outputDirectory', './dist');
             
+            // 设置模块路径环境变量
+            const modulePath = getModulesPath(context);
+            const env = { ...process.env, CHTL_MODULE_PATH: modulePath };
+            
+            terminal.sendText(`export CHTL_MODULE_PATH="${modulePath}"`);
             terminal.sendText(`${compilerPath} compile "${document.fileName}" -o "${outputDir}"`);
             terminal.show();
         })
@@ -291,19 +302,24 @@ function generateComponentTemplate(name: string, type: string): string {
 }
 
 async function getCJmodModules(): Promise<string[]> {
-    // 获取可用的 CJmod 模块
-    const builtinModules = [
-        'builtin:reactive',
-        'builtin:animation',
-        'builtin:async-flow',
-        'builtin:pipeline'
-    ];
+    const context = (globalThis as any).__extensionContext;
+    if (!context) {
+        // 回退到默认列表
+        return [
+            'builtin:reactive',
+            'builtin:animation',
+            'builtin:async-flow',
+            'builtin:pipeline'
+        ];
+    }
 
+    const modules = await getAvailableModules(context);
+    
     // 查找工作区中的 .cjmod 文件
     const files = await vscode.workspace.findFiles('**/*.cjmod', '**/node_modules/**');
     const localModules = files.map(file => `./${path.relative(vscode.workspace.rootPath || '', file.fsPath)}`);
 
-    return [...builtinModules, ...localModules];
+    return [...modules, ...localModules];
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -311,6 +327,28 @@ export function deactivate(): Thenable<void> | undefined {
         return undefined;
     }
     return client.stop();
+}
+
+// 显示扩展信息
+function showExtensionInfo(context: vscode.ExtensionContext) {
+    const compilerPath = getCompilerPath(context);
+    const modulesPath = getModulesPath(context);
+    
+    console.log('CHTL Extension Info:');
+    console.log(`  Compiler: ${compilerPath}`);
+    console.log(`  Modules: ${modulesPath}`);
+    
+    // 检查编译器是否存在
+    if (!fs.existsSync(compilerPath) || compilerPath === 'chtl') {
+        vscode.window.showWarningMessage(
+            'CHTL compiler not found. Please install CHTL or configure compiler path in settings.',
+            'Configure'
+        ).then(selection => {
+            if (selection === 'Configure') {
+                vscode.commands.executeCommand('workbench.action.openSettings', 'chtl.compiler.path');
+            }
+        });
+    }
 }
 
 // 初始化内置模块
@@ -562,4 +600,66 @@ div {
     };
     
     return examples[moduleName] || '// No example available';
+}
+
+// 获取编译器路径
+function getCompilerPath(context: vscode.ExtensionContext): string {
+    // 首先检查用户配置
+    const userPath = vscode.workspace.getConfiguration('chtl').get<string>('compiler.path');
+    if (userPath && fs.existsSync(userPath)) {
+        return userPath;
+    }
+
+    // 然后检查扩展自带的编译器
+    const platform = process.platform;
+    const compilerName = platform === 'win32' ? 'chtl.exe' : 'chtl';
+    const bundledPath = path.join(context.extensionPath, 'bin', compilerName);
+    
+    if (fs.existsSync(bundledPath)) {
+        return bundledPath;
+    }
+
+    // 最后尝试系统 PATH
+    return 'chtl';
+}
+
+// 获取模块路径
+function getModulesPath(context: vscode.ExtensionContext): string {
+    // 首先检查工作区的 modules 目录
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (workspaceRoot) {
+        const workspaceModules = path.join(workspaceRoot, 'modules');
+        if (fs.existsSync(workspaceModules)) {
+            return workspaceModules;
+        }
+    }
+
+    // 返回扩展自带的模块目录
+    return path.join(context.extensionPath, 'modules');
+}
+
+// 获取可用的官方模块
+async function getAvailableModules(context: vscode.ExtensionContext): Promise<string[]> {
+    const modules: string[] = [];
+    const modulesPath = getModulesPath(context);
+    const indexPath = path.join(modulesPath, 'index.json');
+
+    // 如果有索引文件，使用索引
+    if (fs.existsSync(indexPath)) {
+        try {
+            const index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+            Object.keys(index).forEach(name => {
+                modules.push(`module:${name}`);
+            });
+        } catch (error) {
+            console.error('Failed to read module index:', error);
+        }
+    }
+
+    // 添加内置模块
+    BUILTIN_MODULES.forEach((_, key) => {
+        modules.push(`builtin:${key}`);
+    });
+
+    return modules;
 }

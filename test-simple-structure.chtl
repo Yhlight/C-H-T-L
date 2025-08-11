@@ -1,0 +1,5 @@
+body {
+    h1 { text { "Title 1" } }
+    h2 { text { "Title 2" } }
+    h3 { text { "Title 3" } }
+}

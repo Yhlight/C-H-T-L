@@ -1,0 +1,10 @@
+[Custom] @Element Box {
+    div { text { "Box" } }
+}
+
+body {
+    @Element Box;
+    @Element Box;
+    
+    delete @Element Box[0];
+}

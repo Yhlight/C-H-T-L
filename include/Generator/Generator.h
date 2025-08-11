@@ -176,6 +176,9 @@ private:
     void executeDeleteOperation(std::shared_ptr<Node> target,
                                const std::shared_ptr<Operate>& deleteOp);
     void deleteFromNode(std::shared_ptr<Node> node, const std::string& target);
+    std::vector<std::shared_ptr<Node>>::iterator 
+    findTargetNode(std::vector<std::shared_ptr<Node>>& children, 
+                   const std::string& target, int& currentIndex);
     void processCustomComponent(const std::shared_ptr<Custom>& instance, 
                                 const std::shared_ptr<Node>& definition);
     std::shared_ptr<Node> findComponentDefinition(const std::string& name, Custom::CustomType type);

@@ -97,6 +97,7 @@ private:
     
     // 操作解析
     void parseDelete(std::shared_ptr<Node> parent);
+    std::string parseDeleteTarget();
     std::shared_ptr<Node> parseOperation();
     std::shared_ptr<Node> parseInsert();
     std::string parseInsertTarget();

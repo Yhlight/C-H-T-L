@@ -420,6 +420,123 @@ void WebGenerator::applyInstanceModifications(std::shared_ptr<Node> target,
     }
 }
 
+// 查找插入/删除目标节点
+std::vector<std::shared_ptr<Node>>::iterator 
+WebGenerator::findTargetNode(std::vector<std::shared_ptr<Node>>& children, 
+                            const std::string& target, int& currentIndex) {
+    // 解析目标字符串（复用 deleteFromNode 中的逻辑）
+    bool isReference = false;
+    bool isCustom = false;
+    std::string refType;
+    std::string refName;
+    std::string tagName;
+    int targetIndex = -1;
+    
+    size_t pos = 0;
+    
+    // 检查 [Custom] 或 [Template]
+    if (target.find("[Custom]") == 0 || target.find("[Template]") == 0) {
+        isCustom = true;
+        pos = target.find(']') + 1;
+        while (pos < target.length() && target[pos] == ' ') pos++;
+    }
+    
+    // 检查 Custom 或 Template 关键字
+    if (target.find("Custom ", pos) == pos) {
+        isCustom = true;
+        pos += 7;
+    } else if (target.find("Template ", pos) == pos) {
+        isCustom = true;
+        pos += 9;
+    }
+    
+    // 检查 @Element, @Style, @Var
+    if (target.find("@Element ", pos) == pos) {
+        isReference = true;
+        refType = "@Element";
+        pos += 9;
+    } else if (target.find("@Style ", pos) == pos) {
+        isReference = true;
+        refType = "@Style";
+        pos += 7;
+    } else if (target.find("@Var ", pos) == pos) {
+        isReference = true;
+        refType = "@Var";
+        pos += 5;
+    }
+    
+    // 获取名称部分
+    size_t bracketPos = target.find('[', pos);
+    if (bracketPos == std::string::npos) {
+        if (isReference) {
+            refName = target.substr(pos);
+        } else {
+            tagName = target.substr(pos);
+        }
+    } else {
+        if (isReference) {
+            refName = target.substr(pos, bracketPos - pos);
+        } else {
+            tagName = target.substr(pos, bracketPos - pos);
+        }
+        
+        size_t closeBracket = target.find(']', bracketPos);
+        if (closeBracket != std::string::npos) {
+            std::string indexStr = target.substr(bracketPos + 1, closeBracket - bracketPos - 1);
+            try {
+                targetIndex = std::stoi(indexStr);
+            } catch (const std::exception&) {
+                // 索引解析失败
+            }
+        }
+    }
+    
+    // 查找目标节点
+    currentIndex = 0;
+    for (auto it = children.begin(); it != children.end(); ++it) {
+        bool isMatch = false;
+        
+        if (isReference || isCustom) {
+            if ((*it)->getType() == NodeType::ELEMENT) {
+                auto element = std::static_pointer_cast<Element>(*it);
+                if (element->getTagName() == "reference") {
+                    auto attrs = element->getAttributes();
+                    if (attrs.find("type") != attrs.end() && 
+                        attrs.find("name") != attrs.end()) {
+                        auto type = std::get<std::string>(attrs.at("type"));
+                        auto name = std::get<std::string>(attrs.at("name"));
+                        
+                        if (type == refType && name == refName) {
+                            isMatch = true;
+                        }
+                    }
+                }
+            } else if (isCustom && (*it)->getType() == NodeType::CUSTOM) {
+                auto custom = std::static_pointer_cast<Custom>(*it);
+                if (custom->getCustomName() == refName) {
+                    isMatch = true;
+                }
+            }
+        } else {
+            if ((*it)->getType() == NodeType::ELEMENT) {
+                auto element = std::static_pointer_cast<Element>(*it);
+                if (element->getTagName() == tagName) {
+                    isMatch = true;
+                }
+            }
+        }
+        
+        if (isMatch) {
+            if (targetIndex == -1 || currentIndex == targetIndex) {
+                return it;
+            }
+            currentIndex++;
+        }
+    }
+    
+    return children.end();
+}
+
 void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target, 
                                           const std::shared_ptr<Operate>& insertOp) {
     auto position = insertOp->getPosition();
@@ -448,38 +565,10 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
         case Operate::Position::AFTER:
         case Operate::Position::REPLACE:
             {
-                // 查找目标元素
-                auto targetIt = std::find_if(children.begin(), children.end(),
-                    [&insertTarget](const std::shared_ptr<Node>& node) {
-                        if (node->getType() == NodeType::ELEMENT) {
-                            auto elem = std::static_pointer_cast<Element>(node);
-                            // 检查是否匹配 "tag[index]" 格式
-                            size_t bracketPos = insertTarget.find('[');
-                            if (bracketPos != std::string::npos) {
-                                std::string tag = insertTarget.substr(0, bracketPos);
-                                std::string indexStr = insertTarget.substr(bracketPos + 1, 
-                                    insertTarget.find(']') - bracketPos - 1);
-                                int targetIndex = std::stoi(indexStr);
-                                
-                                // 计算当前元素的索引
-                                int currentIndex = 0;
-                                for (auto it = elem->getParent()->getChildren().begin();
-                                     it != elem->getParent()->getChildren().end(); ++it) {
-                                    if ((*it)->getType() == NodeType::ELEMENT &&
-                                        std::static_pointer_cast<Element>(*it)->getTagName() == tag) {
-                                        if (*it == node && currentIndex == targetIndex) {
-                                            return true;
-                                        }
-                                        currentIndex++;
-                                    }
-                                }
-                            } else {
-                                // 简单标签匹配
-                                return elem->getTagName() == insertTarget;
-                            }
-                        }
-                        return false;
-                    });
+                // 使用新的 findTargetNode 方法查找目标
+                int currentIndex = 0;
+                auto targetIt = findTargetNode(const_cast<std::vector<std::shared_ptr<Node>>&>(children), 
+                                              insertTarget, currentIndex);
                 
                 if (targetIt != children.end()) {
                     if (position == Operate::Position::BEFORE) {
@@ -938,50 +1027,159 @@ void WebGenerator::deleteFromNode(std::shared_ptr<Node> node, const std::string&
     // 获取子节点的可修改引用
     auto& children = const_cast<std::vector<std::shared_ptr<Node>>&>(node->getChildren());
     
-    // 检查是否是索引访问
-    size_t bracketPos = target.find('[');
-    if (bracketPos != std::string::npos) {
-        // 解析标签名和索引
-        std::string tagName = target.substr(0, bracketPos);
+    // 解析目标字符串
+    // 支持格式：
+    // - tagname[index]
+    // - @Element Name[index]
+    // - Custom @Element Name[index]
+    // - [Custom] @Element Name[index]
+    
+    // 检查是否是引用或组件删除
+    bool isReference = false;
+    bool isCustom = false;
+    std::string refType;
+    std::string refName;
+    std::string tagName;
+    int targetIndex = -1;
+    
+    // 解析目标字符串
+    size_t pos = 0;
+    
+    // 检查 [Custom] 或 [Template]
+    if (target.find("[Custom]") == 0 || target.find("[Template]") == 0) {
+        isCustom = true;
+        pos = target.find(']') + 1;
+        while (pos < target.length() && target[pos] == ' ') pos++;
+    }
+    
+    // 检查 Custom 或 Template 关键字
+    if (target.find("Custom ", pos) == pos) {
+        isCustom = true;
+        pos += 7;
+    } else if (target.find("Template ", pos) == pos) {
+        isCustom = true;
+        pos += 9;
+    }
+    
+    // 检查 @Element, @Style, @Var
+    if (target.find("@Element ", pos) == pos) {
+        isReference = true;
+        refType = "@Element";
+        pos += 9;
+    } else if (target.find("@Style ", pos) == pos) {
+        isReference = true;
+        refType = "@Style";
+        pos += 7;
+    } else if (target.find("@Var ", pos) == pos) {
+        isReference = true;
+        refType = "@Var";
+        pos += 5;
+    }
+    
+    // 获取名称部分
+    size_t bracketPos = target.find('[', pos);
+    if (bracketPos == std::string::npos) {
+        // 没有索引
+        if (isReference) {
+            refName = target.substr(pos);
+        } else {
+            tagName = target.substr(pos);
+        }
+    } else {
+        // 有索引
+        if (isReference) {
+            refName = target.substr(pos, bracketPos - pos);
+        } else {
+            tagName = target.substr(pos, bracketPos - pos);
+        }
+        
         size_t closeBracket = target.find(']', bracketPos);
         if (closeBracket != std::string::npos) {
             std::string indexStr = target.substr(bracketPos + 1, closeBracket - bracketPos - 1);
             try {
-                int targetIndex = std::stoi(indexStr);
-                int currentIndex = 0;
-                
-                // 查找并删除指定索引的元素
-                auto it = children.begin();
-                while (it != children.end()) {
-                    if ((*it)->getType() == NodeType::ELEMENT) {
-                        auto element = std::static_pointer_cast<Element>(*it);
-                        if (element->getTagName() == tagName) {
-                            if (currentIndex == targetIndex) {
-                                it = children.erase(it);
-                                break;  // 只删除一个
+                targetIndex = std::stoi(indexStr);
+            } catch (const std::exception&) {
+                // 索引解析失败
+            }
+        }
+    }
+    
+    // 执行删除
+    if (isReference || isCustom) {
+        // 删除引用或自定义组件
+        int currentIndex = 0;
+        auto it = children.begin();
+        while (it != children.end()) {
+            bool shouldDelete = false;
+            
+            if ((*it)->getType() == NodeType::ELEMENT) {
+                auto element = std::static_pointer_cast<Element>(*it);
+                if (element->getTagName() == "reference") {
+                    // 检查引用是否匹配
+                    auto attrs = element->getAttributes();
+                    if (attrs.find("type") != attrs.end() && 
+                        attrs.find("name") != attrs.end()) {
+                        auto type = std::get<std::string>(attrs.at("type"));
+                        auto name = std::get<std::string>(attrs.at("name"));
+                        
+                        if (type == refType && name == refName) {
+                            if (targetIndex == -1 || currentIndex == targetIndex) {
+                                shouldDelete = true;
                             }
                             currentIndex++;
                         }
                     }
-                    ++it;
                 }
-            } catch (const std::exception&) {
-                // 索引解析失败，忽略
+            } else if (isCustom && (*it)->getType() == NodeType::CUSTOM) {
+                auto custom = std::static_pointer_cast<Custom>(*it);
+                if (custom->getCustomName() == refName) {
+                    if (targetIndex == -1 || currentIndex == targetIndex) {
+                        shouldDelete = true;
+                    }
+                    currentIndex++;
+                }
+            }
+            
+            if (shouldDelete) {
+                it = children.erase(it);
+                if (targetIndex != -1) break;  // 只删除一个
+            } else {
+                ++it;
             }
         }
     } else {
-        // 普通标签名删除（删除所有匹配的）
-        children.erase(
-            std::remove_if(children.begin(), children.end(),
-                [&target](const std::shared_ptr<Node>& child) {
-                    if (child->getType() == NodeType::ELEMENT) {
-                        auto element = std::static_pointer_cast<Element>(child);
-                        return element->getTagName() == target;
+        // 删除普通元素
+        if (targetIndex != -1) {
+            // 索引删除
+            int currentIndex = 0;
+            auto it = children.begin();
+            while (it != children.end()) {
+                if ((*it)->getType() == NodeType::ELEMENT) {
+                    auto element = std::static_pointer_cast<Element>(*it);
+                    if (element->getTagName() == tagName) {
+                        if (currentIndex == targetIndex) {
+                            it = children.erase(it);
+                            break;
+                        }
+                        currentIndex++;
                     }
-                    return false;
-                }),
-            children.end()
-        );
+                }
+                ++it;
+            }
+        } else {
+            // 删除所有匹配的
+            children.erase(
+                std::remove_if(children.begin(), children.end(),
+                    [&tagName](const std::shared_ptr<Node>& child) {
+                        if (child->getType() == NodeType::ELEMENT) {
+                            auto element = std::static_pointer_cast<Element>(child);
+                            return element->getTagName() == tagName;
+                        }
+                        return false;
+                    }),
+                children.end()
+            );
+        }
     }
     
     // 递归处理子节点

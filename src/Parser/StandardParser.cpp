@@ -1312,6 +1312,51 @@ void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
     }
 }
 
+std::string StandardParser::parseDeleteTarget() {
+    std::string target;
+    
+    // 检查是否是 [Custom] 或 [Template]
+    if (match(TokenType::LEFT_BRACKET)) {
+        auto blockType = consume(TokenType::IDENTIFIER, "Expected block type").value;
+        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+        target = "[" + blockType + "] ";
+    }
+    
+    // 检查是否是 Custom 或 Template 关键字
+    if (currentToken_.type == TokenType::IDENTIFIER && 
+        (currentToken_.value == "Custom" || currentToken_.value == "Template")) {
+        target += currentToken_.value + " ";
+        advance();
+    }
+    
+    // 检查是否是 @Element, @Style, @Var
+    if (currentToken_.type == TokenType::AT_ELEMENT || 
+        currentToken_.type == TokenType::AT_STYLE || 
+        currentToken_.type == TokenType::AT_VAR) {
+        target += currentToken_.value + " ";
+        advance();
+        
+        // 获取名称
+        auto nameToken = consume(TokenType::IDENTIFIER, "Expected name");
+        target += nameToken.value;
+    } else if (currentToken_.type == TokenType::IDENTIFIER) {
+        // 普通标识符
+        target += currentToken_.value;
+        advance();
+    } else {
+        throw std::runtime_error("Expected delete target");
+    }
+    
+    // 检查是否有索引
+    if (match(TokenType::LEFT_BRACKET)) {
+        auto indexToken = consume(TokenType::NUMBER, "Expected index");
+        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+        target += "[" + indexToken.value + "]";
+    }
+    
+    return target;
+}
+
 void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
     // [Delete]已经被消费
     
@@ -1321,15 +1366,7 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
     if (match(TokenType::LEFT_PAREN)) {
         // [Delete] (item1, item2, ...)
         while (!check(TokenType::RIGHT_PAREN) && !isAtEnd()) {
-            std::string item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
-            
-            // 检查是否有索引
-            if (match(TokenType::LEFT_BRACKET)) {
-                auto indexToken = consume(TokenType::NUMBER, "Expected index");
-                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-                item += "[" + indexToken.value + "]";
-            }
-            
+            std::string item = parseDeleteTarget();
             deleteItems.push_back(item);
             
             if (!match(TokenType::COMMA)) {
@@ -1338,16 +1375,8 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
         }
         consume(TokenType::RIGHT_PAREN, "Expected ')'");
     } else {
-        // [Delete] item 或 [Delete] item[index]
-        std::string item = consume(TokenType::IDENTIFIER, "Expected item to delete").value;
-        
-        // 检查是否有索引
-        if (match(TokenType::LEFT_BRACKET)) {
-            auto indexToken = consume(TokenType::NUMBER, "Expected index");
-            consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-            item += "[" + indexToken.value + "]";
-        }
-        
+        // 解析单个删除项
+        std::string item = parseDeleteTarget();
         deleteItems.push_back(item);
     }
     
@@ -1424,19 +1453,8 @@ std::shared_ptr<Node> StandardParser::parseInsert() {
 }
 
 std::string StandardParser::parseInsertTarget() {
-    std::string target;
-    
-    auto token = consume(TokenType::IDENTIFIER, "Expected target element");
-    target = token.value;
-    
-    // 检查索引
-    if (match(TokenType::LEFT_BRACKET)) {
-        auto index = consume(TokenType::NUMBER, "Expected index").value;
-        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-        target += "[" + index + "]";
-    }
-    
-    return target;
+    // 使用相同的逻辑解析 insert 和 delete 的目标
+    return parseDeleteTarget();
 }
 
 std::shared_ptr<Node> StandardParser::parseOrigin() {

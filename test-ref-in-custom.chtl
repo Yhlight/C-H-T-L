@@ -1,0 +1,26 @@
+[Custom] @Element Box {
+    div { text { "Box" } }
+}
+
+[Custom] @Element Container {
+    div {
+        @Element Box;
+        @Element Box;
+        @Element Box;
+    }
+}
+
+body {
+    h2 { text { "原始容器" } }
+    @Element Container;
+    
+    h2 { text { "删除第一个Box" } }
+    @Element Container {
+        delete @Element Box[0];
+    }
+    
+    h2 { text { "删除所有Box" } }
+    @Element Container {
+        delete @Element Box;
+    }
+}

@@ -1,0 +1,65 @@
+// 测试引用和组件的删除语法
+
+[Custom] @Element Box {
+    div {
+        class: "box";
+        p { text { "Box content" } }
+    }
+}
+
+[Template] @Element Card {
+    div {
+        class: "card";
+        h3 { text { "Card title" } }
+        p { text { "Card content" } }
+    }
+}
+
+// 测试场景
+body {
+    h2 { text { "多个引用" } }
+    @Element Box;
+    @Element Box;
+    @Element Box;
+    @Element Card;
+    @Element Card;
+    
+    h2 { text { "删除特定索引的引用" } }
+    div {
+        @Element Box;
+        @Element Box;
+        @Element Box;
+        
+        // 删除第二个 Box 引用
+        delete @Element Box[1];
+    }
+    
+    h2 { text { "删除所有Card引用" } }
+    div {
+        @Element Card;
+        @Element Card;
+        @Element Card;
+        
+        // 删除所有 Card 引用
+        delete @Element Card;
+    }
+    
+    h2 { text { "测试Custom语法删除" } }
+    div {
+        @Element Box;
+        @Element Box;
+        
+        // 使用 Custom 语法删除第一个
+        delete Custom @Element Box[0];
+    }
+    
+    h2 { text { "测试[Custom]语法删除" } }
+    div {
+        @Element Box;
+        @Element Box;
+        @Element Box;
+        
+        // 使用 [Custom] 语法删除最后一个
+        delete [Custom] @Element Box[2];
+    }
+}

@@ -198,7 +198,15 @@ ImportResolveResult ImportResolver::resolveChtlImport(const std::string& path,
 
 ImportResolveResult ImportResolver::resolveCJmodImport(const std::string& path,
                                                      const fs::path& currentDir) {
-    // CJmod 不支持通配符和子模块
+    // 检查是否为通配符导入
+    if (isWildcardImport(path)) {
+        return resolveCJmodWildcardImport(path, currentDir);
+    }
+    
+    // 检查是否为子模块导入
+    if (isSubmoduleImport(path)) {
+        return resolveCJmodSubmoduleImport(path, currentDir);
+    }
     
     // 判断路径类型
     PathType pathType = getPathType(path);
@@ -621,6 +629,176 @@ ImportResolveResult ImportResolver::resolveSubmoduleImport(const std::string& pa
             result.errorMessage = "Submodule file not found: " + submoduleFile.string();
             return result;
         }
+    }
+}
+
+ImportResolveResult ImportResolver::resolveCJmodWildcardImport(const std::string& pattern,
+                                                             const fs::path& currentDir) {
+    ImportResolveResult result;
+    
+    // 检查是否是子模块通配符 (如 "reactive.*")
+    size_t dotPos = pattern.find('.');
+    size_t starPos = pattern.find('*');
+    
+    if (dotPos != std::string::npos && starPos != std::string::npos && dotPos < starPos) {
+        // 这是子模块通配符导入
+        std::string moduleName = pattern.substr(0, dotPos);
+        return resolveCJmodSubmoduleImport(pattern, currentDir);
+    }
+    
+    // 普通通配符导入（目录中的 .cjmod 文件）
+    std::string normalizedPattern = pattern;
+    size_t pos = normalizedPattern.find(".*");
+    while (pos != std::string::npos) {
+        normalizedPattern.replace(pos, 2, "/*");
+        pos = normalizedPattern.find(".*", pos + 2);
+    }
+    
+    fs::path patternPath(normalizedPattern);
+    fs::path directory = patternPath.parent_path();
+    std::string wildcard = patternPath.filename().string();
+    
+    if (wildcard != "*.cjmod" && wildcard != "*") {
+        result.errorMessage = "CJmod only supports *.cjmod or * wildcards";
+        return result;
+    }
+    
+    fs::path resolvedDir;
+    if (directory.is_absolute()) {
+        resolvedDir = directory;
+    } else if (directory.empty()) {
+        resolvedDir = currentDir;
+    } else {
+        resolvedDir = currentDir / directory;
+    }
+    
+    if (!fs::exists(resolvedDir) || !fs::is_directory(resolvedDir)) {
+        result.errorMessage = "Directory not found: " + resolvedDir.string();
+        return result;
+    }
+    
+    result.wildcardResults.clear();
+    try {
+        for (const auto& entry : fs::directory_iterator(resolvedDir)) {
+            if (entry.is_regular_file()) {
+                std::string ext = entry.path().extension().string();
+                if (ext == ".cjmod") {
+                    result.wildcardResults.push_back(entry.path().string());
+                }
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        result.errorMessage = std::string("Error reading directory: ") + e.what();
+        return result;
+    }
+    
+    if (result.wildcardResults.empty()) {
+        result.errorMessage = "No .cjmod files found matching pattern: " + pattern;
+        return result;
+    }
+    
+    result.success = true;
+    result.isWildcard = true;
+    return result;
+}
+
+ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::string& path,
+                                                              const fs::path& currentDir) {
+    ImportResolveResult result;
+    
+    // 支持 '.' 和 '/' 作为子模块分隔符
+    std::string normalizedPath = path;
+    std::replace(normalizedPath.begin(), normalizedPath.end(), '.', '/');
+    
+    // 分离模块名和子模块路径
+    size_t firstSep = normalizedPath.find('/');
+    std::string moduleName = normalizedPath.substr(0, firstSep);
+    std::string submodulePath = (firstSep != std::string::npos) ? 
+                                normalizedPath.substr(firstSep + 1) : "";
+    
+    // 首先找到主模块
+    auto mainModuleResult = resolveModuleName(moduleName, Import::ImportType::CJMOD, currentDir, false);
+    if (!mainModuleResult.success) {
+        result.errorMessage = "Cannot find CJmod module '" + moduleName + 
+                            "' for submodule import";
+        return result;
+    }
+    
+    // 获取主模块的目录
+    fs::path mainModulePath(mainModuleResult.resolvedPath);
+    fs::path moduleDir;
+    
+    // 如果主模块是 .cjmod 文件，则子模块在同名目录中
+    if (mainModulePath.extension() == ".cjmod") {
+        moduleDir = mainModulePath.parent_path() / mainModulePath.stem();
+    } else {
+        // 否则假设是目录形式
+        moduleDir = mainModulePath.parent_path() / moduleName;
+    }
+    
+    // 检查是否是通配符子模块导入
+    if (submodulePath == "*") {
+        if (!fs::exists(moduleDir) || !fs::is_directory(moduleDir)) {
+            result.errorMessage = "CJmod module '" + moduleName + 
+                                "' does not have submodules directory";
+            return result;
+        }
+        
+        // 收集所有子模块
+        result.wildcardResults.clear();
+        try {
+            // 递归搜索所有 .cjmod.json 文件
+            std::function<void(const fs::path&)> searchSubmodules = 
+                [&](const fs::path& dir) {
+                    for (const auto& entry : fs::directory_iterator(dir)) {
+                        if (entry.is_regular_file()) {
+                            std::string filename = entry.path().filename().string();
+                            if (filename.ends_with(".cjmod.json")) {
+                                result.wildcardResults.push_back(entry.path().string());
+                            }
+                        } else if (entry.is_directory()) {
+                            searchSubmodules(entry.path());
+                        }
+                    }
+                };
+            searchSubmodules(moduleDir);
+        } catch (const fs::filesystem_error& e) {
+            result.errorMessage = std::string("Error reading submodules: ") + e.what();
+            return result;
+        }
+        
+        if (result.wildcardResults.empty()) {
+            result.errorMessage = "No submodules found in CJmod module '" + moduleName + "'";
+            return result;
+        }
+        
+        result.success = true;
+        result.isWildcard = true;
+        return result;
+    } else {
+        // 具体的子模块
+        // 在子模块目录中查找
+        fs::path submoduleFile = moduleDir / submodulePath;
+        
+        // 尝试不同的文件名格式
+        std::vector<std::string> possibleFiles = {
+            submoduleFile.string() + ".cjmod.json",
+            submoduleFile.string() + ".cjmod",
+            (submoduleFile / submoduleFile.filename()).string() + ".cjmod.json"
+        };
+        
+        for (const auto& testPath : possibleFiles) {
+            if (fs::exists(testPath) && fs::is_regular_file(testPath)) {
+                result.resolvedPath = testPath;
+                result.fileExtension = fs::path(testPath).extension().string();
+                result.success = true;
+                return result;
+            }
+        }
+        
+        result.errorMessage = "CJmod submodule '" + submodulePath + 
+                            "' not found in module '" + moduleName + "'";
+        return result;
     }
 }
 

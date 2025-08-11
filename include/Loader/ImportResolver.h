@@ -63,6 +63,12 @@ private:
     ImportResolveResult resolveCJmodImport(const std::string& path,
                                          const std::filesystem::path& currentDir);
     
+    ImportResolveResult resolveCJmodWildcardImport(const std::string& pattern,
+                                                 const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveCJmodSubmoduleImport(const std::string& path,
+                                                  const std::filesystem::path& currentDir);
+    
     // 模块名称解析
     ImportResolveResult resolveModuleName(const std::string& name,
                                         Import::ImportType type,

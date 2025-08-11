@@ -1,9 +1,24 @@
 #include "CJmod/CJmodProcessor.h"
+#include "CJmod/CJmodContextImpl.cpp"  // 包含上下文实现
 #include <algorithm>
-#include <sstream>
+#include <regex>
+#include <dlfcn.h>
+#include <iostream>
 
 namespace chtl {
 namespace cjmod {
+
+// SyntaxRuleInternal 实现
+std::unique_ptr<SyntaxRuleInternal> SyntaxRuleInternal::fromBuilder(const SyntaxBuilder* builder) {
+    auto rule = std::make_unique<SyntaxRuleInternal>();
+    rule->name = builder->name_;
+    rule->priority = builder->priority_;
+    rule->pattern = builder->pattern_;
+    rule->scanFunc = builder->scanFunc_;
+    rule->generateFunc = builder->generateFunc_;
+    rule->validateFunc = builder->validateFunc_;
+    return rule;
+}
 
 // CJmodProcessor 实现
 CJmodProcessor& CJmodProcessor::getInstance() {
@@ -11,239 +26,323 @@ CJmodProcessor& CJmodProcessor::getInstance() {
     return instance;
 }
 
-void CJmodProcessor::registerModule(std::unique_ptr<ICJmod> module) {
-    if (!module) return;
+CJmodProcessor::~CJmodProcessor() {
+    unloadAllModules();
+}
+
+bool CJmodProcessor::loadModule(const std::string& modulePath) {
+    // 动态加载 .so/.dll 文件
+    void* handle = loadDynamicLibrary(modulePath);
+    if (!handle) {
+        lastErrors_.push_back("Failed to load module: " + modulePath);
+        return false;
+    }
     
-    std::string name = module->getName();
+    // 获取创建函数
+    typedef CJmodModule* (*CreateFunc)();
+    CreateFunc create = (CreateFunc)dlsym(handle, "cjmod_create");
+    
+    if (!create) {
+        lastErrors_.push_back("Module missing cjmod_create function: " + modulePath);
+        dlclose(handle);
+        return false;
+    }
+    
+    // 创建模块实例
+    CJmodModule* modulePtr = create();
+    if (!modulePtr) {
+        lastErrors_.push_back("Failed to create module instance: " + modulePath);
+        dlclose(handle);
+        return false;
+    }
+    
+    // 初始化模块
+    modulePtr->initialize();
+    
+    // 存储模块信息
+    auto info = std::make_unique<ModuleInfo>();
+    info->module = std::unique_ptr<CJmodModule>(modulePtr);
+    info->dlHandle = handle;
+    
+    // 提取语法规则
+    for (const auto& builder : info->module->syntaxBuilders_) {
+        info->rules.push_back(SyntaxRuleInternal::fromBuilder(builder.get()));
+    }
+    
+    // 复制运行时
+    info->runtime = info->module->runtimeBuilder_;
+    
+    std::string moduleName = info->module->getName();
+    modules_[moduleName] = std::move(info);
+    
+    return true;
+}
+
+bool CJmodProcessor::loadModuleFromMemory(std::unique_ptr<CJmodModule> module) {
+    if (!module) return false;
+    
+    // 初始化模块
     module->initialize();
-    modules_[name] = std::move(module);
-    enabledModules_.insert(name);
+    
+    // 存储模块信息
+    auto info = std::make_unique<ModuleInfo>();
+    std::string moduleName = module->getName();
+    
+    // 提取语法规则
+    for (const auto& builder : module->syntaxBuilders_) {
+        info->rules.push_back(SyntaxRuleInternal::fromBuilder(builder.get()));
+    }
+    
+    // 复制运行时
+    info->runtime = module->runtimeBuilder_;
+    
+    info->module = std::move(module);
+    info->dlHandle = nullptr;  // 内存加载，无动态库句柄
+    
+    modules_[moduleName] = std::move(info);
+    
+    return true;
 }
 
-void CJmodProcessor::registerFactory(std::unique_ptr<ICJmodFactory> factory) {
-    if (!factory) return;
-    factories_[factory->getModuleName()] = std::move(factory);
+std::string CJmodProcessor::processScript(const std::string& script, 
+                                        const std::vector<std::string>& activeModules) {
+    lastErrors_.clear();
+    lastWarnings_.clear();
+    
+    // 收集要使用的规则
+    std::vector<SyntaxRuleInternal*> rules;
+    collectActiveRules(activeModules.empty() ? getLoadedModules() : activeModules, rules);
+    
+    // 应用语法规则
+    return applySyntaxRules(script, rules);
 }
 
-std::string CJmodProcessor::processJavaScript(const std::string& code, 
-                                             const std::set<std::string>& activeModules) {
-    std::string result = code;
+std::string CJmodProcessor::getRuntimeCode(const std::vector<std::string>& modules) {
+    std::vector<std::string> targetModules = modules.empty() ? getLoadedModules() : modules;
     
-    // 确定要使用的模块
-    std::set<std::string> modulesToUse = activeModules.empty() ? enabledModules_ : activeModules;
+    // 合并所有模块的运行时
+    RuntimeBuilder combined;
     
-    // 预处理
-    for (const auto& moduleName : modulesToUse) {
-        if (modules_.find(moduleName) != modules_.end()) {
-            result = modules_[moduleName]->preprocess(result);
+    for (const auto& moduleName : targetModules) {
+        auto it = modules_.find(moduleName);
+        if (it != modules_.end()) {
+            // 合并运行时代码
+            const RuntimeBuilder& moduleRuntime = it->second->runtime;
+            
+            // TODO: 实现 RuntimeBuilder 的合并逻辑
+            // 这里需要合并 functions_, classes_, prototypes_, globals_, initCode_
+            // 暂时简化处理
         }
     }
     
-    // 应用 CHTL 基础语法
-    result = applyCHTLSyntax(result);
-    
-    // 应用模块转换
-    for (const auto& moduleName : modulesToUse) {
-        if (modules_.find(moduleName) != modules_.end()) {
-            result = applyModuleTransforms(result, modules_[moduleName].get());
-        }
-    }
-    
-    // 后处理
-    for (const auto& moduleName : modulesToUse) {
-        if (modules_.find(moduleName) != modules_.end()) {
-            result = modules_[moduleName]->postprocess(result);
-        }
-    }
-    
-    return result;
+    return combined.generate();
 }
 
-std::string CJmodProcessor::generateRuntime(const std::set<std::string>& activeModules) {
-    std::stringstream runtime;
-    runtime << "// CJmod Runtime Generated Code\n";
-    runtime << "(function() {\n";
-    runtime << "  'use strict';\n\n";
-    
-    // 确定要使用的模块
-    std::set<std::string> modulesToUse = activeModules.empty() ? enabledModules_ : activeModules;
-    
-    // 收集所有运行时代码
-    for (const auto& moduleName : modulesToUse) {
-        if (modules_.find(moduleName) != modules_.end()) {
-            runtime << "  // Module: " << moduleName << "\n";
-            runtime << modules_[moduleName]->getRuntimeCode() << "\n\n";
-        }
+std::vector<std::string> CJmodProcessor::getLoadedModules() const {
+    std::vector<std::string> names;
+    for (const auto& [name, info] : modules_) {
+        names.push_back(name);
     }
-    
-    // 方法注入
-    runtime << "  // Method Injections\n";
-    for (const auto& moduleName : modulesToUse) {
-        if (modules_.find(moduleName) != modules_.end()) {
-            auto injections = modules_[moduleName]->getMethodInjections();
-            for (const auto& injection : injections) {
-                runtime << "  if (typeof " << injection.target << " !== 'undefined') {\n";
-                runtime << "    " << injection.target << ".prototype." 
-                       << injection.methodName << " = " << injection.implementation << ";\n";
-                runtime << "  }\n";
-            }
-        }
-    }
-    
-    runtime << "})();\n";
-    return runtime.str();
+    return names;
 }
 
-std::string CJmodProcessor::applyModuleTransforms(const std::string& code, ICJmod* module) {
-    std::string result = code;
-    auto rules = module->getTransformRules();
-    
-    // 按优先级排序
-    std::sort(rules.begin(), rules.end(), 
-              [](const TransformRule& a, const TransformRule& b) {
-                  return a.priority > b.priority;
+bool CJmodProcessor::isModuleLoaded(const std::string& name) const {
+    return modules_.find(name) != modules_.end();
+}
+
+void CJmodProcessor::unloadModule(const std::string& name) {
+    auto it = modules_.find(name);
+    if (it != modules_.end()) {
+        if (it->second->dlHandle) {
+            unloadDynamicLibrary(it->second->dlHandle);
+        }
+        modules_.erase(it);
+    }
+}
+
+void CJmodProcessor::unloadAllModules() {
+    for (auto& [name, info] : modules_) {
+        if (info->dlHandle) {
+            unloadDynamicLibrary(info->dlHandle);
+        }
+    }
+    modules_.clear();
+}
+
+std::string CJmodProcessor::applySyntaxRules(const std::string& code, 
+                                           const std::vector<SyntaxRuleInternal*>& rules) {
+    // 按优先级排序规则
+    std::vector<SyntaxRuleInternal*> sortedRules = rules;
+    std::sort(sortedRules.begin(), sortedRules.end(), 
+              [](const SyntaxRuleInternal* a, const SyntaxRuleInternal* b) {
+                  return a->priority > b->priority;
               });
     
-    // 应用转换规则
-    for (const auto& rule : rules) {
-        std::string transformed;
-        std::smatch match;
-        std::string::const_iterator searchStart(result.cbegin());
+    // 创建扫描上下文
+    auto scanCtx = std::make_unique<ScanContextImpl>(code, &globalState_);
+    
+    // 收集所有切割点
+    std::vector<std::pair<ScanResult, SyntaxRuleInternal*>> allCuts;
+    
+    for (auto* rule : sortedRules) {
+        std::vector<ScanResult> cuts;
         
-        while (std::regex_search(searchStart, result.cend(), match, rule.pattern)) {
-            // 检查验证器
-            if (rule.validator && !rule.validator(match.str())) {
-                searchStart = match.suffix().first;
-                continue;
-            }
+        if (rule->scanFunc) {
+            // 使用自定义扫描函数
+            cuts = rule->scanFunc(scanCtx.get());
+        } else if (!rule->pattern.empty()) {
+            // 使用正则表达式扫描
+            std::regex regex(rule->pattern);
+            auto it = std::sregex_iterator(code.begin(), code.end(), regex);
+            auto end = std::sregex_iterator();
             
-            // 应用转换
-            transformed += std::string(searchStart, match[0].first);
-            transformed += rule.transformer(match);
-            searchStart = match.suffix().first;
+            for (; it != end; ++it) {
+                if (scanCtx->isProcessed(it->position())) continue;
+                
+                ScanResult result;
+                result.start = it->position();
+                result.end = result.start + it->length();
+                result.content = it->str();
+                
+                // 填充捕获组
+                for (size_t i = 1; i < it->size(); i++) {
+                    result.captures[std::to_string(i)] = (*it)[i];
+                }
+                
+                if (!rule->validateFunc || rule->validateFunc(result)) {
+                    cuts.push_back(result);
+                    scanCtx->markProcessed(result.start, result.end);
+                }
+            }
         }
         
-        transformed += std::string(searchStart, result.cend());
-        result = transformed;
+        // 关联规则和切割点
+        for (auto& cut : cuts) {
+            allCuts.push_back({cut, rule});
+        }
+    }
+    
+    // 按位置排序切割点
+    std::sort(allCuts.begin(), allCuts.end(), 
+              [](const auto& a, const auto& b) {
+                  return a.first.start < b.first.start;
+              });
+    
+    // 创建生成上下文
+    RuntimeBuilder runtime;
+    auto genCtx = std::make_unique<GenerateContextImpl>(&runtime, &globalState_);
+    
+    // 生成最终代码
+    std::string result;
+    size_t lastPos = 0;
+    
+    for (const auto& [cut, rule] : allCuts) {
+        // 添加未处理的部分
+        if (cut.start > lastPos) {
+            result += code.substr(lastPos, cut.start - lastPos);
+        }
+        
+        // 应用转换
+        if (rule->generateFunc) {
+            result += rule->generateFunc(cut, genCtx.get());
+        } else {
+            result += cut.content;  // 无转换，保持原样
+        }
+        
+        lastPos = cut.end;
+    }
+    
+    // 添加剩余部分
+    if (lastPos < code.length()) {
+        result += code.substr(lastPos);
+    }
+    
+    // 处理错误和警告
+    for (const auto& [msg, context] : genCtx->getErrors()) {
+        lastErrors_.push_back(msg + " in: " + context);
+    }
+    
+    for (const auto& [msg, context] : genCtx->getWarnings()) {
+        lastWarnings_.push_back(msg + " in: " + context);
     }
     
     return result;
 }
 
-std::string CJmodProcessor::applyCHTLSyntax(const std::string& code) {
-    return CHTLJSSyntaxProcessor::getInstance().process(code);
-}
-
-void CJmodProcessor::overrideCHTLSyntax(const std::string& syntax, const TransformRule& rule) {
-    syntaxOverrides_[syntax] = rule;
-    CHTLJSSyntaxProcessor::getInstance().setSyntaxOverride(syntax, rule.transformer);
-}
-
-// CHTLJSSyntaxProcessor 实现
-CHTLJSSyntaxProcessor::CHTLJSSyntaxProcessor() {
-    initializeOfficialSyntax();
-}
-
-CHTLJSSyntaxProcessor& CHTLJSSyntaxProcessor::getInstance() {
-    static CHTLJSSyntaxProcessor instance;
-    return instance;
-}
-
-void CHTLJSSyntaxProcessor::initializeOfficialSyntax() {
-    // {{&}} -> this
-    registerSyntax({
-        "self-reference",
-        std::regex(R"(\{\{&\}\})"),
-        [](const std::smatch& /* match */) { return "this"; },
-        true  // 可以被覆写
-    });
-    
-    // {{#id}} -> document.getElementById('id')
-    registerSyntax({
-        "id-selector",
-        std::regex(R"(\{\{#([\w-]+)\}\})"),
-        [](const std::smatch& match) {
-            return "document.getElementById('" + match[1].str() + "')";
-        },
-        true
-    });
-    
-    // {{.class}} -> document.getElementsByClassName('class')
-    registerSyntax({
-        "class-selector",
-        std::regex(R"(\{\{\.(\w+)\}\})"),
-        [](const std::smatch& match) {
-            return "document.getElementsByClassName('" + match[1].str() + "')";
-        },
-        true
-    });
-    
-    // obj->method() -> obj.method()
-    registerSyntax({
-        "method-call",
-        std::regex(R"((\w+|this)->(\w+)\()"),
-        [](const std::smatch& match) {
-            return match[1].str() + "." + match[2].str() + "(";
-        },
-        false  // 核心语法，不允许覆写
-    });
-    
-    // obj->listen("event", handler) -> obj.addEventListener("event", handler)
-    registerSyntax({
-        "listen-method",
-        std::regex(R"((\w+|this)->listen\s*\(\s*["'](\w+)["'])"),
-        [](const std::smatch& match) {
-            return match[1].str() + ".addEventListener('" + match[2].str() + "'";
-        },
-        true
-    });
-}
-
-void CHTLJSSyntaxProcessor::registerSyntax(const SyntaxRule& rule) {
-    syntaxRules_.push_back(rule);
-}
-
-std::string CHTLJSSyntaxProcessor::process(const std::string& code) {
-    std::string result = code;
-    
-    for (const auto& rule : syntaxRules_) {
-        // 检查是否有覆写
-        auto overrideIt = overrides_.find(rule.name);
-        auto transformer = (overrideIt != overrides_.end()) 
-                          ? overrideIt->second 
-                          : rule.transformer;
-        
-        std::string transformed;
-        std::smatch match;
-        std::string::const_iterator searchStart(result.cbegin());
-        
-        while (std::regex_search(searchStart, result.cend(), match, rule.pattern)) {
-            transformed += std::string(searchStart, match[0].first);
-            transformed += transformer(match);
-            searchStart = match.suffix().first;
-        }
-        
-        transformed += std::string(searchStart, result.cend());
-        result = transformed;
-    }
-    
-    return result;
-}
-
-std::vector<std::string> CHTLJSSyntaxProcessor::getOverridableSyntax() const {
-    std::vector<std::string> overridable;
-    for (const auto& rule : syntaxRules_) {
-        if (rule.canBeOverridden) {
-            overridable.push_back(rule.name);
+void CJmodProcessor::collectActiveRules(const std::vector<std::string>& moduleNames,
+                                      std::vector<SyntaxRuleInternal*>& outRules) {
+    for (const auto& moduleName : moduleNames) {
+        auto it = modules_.find(moduleName);
+        if (it != modules_.end()) {
+            for (const auto& rule : it->second->rules) {
+                outRules.push_back(rule.get());
+            }
         }
     }
-    return overridable;
 }
 
-void CHTLJSSyntaxProcessor::setSyntaxOverride(const std::string& syntaxName,
-                                             const std::function<std::string(const std::smatch&)>& override) {
-    overrides_[syntaxName] = override;
+void* CJmodProcessor::loadDynamicLibrary(const std::string& path) {
+    void* handle = dlopen(path.c_str(), RTLD_LAZY);
+    if (!handle) {
+        lastErrors_.push_back("dlopen failed: " + std::string(dlerror()));
+    }
+    return handle;
 }
+
+void CJmodProcessor::unloadDynamicLibrary(void* handle) {
+    if (handle) {
+        dlclose(handle);
+    }
+}
+
+// 集成函数实现
+namespace integration {
+
+void initialize() {
+    // 初始化 CJmod 系统
+    auto& processor = CJmodProcessor::getInstance();
+    
+    // 加载内置模块
+    loadStandardModules();
+}
+
+void loadStandardModules() {
+    // 这里可以加载标准库模块
+    // 例如：@cjmod/reactive, @cjmod/animate, @cjmod/delegate 等
+}
+
+bool processImport(const std::string& moduleName, const std::string& source) {
+    auto& processor = CJmodProcessor::getInstance();
+    
+    if (source == "builtin") {
+        // 内置模块，已经预加载
+        return processor.isModuleLoaded(moduleName);
+    } else if (source.find("file:") == 0) {
+        // 从文件加载
+        std::string path = source.substr(5);
+        return processor.loadModule(path);
+    } else if (source.find("npm:") == 0) {
+        // 从 npm 加载（需要额外实现）
+        // TODO: 实现 npm 模块加载
+        return false;
+    }
+    
+    return false;
+}
+
+ModuleMetadata getModuleMetadata(const std::string& moduleName) {
+    auto& processor = CJmodProcessor::getInstance();
+    ModuleMetadata meta;
+    
+    if (processor.isModuleLoaded(moduleName)) {
+        // TODO: 从模块中提取元数据
+        // 这需要在 ModuleInfo 中存储更多信息
+    }
+    
+    return meta;
+}
+
+} // namespace integration
 
 } // namespace cjmod
 } // namespace chtl

@@ -1620,6 +1620,15 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         importType = Import::ImportType::JS;
     } else if (match(TokenType::AT_CHTL)) {
         importType = Import::ImportType::CHTL;
+    } else if (checkIdentifier("@CJmod")) {
+        advance(); // 消费 @CJmod
+        importType = Import::ImportType::CJMOD;
+        // CJmod 名称直接在 @CJmod 后面
+        if (check(TokenType::IDENTIFIER)) {
+            importName = advance().value;
+        } else {
+            addError("Expected CJmod module name after '@CJmod'");
+        }
     } else if (match(TokenType::CUSTOM)) {
         // [Custom] @Type Name
         if (match(TokenType::AT_ELEMENT)) {

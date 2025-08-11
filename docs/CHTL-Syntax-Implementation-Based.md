@@ -393,7 +393,7 @@ body {
 
 ### 已实现但与文档不同：
 1. **文本必须使用text块** - 不支持`div { "文本" }`直接语法
-2. **CJmod导入** - 使用字符串检查`"@CJmod"`而非专门的Token
+2. **CJmod导入** - `@CJmod`不是专门的Token类型（如AT_CJMOD），而是作为IDENTIFIER通过字符串检查`checkIdentifier("@CJmod")`来识别
 3. **脚本中的{{}}** - 已解析但具体处理在运行时
 
 ### 文档中提到但未见实现：

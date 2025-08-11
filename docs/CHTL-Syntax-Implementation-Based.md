@@ -196,6 +196,18 @@ script {
     medium: 16px;
     large: 24px;
 }
+
+# 使用自定义元素
+body {
+    [Custom] @Element Button;  # 正确的使用语法
+    
+    # 带特例化
+    [Custom] @Element Button {
+        button {
+            style { background-color: red; }
+        }
+    }
+}
 ```
 
 ## 8. 继承系统
@@ -412,9 +424,9 @@ body {
 2. **->操作符** - CHTL JS功能
 3. **listen/delegate/animate** - CHTL JS API
 
-### 官方语法但实现不完整：
-1. **变量组函数调用** - `ThemeColor(primary)` - 解析器已实现，但生成器处理不完整
-2. **Custom关键字** - `Custom @Element Name;` 使用语法未实现（只支持定义）
+### 官方语法实现情况：
+1. **变量组函数调用** - `ThemeColor(primary)` - 解析器已实现（parseVarArguments），但生成器可能需要完善
+2. **[Custom] @Element Name使用** - 已实现！在parseSpecialBlock中处理，支持 `[Custom] @Element Name;` 和带特例化的使用
 3. **槽位系统（slot）** - 未见实现
 
 ### 建议确认的功能：

@@ -214,38 +214,6 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     // 调试输出
     // std::cout << "visitElement: " << tag << std::endl;
     
-    // 检查 except 约束
-    const auto& constraints = element->getConstraints();
-    if (!constraints.empty()) {
-        // 如果有约束，生成条件性渲染
-        for (const auto& constraint : constraints) {
-            // except mobile 表示：在非移动端显示
-            if (constraint == "mobile") {
-                // 使用 CSS 媒体查询控制显示
-                static size_t exceptCounter = 0;
-                std::string className = "chtl-except-mobile-" + std::to_string(exceptCounter++);
-                element->setAttribute("class", className);
-                
-                // 添加 CSS 规则
-                cssCollector_.appendLine("@media (max-width: 767px) {");
-                cssCollector_.appendLine("  ." + className + " { display: none !important; }");
-                cssCollector_.appendLine("}");
-            } 
-            else if (constraint == "desktop") {
-                // except desktop 表示：在非桌面端显示
-                static size_t exceptDesktopCounter = 0;
-                std::string className = "chtl-except-desktop-" + std::to_string(exceptDesktopCounter++);
-                element->setAttribute("class", className);
-                
-                // 添加 CSS 规则
-                cssCollector_.appendLine("@media (min-width: 768px) {");
-                cssCollector_.appendLine("  ." + className + " { display: none !important; }");
-                cssCollector_.appendLine("}");
-            }
-            // 其他约束可以扩展，但严格按照 CHTL 语法
-        }
-    }
-    
 
     // 特殊处理引用节点
     if (tag == "reference") {

@@ -287,6 +287,10 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         if (checkAttribute()) {
             parseAttributes(element);
         }
+        // 检查 except 约束
+        else if (check(TokenType::EXCEPT)) {
+            parseExceptConstraints(element);
+        }
         // 检查特殊操作（delete, insert）
         else if (check(TokenType::DELETE_KW) || check(TokenType::INSERT)) {
             auto op = parseOperation();
@@ -304,18 +308,6 @@ std::shared_ptr<Node> StandardParser::parseElement() {
     }
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
-    
-    // 检查 except 约束（在元素结束后）
-    if (check(TokenType::EXCEPT)) {
-        advance(); // 消费 except
-        if (check(TokenType::IDENTIFIER)) {
-            std::string condition = advance().value;
-            element->addConstraint(condition);
-            consume(TokenType::SEMICOLON, "Expected ';' after except condition");
-        } else {
-            addError("Expected condition after 'except'");
-        }
-    }
     
     return element;
 }
@@ -1278,6 +1270,57 @@ void StandardParser::parseVarArguments(std::shared_ptr<Node> refNode) {
     }
 }
 
+void StandardParser::parseExceptConstraints(std::shared_ptr<Node> element) {
+    consume(TokenType::EXCEPT, "Expected 'except'");
+    
+    // 解析约束列表，支持逗号分隔
+    do {
+        std::string constraint;
+        
+        // 检查约束类型
+        if (check(TokenType::LEFT_BRACKET)) {
+            // [Custom] 或 [Template] 类型约束
+            advance(); // 消费 [
+            if (check(TokenType::IDENTIFIER)) {
+                std::string blockType = advance().value;
+                constraint = "[" + blockType + "]";
+                consume(TokenType::RIGHT_BRACKET, "Expected ']'");
+                
+                // 检查是否有具体类型，如 [Template] @Var
+                if (check(TokenType::AT_STYLE) || check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
+                    Token typeToken = advance();
+                    constraint += " " + typeToken.value;
+                    
+                    // 检查是否有具体名称，如 [Custom] @Element Box
+                    if (check(TokenType::IDENTIFIER)) {
+                        constraint += " " + advance().value;
+                    }
+                }
+            }
+        }
+        else if (check(TokenType::AT_HTML) || check(TokenType::AT_STYLE) || 
+                 check(TokenType::AT_ELEMENT) || check(TokenType::AT_VAR)) {
+            // @Html, @Style 等类型约束
+            constraint = advance().value;
+        }
+        else if (check(TokenType::IDENTIFIER)) {
+            // HTML 元素名称约束，如 span, div
+            constraint = advance().value;
+        }
+        else {
+            addError("Expected constraint after 'except'");
+            skipToNextStatement();
+            return;
+        }
+        
+        // 添加约束
+        element->addConstraint(constraint);
+        
+    } while (match(TokenType::COMMA));
+    
+    consume(TokenType::SEMICOLON, "Expected ';' after except constraints");
+}
+
 void StandardParser::parseSpecialization(std::shared_ptr<Node> refNode) {
     // 解析特例化内容（delete, 属性覆盖等）
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
@@ -1816,10 +1859,9 @@ void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceN
         
         if (check(TokenType::RIGHT_BRACE)) break;
         
-        // except约束 - 暂不支持在命名空间内使用
+        // except约束 - 在命名空间内使用作为全局约束
         if (check(TokenType::EXCEPT)) {
-            addError("except is not supported inside namespace blocks");
-            skipToNextStatement();
+            parseExceptConstraints(namespaceNode);
             continue;
         }
         

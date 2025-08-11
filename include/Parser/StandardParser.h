@@ -94,6 +94,7 @@ private:
     std::shared_ptr<Node> parseStyleReference();
     void parseVarArguments(std::shared_ptr<Node> refNode);
     void parseSpecialization(std::shared_ptr<Node> refNode);
+    void parseExceptConstraints(std::shared_ptr<Node> element);
     
     // 操作解析
     void parseDelete(std::shared_ptr<Node> parent);

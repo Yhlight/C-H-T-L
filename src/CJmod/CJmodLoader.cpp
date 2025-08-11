@@ -1,4 +1,5 @@
 #include "CJmod/CJmodLoader.h"
+#include "Loader/ImportResolver.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -18,10 +19,10 @@ std::shared_ptr<ICJmod> CJmodLoader::loadModule(const std::string& path) {
         return it->second;
     }
     
-    // 解析路径
-    auto [protocol, moduleName] = parseModulePath(path);
-    
     std::shared_ptr<ICJmod> module;
+    
+    // 解析路径以检查是否为内置模块
+    auto [protocol, moduleName] = parseModulePath(path);
     
     if (protocol == "builtin") {
         // 从内置模块加载
@@ -31,12 +32,16 @@ std::shared_ptr<ICJmod> CJmodLoader::loadModule(const std::string& path) {
         } else {
             std::cerr << "[CJmod] Builtin module not found: " << moduleName << std::endl;
         }
-    } else if (protocol == "cjmod") {
-        // 从包管理器加载
-        module = loadFromPackage(moduleName);
     } else {
-        // 从文件系统加载
-        module = loadFromFile(path);
+        // 使用 ImportResolver 解析路径（与 @Chtl 相同的逻辑）
+        ImportResolver resolver;
+        auto result = resolver.resolve(path, Import::ImportType::CJMOD, "");
+        
+        if (result.success) {
+            module = loadFromFile(result.resolvedPath);
+        } else {
+            std::cerr << "[CJmod] Failed to resolve module: " << result.errorMessage << std::endl;
+        }
     }
     
     // 缓存模块
@@ -327,9 +332,33 @@ std::pair<std::string, std::string> CJmodLoader::parseModulePath(const std::stri
 }
 
 std::shared_ptr<ICJmod> CJmodLoader::loadFromFile(const std::string& filePath) {
-    // TODO: 实现从文件加载 CJmod
-    // 这需要动态加载或者解释执行
-    std::cerr << "[CJmod] Loading from file not yet implemented: " << filePath << std::endl;
+    // 检查文件是否存在
+    if (!std::filesystem::exists(filePath)) {
+        std::cerr << "[CJmod] File not found: " << filePath << std::endl;
+        return nullptr;
+    }
+    
+    // 读取文件内容
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "[CJmod] Cannot open file: " << filePath << std::endl;
+        return nullptr;
+    }
+    
+    std::string content((std::istreambuf_iterator<char>(file)), 
+                       std::istreambuf_iterator<char>());
+    file.close();
+    
+    // 检查文件扩展名
+    if (filePath.ends_with(".cjmod.json") || filePath.ends_with(".json")) {
+        return loadFromJSON(content);
+    } else if (filePath.ends_with(".cjmod")) {
+        // 未来可以支持其他格式
+        std::cerr << "[CJmod] .cjmod format not yet supported, use .cjmod.json instead" << std::endl;
+        return nullptr;
+    }
+    
+    std::cerr << "[CJmod] Unknown file format: " << filePath << std::endl;
     return nullptr;
 }
 
@@ -337,6 +366,185 @@ std::shared_ptr<ICJmod> CJmodLoader::loadFromPackage(const std::string& packageN
     // TODO: 实现从包管理器加载 CJmod
     std::cerr << "[CJmod] Loading from package not yet implemented: " << packageName << std::endl;
     return nullptr;
+}
+
+std::shared_ptr<ICJmod> CJmodLoader::loadFromJSON(const std::string& jsonContent) {
+    // 简单的 JSON 解析实现
+    // 注意：这是一个简化版本，实际项目中应该使用成熟的 JSON 库如 nlohmann/json
+    
+    class JSONCJmod : public ICJmod {
+    public:
+        std::string name_;
+        std::string version_;
+        std::vector<ScanCutRule> rules_;
+        std::vector<RuntimeInjection> injections_;
+        std::map<std::string, std::string> overrides_;
+        
+        std::string getName() const override { return name_; }
+        std::string getVersion() const override { return version_; }
+        std::vector<ScanCutRule> getScanCutRules() const override { return rules_; }
+        std::vector<RuntimeInjection> getRuntimeInjections() const override { return injections_; }
+        std::map<std::string, std::string> getOverrides() const override { return overrides_; }
+    };
+    
+    auto module = std::make_shared<JSONCJmod>();
+    
+    try {
+        // 简单的 JSON 解析
+        // 提取 name
+        size_t namePos = jsonContent.find("\"name\"");
+        if (namePos != std::string::npos) {
+            size_t colonPos = jsonContent.find(":", namePos);
+            size_t startQuote = jsonContent.find("\"", colonPos);
+            size_t endQuote = jsonContent.find("\"", startQuote + 1);
+            module->name_ = jsonContent.substr(startQuote + 1, endQuote - startQuote - 1);
+        }
+        
+        // 提取 version
+        size_t versionPos = jsonContent.find("\"version\"");
+        if (versionPos != std::string::npos) {
+            size_t colonPos = jsonContent.find(":", versionPos);
+            size_t startQuote = jsonContent.find("\"", colonPos);
+            size_t endQuote = jsonContent.find("\"", startQuote + 1);
+            module->version_ = jsonContent.substr(startQuote + 1, endQuote - startQuote - 1);
+        }
+        
+        // 解析规则
+        size_t rulesPos = jsonContent.find("\"rules\"");
+        if (rulesPos != std::string::npos) {
+            size_t arrayStart = jsonContent.find("[", rulesPos);
+            size_t arrayEnd = findMatchingBracket(jsonContent, arrayStart, '[', ']');
+            
+            size_t ruleStart = arrayStart + 1;
+            while (ruleStart < arrayEnd) {
+                size_t ruleObjStart = jsonContent.find("{", ruleStart);
+                if (ruleObjStart >= arrayEnd) break;
+                
+                size_t ruleObjEnd = findMatchingBracket(jsonContent, ruleObjStart, '{', '}');
+                std::string ruleJson = jsonContent.substr(ruleObjStart, ruleObjEnd - ruleObjStart + 1);
+                
+                ScanCutRule rule;
+                
+                // 提取规则属性
+                size_t pos;
+                
+                // name
+                pos = ruleJson.find("\"name\"");
+                if (pos != std::string::npos) {
+                    size_t colonPos = ruleJson.find(":", pos);
+                    size_t startQuote = ruleJson.find("\"", colonPos);
+                    size_t endQuote = ruleJson.find("\"", startQuote + 1);
+                    rule.name = ruleJson.substr(startQuote + 1, endQuote - startQuote - 1);
+                }
+                
+                // pattern
+                pos = ruleJson.find("\"pattern\"");
+                if (pos != std::string::npos) {
+                    size_t colonPos = ruleJson.find(":", pos);
+                    size_t startQuote = ruleJson.find("\"", colonPos);
+                    size_t endQuote = ruleJson.find("\"", startQuote + 1);
+                    std::string pattern = ruleJson.substr(startQuote + 1, endQuote - startQuote - 1);
+                    rule.pattern = std::regex(pattern);
+                }
+                
+                // replacement
+                pos = ruleJson.find("\"replacement\"");
+                if (pos != std::string::npos) {
+                    size_t colonPos = ruleJson.find(":", pos);
+                    size_t startQuote = ruleJson.find("\"", colonPos);
+                    size_t endQuote = ruleJson.find("\"", startQuote + 1);
+                    rule.replacement = ruleJson.substr(startQuote + 1, endQuote - startQuote - 1);
+                }
+                
+                // priority
+                pos = ruleJson.find("\"priority\"");
+                if (pos != std::string::npos) {
+                    size_t colonPos = ruleJson.find(":", pos);
+                    size_t numStart = colonPos + 1;
+                    while (numStart < ruleJson.length() && std::isspace(ruleJson[numStart])) numStart++;
+                    size_t numEnd = numStart;
+                    while (numEnd < ruleJson.length() && std::isdigit(ruleJson[numEnd])) numEnd++;
+                    rule.priority = std::stoi(ruleJson.substr(numStart, numEnd - numStart));
+                }
+                
+                module->rules_.push_back(rule);
+                
+                ruleStart = ruleObjEnd + 1;
+            }
+        }
+        
+        // 解析 runtime
+        size_t runtimePos = jsonContent.find("\"runtime\"");
+        if (runtimePos != std::string::npos) {
+            size_t objStart = jsonContent.find("{", runtimePos);
+            size_t objEnd = findMatchingBracket(jsonContent, objStart, '{', '}');
+            std::string runtimeJson = jsonContent.substr(objStart, objEnd - objStart + 1);
+            
+            // before
+            size_t beforePos = runtimeJson.find("\"before\"");
+            if (beforePos != std::string::npos) {
+                size_t colonPos = runtimeJson.find(":", beforePos);
+                size_t startQuote = runtimeJson.find("\"", colonPos);
+                size_t endQuote = findLastQuote(runtimeJson, startQuote + 1);
+                std::string code = runtimeJson.substr(startQuote + 1, endQuote - startQuote - 1);
+                
+                // 处理转义字符
+                code = unescapeString(code);
+                
+                module->injections_.push_back({code, "before"});
+            }
+        }
+        
+        std::cout << "[CJmod] Loaded module from JSON: " << module->name_ << " v" << module->version_ << std::endl;
+        std::cout << "[CJmod] Rules: " << module->rules_.size() << std::endl;
+        
+        return module;
+        
+    } catch (const std::exception& e) {
+        std::cerr << "[CJmod] Failed to parse JSON: " << e.what() << std::endl;
+        return nullptr;
+    }
+}
+
+// 辅助函数：查找匹配的括号
+size_t CJmodLoader::findMatchingBracket(const std::string& str, size_t start, char open, char close) {
+    int depth = 1;
+    for (size_t i = start + 1; i < str.length(); i++) {
+        if (str[i] == open) depth++;
+        else if (str[i] == close) depth--;
+        if (depth == 0) return i;
+    }
+    return std::string::npos;
+}
+
+// 辅助函数：查找字符串的结束引号（考虑转义）
+size_t CJmodLoader::findLastQuote(const std::string& str, size_t start) {
+    for (size_t i = start; i < str.length(); i++) {
+        if (str[i] == '"' && (i == 0 || str[i-1] != '\\')) {
+            return i;
+        }
+    }
+    return std::string::npos;
+}
+
+// 辅助函数：处理转义字符
+std::string CJmodLoader::unescapeString(const std::string& str) {
+    std::string result;
+    for (size_t i = 0; i < str.length(); i++) {
+        if (str[i] == '\\' && i + 1 < str.length()) {
+            switch (str[i + 1]) {
+                case 'n': result += '\n'; i++; break;
+                case 't': result += '\t'; i++; break;
+                case 'r': result += '\r'; i++; break;
+                case '"': result += '"'; i++; break;
+                case '\\': result += '\\'; i++; break;
+                default: result += str[i]; break;
+            }
+        } else {
+            result += str[i];
+        }
+    }
+    return result;
 }
 
 } // namespace cjmod

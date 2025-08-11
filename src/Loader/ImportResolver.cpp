@@ -445,7 +445,7 @@ bool ImportResolver::isSubmoduleImport(const std::string& path) const {
 }
 
 ImportResolveResult ImportResolver::resolveWildcardImport(const std::string& pattern,
-                                                        Import::ImportType type,
+                                                        Import::ImportType /* type */,
                                                         const fs::path& currentDir) {
     ImportResolveResult result;
     

@@ -11,7 +11,6 @@ SOURCES = \
     src/Context/ChtlContext.cpp \
     src/Context/BasicContext.cpp \
     src/Node/Node.cpp \
-    src/Node/Element.cpp \
     src/Node/Template.cpp \
     src/Node/Custom.cpp \
     src/Node/Style.cpp \

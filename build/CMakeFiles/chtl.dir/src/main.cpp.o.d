@@ -298,8 +298,8 @@ CMakeFiles/chtl.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /workspace/include/Node/Origin.h \
   /workspace/include/Runtime/ChtlJsRuntime.h \
   /workspace/include/Generator/ConfigManager.h \
-  /workspace/include/Context/StandardContext.h \
   /workspace/include/Context/ChtlContext.h \
+  /workspace/include/Context/StandardContext.h \
   /workspace/include/Context/NamespaceManager.h \
   /workspace/include/Utils/ConstraintValidator.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/unordered_set \
@@ -308,4 +308,23 @@ CMakeFiles/chtl.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /workspace/include/Error/ErrorHandler.h \
   /workspace/include/Error/ErrorTypes.h \
   /workspace/include/Utils/FileUtils.h \
-  /workspace/include/Cmod/CmodPacker.h
+  /workspace/include/Cmod/CmodPacker.h \
+  /workspace/include/CJmod/CJmodLoader.h \
+  /workspace/include/CJmod/CJmodCorrect.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/regex \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bitset \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_map.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_constants.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_error.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_automaton.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_automaton.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_scanner.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_scanner.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_compiler.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_compiler.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_executor.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_executor.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/map \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_multimap.h

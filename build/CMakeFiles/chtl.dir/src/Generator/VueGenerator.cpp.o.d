@@ -254,4 +254,14 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/istream.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
   /workspace/include/Runtime/ChtlJsRuntime.h \
-  /workspace/include/Generator/ConfigManager.h
+  /workspace/include/Generator/ConfigManager.h \
+  /workspace/include/Context/ChtlContext.h \
+  /workspace/include/Context/BasicContext.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stack \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
+  /workspace/include/Common/Token.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iostream \
+  /workspace/include/Common/TokenType.h

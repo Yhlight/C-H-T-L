@@ -255,6 +255,16 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/sstream.tcc \
   /workspace/include/Runtime/ChtlJsRuntime.h \
   /workspace/include/Generator/ConfigManager.h \
+  /workspace/include/Context/ChtlContext.h \
+  /workspace/include/Context/BasicContext.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stack \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
+  /workspace/include/Common/Token.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/iostream \
+  /workspace/include/Common/TokenType.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/regex \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bitset \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/locale \
@@ -266,11 +276,6 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/codecvt.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_facets_nonio.tcc \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/locale_conv.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/stack \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/deque \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_deque.h \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/deque.tcc \
-  /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_stack.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_map.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_constants.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/regex_error.h \

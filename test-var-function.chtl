@@ -1,0 +1,43 @@
+// 测试变量组函数调用
+
+[Template] @Var ThemeColor {
+    primary: "#3498db";
+    secondary: "#2ecc71";
+    danger: "#e74c3c";
+    text: "#333333";
+}
+
+[Custom] @Var Spacing {
+    small: "8px";
+    medium: "16px";
+    large: "24px";
+    xlarge: "32px";
+}
+
+div {
+    style {
+        // 测试1：基本用法
+        color: ThemeColor(primary);
+        background-color: ThemeColor(secondary);
+        
+        // 测试2：覆盖值
+        border-color: ThemeColor(danger = "#ff0000");
+        
+        // 测试3：间距变量
+        padding: Spacing(medium);
+        margin: Spacing(large);
+    }
+}
+
+// 测试全局样式
+style {
+    .card {
+        background: ThemeColor(primary);
+        padding: Spacing(small);
+    }
+    
+    .button {
+        color: ThemeColor(text = "white");
+        margin: Spacing(medium = "20px");
+    }
+}

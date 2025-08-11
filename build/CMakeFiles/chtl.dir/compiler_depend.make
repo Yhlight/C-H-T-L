@@ -6515,6 +6515,7 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: /workspace/src/Generator/Gene
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/locale \
   /usr/include/c++/14/memory \
@@ -6566,6 +6567,10 @@ CMakeFiles/chtl.dir/src/Generator/Generator.cpp.o: /workspace/src/Generator/Gene
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/Common/Token.h \
+  /workspace/include/Common/TokenType.h \
+  /workspace/include/Context/BasicContext.h \
+  /workspace/include/Context/ChtlContext.h \
   /workspace/include/Generator/ConfigManager.h \
   /workspace/include/Generator/Generator.h \
   /workspace/include/Node/Comment.h \
@@ -6996,6 +7001,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/bits/cpp_type_traits.h \
   /usr/include/c++/14/bits/cxxabi_forced.h \
   /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/deque.tcc \
   /usr/include/c++/14/bits/enable_special_members.h \
   /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
@@ -7039,6 +7045,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_deque.h \
   /usr/include/c++/14/bits/stl_function.h \
   /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
@@ -7048,6 +7055,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_set.h \
+  /usr/include/c++/14/bits/stl_stack.h \
   /usr/include/c++/14/bits/stl_tempbuf.h \
   /usr/include/c++/14/bits/stl_tree.h \
   /usr/include/c++/14/bits/stl_uninitialized.h \
@@ -7076,6 +7084,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/cwctype \
   /usr/include/c++/14/debug/assertions.h \
   /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/deque \
   /usr/include/c++/14/exception \
   /usr/include/c++/14/ext/aligned_buffer.h \
   /usr/include/c++/14/ext/alloc_traits.h \
@@ -7088,6 +7097,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
@@ -7099,6 +7109,7 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/set \
   /usr/include/c++/14/sstream \
+  /usr/include/c++/14/stack \
   /usr/include/c++/14/stdexcept \
   /usr/include/c++/14/streambuf \
   /usr/include/c++/14/string \
@@ -7134,6 +7145,10 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o: /workspace/src/Generator
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/Common/Token.h \
+  /workspace/include/Common/TokenType.h \
+  /workspace/include/Context/BasicContext.h \
+  /workspace/include/Context/ChtlContext.h \
   /workspace/include/Generator/ConfigManager.h \
   /workspace/include/Generator/Generator.h \
   /workspace/include/Node/Comment.h \
@@ -7274,6 +7289,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/bits/cpp_type_traits.h \
   /usr/include/c++/14/bits/cxxabi_forced.h \
   /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/deque.tcc \
   /usr/include/c++/14/bits/enable_special_members.h \
   /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
@@ -7317,6 +7333,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_deque.h \
   /usr/include/c++/14/bits/stl_function.h \
   /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
@@ -7326,6 +7343,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_set.h \
+  /usr/include/c++/14/bits/stl_stack.h \
   /usr/include/c++/14/bits/stl_tempbuf.h \
   /usr/include/c++/14/bits/stl_tree.h \
   /usr/include/c++/14/bits/stl_uninitialized.h \
@@ -7354,6 +7372,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/cwctype \
   /usr/include/c++/14/debug/assertions.h \
   /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/deque \
   /usr/include/c++/14/exception \
   /usr/include/c++/14/ext/aligned_buffer.h \
   /usr/include/c++/14/ext/alloc_traits.h \
@@ -7366,6 +7385,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
@@ -7377,6 +7397,7 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/include/c++/14/pstl/pstl_config.h \
   /usr/include/c++/14/set \
   /usr/include/c++/14/sstream \
+  /usr/include/c++/14/stack \
   /usr/include/c++/14/stdexcept \
   /usr/include/c++/14/streambuf \
   /usr/include/c++/14/string \
@@ -7412,6 +7433,10 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o: /workspace/src/Generator/V
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/Common/Token.h \
+  /workspace/include/Common/TokenType.h \
+  /workspace/include/Context/BasicContext.h \
+  /workspace/include/Context/ChtlContext.h \
   /workspace/include/Generator/ConfigManager.h \
   /workspace/include/Generator/Generator.h \
   /workspace/include/Node/Comment.h \
@@ -7620,6 +7645,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
   /usr/include/c++/14/bits/stl_map.h \
+  /usr/include/c++/14/bits/stl_multimap.h \
   /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
@@ -7668,8 +7694,10 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
   /usr/include/c++/14/locale \
+  /usr/include/c++/14/map \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
   /usr/include/c++/14/optional \
@@ -7719,6 +7747,12 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
+  /workspace/include/CJmod/CJmodCorrect.h \
+  /workspace/include/CJmod/CJmodLoader.h \
+  /workspace/include/Common/Token.h \
+  /workspace/include/Common/TokenType.h \
+  /workspace/include/Context/BasicContext.h \
+  /workspace/include/Context/ChtlContext.h \
   /workspace/include/Generator/ConfigManager.h \
   /workspace/include/Generator/Generator.h \
   /workspace/include/Node/Comment.h \
@@ -20123,6 +20157,10 @@ CMakeFiles/chtl.dir/src/Node/Template.cpp.o:
 
 CMakeFiles/chtl.dir/src/Node/Script.cpp.o:
 
+CMakeFiles/chtl.dir/src/Node/Origin.cpp.o:
+
+CMakeFiles/chtl.dir/src/Node/Operate.cpp.o:
+
 /usr/lib/llvm-20/lib/clang/20/include/stddef.h:
 
 /usr/include/c++/14/cwchar:
@@ -21009,13 +21047,21 @@ CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o:
 
 /workspace/include/Node/Text.h:
 
+/workspace/include/CJmod/CJmodCorrect.h:
+
+/usr/include/c++/14/bits/requires_hosted.h:
+
+/workspace/src/Module/ModuleResolver.cpp:
+
+/workspace/include/CJmod/CJmodLoader.h:
+
+/workspace/include/Js/JsTokenizer.h:
+
 /workspace/include/Js/JsBlockExtractor.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
 /workspace/src/Node/Comment.cpp:
-
-/workspace/include/Js/JsTokenizer.h:
 
 /workspace/include/Lexer/ConfigLexer.h:
 
@@ -21041,10 +21087,6 @@ CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o:
 
 /workspace/src/Loader/ImportResolver.cpp:
 
-/usr/include/c++/14/bits/requires_hosted.h:
-
-/workspace/src/Module/ModuleResolver.cpp:
-
 /workspace/include/Module/ModuleInfo.h:
 
 /workspace/include/Module/ModuleResolver.h:
@@ -21056,6 +21098,12 @@ CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o:
 /workspace/src/Node/Delete.cpp:
 
 /workspace/include/Predefine/Registry.h:
+
+CMakeFiles/chtl.dir/src/Node/Node.cpp.o:
+
+/usr/include/c++/14/bits/locale_facets_nonio.tcc:
+
+/workspace/src/Node/Export.cpp:
 
 /usr/include/c++/14/backward/binders.h:
 
@@ -21110,10 +21158,6 @@ CMakeFiles/chtl.dir/src/Lexer/StandardLexer.cpp.o:
 /workspace/src/State/ChtlState.cpp:
 
 /workspace/src/State/CssState.cpp:
-
-CMakeFiles/chtl.dir/src/Node/Origin.cpp.o:
-
-CMakeFiles/chtl.dir/src/Node/Operate.cpp.o:
 
 /workspace/src/State/StateFactory.cpp:
 
@@ -21212,9 +21256,3 @@ CMakeFiles/chtl.dir/src/Node/Comment.cpp.o:
 CMakeFiles/chtl.dir/src/Node/Custom.cpp.o:
 
 CMakeFiles/chtl.dir/src/Node/Export.cpp.o:
-
-/usr/include/c++/14/bits/locale_facets_nonio.tcc:
-
-/workspace/src/Node/Export.cpp:
-
-CMakeFiles/chtl.dir/src/Node/Node.cpp.o:

@@ -69,22 +69,22 @@ private:
     // CHTL JS 官方语法规则
     std::vector<ScanCutRule> officialRules_ = {
         // {{&}} -> this
-        {"self-reference", std::regex(R"(\{\{&\}\})"), "this", 1000},
+        {"self-reference", std::regex(R"(\{\{&\}\})"), "this", 1000, nullptr},
         
         // {{#id}} -> document.getElementById('id')
-        {"id-selector", std::regex(R"(\{\{#([\w-]+)\}\})"), "document.getElementById('$1')", 900},
+        {"id-selector", std::regex(R"(\{\{#([\w-]+)\}\})"), "document.getElementById('$1')", 900, nullptr},
         
         // {{.class}} -> document.getElementsByClassName('class')
-        {"class-selector", std::regex(R"(\{\{\.([\w-]+)\}\})"), "document.getElementsByClassName('$1')", 900},
+        {"class-selector", std::regex(R"(\{\{\.([\w-]+)\}\})"), "document.getElementsByClassName('$1')", 900, nullptr},
         
         // obj->method() -> obj.method()
-        {"method-call", std::regex(R"((\w+)->(\w+)\s*\()"), "$1.$2(", 800},
+        {"method-call", std::regex(R"((\w+)->(\w+)\s*\()"), "$1.$2(", 800, nullptr},
         
         // new @Class -> new Class
-        {"new-instance", std::regex(R"(new\s+@(\w+))"), "new $1", 700},
+        {"new-instance", std::regex(R"(new\s+@(\w+))"), "new $1", 700, nullptr},
         
         // foreach item in items -> items.forEach(item =>
-        {"foreach", std::regex(R"(foreach\s+(\w+)\s+in\s+(\w+)\s*\{)"), "$2.forEach($1 => {", 600}
+        {"foreach", std::regex(R"(foreach\s+(\w+)\s+in\s+(\w+)\s*\{)"), "$2.forEach($1 => {", 600, nullptr}
     };
     
     // 应用扫描切割规则

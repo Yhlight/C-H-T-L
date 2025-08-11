@@ -1375,9 +1375,11 @@ void StandardParser::parseDelete(std::shared_ptr<Node> refNode) {
         }
         consume(TokenType::RIGHT_PAREN, "Expected ')'");
     } else {
-        // 解析单个删除项
-        std::string item = parseDeleteTarget();
-        deleteItems.push_back(item);
+        // 解析删除项（支持逗号分隔）
+        do {
+            std::string item = parseDeleteTarget();
+            deleteItems.push_back(item);
+        } while (match(TokenType::COMMA));
     }
     
     // 创建Delete节点

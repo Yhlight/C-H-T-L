@@ -1,0 +1,100 @@
+// CHTL 删除语法最终验证测试
+
+[Custom] @Element Badge {
+    span {
+        class: "badge";
+        text { "Badge" }
+    }
+}
+
+[Custom] @Element NavItem {
+    li {
+        a { text { "Nav Item" } }
+        @Element Badge;
+    }
+}
+
+[Custom] @Element Navigation {
+    nav {
+        ul {
+            @Element NavItem;
+            @Element NavItem;
+            @Element NavItem;
+            @Element NavItem;
+            @Element NavItem;
+        }
+    }
+}
+
+body {
+    h1 { text { "CHTL 删除语法验证" } }
+    
+    // 测试1: 基本删除
+    section {
+        h2 { text { "1. 基本元素删除" } }
+        
+        div {
+            p { text { "段落1" } }
+            p { text { "段落2" } }
+            p { text { "段落3" } }
+            delete p[1];  // 删除段落2
+        }
+    }
+    
+    // 测试2: 引用删除
+    section {
+        h2 { text { "2. 引用删除" } }
+        
+        div {
+            h3 { text { "删除特定导航项" } }
+            @Element Navigation {
+                delete @Element NavItem[0];  // 删除第一个
+                delete @Element NavItem[3];  // 删除第五个（原第四个）
+            }
+        }
+        
+        div {
+            h3 { text { "删除所有徽章" } }
+            @Element Navigation {
+                delete @Element Badge;  // 删除所有徽章
+            }
+        }
+    }
+    
+    // 测试3: 链式删除
+    section {
+        h2 { text { "3. 链式删除" } }
+        
+        @Element Navigation {
+            delete @Element NavItem[0], @Element NavItem[2], @Element NavItem[4];
+        }
+    }
+    
+    // 测试4: 混合删除
+    section {
+        h2 { text { "4. 混合删除" } }
+        
+        div {
+            span { text { "Span1" } }
+            @Element Badge;
+            span { text { "Span2" } }
+            @Element Badge;
+            span { text { "Span3" } }
+            
+            // 删除普通元素和引用
+            delete span[1], @Element Badge[0];
+        }
+    }
+    
+    // 测试5: 嵌套组件中的删除
+    section {
+        h2 { text { "5. 嵌套删除" } }
+        
+        @Element Navigation {
+            // 先删除每个NavItem中的Badge
+            delete @Element Badge;
+            // 再删除部分NavItem
+            delete @Element NavItem[1], @Element NavItem[3];
+        }
+    }
+}

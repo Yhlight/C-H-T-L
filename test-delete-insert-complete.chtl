@@ -1,0 +1,167 @@
+// CHTL 删除/插入语法完整测试
+
+// 定义测试组件
+[Custom] @Element Box {
+    div {
+        class: "box";
+        p { text { "Box Content" } }
+    }
+}
+
+[Custom] @Element Card {
+    div {
+        class: "card";
+        h4 { text { "Card Title" } }
+        p { text { "Card Body" } }
+    }
+}
+
+[Custom] @Element ListItem {
+    li { 
+        class: "item";
+        text { "List Item" } 
+    }
+}
+
+[Custom] @Element TodoList {
+    ul {
+        class: "todo-list";
+        @Element ListItem;
+        @Element ListItem;
+        @Element ListItem;
+        @Element ListItem;
+        @Element ListItem;
+    }
+}
+
+// 测试删除引用
+[Custom] @Element TestDeleteRef {
+    div {
+        h3 { text { "删除引用测试" } }
+        
+        // 测试1: 删除特定索引
+        div {
+            class: "test-1";
+            @Element Box;
+            @Element Box;
+            @Element Box;
+            delete @Element Box[1];  // 删除第二个Box
+        }
+        
+        // 测试2: 删除所有
+        div {
+            class: "test-2";
+            @Element Card;
+            @Element Card;
+            delete @Element Card;  // 删除所有Card
+        }
+        
+        // 测试3: 链式删除
+        div {
+            class: "test-3";
+            @Element ListItem;
+            @Element ListItem;
+            @Element ListItem;
+            @Element ListItem;
+            delete @Element ListItem[0], @Element ListItem[2];  // 删除第1和第3个
+        }
+    }
+}
+
+// 测试不同语法格式
+[Custom] @Element TestDeleteSyntax {
+    div {
+        h3 { text { "删除语法格式测试" } }
+        
+        // Custom 语法
+        div {
+            @Element Box;
+            @Element Box;
+            delete Custom @Element Box[0];
+        }
+        
+        // [Custom] 语法
+        div {
+            @Element Card;
+            @Element Card;
+            @Element Card;
+            delete [Custom] @Element Card[1];
+        }
+    }
+}
+
+// 测试在引用特例化中删除
+[Custom] @Element TestSpecialization {
+    div {
+        h3 { text { "特例化删除测试" } }
+        
+        // 原始列表
+        div {
+            p { text { "原始列表 (5个项目):" } }
+            @Element TodoList;
+        }
+        
+        // 删除部分项目
+        div {
+            p { text { "删除第1,3,5个项目:" } }
+            @Element TodoList {
+                delete @Element ListItem[0];
+                delete @Element ListItem[2];  // 注意：删除后索引会变化
+                delete @Element ListItem[4];
+            }
+        }
+        
+        // 删除所有项目
+        div {
+            p { text { "删除所有项目:" } }
+            @Element TodoList {
+                delete @Element ListItem;
+            }
+        }
+    }
+}
+
+// 测试插入功能（如果实现）
+[Custom] @Element TestInsert {
+    div {
+        h3 { text { "插入测试" } }
+        
+        @Element TodoList {
+            // 在顶部插入
+            insert at top {
+                li { 
+                    class: "special";
+                    text { "插入到顶部" } 
+                }
+            }
+            
+            // 在特定位置插入
+            insert after @Element ListItem[2] {
+                li {
+                    class: "inserted";
+                    text { "插入到第3个后面" }
+                }
+            }
+        }
+    }
+}
+
+// 主体测试
+body {
+    h1 { text { "CHTL 删除/插入语法完整测试" } }
+    
+    // 使用测试组件
+    @Element TestDeleteRef;
+    
+    hr;
+    
+    @Element TestDeleteSyntax;
+    
+    hr;
+    
+    @Element TestSpecialization;
+    
+    hr;
+    
+    @Element TestInsert;
+}

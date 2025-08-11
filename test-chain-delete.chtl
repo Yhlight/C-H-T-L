@@ -1,0 +1,29 @@
+[Custom] @Element Item {
+    li { text { "Item" } }
+}
+
+[Custom] @Element NumberedList {
+    ol {
+        li { text { "Item 0" } }
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+        li { text { "Item 4" } }
+    }
+}
+
+body {
+    h2 { text { "原始列表" } }
+    @Element NumberedList;
+    
+    h2 { text { "链式删除 li[0], li[2]" } }
+    @Element NumberedList {
+        delete li[0], li[2];
+    }
+    
+    h2 { text { "分步删除 li[0] 然后 li[2]" } }
+    @Element NumberedList {
+        delete li[0];
+        delete li[2];
+    }
+}

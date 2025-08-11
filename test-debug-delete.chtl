@@ -1,0 +1,19 @@
+// 调试删除功能
+
+body {
+    // 测试1: 直接在body中删除
+    p { text { "P1" } }
+    p { text { "P2" } }
+    p { text { "P3" } }
+    delete p[1];
+    
+    hr;
+    
+    // 测试2: 在div中删除
+    div {
+        span { text { "S1" } }
+        span { text { "S2" } }
+        span { text { "S3" } }
+        delete span[1];
+    }
+}

@@ -1,26 +1,24 @@
-#ifndef CHTL_IMPORT_RESOLVER_H
-#define CHTL_IMPORT_RESOLVER_H
+#pragma once
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <filesystem>
-#include <memory>
 #include "Node/Import.h"
 
 namespace chtl {
 
-namespace fs = std::filesystem;
-
 // 导入解析结果
 struct ImportResolveResult {
     bool success = false;
-    std::string resolvedPath;      // 解析后的完整路径
-    std::string errorMessage;       // 错误信息
-    bool isRelative = true;         // 是否为相对路径
+    std::string resolvedPath;       // 解析后的完整路径
     std::string fileExtension;      // 文件扩展名
+    bool isRelative = false;        // 是否为相对路径
+    bool isWildcard = false;        // 是否为通配符导入
+    std::vector<std::string> wildcardResults;  // 通配符匹配的所有文件
+    std::string errorMessage;       // 错误信息
 };
 
-// 导入路径解析器
 class ImportResolver {
 public:
     ImportResolver();
@@ -37,45 +35,66 @@ public:
     // 获取项目根目录
     const std::string& getProjectRoot() const { return projectRoot_; }
     
+    // 设置官方模块路径
+    void setOfficialModulePath(const std::string& path) { officialModulePath_ = path; }
+    
 private:
-    // 根据导入类型获取默认扩展名
+    // 路径类型
+    enum class PathType {
+        NAME_ONLY,                    // 只有名称，没有后缀名
+        NAME_WITH_EXT,               // 有具体的后缀名
+        SPECIFIC_PATH_WITH_FILE,     // 具体路径（包含文件信息）
+        SPECIFIC_PATH_WITHOUT_FILE   // 具体路径（不包含文件信息）
+    };
+    
+    // 判断路径类型
+    PathType getPathType(const std::string& path) const;
+    
+    // 解析不同类型的路径
+    ImportResolveResult resolveNameOnly(const std::string& name,
+                                       Import::ImportType type,
+                                       const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveNameWithExtension(const std::string& name,
+                                                Import::ImportType type,
+                                                const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveSpecificPath(const std::string& path,
+                                          Import::ImportType type);
+    
+    // 通配符和子模块导入
+    bool isWildcardImport(const std::string& path) const;
+    bool isSubmoduleImport(const std::string& path) const;
+    
+    ImportResolveResult resolveWildcardImport(const std::string& pattern,
+                                            Import::ImportType type,
+                                            const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveSubmoduleImport(const std::string& path,
+                                             Import::ImportType type,
+                                             const std::filesystem::path& currentDir);
+    
+    // 辅助方法
     std::string getDefaultExtension(Import::ImportType type) const;
-    
-    // 检查文件是否存在
     bool fileExists(const std::string& path) const;
-    
-    // 规范化路径
     std::string normalizePath(const std::string& path) const;
-    
-    // 判断是否为绝对路径
     bool isAbsolutePath(const std::string& path) const;
-    
-    // 获取文件扩展名
     std::string getExtension(const std::string& path) const;
-    
-    // 判断是否有扩展名
     bool hasExtension(const std::string& path) const;
-    
-    // 在目录中查找文件
     std::string findFileInDirectory(const std::string& directory,
                                    const std::string& filename,
                                    const std::string& extension) const;
-    
-    // 处理相对路径
     std::string resolveRelativePath(const std::string& basePath,
                                    const std::string& relativePath) const;
-    
-    // 验证文件扩展名是否匹配导入类型
     bool validateExtension(const std::string& extension,
-                          Import::ImportType type) const;
+                         Import::ImportType type) const;
     
-private:
-    std::string projectRoot_;       // 项目根目录
-    
-    // 支持的文件扩展名映射
+    // 静态扩展名映射表
     static const std::unordered_map<Import::ImportType, std::vector<std::string>> EXTENSION_MAP;
+    
+    // 成员变量
+    std::string projectRoot_;
+    std::filesystem::path officialModulePath_;  // 官方模块路径
 };
 
 } // namespace chtl
-
-#endif // CHTL_IMPORT_RESOLVER_H

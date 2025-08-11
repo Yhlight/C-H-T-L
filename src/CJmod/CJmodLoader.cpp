@@ -42,10 +42,30 @@ std::shared_ptr<ICJmod> CJmodLoader::loadModule(const std::string& path) {
     } else {
         // 使用 ImportResolver 解析路径（与 @Chtl 相同的逻辑）
         ImportResolver resolver;
+        
+        // 设置官方模块路径（如果有环境变量指定）
+        if (const char* compilerPath = std::getenv("CHTL_COMPILER_PATH")) {
+            std::filesystem::path p(compilerPath);
+            resolver.setOfficialModulePath((p.parent_path() / "module").string());
+        }
+        
         auto result = resolver.resolve(path, Import::ImportType::CJMOD, "");
         
         if (result.success) {
-            module = loadFromFile(result.resolvedPath);
+            if (result.isWildcard) {
+                // 处理通配符导入（加载多个模块）
+                for (const auto& filePath : result.wildcardResults) {
+                    auto wildcardModule = loadFromFile(filePath);
+                    if (wildcardModule) {
+                        // 注册每个匹配的模块
+                        CHTLJSProcessor::getInstance().registerModule(wildcardModule);
+                    }
+                }
+                // 返回nullptr表示已处理通配符
+                return nullptr;
+            } else {
+                module = loadFromFile(result.resolvedPath);
+            }
         } else {
             std::cerr << "[CJmod] Failed to resolve module: " << result.errorMessage << std::endl;
         }

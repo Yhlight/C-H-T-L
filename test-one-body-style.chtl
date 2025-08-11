@@ -1,0 +1,6 @@
+body {
+    div {
+        style { color: blue; }
+        text { "Only Body" }
+    }
+}

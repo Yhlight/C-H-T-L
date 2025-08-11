@@ -1,0 +1,13 @@
+body {
+    // 步骤1
+    p { text { "Step 1" } }
+    
+    // 步骤2: 空的 style 块
+    div {
+        style { }
+        text { "Step 2" }
+    }
+    
+    // 步骤3
+    p { text { "Step 3" } }
+}

@@ -1,0 +1,11 @@
+// 这个应该工作
+p { text { "Line 1" } }
+
+// 这个不工作
+div {
+    style { color: red; }
+    text { "Line 2" }
+}
+
+// 这个应该工作  
+p { text { "Line 3" } }

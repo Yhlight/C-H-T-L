@@ -1,0 +1,66 @@
+[Import] @CJmod from "builtin:animation";
+
+div {
+    h1 { "Animation Example" }
+    
+    div #box {
+        style {
+            width: 100px;
+            height: 100px;
+            background: #007bff;
+            margin: 20px;
+            border-radius: 8px;
+        }
+        "Click me!"
+    }
+    
+    button #fadeIn { "Fade In" }
+    button #fadeOut { "Fade Out" }
+    
+    script {
+        // 使用 CJmod 动画语法
+        {{#fadeIn}}->onclick = async () => {
+            {{#box}} ~> fadeIn(500);
+        };
+        
+        {{#fadeOut}}->onclick = async () => {
+            {{#box}} ~> fadeOut(500);
+        };
+        
+        // 页面加载时的动画序列
+        window.onload = async () => {
+            {{#box}} ~> fadeOut(0);  // 初始隐藏
+            delay(500);
+            {{#box}} ~> fadeIn(1000);
+        };
+    }
+}
+
+[Style] {
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    
+    button {
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+    
+    button:hover {
+        background: #218838;
+    }
+    
+    #box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+}

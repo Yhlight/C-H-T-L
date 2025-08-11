@@ -1,0 +1,58 @@
+# 正确的 except 约束语法测试
+
+## 1. 精确约束
+div {
+    except span, [Custom] @Element Box;  # 禁止使用 span 和 Box
+    
+    span { "这个不应该生成" }
+    p { "这个应该生成" }
+}
+
+## 2. 类型约束
+div.container {
+    except @Html;  # 禁止所有 HTML 元素
+    except [Template] @Var;  # 禁止变量组模板对象
+    except [Custom];  # 禁止所有自定义类型
+    
+    # 只允许样式和脚本
+    style {
+        color: red;
+    }
+    
+    script {
+        console.log("allowed");
+    }
+}
+
+## 3. 混合约束
+section {
+    except div, span, [Custom] @Style MyStyle;
+    
+    h1 { "标题" }
+    p { "段落" }
+    # div { "不允许" }
+    # span { "不允许" }
+}
+
+## 4. 全局约束
+[Namespace] RestrictedSpace {
+    except [Template];  # 在此命名空间内禁止定义模板
+    
+    # [Template] @Element MyElement { }  # 错误
+    
+    [Custom] @Element MyCustom {
+        # 这是允许的
+    }
+}
+
+## 5. 配置示例
+[Configuration] {
+    DEBUG_MODE = true;
+    INDEX_INITIAL_COUNT = 1;
+    
+    [Name] {
+        CUSTOM_STYLE = [@Style, @样式];
+        KEYWORD_EXCEPT = [except, 除外];
+        OPTION_COUNT = 2;
+    }
+}

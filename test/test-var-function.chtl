@@ -1,0 +1,70 @@
+// 测试变量组函数调用功能
+[Template] @Var ThemeColor
+{
+    primary: "#3498db";
+    secondary: "#2ecc71";
+    danger: "#e74c3c";
+    warning: "#f39c12";
+}
+
+[Template] @Var Spacing
+{
+    small: "8px";
+    medium: "16px";
+    large: "24px";
+}
+
+// 测试1: 基础变量组函数调用
+div
+{
+    style
+    {
+        // 内联样式中的变量组函数调用
+        color: ThemeColor(primary);
+        padding: Spacing(medium);
+        background-color: ThemeColor(secondary);
+    }
+}
+
+// 测试2: 带参数覆盖的变量组函数调用  
+button
+{
+    style
+    {
+        background-color: ThemeColor(primary = "#ff0000");
+        margin: Spacing(large = "32px");
+    }
+}
+
+// 测试3: 在类选择器中使用
+div
+{
+    style
+    {
+        .card
+        {
+            border-color: ThemeColor(primary);
+            padding: Spacing(small);
+        }
+        
+        &:hover
+        {
+            background-color: ThemeColor(warning);
+        }
+    }
+}
+
+// 测试4: 在全局样式块中使用
+style
+{
+    body {
+        --theme-primary: ThemeColor(primary);
+        --spacing-base: Spacing(medium);
+    }
+    
+    .container {
+        max-width: 1200px;
+        padding: Spacing(large);
+        color: ThemeColor(danger);
+    }
+}

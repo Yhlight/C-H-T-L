@@ -1,0 +1,35 @@
+{
+    "name": "reactive",
+    "version": "1.0.0",
+    "description": "Reactive programming support for CHTL JS",
+    "rules": [
+        {
+            "name": "reactive-declaration",
+            "pattern": "(\\w+)\\s*:=\\s*([^;]+);",
+            "replacement": "let $1 = reactive($2);",
+            "priority": 100
+        },
+        {
+            "name": "computed-property", 
+            "pattern": "(\\w+)\\s*=>\\s*([^;]+);",
+            "replacement": "let $1 = computed(() => $2);",
+            "priority": 90
+        },
+        {
+            "name": "watch-syntax",
+            "pattern": "watch\\s+(\\w+)\\s*\\{",
+            "replacement": "watch($1, () => {",
+            "priority": 80
+        },
+        {
+            "name": "reactive-assignment",
+            "pattern": "(\\w+)\\.value\\s*:=\\s*([^;]+);",
+            "replacement": "$1.value = $2;",
+            "priority": 70
+        }
+    ],
+    "runtime": {
+        "before": "// Reactive Runtime\nwindow.reactive = function(initialValue) {\n    let _value = initialValue;\n    const subscribers = new Set();\n    \n    return {\n        get value() { return _value; },\n        set value(newValue) {\n            if (_value !== newValue) {\n                _value = newValue;\n                subscribers.forEach(fn => fn());\n            }\n        },\n        subscribe(fn) {\n            subscribers.add(fn);\n            return () => subscribers.delete(fn);\n        }\n    };\n};\n\nwindow.computed = function(computeFn) {\n    let cache;\n    let dirty = true;\n    \n    return {\n        get value() {\n            if (dirty) {\n                cache = computeFn();\n                dirty = false;\n            }\n            return cache;\n        }\n    };\n};\n\nwindow.watch = function(target, callback) {\n    if (target && typeof target.subscribe === 'function') {\n        return target.subscribe(callback);\n    }\n};"
+    },
+    "overrides": {}
+}

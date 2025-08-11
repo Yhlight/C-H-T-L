@@ -1,0 +1,153 @@
+{
+    "name": "chtl-language",
+    "displayName": "CHTL Language Support",
+    "description": "Language support for CHTL (Component HTML Template Language)",
+    "version": "1.0.0",
+    "publisher": "chtl-team",
+    "engines": {
+        "vscode": "^1.74.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Snippets",
+        "Linters",
+        "Formatters"
+    ],
+    "keywords": [
+        "chtl",
+        "template",
+        "component",
+        "web",
+        "cjmod"
+    ],
+    "activationEvents": [
+        "onLanguage:chtl"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "chtl",
+                "aliases": ["CHTL", "chtl"],
+                "extensions": [".chtl"],
+                "configuration": "./language-configuration.json"
+            },
+            {
+                "id": "cjmod",
+                "aliases": ["CJmod", "cjmod"],
+                "extensions": [".cjmod", ".cjmod.json"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "chtl",
+                "scopeName": "source.chtl",
+                "path": "./syntaxes/chtl.tmLanguage.json"
+            },
+            {
+                "language": "cjmod",
+                "scopeName": "source.cjmod",
+                "path": "./syntaxes/cjmod.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "chtl",
+                "path": "./snippets/chtl-snippets.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "chtl.compile",
+                "title": "CHTL: Compile Current File"
+            },
+            {
+                "command": "chtl.preview",
+                "title": "CHTL: Preview in Browser"
+            },
+            {
+                "command": "chtl.createComponent",
+                "title": "CHTL: Create New Component"
+            },
+            {
+                "command": "chtl.importCJmod",
+                "title": "CHTL: Import CJmod Module"
+            },
+            {
+                "command": "chtl.exportBuiltinModules",
+                "title": "CHTL: Export Built-in Modules",
+                "category": "CHTL"
+            },
+            {
+                "command": "chtl.showModuleInfo",
+                "title": "CHTL: Show Module Information",
+                "category": "CHTL"
+            }
+        ],
+        "configuration": {
+            "title": "CHTL",
+            "properties": {
+                "chtl.compiler.path": {
+                    "type": "string",
+                    "default": "chtl",
+                    "description": "Path to CHTL compiler executable"
+                },
+                "chtl.compiler.outputDirectory": {
+                    "type": "string",
+                    "default": "./dist",
+                    "description": "Output directory for compiled files"
+                },
+                "chtl.linting.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable CHTL linting"
+                },
+                "chtl.cjmod.autoComplete": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable CJmod syntax auto-completion"
+                },
+                "chtl.format.enable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable CHTL formatting"
+                }
+            }
+        },
+        "taskDefinitions": [
+            {
+                "type": "chtl",
+                "required": ["task"],
+                "properties": {
+                    "task": {
+                        "type": "string",
+                        "description": "The CHTL task to run"
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package:prepare",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js",
+        "package:prepare": "node ./scripts/package-extension.js",
+        "package": "npm run package:prepare"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.74.0",
+        "@types/node": "^18.x",
+        "@typescript-eslint/eslint-plugin": "^5.x",
+        "@typescript-eslint/parser": "^5.x",
+        "eslint": "^8.x",
+        "typescript": "^4.x"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^8.0.0",
+        "vscode-languageserver": "^8.0.0",
+        "vscode-languageserver-textdocument": "^1.0.0"
+    }
+}

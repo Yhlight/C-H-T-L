@@ -1,0 +1,8 @@
+body {
+    p { text { "Line 1" } }
+    div {
+        style { color: red; }
+        text { "Line 2" }
+    }
+    p { text { "Line 3" } }
+}

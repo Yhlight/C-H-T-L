@@ -1,0 +1,677 @@
+// Chtholly.Utils Module
+// 实用工具模块 - 提供各种实用的工具函数和组件
+// "用心准备的工具，能让每一天都更加美好"
+
+[Info] {
+    name: "Chtholly.Utils"
+    version: "1.0.0"
+    description: "CHTL实用工具模块，提供常用的工具函数和辅助组件"
+    author: "CHTL Development Team"
+    license: "MIT"
+}
+
+// 导入核心模块
+Import @Chtl from "Chtholly.Core.*"
+
+// 条件渲染组件
+[Custom] @Element If {
+    props: {
+        condition: boolean
+        then: any
+        else: any
+    }
+    
+    render: {
+        props.condition ? props.then : (props.else || null)
+    }
+}
+
+// 循环渲染组件
+[Custom] @Element For {
+    props: {
+        each: array | object
+        as: string = "item"
+        index: string = "index"
+        children: function
+    }
+    
+    render: {
+        if (Array.isArray(props.each)) {
+            props.each.map((item, idx) => {
+                props.children({ [props.as]: item, [props.index]: idx })
+            })
+        } else if (typeof props.each === 'object') {
+            Object.entries(props.each).map(([key, value], idx) => {
+                props.children({ 
+                    [props.as]: value, 
+                    key: key, 
+                    [props.index]: idx 
+                })
+            })
+        }
+    }
+}
+
+// 开关组件
+[Custom] @Element Switch {
+    props: {
+        value: any
+        cases: object
+        default: any
+    }
+    
+    render: {
+        props.cases[props.value] || props.default || null
+    }
+}
+
+// 延迟加载组件
+[Custom] @Element Lazy {
+    props: {
+        load: function           // 加载函数
+        fallback: any           // 加载时显示的内容
+        delay: number = 200     // 延迟时间
+        onError: function       // 错误处理
+    }
+    
+    state: {
+        component: null
+        loading: boolean = true
+        error: null
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            setTimeout(async () => {
+                try {
+                    const component = await props.load()
+                    this.setState({ component, loading: false })
+                } catch (error) {
+                    this.setState({ error, loading: false })
+                    props.onError?.(error)
+                }
+            }, props.delay)
+        }
+    }
+    
+    render: {
+        if (state.loading) {
+            props.fallback || div { "加载中..." }
+        } else if (state.error) {
+            div {
+                class: "chtl-error"
+                "加载失败: " + state.error.message
+            }
+        } else {
+            state.component
+        }
+    }
+}
+
+// 错误边界组件
+[Custom] @Element ErrorBoundary {
+    props: {
+        fallback: any
+        onError: function
+    }
+    
+    state: {
+        hasError: boolean = false
+        error: null
+    }
+    
+    lifecycle: {
+        onError: (error) => {
+            this.setState({ hasError: true, error })
+            props.onError?.(error)
+        }
+    }
+    
+    render: {
+        if (state.hasError) {
+            props.fallback || div {
+                class: "chtl-error-boundary"
+                h3 { "出错了！" }
+                p { state.error?.message || "未知错误" }
+            }
+        } else {
+            [children]
+        }
+    }
+}
+
+// 门户组件（传送门）
+[Custom] @Element Portal {
+    props: {
+        to: string = "body"      // 目标选择器
+        disabled: boolean = false
+    }
+    
+    state: {
+        mounted: boolean = false
+        portalId: string = ""
+    }
+    
+    render: {
+        div {
+            id: state.portalId || "portal-" + Math.random().toString(36).substr(2, 9)
+            style: { display: "none" }
+            
+            script {
+                // 生成唯一ID
+                if (!this.state.portalId) {
+                    this.state.portalId = {{&}}.id;
+                }
+                
+                if (!{{props.disabled}}) {
+                    // 创建portal容器
+                    const container = document.querySelector("{{props.to}}") || document.body;
+                    const portalEl = document.createElement('div');
+                    portalEl.className = 'chtl-portal';
+                    portalEl.setAttribute('data-portal-id', this.state.portalId);
+                    
+                    // 将内容移动到portal
+                    const content = {{&}}.innerHTML;
+                    portalEl.innerHTML = content;
+                    container.appendChild(portalEl);
+                    
+                    // 清理原始内容
+                    {{&}}.innerHTML = '';
+                    
+                    // 组件卸载时清理
+                    {{&}}.setAttribute('data-portal-cleanup', 'true');
+                    
+                    // 监听自定义卸载事件
+                    window.addEventListener('beforeunload', () => {
+                        const portal = document.querySelector(`[data-portal-id="${this.state.portalId}"]`);
+                        if (portal) {
+                            portal.remove();
+                        }
+                    });
+                }
+            }
+            
+            if (!props.disabled) {
+                [children]
+            }
+        }
+    }
+}
+
+// 防抖组件
+[Custom] @Element Debounced {
+    props: {
+        delay: number = 300
+        onChange: function
+        children: function
+    }
+    
+    state: {
+        value: any = null
+    }
+    
+    methods: {
+        handleChange: (newValue) => {
+            clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+                this.setState({ value: newValue })
+                props.onChange?.(newValue)
+            }, props.delay)
+        }
+    }
+    
+    render: {
+        props.children({
+            value: state.value,
+            onChange: this.handleChange
+        })
+    }
+}
+
+// 节流组件
+[Custom] @Element Throttled {
+    props: {
+        delay: number = 100
+        onTrigger: function
+        children: function
+    }
+    
+    state: {
+        canTrigger: boolean = true
+    }
+    
+    methods: {
+        handleTrigger: (...args) => {
+            if (state.canTrigger) {
+                this.setState({ canTrigger: false })
+                props.onTrigger?.(...args)
+                
+                setTimeout(() => {
+                    this.setState({ canTrigger: true })
+                }, props.delay)
+            }
+        }
+    }
+    
+    render: {
+        props.children({
+            canTrigger: state.canTrigger,
+            trigger: this.handleTrigger
+        })
+    }
+}
+
+// 复制到剪贴板组件
+[Custom] @Element CopyToClipboard {
+    props: {
+        text: string
+        onCopy: function
+        onError: function
+        children: any
+    }
+    
+    state: {
+        copied: boolean = false
+    }
+    
+    render: {
+        div {
+            class: ["chtl-copy-wrapper", state.copied ? "copied" : ""]
+            style: { cursor: "pointer", position: "relative" }
+            
+            script {
+                {{&}}->listen({
+                    click: async function(e) {
+                        e.preventDefault();
+                        try {
+                            await navigator.clipboard.writeText({{props.text}});
+                            
+                            // 显示复制成功反馈
+                            {{&}}.classList.add('copied');
+                            this.state.copied = true;
+                            
+                            // 创建提示
+                            const tooltip = document.createElement('span');
+                            tooltip.className = 'chtl-copy-tooltip';
+                            tooltip.textContent = '已复制!';
+                            {{&}}.appendChild(tooltip);
+                            
+                            // 动画
+                            tooltip->animate({
+                                duration: 300,
+                                easing: 'ease-out',
+                                begin: {
+                                    opacity: 0,
+                                    transform: 'translateY(10px)'
+                                },
+                                end: {
+                                    opacity: 1,
+                                    transform: 'translateY(0)'
+                                }
+                            });
+                            
+                            // 2秒后移除
+                            setTimeout(() => {
+                                tooltip->animate({
+                                    duration: 200,
+                                    easing: 'ease-in',
+                                    begin: { opacity: 1 },
+                                    end: { opacity: 0 },
+                                    callback: () => {
+                                        tooltip.remove();
+                                        {{&}}.classList.remove('copied');
+                                        this.state.copied = false;
+                                    }
+                                });
+                            }, 2000);
+                            
+                            {{props.onCopy}}?.({{props.text}});
+                        } catch (error) {
+                            console.error('复制失败:', error);
+                            {{props.onError}}?.(error);
+                            
+                            // 显示错误提示
+                            const errorTip = document.createElement('span');
+                            errorTip.className = 'chtl-copy-error';
+                            errorTip.textContent = '复制失败';
+                            {{&}}.appendChild(errorTip);
+                            
+                            setTimeout(() => errorTip.remove(), 2000);
+                        }
+                    }
+                });
+            }
+            
+            [children]
+        }
+    }
+}
+
+// 可见性观察组件
+[Custom] @Element VisibilityObserver {
+    props: {
+        threshold: number = 0.1
+        rootMargin: string = "0px"
+        onVisible: function
+        onHidden: function
+        once: boolean = false
+    }
+    
+    state: {
+        isVisible: boolean = false
+        hasBeenVisible: boolean = false
+    }
+    
+    render: {
+        div {
+            class: ["chtl-visibility-observer", state.isVisible ? "is-visible" : ""]
+            
+            script {
+                // 创建IntersectionObserver
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach(entry => {
+                            const wasVisible = this.state.isVisible;
+                            const isVisible = entry.isIntersecting;
+                            
+                            this.state.isVisible = isVisible;
+                            {{&}}.classList.toggle('is-visible', isVisible);
+                            
+                            if (isVisible && !wasVisible) {
+                                {{props.onVisible}}?.();
+                                this.state.hasBeenVisible = true;
+                                
+                                // 添加动画类
+                                {{&}}.classList.add('animate-in');
+                                
+                                if ({{props.once}} && !this.observerDisconnected) {
+                                    observer.disconnect();
+                                    this.observerDisconnected = true;
+                                }
+                            } else if (!isVisible && wasVisible) {
+                                {{props.onHidden}}?.();
+                            }
+                        });
+                    },
+                    {
+                        threshold: {{props.threshold}},
+                        rootMargin: "{{props.rootMargin}}"
+                    }
+                );
+                
+                // 开始观察
+                observer.observe({{&}});
+                
+                // 清理函数
+                this.cleanup = () => {
+                    observer.disconnect();
+                };
+                
+                // 监听元素移除
+                const mutationObserver = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        mutation.removedNodes.forEach((node) => {
+                            if (node === {{&}}) {
+                                this.cleanup();
+                                mutationObserver.disconnect();
+                            }
+                        });
+                    });
+                });
+                
+                if ({{&}}.parentNode) {
+                    mutationObserver.observe({{&}}.parentNode, { childList: true });
+                }
+            }
+            
+            [children]
+        }
+    }
+}
+
+// 工具样式
+[Style] @UtilsStyles {
+    .chtl-error {
+        color: #FF6B6B;
+        padding: 16px;
+        background: #FFF0F0;
+        border: 1px solid #FFD0D0;
+        border-radius: 4px;
+    }
+    
+    .chtl-error-boundary {
+        padding: 20px;
+        background: #FFF0F0;
+        border: 2px solid #FF6B6B;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    .chtl-error-boundary h3 {
+        color: #FF6B6B;
+        margin-bottom: 10px;
+    }
+    
+    .chtl-portal {
+        position: absolute;
+        z-index: 9999;
+    }
+    
+    // 复制组件样式
+    .chtl-copy-wrapper {
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .chtl-copy-wrapper:hover {
+        opacity: 0.8;
+    }
+    
+    .chtl-copy-wrapper:active {
+        transform: scale(0.95);
+    }
+    
+    .chtl-copy-tooltip {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #67C3CC;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    
+    .chtl-copy-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 4px solid transparent;
+        border-top-color: #67C3CC;
+    }
+    
+    .chtl-copy-error {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #FF6B6B;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    
+    // 可见性观察组件样式
+    .chtl-visibility-observer {
+        transition: all 0.6s ease;
+    }
+    
+    .chtl-visibility-observer.animate-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+// 工具函数集合
+[Template] @Function debounce(func, delay) {
+    let timeoutId
+    return function(...args) {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => func.apply(this, args), delay)
+    }
+}
+
+[Template] @Function throttle(func, delay) {
+    let lastCall = 0
+    return function(...args) {
+        const now = Date.now()
+        if (now - lastCall >= delay) {
+            lastCall = now
+            return func.apply(this, args)
+        }
+    }
+}
+
+[Template] @Function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') return obj
+    if (obj instanceof Date) return new Date(obj.getTime())
+    if (obj instanceof Array) return obj.map(item => deepClone(item))
+    if (obj instanceof Object) {
+        const cloned = {}
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                cloned[key] = deepClone(obj[key])
+            }
+        }
+        return cloned
+    }
+}
+
+[Template] @Function deepMerge(target, ...sources) {
+    if (!sources.length) return target
+    const source = sources.shift()
+    
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} })
+                deepMerge(target[key], source[key])
+            } else {
+                Object.assign(target, { [key]: source[key] })
+            }
+        }
+    }
+    
+    return deepMerge(target, ...sources)
+}
+
+[Template] @Function isObject(item) {
+    return item && typeof item === 'object' && !Array.isArray(item)
+}
+
+[Template] @Function generateId(prefix = 'chtl') {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+[Template] @Function classNames(...args) {
+    // 类名组合工具
+    return args.filter(Boolean).flat().join(' ')
+}
+
+[Template] @Function range(start, end, step = 1) {
+    // 生成数字范围
+    const result = []
+    for (let i = start; i < end; i += step) {
+        result.push(i)
+    }
+    return result
+}
+
+[Template] @Function pipe(...funcs) {
+    // 函数管道
+    return (value) => funcs.reduce((acc, func) => func(acc), value)
+}
+
+[Template] @Function compose(...funcs) {
+    // 函数组合
+    return (value) => funcs.reduceRight((acc, func) => func(acc), value)
+}
+
+[Template] @Function memoize(func) {
+    // 函数记忆化
+    const cache = new Map()
+    return function(...args) {
+        const key = JSON.stringify(args)
+        if (cache.has(key)) {
+            return cache.get(key)
+        }
+        const result = func.apply(this, args)
+        cache.set(key, result)
+        return result
+    }
+}
+
+[Template] @Function retry(func, attempts = 3, delay = 1000) {
+    // 重试函数
+    return async function(...args) {
+        for (let i = 0; i < attempts; i++) {
+            try {
+                return await func.apply(this, args)
+            } catch (error) {
+                if (i === attempts - 1) throw error
+                await new Promise(resolve => setTimeout(resolve, delay))
+            }
+        }
+    }
+}
+
+[Template] @Function formatNumber(num, decimals = 2) {
+    // 格式化数字
+    return Number(num).toLocaleString('zh-CN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+    })
+}
+
+[Template] @Function formatBytes(bytes, decimals = 2) {
+    // 格式化字节大小
+    if (bytes === 0) return '0 Bytes'
+    
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB']
+    
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+// 导出工具模块
+[Export] {
+    @Element If, For, Switch, Lazy, ErrorBoundary, Portal, 
+             Debounced, Throttled, CopyToClipboard, VisibilityObserver
+    @Style UtilsStyles
+    @Var debounce, throttle, deepClone, deepMerge, isObject, 
+         generateId, classNames, range, pipe, compose, memoize, 
+         retry, formatNumber, formatBytes
+}

@@ -1,0 +1,119 @@
+// 测试约束和变量组特例化
+
+// 定义变量组模板
+[Template] @Var ThemeColor {
+    primary: "rgb(0, 123, 255)";
+    secondary: "rgb(108, 117, 125)";
+    success: "rgb(40, 167, 69)";
+    danger: "rgb(220, 53, 69)";
+    textColor: "rgb(33, 37, 41)";
+    bgColor: "rgb(248, 249, 250)";
+}
+
+// 定义自定义变量组
+[Custom] @Var BrandColor {
+    // 无值变量
+    primary;
+    secondary;
+    accent;
+}
+
+// 测试约束
+div {
+    // 约束：禁止span和[Custom]类型
+    except span, [Custom];
+    
+    // 这些是允许的
+    p {
+        text { "This is allowed" }
+    }
+    
+    button {
+        style {
+            // 使用变量组
+            background-color: ThemeColor(primary);
+            color: white;
+            
+            // 特例化使用
+            border-color: ThemeColor(secondary = rgb(255, 0, 0));
+        }
+        text { "Click me" }
+    }
+    
+    // 尝试使用禁止的元素（应该被跳过）
+    span {
+        text { "This should be skipped" }
+    }
+}
+
+// 测试自定义变量组的特例化
+section {
+    style {
+        // 使用自定义变量组，提供具体值
+        @Style BrandStyle {
+            @Var BrandColor {
+                primary: "#FF6B6B";
+                secondary: "#4ECDC4"; 
+                accent: "#FFE66D";
+            }
+        }
+        
+        .brand-header {
+            background: BrandColor(primary);
+            color: BrandColor(accent);
+        }
+    }
+}
+
+// 测试变量组在样式模板中的使用
+[Template] @Style ButtonStyle {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: ThemeColor(primary);
+    color: ThemeColor(textColor);
+    
+    // 使用变量组引用
+    @Var ThemeColor;
+}
+
+// 测试命名空间级约束
+[Namespace] restricted {
+    // 全局约束：禁止所有Template类型
+    except [Template];
+    
+    // 这应该被允许
+    div {
+        text { "Inside restricted namespace" }
+    }
+    
+    // 这应该被禁止
+    [Template] @Style NotAllowed {
+        color: red;
+    }
+}
+
+body {
+    // 使用带变量的样式模板
+    button {
+        style {
+            @Style ButtonStyle;
+            // 覆盖某些变量
+            background-color: ThemeColor(success);
+        }
+        text { "Success Button" }
+    }
+    
+    // 测试变量组的直接展开
+    div {
+        class: "theme-demo";
+        style {
+            // 展开所有变量
+            @Var ThemeColor;
+            
+            .theme-demo {
+                padding: 20px;
+            }
+        }
+    }
+}

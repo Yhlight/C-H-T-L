@@ -1,0 +1,16 @@
+// 简单的CHTL测试
+div
+{
+    class: container;
+    id: main;
+    
+    text
+    {
+        "Hello World"
+    }
+    
+    span
+    {
+        @Style MyStyle;
+    }
+}

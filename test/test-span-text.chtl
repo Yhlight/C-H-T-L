@@ -1,0 +1,18 @@
+// Test for missing span text
+
+span
+{
+    text
+    {
+        "This is span text"
+    }
+}
+
+// Another test
+p
+{
+    text
+    {
+        "Paragraph text"
+    }
+}

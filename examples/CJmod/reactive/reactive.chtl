@@ -1,0 +1,38 @@
+[Info] @CJmod reactive
+{
+    name: "Reactive"
+    version: "1.0.0"
+    description: "响应式编程支持模块"
+    author: "CHTL Team"
+    
+    // 子模块定义
+    submodules: {
+        state: {
+            path: "./state/state.chtl"
+            description: "状态管理子模块"
+            autoLoad: true
+        }
+        computed: {
+            path: "./computed/computed.chtl"
+            description: "计算属性子模块"
+            autoLoad: false
+        }
+        watch: {
+            path: "./watch/watch.chtl"
+            description: "监听器子模块"
+            autoLoad: false
+        }
+    }
+    
+    // 运行时文件
+    runtime: {
+        main: "./runtime/reactive.js"
+        css: "./runtime/reactive.css"
+    }
+    
+    // C++ 源文件
+    sources: {
+        main: "./src/reactive.cpp"
+        headers: ["./src/reactive.h"]
+    }
+}

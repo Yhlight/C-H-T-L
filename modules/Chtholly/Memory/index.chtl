@@ -1,0 +1,593 @@
+// Chtholly.Memory Module
+// 记忆/缓存模块 - 提供状态管理和数据缓存功能
+// "即使记忆会消逝，但美好的瞬间永远都在"
+
+[Info] {
+    name: "Chtholly.Memory"
+    version: "1.0.0"
+    description: "CHTL记忆管理模块，提供状态存储、缓存和记忆管理功能"
+    author: "CHTL Development Team"
+    license: "MIT"
+}
+
+// 导入核心模块
+Import @Chtl from "Chtholly.Core.*"
+
+// 记忆存储组件
+[Custom] @Element MemoryStore {
+    props: {
+        namespace: string = "default"  // 存储命名空间
+        persistent: boolean = false    // 是否持久化到localStorage
+        maxSize: number = 100         // 最大存储项数
+        ttl: number                   // 存储项生存时间（毫秒）
+    }
+    
+    state: {
+        store: Map = new Map()
+        metadata: Map = new Map()     // 存储元数据（创建时间等）
+    }
+    
+    methods: {
+        set: (key, value, options = {}) => {
+            // 检查容量限制
+            if (state.store.size >= props.maxSize && !state.store.has(key)) {
+                // 删除最早的项
+                const firstKey = state.store.keys().next().value
+                this.delete(firstKey)
+            }
+            
+            // 存储数据
+            state.store.set(key, value)
+            state.metadata.set(key, {
+                createdAt: Date.now(),
+                ttl: options.ttl || props.ttl,
+                ...options
+            })
+            
+            // 持久化
+            if (props.persistent) {
+                this.persist()
+            }
+        }
+        
+        get: (key) => {
+            const meta = state.metadata.get(key)
+            
+            // 检查是否过期
+            if (meta && meta.ttl) {
+                const age = Date.now() - meta.createdAt
+                if (age > meta.ttl) {
+                    this.delete(key)
+                    return undefined
+                }
+            }
+            
+            return state.store.get(key)
+        }
+        
+        delete: (key) => {
+            state.store.delete(key)
+            state.metadata.delete(key)
+            
+            if (props.persistent) {
+                this.persist()
+            }
+        }
+        
+        clear: () => {
+            state.store.clear()
+            state.metadata.clear()
+            
+            if (props.persistent) {
+                localStorage.removeItem(`chtl-memory-${props.namespace}`)
+            }
+        }
+        
+        persist: () => {
+            const data = {
+                store: Array.from(state.store.entries()),
+                metadata: Array.from(state.metadata.entries())
+            }
+            localStorage.setItem(
+                `chtl-memory-${props.namespace}`,
+                JSON.stringify(data)
+            )
+        }
+        
+        restore: () => {
+            const data = localStorage.getItem(`chtl-memory-${props.namespace}`)
+            if (data) {
+                const parsed = JSON.parse(data)
+                state.store = new Map(parsed.store)
+                state.metadata = new Map(parsed.metadata)
+            }
+        }
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            if (props.persistent) {
+                this.restore()
+            }
+        }
+    }
+    
+    render: {
+        // MemoryStore不渲染UI，只提供数据管理功能
+        [children]
+    }
+}
+
+// 缓存容器组件
+[Custom] @Element CacheContainer {
+    props: {
+        cacheKey: string              // 缓存键
+        duration: number = 300000     // 缓存时长（默认5分钟）
+        fallback: any                 // 缓存未命中时的后备内容
+        onMiss: function             // 缓存未命中时的回调
+    }
+    
+    state: {
+        cached: any = null
+        loading: boolean = false
+    }
+    
+    lifecycle: {
+        onMount: async () => {
+            // 尝试从缓存获取
+            const cached = memoryCache.get(props.cacheKey)
+            
+            if (cached) {
+                this.setState({ cached })
+            } else {
+                this.setState({ loading: true })
+                
+                // 调用未命中回调获取数据
+                if (props.onMiss) {
+                    const data = await props.onMiss()
+                    memoryCache.set(props.cacheKey, data, { ttl: props.duration })
+                    this.setState({ cached: data, loading: false })
+                }
+            }
+        }
+    }
+    
+    render: {
+        if (state.loading) {
+            div {
+                class: "chtl-cache-loading"
+                "加载中..."
+            }
+        } else if (state.cached) {
+            [state.cached]
+        } else {
+            [props.fallback || null]
+        }
+    }
+}
+
+// 记忆卡片组件（致敬珂朵莉的记忆主题）
+[Custom] @Element MemoryCard {
+    props: {
+        title: string
+        content: string
+        timestamp: Date | string
+        tags: array = []
+        fadeIn: boolean = true
+        onClick: function
+    }
+    
+    render: {
+        div {
+            class: ["chtl-memory-card", props.fadeIn ? "fade-in" : ""]
+            onclick: props.onClick
+            
+            // 标题区
+            div {
+                class: "chtl-memory-header"
+                
+                @Text {
+                    class: "chtl-memory-title"
+                    weight: "bold"
+                    size: "18px"
+                    props.title
+                }
+                
+                @Text {
+                    class: "chtl-memory-time"
+                    size: "12px"
+                    color: "#999"
+                    formatTimeAgo(props.timestamp)
+                }
+            }
+            
+            // 内容区
+            div {
+                class: "chtl-memory-content"
+                @Text {
+                    props.content
+                }
+            }
+            
+            // 标签区
+            if (props.tags.length > 0) {
+                div {
+                    class: "chtl-memory-tags"
+                    props.tags.map(tag => {
+                        span {
+                            class: "chtl-memory-tag"
+                            tag
+                        }
+                    })
+                }
+            }
+        }
+    }
+}
+
+// 历史记录组件
+[Custom] @Element HistoryTracker {
+    props: {
+        maxItems: number = 50         // 最大历史记录数
+        unique: boolean = true        // 是否去重
+        onNavigate: function         // 导航回调
+    }
+    
+    state: {
+        history: array = []
+        currentIndex: number = -1
+    }
+    
+    methods: {
+        push: (item) => {
+            let newHistory = [...state.history]
+            
+            // 如果不在最后位置，删除后面的历史
+            if (state.currentIndex < newHistory.length - 1) {
+                newHistory = newHistory.slice(0, state.currentIndex + 1)
+            }
+            
+            // 去重
+            if (props.unique && newHistory.length > 0) {
+                const last = newHistory[newHistory.length - 1]
+                if (JSON.stringify(last) === JSON.stringify(item)) {
+                    return
+                }
+            }
+            
+            // 添加新项
+            newHistory.push(item)
+            
+            // 限制长度
+            if (newHistory.length > props.maxItems) {
+                newHistory.shift()
+            }
+            
+            this.setState({
+                history: newHistory,
+                currentIndex: newHistory.length - 1
+            })
+        }
+        
+        back: () => {
+            if (state.currentIndex > 0) {
+                const newIndex = state.currentIndex - 1
+                this.setState({ currentIndex: newIndex })
+                props.onNavigate?.(state.history[newIndex])
+            }
+        }
+        
+        forward: () => {
+            if (state.currentIndex < state.history.length - 1) {
+                const newIndex = state.currentIndex + 1
+                this.setState({ currentIndex: newIndex })
+                props.onNavigate?.(state.history[newIndex])
+            }
+        }
+        
+        goto: (index) => {
+            if (index >= 0 && index < state.history.length) {
+                this.setState({ currentIndex: index })
+                props.onNavigate?.(state.history[index])
+            }
+        }
+    }
+    
+    render: {
+        div {
+            class: "chtl-history-tracker"
+            
+            // 控制按钮
+            div {
+                class: "chtl-history-controls"
+                
+                @Button {
+                    size: "small"
+                    disabled: state.currentIndex <= 0
+                    onClick: this.back
+                    "←"
+                }
+                
+                @Text {
+                    class: "chtl-history-position"
+                    `${state.currentIndex + 1} / ${state.history.length}`
+                }
+                
+                @Button {
+                    size: "small"
+                    disabled: state.currentIndex >= state.history.length - 1
+                    onClick: this.forward
+                    "→"
+                }
+            }
+            
+            [children]
+        }
+    }
+}
+
+// 状态快照组件
+[Custom] @Element StateSnapshot {
+    props: {
+        target: object               // 要快照的对象
+        interval: number = 0         // 自动快照间隔（0为手动）
+        maxSnapshots: number = 10    // 最大快照数
+    }
+    
+    state: {
+        snapshots: array = []
+        currentSnapshot: number = -1
+    }
+    
+    methods: {
+        takeSnapshot: (label = "") => {
+            const snapshot = {
+                id: Date.now(),
+                label: label || `快照 ${state.snapshots.length + 1}`,
+                timestamp: new Date(),
+                data: JSON.parse(JSON.stringify(props.target))
+            }
+            
+            let newSnapshots = [...state.snapshots]
+            
+            // 如果当前不在最后，删除后面的快照
+            if (state.currentSnapshot < newSnapshots.length - 1) {
+                newSnapshots = newSnapshots.slice(0, state.currentSnapshot + 1)
+            }
+            
+            newSnapshots.push(snapshot)
+            
+            // 限制数量
+            if (newSnapshots.length > props.maxSnapshots) {
+                newSnapshots.shift()
+            }
+            
+            this.setState({
+                snapshots: newSnapshots,
+                currentSnapshot: newSnapshots.length - 1
+            })
+        }
+        
+        restoreSnapshot: (index) => {
+            if (index >= 0 && index < state.snapshots.length) {
+                const snapshot = state.snapshots[index]
+                Object.assign(props.target, snapshot.data)
+                this.setState({ currentSnapshot: index })
+            }
+        }
+        
+        deleteSnapshot: (index) => {
+            const newSnapshots = state.snapshots.filter((_, i) => i !== index)
+            this.setState({
+                snapshots: newSnapshots,
+                currentSnapshot: Math.min(state.currentSnapshot, newSnapshots.length - 1)
+            })
+        }
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            if (props.interval > 0) {
+                this.timer = setInterval(() => {
+                    this.takeSnapshot("自动快照")
+                }, props.interval)
+            }
+        }
+        
+        onUnmount: () => {
+            if (this.timer) {
+                clearInterval(this.timer)
+            }
+        }
+    }
+    
+    render: {
+        div {
+            class: "chtl-state-snapshot"
+            
+            // 快照列表
+            div {
+                class: "chtl-snapshot-list"
+                
+                state.snapshots.map((snapshot, index) => {
+                    div {
+                        class: ["chtl-snapshot-item", 
+                                index === state.currentSnapshot ? "active" : ""]
+                        
+                        @Text {
+                            snapshot.label
+                        }
+                        
+                        @Text {
+                            size: "12px"
+                            color: "#999"
+                            formatTimeAgo(snapshot.timestamp)
+                        }
+                        
+                        div {
+                            class: "chtl-snapshot-actions"
+                            
+                            @Button {
+                                size: "small"
+                                onClick: () => this.restoreSnapshot(index)
+                                "恢复"
+                            }
+                            
+                            @Button {
+                                size: "small"
+                                type: "danger"
+                                onClick: () => this.deleteSnapshot(index)
+                                "删除"
+                            }
+                        }
+                    }
+                })
+            }
+            
+            // 控制按钮
+            @Button {
+                onClick: () => this.takeSnapshot()
+                "创建快照"
+            }
+        }
+    }
+}
+
+// 记忆样式
+[Style] @MemoryStyles {
+    .chtl-cache-loading {
+        padding: 20px;
+        text-align: center;
+        color: #999;
+    }
+    
+    .chtl-memory-card {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chtl-memory-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .chtl-memory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .chtl-memory-content {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+    
+    .chtl-memory-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .chtl-memory-tag {
+        display: inline-block;
+        padding: 4px 8px;
+        background: #F0F0F0;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #666;
+    }
+    
+    .chtl-history-tracker {
+        border: 1px solid #E8E8E8;
+        border-radius: 8px;
+        padding: 16px;
+    }
+    
+    .chtl-history-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .chtl-history-position {
+        font-variant-numeric: tabular-nums;
+        color: #666;
+    }
+    
+    .chtl-snapshot-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+    }
+    
+    .chtl-snapshot-item {
+        padding: 12px;
+        border: 1px solid #E8E8E8;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .chtl-snapshot-item.active {
+        background: #F0F8FF;
+        border-color: #67C3CC;
+    }
+    
+    .chtl-snapshot-actions {
+        display: flex;
+        gap: 8px;
+    }
+}
+
+// 全局内存缓存实例
+const memoryCache = new MemoryStore({ namespace: "global", persistent: true })
+
+// 工具函数
+[Template] @Function formatTimeAgo(time) {
+    // 格式化相对时间
+    const now = Date.now()
+    const timestamp = new Date(time).getTime()
+    const diff = now - timestamp
+    
+    const minutes = Math.floor(diff / 60000)
+    const hours = Math.floor(diff / 3600000)
+    const days = Math.floor(diff / 86400000)
+    
+    if (minutes < 1) return "刚刚"
+    if (minutes < 60) return `${minutes}分钟前`
+    if (hours < 24) return `${hours}小时前`
+    if (days < 30) return `${days}天前`
+    
+    return new Date(time).toLocaleDateString()
+}
+
+[Template] @Function createMemoryStore(options) {
+    // 创建独立的记忆存储实例
+    return new MemoryStore(options)
+}
+
+// 导出记忆模块
+[Export] {
+    @Element MemoryStore, CacheContainer, MemoryCard, HistoryTracker, StateSnapshot
+    @Style MemoryStyles
+    @Var memoryCache, formatTimeAgo, createMemoryStore
+}

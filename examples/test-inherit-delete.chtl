@@ -1,0 +1,95 @@
+// 测试继承和删除功能
+
+// 基础样式模板
+[Template] @Style BaseButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+// 继承基础样式
+[Template] @Style PrimaryButton {
+    background-color: #007bff;
+    color: white;
+    inherit @Style BaseButton;
+}
+
+// 自定义样式组，继承并删除某些属性
+[Custom] @Style DangerButton {
+    @Style PrimaryButton {
+        delete border-radius, cursor;
+    }
+    background-color: #dc3545;
+}
+
+// 基础元素模板
+[Template] @Element Card {
+    div {
+        class: "card";
+        style {
+            .card {
+                border: 1px solid #ddd;
+                padding: 20px;
+                margin: 10px;
+            }
+        }
+        h3 {
+            text { "Card Title" }
+        }
+        p {
+            text { "Card content goes here" }
+        }
+        footer {
+            text { "Footer" }
+        }
+    }
+}
+
+// 自定义元素，继承并修改
+[Custom] @Element SimpleCard {
+    @Element Card {
+        // 删除footer
+        delete footer;
+        // 在h3后面插入一个span
+        insert after h3 {
+            span {
+                class: "subtitle";
+                text { "Subtitle" }
+            }
+        }
+    }
+}
+
+// 使用示例
+body {
+    // 使用继承的样式
+    button {
+        style {
+            @Style PrimaryButton;
+        }
+        text { "Primary Button" }
+    }
+    
+    button {
+        style {
+            @Style DangerButton;
+        }
+        text { "Danger Button" }
+    }
+    
+    // 使用自定义元素
+    @Element SimpleCard;
+    
+    // 使用时再次自定义
+    @Element Card {
+        delete p;
+        insert at top {
+            div {
+                class: "header";
+                text { "New Header" }
+            }
+        }
+    }
+}

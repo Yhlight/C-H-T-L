@@ -1,0 +1,16 @@
+[Custom] @Element Box {
+    div {
+        p { text { "P1" } }
+        p { text { "P2" } }
+    }
+}
+
+body {
+    h1 { text { "删除测试" } }
+    
+    @Element Box;
+    
+    @Element Box {
+        delete p[0];
+    }
+}

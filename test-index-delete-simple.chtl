@@ -1,0 +1,27 @@
+// 简单的索引删除测试
+
+[Custom] @Element List {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+div {
+    // 原始列表
+    h3 { text { "Original" } }
+    @Element List;
+    
+    // 删除索引 1
+    h3 { text { "Delete index 1" } }
+    @Element List {
+        delete li[1];
+    }
+    
+    // 删除所有
+    h3 { text { "Delete all" } }
+    @Element List {
+        delete li;
+    }
+}

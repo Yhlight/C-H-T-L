@@ -1,0 +1,61 @@
+// 测试全缀名引用
+
+// 定义同名的 Template 和 Custom
+[Template] @Element Button {
+    button {
+        class: "template-button";
+        style {
+            background: blue;
+            color: white;
+            padding: 10px 20px;
+        }
+        text { "Template Button" }
+    }
+}
+
+[Custom] @Element Button {
+    button {
+        class: "custom-button";
+        style {
+            background: red;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+        }
+        text { "Custom Button" }
+    }
+}
+
+// 使用示例
+html {
+    head {
+        title { text { "全缀名测试" } }
+    }
+    
+    body {
+        div {
+            // 默认引用（应该使用 Custom）
+            @Element Button;
+            
+            // 明确引用 Template
+            [Template] @Element Button;
+            
+            // 明确引用 Custom
+            [Custom] @Element Button;
+            
+            // 带特例化的全缀名引用
+            [Template] @Element Button {
+                button {
+                    style {
+                        background: green;
+                    }
+                }
+            }
+            
+            // 带特例化的 Custom 引用
+            [Custom] @Element Button {
+                text { "Modified Custom Button" }
+            }
+        }
+    }
+}

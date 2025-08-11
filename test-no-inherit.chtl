@@ -1,0 +1,25 @@
+// 不带继承的测试
+
+[Template] @Style Base {
+    color: red;
+}
+
+[Custom] @Style Simple {
+    color: blue;
+    font-size: 20px;
+}
+
+[Custom] @Element Card {
+    div { text { "Card" } }
+}
+
+body {
+    h1 { text { "No Inherit Test" } }
+    
+    @Element Card;
+    
+    div {
+        style { @Style Simple; }
+        text { "Styled Text" }
+    }
+}

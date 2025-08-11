@@ -1,0 +1,43 @@
+// 导入整个 reactive 模块（包括自动加载的子模块）
+[Import] @CJmod from "reactive";
+
+// 导入特定子模块
+[Import] @CJmod from "reactive.computed";
+[Import] @CJmod from "reactive/watch";
+
+// 导入所有子模块
+[Import] @CJmod from "reactive.*";
+
+[Template] @Element ReactiveExample
+{
+    div {
+        h1 { "CJmod 子模块示例" }
+        
+        script {
+            // 使用 state 子模块的语法
+            state count = 0;
+            state message = "Hello";
+            
+            // 使用 computed 子模块的语法（如果已导入）
+            computed double => count * 2;
+            
+            // 使用 watch 子模块的语法（如果已导入）
+            watch count => {
+                console.log("Count changed to:", count.get());
+            };
+            
+            // 批量更新
+            batch {
+                update count(count.get() + 1);
+                update message("Updated!");
+            };
+        }
+        
+        button onclick="update count(count.get() + 1)" {
+            "点击计数"
+        }
+        
+        p { "计数: {{count.get()}}" }
+        p { "消息: {{message.get()}}" }
+    }
+}

@@ -1,0 +1,21 @@
+[Custom] @Element Box {
+    div { text { "Box" } }
+}
+
+[Custom] @Element Container {
+    div {
+        @Element Box;
+        @Element Box;
+        @Element Box;
+    }
+}
+
+body {
+    // 测试1
+    @Element Container;
+    
+    // 测试2
+    @Element Container {
+        delete @Element Box[1];
+    }
+}

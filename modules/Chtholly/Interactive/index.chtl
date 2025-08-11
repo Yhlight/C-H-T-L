@@ -1,0 +1,787 @@
+// Chtholly.Interactive Module
+// 交互式组件模块 - 提供丰富的交互组件
+// "每一次交互，都是心与心的触碰"
+
+[Info] {
+    name: "Chtholly.Interactive"
+    version: "1.0.0"
+    description: "CHTL交互式组件模块，提供丰富的用户交互组件"
+    author: "CHTL Development Team"
+    license: "MIT"
+}
+
+// 导入核心模块
+Import @Chtl from "Chtholly.Core.*"
+Import @Utils from "Chtholly.Utils.*"
+
+// 弹出提示组件
+[Custom] @Element Tooltip {
+    props: {
+        content: string
+        position: string = "top"    // top, bottom, left, right
+        trigger: string = "hover"   // hover, click
+        delay: number = 200
+    }
+    
+    state: {
+        visible: boolean = false
+        coords: object = { x: 0, y: 0 }
+    }
+    
+    render: {
+        div {
+            class: "chtl-tooltip-wrapper"
+            
+            // 触发器元素
+            div {
+                class: "chtl-tooltip-trigger"
+                ref: "trigger"
+                
+                script {
+                    // 使用增强的选择器和事件绑定
+                    if ("{{props.trigger}}" === "hover") {
+                        {{&}}->listen({
+                            mouseenter: () => {
+                                clearTimeout(this.hideTimer);
+                                this.showTimer = setTimeout(() => {
+                                    this.showTooltip();
+                                }, {{props.delay}});
+                            },
+                            mouseleave: () => {
+                                clearTimeout(this.showTimer);
+                                this.hideTimer = setTimeout(() => {
+                                    this.hideTooltip();
+                                }, 100);
+                            }
+                        });
+                    } else {
+                        {{&}}->listen({
+                            click: (e) => {
+                                e.stopPropagation();
+                                this.toggleTooltip();
+                            }
+                        });
+                        
+                        // 点击外部关闭
+                        document->listen({
+                            click: () => {
+                                this.hideTooltip();
+                            }
+                        });
+                    }
+                    
+                    // 工具方法
+                    this.showTooltip = () => {
+                        const rect = {{&}}.getBoundingClientRect();
+                        const position = this.calculatePosition(rect);
+                        {{".chtl-tooltip-content"}}->style.left = position.x + "px";
+                        {{".chtl-tooltip-content"}}->style.top = position.y + "px";
+                        {{".chtl-tooltip-content"}}->style.opacity = "1";
+                        {{".chtl-tooltip-content"}}->style.visibility = "visible";
+                    };
+                    
+                    this.hideTooltip = () => {
+                        {{".chtl-tooltip-content"}}->style.opacity = "0";
+                        {{".chtl-tooltip-content"}}->style.visibility = "hidden";
+                    };
+                    
+                    this.toggleTooltip = () => {
+                        const content = {{".chtl-tooltip-content"}};
+                        if (content->style.visibility === "visible") {
+                            this.hideTooltip();
+                        } else {
+                            this.showTooltip();
+                        }
+                    };
+                    
+                    this.calculatePosition = (rect) => {
+                        const offset = 10;
+                        let x = rect.left;
+                        let y = rect.top;
+                        
+                        switch("{{props.position}}") {
+                            case "top":
+                                x += rect.width / 2;
+                                y -= offset;
+                                break;
+                            case "bottom":
+                                x += rect.width / 2;
+                                y += rect.height + offset;
+                                break;
+                            case "left":
+                                x -= offset;
+                                y += rect.height / 2;
+                                break;
+                            case "right":
+                                x += rect.width + offset;
+                                y += rect.height / 2;
+                                break;
+                        }
+                        
+                        return { x, y };
+                    };
+                }
+                
+                [children]
+            }
+            
+            // 提示内容
+            @Portal {
+                div {
+                    class: ["chtl-tooltip-content", "chtl-tooltip-" + props.position]
+                    style: {
+                        opacity: 0
+                        visibility: "hidden"
+                    }
+                    props.content
+                }
+            }
+        }
+    }
+}
+
+// 下拉菜单组件
+[Custom] @Element Dropdown {
+    props: {
+        trigger: any              // 触发元素
+        items: array             // 菜单项 [{label, value, icon, disabled}]
+        onSelect: function       // 选择回调
+        align: string = "left"   // left, right, center
+    }
+    
+    state: {
+        open: boolean = false
+        selectedIndex: number = -1
+    }
+    
+    render: {
+        div {
+            class: "chtl-dropdown"
+            
+            // 触发器
+            div {
+                class: "chtl-dropdown-trigger"
+                
+                script {
+                    {{&}}->listen({
+                        click: (e) => {
+                            e.stopPropagation();
+                            this.toggleDropdown();
+                        }
+                    });
+                    
+                    // 全局点击关闭
+                    document->listen({
+                        click: () => {
+                            this.closeDropdown();
+                        }
+                    });
+                    
+                    // 键盘导航
+                    {{&}}->listen({
+                        keydown: (e) => {
+                            if (!this.isOpen()) return;
+                            
+                            switch(e.key) {
+                                case "ArrowDown":
+                                    e.preventDefault();
+                                    this.selectNext();
+                                    break;
+                                case "ArrowUp":
+                                    e.preventDefault();
+                                    this.selectPrev();
+                                    break;
+                                case "Enter":
+                                    e.preventDefault();
+                                    this.confirmSelection();
+                                    break;
+                                case "Escape":
+                                    this.closeDropdown();
+                                    break;
+                            }
+                        }
+                    });
+                    
+                    // 方法定义
+                    this.toggleDropdown = () => {
+                        const menu = {{".chtl-dropdown-menu"}};
+                        if (this.isOpen()) {
+                            this.closeDropdown();
+                        } else {
+                            this.openDropdown();
+                        }
+                    };
+                    
+                    this.openDropdown = () => {
+                        {{".chtl-dropdown-menu"}}->classList.add("open");
+                        this.selectedIndex = -1;
+                    };
+                    
+                    this.closeDropdown = () => {
+                        {{".chtl-dropdown-menu"}}->classList.remove("open");
+                    };
+                    
+                    this.isOpen = () => {
+                        return {{".chtl-dropdown-menu"}}->classList.contains("open");
+                    };
+                    
+                    this.selectNext = () => {
+                        const items = {{".chtl-dropdown-item:not(.disabled)"}};
+                        this.selectedIndex = (this.selectedIndex + 1) % items.length;
+                        this.highlightItem();
+                    };
+                    
+                    this.selectPrev = () => {
+                        const items = {{".chtl-dropdown-item:not(.disabled)"}};
+                        this.selectedIndex = this.selectedIndex <= 0 ? 
+                            items.length - 1 : this.selectedIndex - 1;
+                        this.highlightItem();
+                    };
+                    
+                    this.highlightItem = () => {
+                        const items = {{".chtl-dropdown-item"}};
+                        items->forEach((item, index) => {
+                            if (index === this.selectedIndex) {
+                                item->classList.add("highlighted");
+                            } else {
+                                item->classList.remove("highlighted");
+                            }
+                        });
+                    };
+                    
+                    this.confirmSelection = () => {
+                        const items = {{".chtl-dropdown-item:not(.disabled)"}};
+                        if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+                            items[this.selectedIndex]->click();
+                        }
+                    };
+                }
+                
+                props.trigger
+            }
+            
+            // 下拉菜单
+            div {
+                class: ["chtl-dropdown-menu", "chtl-dropdown-align-" + props.align]
+                
+                @For {
+                    each: props.items
+                    as: "item"
+                    children: ({ item, index }) => {
+                        div {
+                            class: ["chtl-dropdown-item", item.disabled ? "disabled" : ""]
+                            
+                            script {
+                                {{&}}->listen({
+                                    click: (e) => {
+                                        e.stopPropagation();
+                                        if (!{{item.disabled}}) {
+                                            {{props.onSelect}}?.({{item}});
+                                            this.closeDropdown();
+                                        }
+                                    },
+                                    mouseenter: () => {
+                                        if (!{{item.disabled}}) {
+                                            this.selectedIndex = {{index}};
+                                            this.highlightItem();
+                                        }
+                                    }
+                                });
+                            }
+                            
+                            if (item.icon) {
+                                span { class: "chtl-dropdown-icon"; item.icon }
+                            }
+                            span { class: "chtl-dropdown-label"; item.label }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 模态框组件
+[Custom] @Element Modal {
+    props: {
+        open: boolean = false
+        title: string
+        closable: boolean = true
+        onClose: function
+        width: string | number = "500px"
+        maskClosable: boolean = true
+        centered: boolean = false
+    }
+    
+    render: {
+        @Portal {
+            @If {
+                condition: props.open
+                then: {
+                    div {
+                        class: ["chtl-modal-wrapper", props.centered ? "centered" : ""]
+                        
+                        // 遮罩层
+                        div {
+                            class: "chtl-modal-mask"
+                            
+                            script {
+                                if ({{props.maskClosable}}) {
+                                    {{&}}->listen({
+                                        click: () => {
+                                            {{props.onClose}}?.();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        
+                        // 模态框内容
+                        div {
+                            class: "chtl-modal"
+                            style: { width: props.width }
+                            
+                            script {
+                                // 防止点击内容关闭
+                                {{&}}->listen({
+                                    click: (e) => {
+                                        e.stopPropagation();
+                                    }
+                                });
+                                
+                                // ESC键关闭
+                                document->listen({
+                                    keydown: (e) => {
+                                        if (e.key === "Escape" && {{props.closable}}) {
+                                            {{props.onClose}}?.();
+                                        }
+                                    }
+                                });
+                                
+                                // 入场动画
+                                {{&}}->animate({
+                                    duration: 300,
+                                    easing: 'ease-out',
+                                    begin: {
+                                        opacity: 0,
+                                        transform: 'scale(0.9) translateY(-20px)'
+                                    },
+                                    end: {
+                                        opacity: 1,
+                                        transform: 'scale(1) translateY(0)'
+                                    }
+                                });
+                            }
+                            
+                            // 标题栏
+                            if (props.title || props.closable) {
+                                div {
+                                    class: "chtl-modal-header"
+                                    
+                                    h3 { class: "chtl-modal-title"; props.title }
+                                    
+                                    if (props.closable) {
+                                        button {
+                                            class: "chtl-modal-close"
+                                            
+                                            script {
+                                                {{&}}->listen({
+                                                    click: () => {
+                                                        {{props.onClose}}?.();
+                                                    }
+                                                });
+                                            }
+                                            
+                                            "×"
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // 内容区
+                            div {
+                                class: "chtl-modal-content"
+                                [children]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 选项卡组件
+[Custom] @Element Tabs {
+    props: {
+        items: array              // [{key, label, content, disabled}]
+        defaultActiveKey: string
+        onChange: function
+        type: string = "line"     // line, card
+    }
+    
+    state: {
+        activeKey: string = props.defaultActiveKey || props.items[0]?.key
+    }
+    
+    render: {
+        div {
+            class: ["chtl-tabs", "chtl-tabs-" + props.type]
+            
+            // 标签栏
+            div {
+                class: "chtl-tabs-nav"
+                
+                script {
+                    // 计算指示器位置
+                    this.updateIndicator = () => {
+                        const activeTab = {{`.chtl-tab[data-key="${this.state.activeKey}"]`}};
+                        if (activeTab) {
+                            const indicator = {{".chtl-tabs-indicator"}};
+                            indicator->style.width = activeTab.offsetWidth + "px";
+                            indicator->style.left = activeTab.offsetLeft + "px";
+                        }
+                    };
+                    
+                    // 初始化和窗口调整时更新
+                    setTimeout(this.updateIndicator, 100);
+                    window->listen({
+                        resize: this.updateIndicator
+                    });
+                }
+                
+                @For {
+                    each: props.items
+                    as: "tab"
+                    children: ({ tab }) => {
+                        div {
+                            class: [
+                                "chtl-tab",
+                                state.activeKey === tab.key ? "active" : "",
+                                tab.disabled ? "disabled" : ""
+                            ]
+                            data-key: tab.key
+                            
+                            script {
+                                {{&}}->listen({
+                                    click: () => {
+                                        if (!{{tab.disabled}}) {
+                                            this.setState({ activeKey: "{{tab.key}}" });
+                                            {{props.onChange}}?.("{{tab.key}}");
+                                            this.updateIndicator();
+                                        }
+                                    }
+                                });
+                            }
+                            
+                            tab.label
+                        }
+                    }
+                }
+                
+                // 指示器（仅line类型）
+                if (props.type === "line") {
+                    div { class: "chtl-tabs-indicator" }
+                }
+            }
+            
+            // 内容区
+            div {
+                class: "chtl-tabs-content"
+                
+                @For {
+                    each: props.items
+                    as: "tab"
+                    children: ({ tab }) => {
+                        div {
+                            class: ["chtl-tab-pane", state.activeKey === tab.key ? "active" : ""]
+                            
+                            script {
+                                if (this.state.activeKey === "{{tab.key}}") {
+                                    // 内容切换动画
+                                    {{&}}->animate({
+                                        duration: 300,
+                                        easing: 'ease-out',
+                                        begin: {
+                                            opacity: 0,
+                                            transform: 'translateX(20px)'
+                                        },
+                                        end: {
+                                            opacity: 1,
+                                            transform: 'translateX(0)'
+                                        }
+                                    });
+                                }
+                            }
+                            
+                            tab.content
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 交互组件样式
+[Style] @InteractiveStyles {
+    // Tooltip样式
+    .chtl-tooltip-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .chtl-tooltip-content {
+        position: fixed;
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 14px;
+        border-radius: 4px;
+        white-space: nowrap;
+        pointer-events: none;
+        transition: opacity 0.3s, visibility 0.3s;
+        z-index: 10000;
+        transform: translateX(-50%);
+    }
+    
+    .chtl-tooltip-top {
+        transform: translateX(-50%) translateY(-100%);
+    }
+    
+    .chtl-tooltip-bottom {
+        transform: translateX(-50%);
+    }
+    
+    .chtl-tooltip-left {
+        transform: translateY(-50%) translateX(-100%);
+    }
+    
+    .chtl-tooltip-right {
+        transform: translateY(-50%);
+    }
+    
+    // Dropdown样式
+    .chtl-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .chtl-dropdown-trigger {
+        cursor: pointer;
+    }
+    
+    .chtl-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        margin-top: 4px;
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        min-width: 150px;
+        max-height: 300px;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.95) translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .chtl-dropdown-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1) translateY(0);
+    }
+    
+    .chtl-dropdown-align-left {
+        left: 0;
+    }
+    
+    .chtl-dropdown-align-right {
+        right: 0;
+    }
+    
+    .chtl-dropdown-align-center {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .chtl-dropdown-item {
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .chtl-dropdown-item:hover:not(.disabled),
+    .chtl-dropdown-item.highlighted {
+        background: #f5f5f5;
+    }
+    
+    .chtl-dropdown-item.disabled {
+        color: #999;
+        cursor: not-allowed;
+    }
+    
+    // Modal样式
+    .chtl-modal-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+    }
+    
+    .chtl-modal-wrapper.centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .chtl-modal-mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.45);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .chtl-modal {
+        position: relative;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin: 20px auto;
+    }
+    
+    .chtl-modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .chtl-modal-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .chtl-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        line-height: 1;
+        color: #999;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    
+    .chtl-modal-close:hover {
+        background: #f5f5f5;
+        color: #333;
+    }
+    
+    .chtl-modal-content {
+        padding: 24px;
+    }
+    
+    // Tabs样式
+    .chtl-tabs {
+        width: 100%;
+    }
+    
+    .chtl-tabs-nav {
+        display: flex;
+        align-items: center;
+        position: relative;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .chtl-tabs-card .chtl-tabs-nav {
+        border-bottom: none;
+        gap: 4px;
+    }
+    
+    .chtl-tab {
+        padding: 12px 16px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s;
+        white-space: nowrap;
+        color: #666;
+    }
+    
+    .chtl-tab:hover:not(.disabled) {
+        color: #67C3CC;
+    }
+    
+    .chtl-tab.active {
+        color: #67C3CC;
+        font-weight: 500;
+    }
+    
+    .chtl-tab.disabled {
+        color: #999;
+        cursor: not-allowed;
+    }
+    
+    .chtl-tabs-card .chtl-tab {
+        background: #f5f5f5;
+        border-radius: 4px 4px 0 0;
+        border: 1px solid #f0f0f0;
+        border-bottom: none;
+    }
+    
+    .chtl-tabs-card .chtl-tab.active {
+        background: white;
+        border-bottom: 1px solid white;
+        margin-bottom: -1px;
+    }
+    
+    .chtl-tabs-indicator {
+        position: absolute;
+        bottom: 0;
+        height: 2px;
+        background: #67C3CC;
+        transition: all 0.3s ease;
+    }
+    
+    .chtl-tabs-content {
+        padding: 16px 0;
+    }
+    
+    .chtl-tab-pane {
+        display: none;
+    }
+    
+    .chtl-tab-pane.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+}
+
+// 导出交互组件
+[Export] {
+    @Element Tooltip, Dropdown, Modal, Tabs
+    @Style InteractiveStyles
+}

@@ -1,0 +1,509 @@
+// CHTL JS增强语法 - 事件委托示例
+// 展示如何使用事件委托解决SPA中动态元素的事件绑定问题
+
+Import @Chtl from "Chtholly.Core.*"
+
+// 1. 基础事件委托
+div {
+    id: "todo-container"
+    class: "container"
+    
+    h1 { "事件委托示例" }
+    
+    // 添加按钮
+    button {
+        id: "add-todo"
+        class: "btn-primary"
+        "添加任务"
+    }
+    
+    // 任务列表容器
+    ul {
+        id: "todo-list"
+        class: "todo-list"
+        
+        // 初始任务
+        li {
+            class: "todo-item"
+            data-id: "1"
+            
+            span { class: "todo-text"; "示例任务 1" }
+            button { class: "btn-delete"; "删除" }
+        }
+    }
+    
+    script {
+        // 使用事件委托处理动态添加的任务项
+        {{"#todo-list"}}->delegate({
+            target: ".todo-item",
+            click: function(e) {
+                // 切换完成状态
+                if (!e.target.classList.contains('btn-delete')) {
+                    this.classList.toggle('completed');
+                }
+            }
+        });
+        
+        // 删除按钮的事件委托
+        {{"#todo-list"}}->delegate({
+            target: ".btn-delete",
+            click: function(e) {
+                e.stopPropagation();
+                const todoItem = this.closest('.todo-item');
+                todoItem.remove();
+            }
+        });
+        
+        // 添加新任务
+        let todoId = 2;
+        {{"#add-todo"}}.addEventListener('click', () => {
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.dataset.id = todoId++;
+            li.innerHTML = `
+                <span class="todo-text">新任务 ${todoId - 1}</span>
+                <button class="btn-delete">删除</button>
+            `;
+            {{"#todo-list"}}.appendChild(li);
+        });
+    }
+    
+    style {
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .todo-item:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        .btn-primary {
+            background: #67C3CC;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    }
+}
+
+// 2. 多目标选择器的事件委托
+div {
+    class: "interactive-grid"
+    
+    h2 { "多目标事件委托" }
+    
+    div {
+        class: "grid-container"
+        id: "grid"
+        
+        // 初始格子
+        div { class: "grid-item"; data-type: "normal"; "1" }
+        div { class: "grid-item special"; data-type: "special"; "2" }
+        div { class: "grid-item"; data-type: "normal"; "3" }
+    }
+    
+    button {
+        id: "add-grid-item"
+        "添加格子"
+    }
+    
+    script {
+        // 使用多个选择器进行事件委托
+        {{"#grid"}}->delegate({
+            target: [".grid-item", ".special"],
+            mouseenter: function(e) {
+                this.style.transform = 'scale(1.1)';
+            },
+            mouseleave: function(e) {
+                this.style.transform = 'scale(1)';
+            },
+            click: function(e) {
+                const type = this.dataset.type;
+                if (type === 'special') {
+                    alert('这是一个特殊格子！');
+                } else {
+                    this.style.backgroundColor = 
+                        '#' + Math.floor(Math.random()*16777215).toString(16);
+                }
+            }
+        });
+        
+        // 动态添加格子
+        let gridCount = 4;
+        {{"#add-grid-item"}}.addEventListener('click', () => {
+            const div = document.createElement('div');
+            const isSpecial = Math.random() > 0.7;
+            div.className = isSpecial ? 'grid-item special' : 'grid-item';
+            div.dataset.type = isSpecial ? 'special' : 'normal';
+            div.textContent = gridCount++;
+            {{"#grid"}}.appendChild(div);
+        });
+    }
+    
+    style {
+        .interactive-grid {
+            margin-top: 40px;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .grid-item {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .grid-item.special {
+            background: #67C3CC;
+            color: white;
+            border-color: #5AB3BC;
+        }
+    }
+}
+
+// 3. 复杂交互的事件委托
+div {
+    class: "comment-section"
+    
+    h2 { "评论系统（事件委托）" }
+    
+    div {
+        class: "comment-form"
+        
+        textarea {
+            id: "comment-input"
+            placeholder: "写下你的评论..."
+        }
+        
+        button {
+            id: "submit-comment"
+            "发表评论"
+        }
+    }
+    
+    div {
+        id: "comments"
+        class: "comments-list"
+        
+        // 示例评论
+        div {
+            class: "comment"
+            data-id: "1"
+            
+            div {
+                class: "comment-header"
+                
+                span { class: "author"; "用户1" }
+                span { class: "time"; "刚刚" }
+            }
+            
+            div { class: "comment-body"; "这是一条示例评论" }
+            
+            div {
+                class: "comment-actions"
+                
+                button { class: "btn-like"; "👍 0" }
+                button { class: "btn-reply"; "回复" }
+                button { class: "btn-delete"; "删除" }
+            }
+        }
+    }
+    
+    script {
+        // 评论操作的事件委托
+        {{"#comments"}}->delegate({
+            target: ".btn-like",
+            click: function(e) {
+                const count = parseInt(this.textContent.match(/\d+/)[0]) + 1;
+                this.textContent = `👍 ${count}`;
+                this.classList.add('liked');
+            }
+        });
+        
+        {{"#comments"}}->delegate({
+            target: ".btn-reply",
+            click: function(e) {
+                const comment = this.closest('.comment');
+                const author = comment.querySelector('.author').textContent;
+                {{"#comment-input"}}.value = `@${author} `;
+                {{"#comment-input"}}.focus();
+            }
+        });
+        
+        {{"#comments"}}->delegate({
+            target: ".btn-delete",
+            click: function(e) {
+                if (confirm('确定要删除这条评论吗？')) {
+                    this.closest('.comment').remove();
+                }
+            }
+        });
+        
+        // 添加新评论
+        let commentId = 2;
+        {{"#submit-comment"}}.addEventListener('click', () => {
+            const content = {{"#comment-input"}}.value.trim();
+            if (!content) return;
+            
+            const comment = document.createElement('div');
+            comment.className = 'comment';
+            comment.dataset.id = commentId++;
+            comment.innerHTML = `
+                <div class="comment-header">
+                    <span class="author">当前用户</span>
+                    <span class="time">刚刚</span>
+                </div>
+                <div class="comment-body">${content}</div>
+                <div class="comment-actions">
+                    <button class="btn-like">👍 0</button>
+                    <button class="btn-reply">回复</button>
+                    <button class="btn-delete">删除</button>
+                </div>
+            `;
+            
+            {{"#comments"}}.insertBefore(comment, {{"#comments"}}.firstChild);
+            {{"#comment-input"}}.value = '';
+        });
+    }
+    
+    style {
+        .comment-section {
+            margin-top: 40px;
+            max-width: 600px;
+        }
+        
+        .comment-form {
+            margin-bottom: 20px;
+        }
+        
+        #comment-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        
+        #submit-comment {
+            margin-top: 10px;
+            background: #67C3CC;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .comment {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .author {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .comment-body {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .comment-actions button {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .comment-actions button:hover {
+            background: #f5f5f5;
+        }
+        
+        .btn-like.liked {
+            background: #67C3CC;
+            color: white;
+            border-color: #67C3CC;
+        }
+    }
+}
+
+// 4. 使用{{&}}配合事件委托
+div {
+    class: "card-container"
+    id: "cards"
+    
+    h2 { "卡片系统" }
+    
+    script {
+        // 创建初始卡片
+        for (let i = 1; i <= 3; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>卡片 ${i}</h3>
+                <p>这是卡片 ${i} 的内容</p>
+                <button class="card-action">操作</button>
+            `;
+            {{&}}.appendChild(card);
+        }
+        
+        // 使用{{&}}作为委托父元素
+        {{&}}->delegate({
+            target: ".card",
+            mouseenter: function(e) {
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+            },
+            mouseleave: function(e) {
+                this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            }
+        });
+        
+        {{&}}->delegate({
+            target: ".card-action",
+            click: function(e) {
+                const card = this.closest('.card');
+                const title = card.querySelector('h3').textContent;
+                alert(`执行${title}的操作`);
+            }
+        });
+        
+        // 动态添加更多卡片
+        let cardCount = 4;
+        setInterval(() => {
+            if (cardCount <= 6) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>新卡片 ${cardCount}</h3>
+                    <p>这是动态添加的卡片 ${cardCount}</p>
+                    <button class="card-action">操作</button>
+                `;
+                {{&}}.appendChild(card);
+                cardCount++;
+            }
+        }, 2000);
+    }
+    
+    style {
+        .card-container {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .card p {
+            color: #666;
+            margin: 10px 0;
+        }
+        
+        .card-action {
+            background: #67C3CC;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .card-action:hover {
+            background: #5AB3BC;
+        }
+    }
+}
+
+// 5. 全局样式
+style {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    h1, h2 {
+        color: #333;
+    }
+}

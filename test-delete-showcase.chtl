@@ -1,0 +1,122 @@
+// CHTL 删除功能展示
+
+// 定义组件
+[Custom] @Element TodoItem {
+    li {
+        input { type: "checkbox"; }
+        span { text { "待办事项" } }
+    }
+}
+
+[Custom] @Element TodoList {
+    div {
+        class: "todo-list";
+        h3 { text { "待办清单" } }
+        ul {
+            @Element TodoItem;
+            @Element TodoItem;
+            @Element TodoItem;
+            @Element TodoItem;
+            @Element TodoItem;
+        }
+    }
+}
+
+[Custom] @Element Card {
+    div {
+        class: "card";
+        h4 { text { "卡片标题" } }
+        p { text { "卡片内容" } }
+        button { text { "操作" } }
+    }
+}
+
+[Custom] @Element CardGroup {
+    div {
+        class: "card-group";
+        @Element Card;
+        @Element Card;
+        @Element Card;
+        @Element Card;
+    }
+}
+
+body {
+    h1 { text { "CHTL 删除功能展示" } }
+    
+    // 示例1: 删除特定索引的引用
+    section {
+        h2 { text { "1. 删除特定待办事项" } }
+        p { text { "删除第2和第4个待办事项:" } }
+        @Element TodoList {
+            delete @Element TodoItem[1], @Element TodoItem[3];
+        }
+    }
+    
+    // 示例2: 删除所有引用
+    section {
+        h2 { text { "2. 清空待办清单" } }
+        p { text { "删除所有待办事项:" } }
+        @Element TodoList {
+            delete @Element TodoItem;
+        }
+    }
+    
+    // 示例3: 使用不同语法
+    section {
+        h2 { text { "3. 不同删除语法" } }
+        
+        div {
+            h3 { text { "使用 Custom 语法:" } }
+            @Element CardGroup {
+                delete Custom @Element Card[0];
+            }
+        }
+        
+        div {
+            h3 { text { "使用 [Custom] 语法:" } }
+            @Element CardGroup {
+                delete [Custom] @Element Card[2];
+            }
+        }
+    }
+    
+    // 示例4: 复杂删除场景
+    section {
+        h2 { text { "4. 组合删除" } }
+        
+        [Custom] @Element ComplexComponent {
+            div {
+                @Element TodoList;
+                @Element CardGroup;
+            }
+        }
+        
+        p { text { "删除部分待办事项和卡片:" } }
+        @Element ComplexComponent {
+            delete @Element TodoItem[0], @Element TodoItem[2], @Element TodoItem[4];
+            delete @Element Card[1], @Element Card[3];
+        }
+    }
+    
+    // 示例5: 删除普通元素
+    section {
+        h2 { text { "5. 删除组件内的普通元素" } }
+        
+        [Custom] @Element Article {
+            article {
+                h3 { text { "文章标题" } }
+                p { text { "段落1" } }
+                p { text { "段落2" } }
+                p { text { "段落3" } }
+                p { text { "段落4" } }
+                p { text { "段落5" } }
+            }
+        }
+        
+        p { text { "删除第2和第4段:" } }
+        @Element Article {
+            delete p[1], p[3];
+        }
+    }
+}

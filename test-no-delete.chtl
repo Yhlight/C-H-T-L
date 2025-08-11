@@ -1,0 +1,10 @@
+[Custom] @Element L {
+    ul {
+        li { text { "A" } }
+        li { text { "B" } }
+    }
+}
+
+div {
+    @Element L;
+}

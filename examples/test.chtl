@@ -1,0 +1,85 @@
+// CHTL测试文件
+// 测试基本语法
+
+[Template] @Style DefaultText
+{
+    color: black;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+[Custom] @Element Card
+{
+    div
+    {
+        class: card-container;
+        
+        style
+        {
+            .card-container
+            {
+                width: 300px;
+                padding: 20px;
+                border-radius: 8px;
+            }
+            
+            &:hover
+            {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+        }
+        
+        h2
+        {
+            text
+            {
+                "Card Title"
+            }
+        }
+        
+        p
+        {
+            style
+            {
+                @Style DefaultText;
+            }
+            
+            text
+            {
+                这是一段无引号的文本内容
+            }
+        }
+    }
+}
+
+html
+{
+    head
+    {
+        title
+        {
+            text { "CHTL Test Page" }
+        }
+    }
+    
+    body
+    {
+        // 使用自定义元素
+        @Element Card;
+        
+        div
+        {
+            id: main-content;
+            class: container;
+            
+            // 测试CE对等式
+            data-value = "test";
+            data-name : example;
+            
+            text
+            {
+                HelloWorld
+            }
+        }
+    }
+}

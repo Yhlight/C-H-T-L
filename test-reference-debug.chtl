@@ -1,0 +1,19 @@
+// 测试引用解析
+
+[Custom] @Element MyBox {
+    div {
+        class: "my-box";
+        text { "Box Content" }
+    }
+}
+
+// 不同的引用方式
+div {
+    // 方式1：@Element Name;
+    @Element MyBox;
+    
+    // 方式2：@Element Name { }
+    @Element MyBox {
+        text { "Extra content" }
+    }
+}

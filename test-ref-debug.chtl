@@ -1,0 +1,13 @@
+// 测试引用解析问题
+
+[Custom] @Element Box {
+    div { text { "Box Content" } }
+}
+
+// 顶级引用
+@Element Box;
+
+// 在元素内的引用  
+div {
+    @Element Box;
+}

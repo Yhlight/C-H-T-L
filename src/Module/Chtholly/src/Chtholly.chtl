@@ -1,0 +1,350 @@
+// 珂朵莉主题模块
+
+// 颜色变量组
+[Template] @Var ChthollyColors {
+    primary: "#FFB3BA";      // 粉色 - 珂朵莉的发色
+    secondary: "#BAE1FF";    // 浅蓝色 - 天空
+    accent: "#FFFFBA";       // 浅黄色 - 金色妖精
+    success: "#BAFFC9";      // 浅绿色
+    warning: "#FFD4BA";      // 浅橙色
+    danger: "#FFBABA";       // 浅红色
+    light: "#FAFAFA";
+    dark: "#2E3440";
+    textPrimary: "#4C566A";
+    textSecondary: "#D8DEE9";
+}
+
+// 字体变量组
+[Template] @Var ChthollyFonts {
+    primary: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    heading: "Georgia, 'Times New Roman', serif";
+    mono: "'Fira Code', 'Consolas', monospace";
+    sizeBase: "16px";
+    sizeSmall: "14px";
+    sizeLarge: "18px";
+    sizeH1: "2.5rem";
+    sizeH2: "2rem";
+    sizeH3: "1.5rem";
+}
+
+// 间距变量组
+[Template] @Var ChthollySpacing {
+    xs: "4px";
+    sm: "8px";
+    md: "16px";
+    lg: "24px";
+    xl: "32px";
+    xxl: "48px";
+}
+
+// 断点变量组
+[Template] @Var ChthollyBreakpoints {
+    mobile: "576px";
+    tablet: "768px";
+    desktop: "992px";
+    wide: "1200px";
+}
+
+// 动画变量组
+[Template] @Var ChthollyAnimations {
+    durationFast: "150ms";
+    durationNormal: "300ms";
+    durationSlow: "500ms";
+    easingDefault: "cubic-bezier(0.4, 0, 0.2, 1)";
+    easingBounce: "cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+}
+
+// 基础样式
+[Template] @Style ChthollyStyle {
+    font-family: ChthollyFonts(primary);
+    font-size: ChthollyFonts(sizeBase);
+    line-height: 1.6;
+    color: ChthollyColors(textPrimary);
+    background-color: ChthollyColors(light);
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    ::selection {
+        background-color: ChthollyColors(primary);
+        color: white;
+    }
+}
+
+// 卡片样式
+[Template] @Style ChthollyCard {
+    background: white;
+    border-radius: 12px;
+    padding: ChthollySpacing(lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all ChthollyAnimations(durationNormal) ChthollyAnimations(easingDefault);
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+}
+
+// 按钮样式
+[Template] @Style ChthollyButton {
+    padding: ChthollySpacing(sm) ChthollySpacing(lg);
+    border: none;
+    border-radius: 24px;
+    font-size: ChthollyFonts(sizeBase);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all ChthollyAnimations(durationFast) ChthollyAnimations(easingDefault);
+    display: inline-flex;
+    align-items: center;
+    gap: ChthollySpacing(sm);
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+    
+    &:active {
+        transform: scale(0.98);
+    }
+    
+    &.primary {
+        background-color: ChthollyColors(primary);
+        color: white;
+    }
+    
+    &.secondary {
+        background-color: ChthollyColors(secondary);
+        color: ChthollyColors(dark);
+    }
+}
+
+// 页面容器
+[Template] @Element ChthollyPage {
+    div {
+        class: "chtholly-page";
+        style {
+            @Style ChthollyStyle;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+// 区块容器
+[Template] @Element ChthollySection {
+    section {
+        class: "chtholly-section";
+        style {
+            padding: ChthollySpacing(xl) ChthollySpacing(lg);
+            max-width: ChthollyBreakpoints(wide);
+            margin: 0 auto;
+            width: 100%;
+        }
+    }
+}
+
+// 导航栏
+[Custom] @Element ChthollyNav {
+    nav {
+        class: "chtholly-nav";
+        style {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: ChthollySpacing(md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            
+            .nav-container {
+                max-width: ChthollyBreakpoints(wide);
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .nav-brand {
+                font-size: ChthollyFonts(sizeH3);
+                font-weight: bold;
+                color: ChthollyColors(primary);
+                text-decoration: none;
+            }
+            
+            .nav-links {
+                display: flex;
+                gap: ChthollySpacing(lg);
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                
+                a {
+                    color: ChthollyColors(textPrimary);
+                    text-decoration: none;
+                    transition: color ChthollyAnimations(durationFast);
+                    
+                    &:hover {
+                        color: ChthollyColors(primary);
+                    }
+                }
+            }
+        }
+        
+        div {
+            class: "nav-container";
+            a {
+                class: "nav-brand";
+                href: "/";
+                text { "Chtholly" }
+            }
+            ul {
+                class: "nav-links";
+            }
+        }
+    }
+}
+
+// 模态框
+[Custom] @Element ChthollyModal {
+    div {
+        class: "chtholly-modal";
+        style {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: ChthollySpacing(xl);
+            
+            &.active {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .modal-content {
+                @Style ChthollyCard;
+                max-width: 600px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                animation: modalIn ChthollyAnimations(durationNormal) ChthollyAnimations(easingBounce);
+            }
+            
+            @keyframes modalIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.9);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+        }
+        
+        div {
+            class: "modal-content";
+        }
+    }
+}
+
+// 图库组件
+[Custom] @Element ChthollyGallery {
+    div {
+        class: "chtholly-gallery";
+        style {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: ChthollySpacing(lg);
+            
+            .gallery-item {
+                @Style ChthollyCard;
+                padding: 0;
+                overflow: hidden;
+                
+                img {
+                    width: 100%;
+                    height: 200px;
+                    object-fit: cover;
+                    transition: transform ChthollyAnimations(durationNormal);
+                }
+                
+                &:hover img {
+                    transform: scale(1.1);
+                }
+                
+                .gallery-caption {
+                    padding: ChthollySpacing(md);
+                    text-align: center;
+                    font-size: ChthollyFonts(sizeSmall);
+                    color: ChthollyColors(textSecondary);
+                }
+            }
+        }
+    }
+}
+
+// 头部样式
+[Template] @Style ChthollyHeader {
+    background: linear-gradient(135deg, ChthollyColors(primary), ChthollyColors(secondary));
+    color: white;
+    padding: ChthollySpacing(xxl) ChthollySpacing(lg);
+    text-align: center;
+    
+    h1 {
+        font-size: ChthollyFonts(sizeH1);
+        margin: 0 0 ChthollySpacing(md);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    p {
+        font-size: ChthollyFonts(sizeLarge);
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+// 页脚样式
+[Template] @Style ChthollyFooter {
+    background: ChthollyColors(dark);
+    color: ChthollyColors(textSecondary);
+    padding: ChthollySpacing(xl) ChthollySpacing(lg);
+    margin-top: auto;
+    
+    .footer-content {
+        max-width: ChthollyBreakpoints(wide);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: ChthollySpacing(xl);
+    }
+    
+    h3 {
+        color: white;
+        font-size: ChthollyFonts(sizeH3);
+        margin: 0 0 ChthollySpacing(md);
+    }
+    
+    a {
+        color: ChthollyColors(textSecondary);
+        text-decoration: none;
+        transition: color ChthollyAnimations(durationFast);
+        
+        &:hover {
+            color: ChthollyColors(primary);
+        }
+    }
+    
+    .footer-bottom {
+        margin-top: ChthollySpacing(xl);
+        padding-top: ChthollySpacing(lg);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        font-size: ChthollyFonts(sizeSmall);
+    }
+}

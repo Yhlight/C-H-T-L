@@ -1,0 +1,51 @@
+[Custom] @Element Header {
+    h1 { text { "Header" } }
+}
+
+[Custom] @Element Footer {
+    p { text { "Footer" } }
+}
+
+[Custom] @Element Item {
+    li { text { "Item" } }
+}
+
+[Custom] @Element List {
+    ul {
+        @Element Item;
+        @Element Item;
+    }
+}
+
+body {
+    h2 { text { "插入到顶部" } }
+    @Element List {
+        insert at top {
+            @Element Header;
+        }
+    }
+    
+    h2 { text { "插入到底部" } }
+    @Element List {
+        insert at bottom {
+            @Element Footer;
+        }
+    }
+    
+    h2 { text { "在特定位置插入" } }
+    @Element List {
+        insert after @Element Item[0] {
+            [Custom] @Element Header {
+                h3 { text { "Inserted Header" } }
+            }
+        }
+    }
+    
+    h2 { text { "替换引用" } }
+    @Element List {
+        insert replace @Element Item[1] {
+            @Element Header;
+            @Element Footer;
+        }
+    }
+}

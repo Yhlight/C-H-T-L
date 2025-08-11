@@ -1,0 +1,15 @@
+[Custom] @Element Box {
+    div { 
+        p { text { "Box" } }
+    }
+}
+
+body {
+    h1 { text { "Test" } }
+    
+    @Element Box;
+    
+    @Element Box {
+        delete p[0];
+    }
+}

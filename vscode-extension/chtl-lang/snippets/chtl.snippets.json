@@ -1,0 +1,425 @@
+{
+  "Configuration Block": {
+    "prefix": "config",
+    "body": [
+      "[Configuration] {",
+      "\tINDEX_INITIAL_COUNT = ${1:0};",
+      "\tDISABLE_NAME_GROUP = ${2:false};",
+      "\tDEBUG_MODE = ${3:false};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Configuration block with common settings"
+  },
+  "Name Block": {
+    "prefix": "name",
+    "body": [
+      "[Name] {",
+      "\t${1:CUSTOM_STYLE} = [${2:@Style, @样式}];",
+      "\t$0",
+      "}"
+    ],
+    "description": "Name block for keyword aliases"
+  },
+  "Import Block": {
+    "prefix": "import",
+    "body": [
+      "[Import] {",
+      "\t@${1:Element} ${2:ComponentName} from \"${3:path/to/file.chtl}\";",
+      "\t$0",
+      "}"
+    ],
+    "description": "Import block with file path"
+  },
+  "Import from Namespace": {
+    "prefix": "importns",
+    "body": [
+      "[Import] {",
+      "\t@${1:Element} ${2:ComponentName} from namespace ${3:NamespaceName} as ${4:Alias};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Import from namespace with alias"
+  },
+  "Import All": {
+    "prefix": "importall",
+    "body": [
+      "[Import] {",
+      "\t* from \"${1:path/to/file.chtl}\";",
+      "}"
+    ],
+    "description": "Import all from file"
+  },
+  "Export Block": {
+    "prefix": "export",
+    "body": [
+      "[Export] {",
+      "\t@${1:Element} ${2:ComponentName};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Export block"
+  },
+  "Export with Alias": {
+    "prefix": "exportas",
+    "body": [
+      "[Export] {",
+      "\t@${1:Element} ${2:ComponentName} as ${3:ExportName};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Export with alias"
+  },
+  "Export from Namespace": {
+    "prefix": "exportns",
+    "body": [
+      "[Export] from namespace ${1:NamespaceName} {",
+      "\t@${2:Element} ${3:ComponentName};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Export from namespace"
+  },
+  "Namespace Block": {
+    "prefix": "namespace",
+    "body": [
+      "[Namespace] ${1:NamespaceName} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Namespace block"
+  },
+  "Info Block": {
+    "prefix": "info",
+    "body": [
+      "[Info] {",
+      "\tname = \"${1:ModuleName}\";",
+      "\tversion = \"${2:1.0.0}\";",
+      "\tauthor = \"${3:Author Name}\";",
+      "\tdescription = \"${4:Module description}\";",
+      "\t$0",
+      "}"
+    ],
+    "description": "Info block for CMOD modules"
+  },
+  "Origin HTML": {
+    "prefix": "originhtml",
+    "body": [
+      "[Origin] @Html ${1:name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Named HTML origin block"
+  },
+  "Origin Style": {
+    "prefix": "originstyle",
+    "body": [
+      "[Origin] @Style ${1:name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Named CSS origin block"
+  },
+  "Origin JavaScript": {
+    "prefix": "originjs",
+    "body": [
+      "[Origin] @JavaScript ${1:name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Named JavaScript origin block"
+  },
+  "Origin Reference": {
+    "prefix": "originref",
+    "body": "[Origin] @${1:Style} ${2:name};",
+    "description": "Reference to named origin block"
+  },
+  "Custom Element": {
+    "prefix": "custom",
+    "body": [
+      "[Custom] @Element ${1:ComponentName} {",
+      "\t${2:div} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Custom element component"
+  },
+  "Custom Style": {
+    "prefix": "customstyle",
+    "body": [
+      "[Custom] @Style ${1:StyleName} {",
+      "\t${2:color}${3:,}",
+      "\t${4:font-size};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Custom style group with optional values"
+  },
+  "Custom Variable": {
+    "prefix": "customvar",
+    "body": [
+      "[Custom] @Var ${1:VarName} {",
+      "\t${2:primary}: ${3:\"#007bff\"};",
+      "\t${4:secondary}: ${5:\"#6c757d\"};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Custom variable group"
+  },
+  "Template Element": {
+    "prefix": "template",
+    "body": [
+      "[Template] @Element ${1:TemplateName} {",
+      "\t${2:div} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Template element"
+  },
+  "Template Style": {
+    "prefix": "templatestyle",
+    "body": [
+      "[Template] @Style ${1:StyleName} {",
+      "\t${2:color}: ${3:black};",
+      "\t${4:font-size}: ${5:16px};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Template style group"
+  },
+  "Template Variable": {
+    "prefix": "templatevar",
+    "body": [
+      "[Template] @Var ${1:VarName} {",
+      "\t${2:primary}: ${3:\"#007bff\"};",
+      "\t${4:secondary}: ${5:\"#6c757d\"};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Template variable group"
+  },
+  "Inherit Statement": {
+    "prefix": "inherit",
+    "body": "inherit @${1:Style} ${2:BaseName};",
+    "description": "Inherit from template or custom"
+  },
+  "Inherit with Type": {
+    "prefix": "inherittype",
+    "body": "inherit [${1:Template}] @${2:Element} ${3:BaseName};",
+    "description": "Inherit with explicit type"
+  },
+  "Delete Properties": {
+    "prefix": "delete",
+    "body": "delete ${1:property1}, ${2:property2};",
+    "description": "Delete properties or elements"
+  },
+  "Delete Style Group": {
+    "prefix": "deletestyle",
+    "body": "delete @Style ${1:StyleName};",
+    "description": "Delete inherited style group"
+  },
+  "Insert After": {
+    "prefix": "insertafter",
+    "body": [
+      "insert after ${1:div[0]} {",
+      "\t${2:span} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Insert element after target"
+  },
+  "Insert Before": {
+    "prefix": "insertbefore",
+    "body": [
+      "insert before ${1:div[0]} {",
+      "\t${2:span} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Insert element before target"
+  },
+  "Insert Replace": {
+    "prefix": "insertreplace",
+    "body": [
+      "insert replace ${1:div[0]} {",
+      "\t${2:span} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Replace target element"
+  },
+  "Insert at Top": {
+    "prefix": "inserttop",
+    "body": [
+      "insert at top {",
+      "\t${1:div} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Insert at top of container"
+  },
+  "Insert at Bottom": {
+    "prefix": "insertbottom",
+    "body": [
+      "insert at bottom {",
+      "\t${1:div} {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Insert at bottom of container"
+  },
+  "Except Constraint": {
+    "prefix": "except",
+    "body": "except ${1:span}, ${2:[Custom] @Element Box};",
+    "description": "Exclude certain elements or types"
+  },
+  "Style Block": {
+    "prefix": "style",
+    "body": [
+      "style {",
+      "\t${1:width}: ${2:100px};",
+      "\t${3:height}: ${4:100px};",
+      "\t$0",
+      "}"
+    ],
+    "description": "Local style block"
+  },
+  "Style with Class": {
+    "prefix": "styleclass",
+    "body": [
+      "style {",
+      "\t.${1:box} {",
+      "\t\t${2:width}: ${3:100px};",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Style block with auto class"
+  },
+  "Style with Hover": {
+    "prefix": "stylehover",
+    "body": [
+      "style {",
+      "\t.${1:button} {",
+      "\t\t${2:background}: ${3:blue};",
+      "\t}",
+      "\t&:hover {",
+      "\t\t${4:background}: ${5:darkblue};",
+      "\t}",
+      "}"
+    ],
+    "description": "Style with hover state"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": [
+      "script {",
+      "\t{{&}}->listen({",
+      "\t\tclick: (e) => {",
+      "\t\t\t$0",
+      "\t\t}",
+      "\t});",
+      "}"
+    ],
+    "description": "Local script block"
+  },
+  "Text Block": {
+    "prefix": "text",
+    "body": [
+      "text {",
+      "\t${1:Your text here}",
+      "}"
+    ],
+    "description": "Text block"
+  },
+  "Element with Attributes": {
+    "prefix": "element",
+    "body": [
+      "${1:div} {",
+      "\tid: ${2:elementId};",
+      "\tclass: ${3:className};",
+      "\t$0",
+      "}"
+    ],
+    "description": "HTML element with attributes"
+  },
+  "Variable Group Call": {
+    "prefix": "vargroup",
+    "body": "${1:ThemeColor}(${2:primary}${3: = rgb(255, 0, 0)})",
+    "description": "Variable group specialization"
+  },
+  "Style Group Reference": {
+    "prefix": "styleref",
+    "body": "@Style ${1:StyleName};",
+    "description": "Reference style group"
+  },
+  "Variable Group Reference": {
+    "prefix": "varref",
+    "body": "@Var ${1:VarName};",
+    "description": "Expand variable group"
+  },
+  "Element Reference": {
+    "prefix": "elementref",
+    "body": "@Element ${1:ComponentName};",
+    "description": "Use element template/custom"
+  },
+  "Generator Comment": {
+    "prefix": "comment",
+    "body": "-- ${1:This comment will appear in generated HTML}",
+    "description": "Generator-recognized comment"
+  },
+  "CHTL Selector": {
+    "prefix": "selector",
+    "body": "{{${1:.className}}}",
+    "description": "CHTL enhanced selector"
+  },
+  "CHTL Current Element": {
+    "prefix": "current",
+    "body": "{{&}}",
+    "description": "Reference to current element"
+  },
+  "CHTL Listen": {
+    "prefix": "listen",
+    "body": [
+      "{{&}}->listen({",
+      "\t${1:click}: (e) => {",
+      "\t\t$0",
+      "\t}",
+      "});"
+    ],
+    "description": "CHTL listen for events"
+  },
+  "CHTL Delegate": {
+    "prefix": "delegate",
+    "body": [
+      "{{${1:container}}}->delegate({",
+      "\ttarget: '${2:.item}',",
+      "\tevents: {",
+      "\t\t${3:click}: (e, target) => {",
+      "\t\t\t$0",
+      "\t\t}",
+      "\t}",
+      "});"
+    ],
+    "description": "CHTL event delegation"
+  },
+  "CHTL Animate": {
+    "prefix": "animate",
+    "body": [
+      "{{&}}->animate({",
+      "\tduration: ${1:300},",
+      "\teasing: '${2:ease}',",
+      "\tfrom: { ${3:opacity}: ${4:0} },",
+      "\tto: { ${3:opacity}: ${5:1} }",
+      "});"
+    ],
+    "description": "CHTL animation"
+  }
+}

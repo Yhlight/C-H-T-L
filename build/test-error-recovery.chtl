@@ -1,0 +1,34 @@
+[Template] @Style GoodStyle
+{
+    color: blue;
+    font-size: 14px;
+}
+
+// Intentional error: missing closing brace
+div
+{
+    style
+    {
+        .error-class
+        {
+            color: red;
+    }
+}
+
+// This should still parse after the error
+[Template] @Element ValidElement
+{
+    span
+    {
+        style
+        {
+            @Style GoodStyle;
+        }
+        text { "This should work" }
+    }
+}
+
+body
+{
+    @Element ValidElement;
+}

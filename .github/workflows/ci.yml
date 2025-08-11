@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        build_type: [Debug, Release]
+        compiler: 
+          - { cc: gcc-11, cxx: g++-11 }
+          - { cc: clang-14, cxx: clang++-14 }
+        exclude:
+          - os: macos-latest
+            compiler: { cc: gcc-11, cxx: g++-11 }
+          
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build
+
+    - name: Install dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install cmake ninja
+
+    - name: Configure CMake
+      env:
+        CC: ${{ matrix.compiler.cc }}
+        CXX: ${{ matrix.compiler.cxx }}
+      run: |
+        cmake -B build \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build_type }}
+
+    - name: Test basic compilation
+      run: |
+        echo 'div { text { "Hello World" } }' > test.chtl
+        ./build/chtl test.chtl -o test-output
+        test -f test-output/index.html
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: matrix.build_type == 'Release'
+      with:
+        name: chtl-${{ matrix.os }}-${{ matrix.compiler.cc }}
+        path: build/chtl
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: chtl-ubuntu-latest-gcc-11
+        path: .
+
+    - name: Make executable
+      run: chmod +x chtl
+
+    - name: Run unit tests
+      run: |
+        # Test variable group function calls
+        ./chtl test-var-function-fixed.chtl -o test-output
+        grep -q "#3498db" test-output/index.html || exit 1
+        
+        # Test error recovery
+        ./chtl test-complex-file.chtl -o test-output || true
+        
+        # Test delete syntax
+        ./chtl test-delete-correct.chtl -o test-output
+        
+    - name: Test CJmod
+      run: |
+        # Test CJmod import
+        echo '[Import] @CJmod from "reactive";' > test-cjmod.chtl
+        echo 'div { text { "test" } }' >> test-cjmod.chtl
+        ./chtl test-cjmod.chtl -o test-output
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format-14
+    
+    - name: Check formatting
+      run: |
+        find include src -name "*.h" -o -name "*.cpp" | xargs clang-format-14 --dry-run --Werror
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Doxygen
+      run: sudo apt-get install -y doxygen graphviz
+    
+    - name: Generate documentation
+      run: |
+        mkdir -p build/docs
+        doxygen Doxyfile || true
+    
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: build/docs

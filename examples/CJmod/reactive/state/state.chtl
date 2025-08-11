@@ -1,0 +1,42 @@
+[Info] @CJmod reactive.state
+{
+    name: "State"
+    version: "1.0.0"
+    description: "响应式状态管理"
+    parent: "reactive"
+    
+    // 定义的语法规则
+    syntax: {
+        // 状态声明
+        stateDeclaration: {
+            pattern: "state\\s+(\\w+)\\s*=\\s*([^;]+);"
+            replacement: "const $1 = createState($2);"
+            description: "声明响应式状态"
+        }
+        
+        // 状态更新
+        stateUpdate: {
+            pattern: "update\\s+(\\w+)\\s*\\(([^)]+)\\);"
+            replacement: "updateState($1, $2);"
+            description: "更新状态值"
+        }
+        
+        // 批量更新
+        batchUpdate: {
+            pattern: "batch\\s*\\{([^}]+)\\}"
+            replacement: "batchUpdate(() => { $1 });"
+            description: "批量更新状态"
+        }
+    }
+    
+    // 运行时文件
+    runtime: {
+        main: "../runtime/state.js"
+    }
+    
+    // C++ 源文件
+    sources: {
+        main: "./state.cpp"
+        headers: ["./state.h"]
+    }
+}

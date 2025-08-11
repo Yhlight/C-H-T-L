@@ -1,0 +1,99 @@
+// reactive.cjmod - 响应式编程模块
+// 这是一个 CJmod 模块文件示例
+
+// 模块元信息
+export const MODULE_INFO = {
+    name: "reactive",
+    version: "1.0.0",
+    description: "Reactive programming support for CHTL JS"
+};
+
+// 扫描切割规则
+export const SCAN_CUT_RULES = [
+    {
+        name: "reactive-declaration",
+        pattern: /(\w+)\s*:=\s*([^;]+);/g,
+        replacement: "let $1 = reactive($2);",
+        priority: 100
+    },
+    {
+        name: "computed-property",
+        pattern: /(\w+)\s*=>\s*([^;]+);/g,
+        replacement: "let $1 = computed(() => $2);",
+        priority: 90
+    },
+    {
+        name: "watch-syntax",
+        pattern: /watch\s+(\w+)\s*\{/g,
+        replacement: "watch($1, () => {",
+        priority: 80
+    },
+    {
+        name: "reactive-assignment",
+        pattern: /(\w+)\.value\s*:=\s*([^;]+);/g,
+        replacement: "$1.value = $2;",
+        priority: 70
+    }
+];
+
+// 运行时注入代码
+export const RUNTIME_CODE = `
+// Reactive Runtime
+window.reactive = function(initialValue) {
+    let _value = initialValue;
+    const subscribers = new Set();
+    
+    return {
+        get value() { return _value; },
+        set value(newValue) {
+            if (_value !== newValue) {
+                _value = newValue;
+                subscribers.forEach(fn => fn());
+            }
+        },
+        subscribe(fn) {
+            subscribers.add(fn);
+            return () => subscribers.delete(fn);
+        }
+    };
+};
+
+window.computed = function(computeFn) {
+    let cache;
+    let dirty = true;
+    const deps = new Set();
+    
+    return {
+        get value() {
+            if (dirty) {
+                cache = computeFn();
+                dirty = false;
+            }
+            return cache;
+        },
+        invalidate() {
+            dirty = true;
+        }
+    };
+};
+
+window.watch = function(target, callback) {
+    if (target && typeof target.subscribe === 'function') {
+        return target.subscribe(callback);
+    }
+    // 监听普通对象
+    let oldValue = target;
+    setInterval(() => {
+        if (target !== oldValue) {
+            oldValue = target;
+            callback();
+        }
+    }, 100);
+};
+`;
+
+// 可选：覆盖官方语法
+export const OVERRIDES = {
+    // 例如：修改 foreach 的行为
+    // "foreach": "$2.forEach(($1, index) => {"
+};

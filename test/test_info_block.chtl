@@ -1,0 +1,26 @@
+// 测试[Info]块解析
+
+[Info] {
+    name: "MyModule"
+    version: "1.0.0"
+    description: "A test module for CHTL"
+    author: "CHTL Developer"
+    license: "MIT"
+}
+
+// 也可以使用字符串字面量
+[Info] {
+    name: "AnotherModule",
+    version: "2.0.0-beta",
+    description: "This is a longer description with spaces",
+    author: "Test Author",
+    homepage: "https://example.com/module"
+}
+
+// 测试无引号的复杂值
+[Info] {
+    name: MyComplexModule
+    version: 1.2.3-alpha.1
+    build: 2024.01.15
+    requires: chtl-core-1.0
+}

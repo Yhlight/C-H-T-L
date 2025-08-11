@@ -1,0 +1,7 @@
+[Custom] @Element A {
+    div { text { "Component A" } }
+}
+
+p { text { "Before" } }
+@Element A;
+p { text { "After" } }

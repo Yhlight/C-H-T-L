@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  chtl-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/workspace
+      - build-cache:/workspace/build
+    working_dir: /workspace
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+
+  chtl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./examples:/workspace
+    working_dir: /workspace
+
+volumes:
+  build-cache:

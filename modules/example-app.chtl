@@ -1,0 +1,219 @@
+// Chtholly模块示例应用
+// 展示如何使用珂朵莉模块构建应用
+// "就算是一瞬间也好，我想要留下幸福的回忆"
+
+// 导入所需的Chtholly模块
+Import @Chtl from "Chtholly.Core.*"
+Import @Space from "Chtholly.Space.*"
+Import @Time from "Chtholly.Time.*"
+Import @Memory from "Chtholly.Memory.*"
+Import @Utils from "Chtholly.Utils.*"
+
+// 主应用组件
+[Custom] @Element ChthollyApp {
+    state: {
+        currentTime: Date = new Date()
+        memories: array = []
+        selectedMemory: object = null
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            // 从缓存恢复记忆
+            const cached = memoryCache.get("user-memories")
+            if (cached) {
+                this.setState({ memories: cached })
+            }
+        }
+    }
+    
+    methods: {
+        addMemory: (title, content) => {
+            const memory = {
+                id: generateId("memory"),
+                title,
+                content,
+                timestamp: new Date(),
+                tags: ["美好", "珂朵莉"]
+            }
+            
+            const newMemories = [...state.memories, memory]
+            this.setState({ memories: newMemories })
+            
+            // 缓存记忆
+            memoryCache.set("user-memories", newMemories)
+        }
+        
+        selectMemory: (memory) => {
+            this.setState({ selectedMemory: memory })
+        }
+    }
+    
+    render: {
+        @Container {
+            padding: "20px"
+            
+            // 应用标题
+            @Center {
+                @Text {
+                    size: "32px"
+                    weight: "bold"
+                    color: "#67C3CC"
+                    "珂朵莉的记忆花园"
+                }
+            }
+            
+            @Spacer { size: "30px" }
+            
+            // 时间显示
+            @FloatingIsland {
+                drift: true
+                elevation: 2
+                
+                @FlexBox {
+                    justify: "space-between"
+                    align: "center"
+                    
+                    @Text {
+                        "当前时间："
+                    }
+                    
+                    @Clock {
+                        format: "HH:mm:ss"
+                        showDate: true
+                    }
+                }
+            }
+            
+            @Spacer { size: "20px" }
+            
+            // 记忆时间线
+            @Stack {
+                spacing: "20px"
+                
+                @Text {
+                    size: "24px"
+                    weight: "bold"
+                    "记忆碎片"
+                }
+                
+                // 添加新记忆
+                @Box {
+                    color: "#F0F8FF"
+                    radius: "8px"
+                    padding: "16px"
+                    
+                    @Button {
+                        onClick: () => {
+                            const title = prompt("记忆标题：")
+                            const content = prompt("记忆内容：")
+                            if (title && content) {
+                                this.addMemory(title, content)
+                            }
+                        }
+                        "添加新的记忆"
+                    }
+                }
+                
+                // 记忆列表
+                @If {
+                    condition: state.memories.length > 0
+                    then: @Stack {
+                        spacing: "16px"
+                        
+                        @For {
+                            each: state.memories
+                            as: "memory"
+                            children: ({ memory }) => {
+                                @MemoryCard {
+                                    title: memory.title
+                                    content: memory.content
+                                    timestamp: memory.timestamp
+                                    tags: memory.tags
+                                    onClick: () => this.selectMemory(memory)
+                                }
+                            }
+                        }
+                    }
+                    else: @Center {
+                        @Text {
+                            color: "#999"
+                            "还没有任何记忆..."
+                        }
+                    }
+                }
+            }
+            
+            // 选中的记忆详情
+            @If {
+                condition: state.selectedMemory !== null
+                then: @Portal {
+                    div {
+                        style: {
+                            position: "fixed"
+                            top: 0
+                            left: 0
+                            right: 0
+                            bottom: 0
+                            background: "rgba(0, 0, 0, 0.5)"
+                            display: "flex"
+                            justify-content: "center"
+                            align-items: "center"
+                            z-index: 1000
+                        }
+                        onclick: () => this.setState({ selectedMemory: null })
+                        
+                        @Box {
+                            color: "white"
+                            radius: "12px"
+                            shadow: "0 8px 32px rgba(0, 0, 0, 0.2)"
+                            padding: "32px"
+                            onclick: (e) => e.stopPropagation()
+                            
+                            @Stack {
+                                spacing: "16px"
+                                
+                                @Text {
+                                    size: "24px"
+                                    weight: "bold"
+                                    state.selectedMemory.title
+                                }
+                                
+                                @Text {
+                                    color: "#666"
+                                    state.selectedMemory.content
+                                }
+                                
+                                @Text {
+                                    size: "14px"
+                                    color: "#999"
+                                    formatTimeAgo(state.selectedMemory.timestamp)
+                                }
+                                
+                                @Button {
+                                    onClick: () => this.setState({ selectedMemory: null })
+                                    "关闭"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            @Spacer { size: "40px" }
+            
+            // 页脚
+            @Center {
+                @Text {
+                    size: "14px"
+                    color: "#999"
+                    style: "italic"
+                    "「世界上最幸福的女孩」"
+                }
+            }
+        }
+    }
+}
+
+// 渲染应用
+@ChthollyApp {}

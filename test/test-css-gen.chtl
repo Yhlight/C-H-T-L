@@ -1,0 +1,49 @@
+// Test CSS generation
+
+div
+{
+    style
+    {
+        // 内联样式
+        padding: 10px;
+        margin: 5px;
+        
+        // 类选择器
+        .box
+        {
+            background: red;
+            border: 1px solid black;
+        }
+        
+        // ID选择器
+        #special
+        {
+            font-weight: bold;
+        }
+        
+        // 伪类
+        &:hover
+        {
+            opacity: 0.8;
+        }
+    }
+    
+    text
+    {
+        "Test Content"
+    }
+}
+
+// 全局样式块
+style
+{
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}

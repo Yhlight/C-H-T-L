@@ -1,0 +1,7 @@
+[Custom] @Style MyStyle {
+    color: blue;
+}
+
+body {
+    div { text { "Test" } }
+}

@@ -1,0 +1,74 @@
+// 测试 CHTL insert 语法
+
+[Custom] @Element Container {
+    div {
+        p { text { "P1" } }
+        p { text { "P2" } }
+        p { text { "P3" } }
+    }
+}
+
+[Custom] @Element List {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+body {
+    h1 { text { "插入测试" } }
+    
+    // 测试1: 在顶部插入
+    section {
+        h2 { text { "在顶部插入" } }
+        @Element Container {
+            insert at top {
+                h3 { text { "插入的标题" } }
+            }
+        }
+    }
+    
+    // 测试2: 在底部插入
+    section {
+        h2 { text { "在底部插入" } }
+        @Element Container {
+            insert at bottom {
+                p { text { "P4 - 插入的段落" } }
+            }
+        }
+    }
+    
+    // 测试3: 在特定元素后插入
+    section {
+        h2 { text { "在P2后插入" } }
+        @Element Container {
+            insert after p[1] {
+                p { text { "P2.5 - 插入的段落" } }
+            }
+        }
+    }
+    
+    // 测试4: 在特定元素前插入
+    section {
+        h2 { text { "在第二个项目前插入" } }
+        @Element List {
+            insert before li[1] {
+                li { text { "Item 1.5 - 插入的项目" } }
+            }
+        }
+    }
+    
+    // 测试5: 替换元素
+    section {
+        h2 { text { "替换P2" } }
+        @Element Container {
+            insert replace p[1] {
+                div {
+                    h4 { text { "替换的内容" } }
+                    p { text { "这是一个div替换了P2" } }
+                }
+            }
+        }
+    }
+}

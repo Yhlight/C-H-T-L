@@ -1,0 +1,10 @@
+[Custom] @Style MyStyle {
+    color: blue;
+}
+
+body {
+    div {
+        style { @Style MyStyle; }
+        text { "Styled" }
+    }
+}

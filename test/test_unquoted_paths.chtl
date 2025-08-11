@@ -1,0 +1,25 @@
+// 测试无引号路径的导入语句
+
+// 无引号的简单路径（通配符）
+Import @Chtl from chtholly/core.*
+Import @Style from styles/base/*
+Import @Html from components.*
+
+// 带点的模块路径（如子模块）
+Import @Chtl from Chtholly.Space.*
+Import @Chtl from Chtholly.Math.Vector
+
+// 混合路径分隔符
+Import @Style from themes/dark/colors
+Import @JavaScript from utils/string/format.*
+
+// 带引号的路径（仍然支持）
+Import @Chtl from "special/path with spaces.*"
+Import @Html from "components/header"
+Import @Style from "styles/*"
+
+// 测试元素
+div {
+    class: "test"
+    "Import paths test"
+}

@@ -1,0 +1,73 @@
+// 测试错误恢复机制
+// 这个文件包含多个语法错误，用于验证编译器的错误恢复能力
+
+// 正确的模板定义
+[Template] @Style ValidStyle
+{
+    color: red;
+    font-size: 16px;
+}
+
+// 错误1: 缺少分号
+div
+{
+    id: "test"
+    class: "box"  // 缺少前一行的分号
+}
+
+// 错误2: 不完整的属性
+span
+{
+    style
+    {
+        color:  // 缺少值
+        background-color: blue;
+    }
+}
+
+// 错误3: 不匹配的大括号
+[Custom] @Element BadElement
+{
+    div
+    {
+        text
+        {
+            "Hello"
+        // 缺少闭合大括号
+    }
+// 缺少闭合大括号
+
+// 错误恢复后的正确内容
+[Template] @Element GoodElement
+{
+    div
+    {
+        style
+        {
+            @Style ValidStyle;
+        }
+        
+        text
+        {
+            "This should parse correctly"
+        }
+    }
+}
+
+// 错误4: 无效的语法
+invalid syntax here
+
+// 更多正确的内容
+body
+{
+    @Element GoodElement;
+    
+    div
+    {
+        style
+        {
+            width: 100px;
+            height: 100px;
+        }
+    }
+}

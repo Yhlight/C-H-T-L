@@ -1,0 +1,211 @@
+// Test CHTL compiler comprehensive functionality
+// Focus on: variable group function calls, error recovery, CJmod
+
+[Configuration]
+{
+    DEBUG_MODE = true;
+    INDEX_INITIAL_COUNT = 0;
+}
+
+[Template] @Var ThemeColor
+{
+    primary: "#3498db";
+    secondary: "#2ecc71";
+    danger: "#e74c3c";
+    warning: "#f39c12";
+}
+
+[Template] @Var Spacing
+{
+    small: "8px";
+    medium: "16px";
+    large: "24px";
+}
+
+[Template] @Style CardStyle
+{
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: Spacing(medium);  // Test variable group function call
+    background-color: white;
+}
+
+[Custom] @Element Card
+{
+    div
+    {
+        style
+        {
+            @Style CardStyle
+            {
+                // Test variable group function with parameter override
+                padding: Spacing(medium = "20px");
+            }
+            .card
+            {
+                border: 1px solid #ddd;
+            }
+        }
+        
+        h2
+        {
+            style
+            {
+                color: ThemeColor(primary);  // Test variable group function call
+                margin-bottom: Spacing(small);
+            }
+        }
+        
+        p
+        {
+            style
+            {
+                color: #666;
+                line-height: 1.6;
+            }
+        }
+    }
+}
+
+// Test CJmod import
+[Import] @CJmod from "reactive";
+
+// Test error recovery - intentional syntax error
+div
+{
+    style
+    {
+        // Missing closing brace for .error-test
+        .error-test
+        {
+            color: red;
+    }
+    
+    .recovered
+    {
+        color: green;
+    }
+}
+
+// Should continue parsing after error
+[Template] @Element Button
+{
+    button
+    {
+        style
+        {
+            background-color: ThemeColor(primary);
+            color: white;
+            padding: Spacing(small) Spacing(medium);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            &:hover
+            {
+                background-color: ThemeColor(primary = "#2980b9");
+            }
+        }
+        
+        text
+        {
+            "Click Me"
+        }
+    }
+}
+
+body
+{
+    style
+    {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: Spacing(large);
+        background-color: #f5f5f5;
+    }
+    
+    @Element Card
+    {
+        h2
+        {
+            text { "Welcome to CHTL" }
+        }
+        
+        p
+        {
+            text { "Testing variable group functions and error recovery." }
+        }
+    }
+    
+    @Element Button;
+    
+    // Test except constraint
+    div
+    {
+        except mobile
+        {
+            style
+            {
+                display: flex;
+                gap: Spacing(medium);
+            }
+        }
+        
+        except desktop
+        {
+            style
+            {
+                flex-direction: column;
+            }
+        }
+    }
+}
+
+// Test delete operation
+[Custom] @Style ExtendedCard
+{
+    @Style CardStyle
+    {
+        delete box-shadow;
+    }
+    border: 2px solid ThemeColor(primary);
+}
+
+// Test insert operation
+[Custom] @Element ExtendedCard
+{
+    @Element Card
+    {
+        insert after h2
+        {
+            div
+            {
+                style
+                {
+                    .subtitle
+                    {
+                        font-size: 14px;
+                        color: ThemeColor(secondary);
+                    }
+                }
+                text { "Powered by CHTL" }
+            }
+        }
+    }
+}
+
+// Test CHTL JS enhanced syntax (should be passed through)
+script
+{
+    // This should be handled by CHTL JS, not the compiler
+    {{.card}}->listen({
+        click: () => {
+            console.log("Card clicked");
+        }
+    });
+    
+    // Test reactive features from CJmod
+    const state = reactive({
+        count: 0
+    });
+}

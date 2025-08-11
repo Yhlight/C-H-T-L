@@ -1,0 +1,13 @@
+[Custom] @Element Box {
+    div { 
+        p { text { "Line 1" } }
+        p { text { "Line 2" } }
+        p { text { "Line 3" } }
+    }
+}
+
+body {
+    @Element Box {
+        delete p[1];
+    }
+}

@@ -1,0 +1,19 @@
+[Custom] @Element Simple {
+    div {
+        p { text { "Original" } }
+    }
+}
+
+body {
+    h1 { text { "插入调试" } }
+    
+    h2 { text { "原始" } }
+    @Element Simple;
+    
+    h2 { text { "在顶部插入" } }
+    @Element Simple {
+        insert at top {
+            h3 { text { "Top" } }
+        }
+    }
+}

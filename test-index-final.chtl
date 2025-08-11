@@ -1,0 +1,20 @@
+// 测试索引删除功能
+
+[Custom] @Element TestBox {
+    div { text { "div 1" } }
+    div { text { "div 2" } }
+    div { text { "div 3" } }
+    span { text { "span 1" } }
+    span { text { "span 2" } }
+}
+
+// 测试1：删除特定索引
+@Element TestBox {
+    delete div[1];      // 删除第二个 div
+    delete span[0];     // 删除第一个 span
+}
+
+// 测试2：删除所有
+@Element TestBox {
+    delete span;        // 删除所有 span
+}

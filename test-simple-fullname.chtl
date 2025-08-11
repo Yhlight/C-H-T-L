@@ -1,0 +1,26 @@
+// 简单的全缀名测试
+
+[Template] @Element Box {
+    div {
+        class: "template-box";
+        text { "This is Template Box" }
+    }
+}
+
+[Custom] @Element Box {
+    div {
+        class: "custom-box";
+        text { "This is Custom Box" }
+    }
+}
+
+div {
+    // 默认引用
+    @Element Box;
+    
+    // 全缀名引用 Template
+    [Template] @Element Box;
+    
+    // 全缀名引用 Custom
+    [Custom] @Element Box;
+}

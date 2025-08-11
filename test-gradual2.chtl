@@ -1,0 +1,20 @@
+// 步骤1: 基础定义
+[Custom] @Element Card {
+    div {
+        h3 { text { "Card" } }
+    }
+}
+
+body {
+    h1 { text { "渐进测试" } }
+    
+    // 步骤2: 基本引用
+    @Element Card;
+    
+    // 步骤3: 带操作的引用
+    @Element Card {
+        insert at bottom {
+            p { text { "Footer" } }
+        }
+    }
+}

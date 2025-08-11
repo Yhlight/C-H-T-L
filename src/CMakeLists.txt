@@ -1,0 +1,142 @@
+# 收集所有源文件
+set(CHTL_SOURCES
+    # Common
+    Common/GlobalMap.cpp
+    Common/Token.cpp
+    
+    # State
+    State/ChtlState.cpp
+    State/StandardState.cpp
+    State/CssState.cpp
+    State/JsState.cpp
+    State/ChtlJsState.cpp
+    State/StateFactory.cpp
+    
+    # Context
+    Context/BasicContext.cpp
+    Context/ChtlContext.cpp
+    Context/StandardContext.cpp
+    Context/EnhancedContext.cpp
+    Context/CssContext.cpp
+    Context/JsContext.cpp
+    Context/ContextFactory.cpp
+    Context/NamespaceManager.cpp
+    
+    # Lexer
+    Lexer/BasicLexer.cpp
+    Lexer/StandardLexer.cpp
+    Lexer/ConfigLexer.cpp
+    Lexer/ChtlJsLexer.cpp
+    
+    # Parser
+    Parser/BasicParser.cpp
+    Parser/StandardParser.cpp
+    Parser/ConfigParser.cpp
+    
+    # Node
+    Node/Node.cpp
+    Node/Comment.cpp
+    Node/Template.cpp
+    Node/Custom.cpp
+    Node/Style.cpp
+    Node/Config.cpp
+    Node/Import.cpp
+    Node/Export.cpp
+    Node/Namespace.cpp
+    Node/Operate.cpp
+    Node/Origin.cpp
+    Node/Info.cpp
+    Node/Script.cpp
+    Node/Delete.cpp
+    
+    # Generator
+    Generator/BasicGenerator.cpp
+    Generator/Generator.cpp
+    Generator/WebGenerator.cpp
+    Generator/ReactGenerator.cpp
+    Generator/VueGenerator.cpp
+    Generator/ConfigGenerator.cpp
+    Generator/HtmlGenerator.cpp
+    
+    # Scanner
+    Scanner/Segment.cpp
+    Scanner/BridgeScanner.cpp
+    
+    # CSS Analyzer
+    Css/CssAnalyzer.cpp
+    Css/CssTokenizer.cpp
+    Css/CssBlockExtractor.cpp
+    
+    # JS Analyzer
+    Js/JsAnalyzer.cpp
+    Js/JsTokenizer.cpp
+    Js/JsBlockExtractor.cpp
+    
+    # CHTL-JS (只包含实际存在的文件)
+    ChtlJs/ChtlJsContext.cpp
+    
+    # Loader
+    Loader/DependencyGraph.cpp
+    Loader/ImportManager.cpp
+    Loader/ImportResolver.cpp
+    Loader/ImportProcessor.cpp
+    Loader/FileLoader.cpp
+    Loader/CmodLoader.cpp
+    
+    # Runtime
+    Runtime/ChtlJsRuntime.cpp
+    
+    # Error
+    Error/ErrorHandler.cpp
+    
+    # Module
+    Module/CmodHandler.cpp
+    
+    # Script
+    Script/ScriptManager.cpp
+    
+    # Utils
+    Utils/ConstraintValidator.cpp
+    
+    # Cmod
+    Cmod/CmodPacker.cpp
+)
+
+# 创建静态库
+add_library(chtl_core STATIC ${CHTL_SOURCES})
+target_include_directories(chtl_core PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/chtl>
+)
+
+# 创建共享库（可选）
+add_library(chtl_shared SHARED ${CHTL_SOURCES})
+target_include_directories(chtl_shared PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/chtl>
+)
+set_target_properties(chtl_shared PROPERTIES OUTPUT_NAME chtl)
+
+# 主程序
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+    add_executable(chtl main.cpp)
+    target_link_libraries(chtl chtl_core)
+endif()
+
+# 安装目标
+install(TARGETS chtl_core chtl_shared
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+if(TARGET chtl)
+    install(TARGETS chtl RUNTIME DESTINATION bin)
+endif()
+
+# 导出目标
+install(TARGETS chtl_core chtl_shared
+    EXPORT CHTLTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)

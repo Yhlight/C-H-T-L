@@ -1,0 +1,216 @@
+{
+    "Template Style": {
+        "prefix": "template-style",
+        "body": [
+            "[Template] @Style ${1:StyleName} {",
+            "\t${2:property}: ${3:value};",
+            "}"
+        ],
+        "description": "Create a style template"
+    },
+    "Template Element": {
+        "prefix": "template-element",
+        "body": [
+            "[Template] @Element ${1:ElementName} {",
+            "\t${2:div} {",
+            "\t\t${3}",
+            "\t}",
+            "}"
+        ],
+        "description": "Create an element template"
+    },
+    "Template Var": {
+        "prefix": "template-var",
+        "body": [
+            "[Template] @Var ${1:VarName} {",
+            "\t${2:property}: \"${3:value}\";",
+            "}"
+        ],
+        "description": "Create a variable group template"
+    },
+    "Custom Style": {
+        "prefix": "custom-style",
+        "body": [
+            "[Custom] @Style ${1:StyleName} {",
+            "\t${2:property},",
+            "\t${3:property2};",
+            "}"
+        ],
+        "description": "Create a custom style"
+    },
+    "Custom Element": {
+        "prefix": "custom-element",
+        "body": [
+            "[Custom] @Element ${1:ElementName} {",
+            "\t${2:div} {",
+            "\t\t${3}",
+            "\t}",
+            "}"
+        ],
+        "description": "Create a custom element"
+    },
+    "Import": {
+        "prefix": "import",
+        "body": [
+            "[Import] ${1:@Chtl} from \"${2:module}\";$0"
+        ],
+        "description": "Import a module"
+    },
+    "Import CJmod": {
+        "prefix": "import-cjmod",
+        "body": [
+            "[Import] @CJmod from \"${1:module}\";$0"
+        ],
+        "description": "Import a CJmod module"
+    },
+    "Configuration": {
+        "prefix": "config",
+        "body": [
+            "[Configuration] {",
+            "\t${1:SETTING_NAME} = ${2:value};",
+            "}"
+        ],
+        "description": "Create a configuration block"
+    },
+    "Delete": {
+        "prefix": "delete",
+        "body": [
+            "delete ${1:element};$0"
+        ],
+        "description": "Delete an element or property"
+    },
+    "Delete Multiple": {
+        "prefix": "delete-multi",
+        "body": [
+            "delete ${1:prop1}, ${2:prop2};$0"
+        ],
+        "description": "Delete multiple properties"
+    },
+    "Insert After": {
+        "prefix": "insert-after",
+        "body": [
+            "insert after ${1:element} {",
+            "\t${2:div} {",
+            "\t\t${3}",
+            "\t}",
+            "}"
+        ],
+        "description": "Insert content after an element"
+    },
+    "Insert Before": {
+        "prefix": "insert-before",
+        "body": [
+            "insert before ${1:element} {",
+            "\t${2:div} {",
+            "\t\t${3}",
+            "\t}",
+            "}"
+        ],
+        "description": "Insert content before an element"
+    },
+    "Insert Replace": {
+        "prefix": "insert-replace",
+        "body": [
+            "insert replace ${1:element} {",
+            "\t${2:div} {",
+            "\t\t${3}",
+            "\t}",
+            "}"
+        ],
+        "description": "Replace an element"
+    },
+    "Style Block": {
+        "prefix": "style",
+        "body": [
+            "style {",
+            "\t${1:property}: ${2:value};",
+            "}"
+        ],
+        "description": "Create a style block"
+    },
+    "Style Class": {
+        "prefix": "style-class",
+        "body": [
+            "style {",
+            "\t.${1:className} {",
+            "\t\t${2:property}: ${3:value};",
+            "\t}",
+            "}"
+        ],
+        "description": "Create a style with class selector"
+    },
+    "Text Block": {
+        "prefix": "text",
+        "body": [
+            "text { \"${1:content}\" }"
+        ],
+        "description": "Create a text block"
+    },
+    "Inherit": {
+        "prefix": "inherit",
+        "body": [
+            "inherit ${1:@Style} ${2:Name};$0"
+        ],
+        "description": "Inherit from another definition"
+    },
+    "Except": {
+        "prefix": "except",
+        "body": [
+            "except ${1:span}, ${2:@Html};$0"
+        ],
+        "description": "Add constraints"
+    },
+    "Variable Reference": {
+        "prefix": "var-ref",
+        "body": [
+            "${1:VarName}(${2:property})"
+        ],
+        "description": "Reference a variable group property"
+    },
+    "Variable Override": {
+        "prefix": "var-override",
+        "body": [
+            "${1:VarName}(${2:property} = ${3:value})"
+        ],
+        "description": "Reference with override value"
+    },
+    "Namespace": {
+        "prefix": "namespace",
+        "body": [
+            "[Namespace] ${1:name} {",
+            "\t${2}",
+            "}"
+        ],
+        "description": "Create a namespace"
+    },
+    "Origin HTML": {
+        "prefix": "origin-html",
+        "body": [
+            "[Origin] @Html ${1:name} {",
+            "\t${2}",
+            "}"
+        ],
+        "description": "Embed raw HTML"
+    },
+    "CHTL Basic Structure": {
+        "prefix": "chtl",
+        "body": [
+            "// ${1:Component Name}",
+            "",
+            "[Template] @Style Base {",
+            "\tmargin: 0;",
+            "\tpadding: 0;",
+            "}",
+            "",
+            "div {",
+            "\tclass: \"${2:container}\";",
+            "\tstyle {",
+            "\t\t@Style Base;",
+            "\t}",
+            "\t",
+            "\t${3}",
+            "}"
+        ],
+        "description": "Basic CHTL file structure"
+    }
+}

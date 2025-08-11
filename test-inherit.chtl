@@ -1,0 +1,15 @@
+[Template] @Style Base {
+    color: red;
+}
+
+[Custom] @Style Extended {
+    inherit @Style Base;
+    font-size: 20px;
+}
+
+body {
+    div {
+        style { @Style Extended; }
+        text { "继承测试" }
+    }
+}

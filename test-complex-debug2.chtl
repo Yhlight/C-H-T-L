@@ -1,0 +1,29 @@
+// 复杂文件测试
+
+// 多个定义
+[Template] @Style Base {
+    color: red;
+}
+
+[Custom] @Style Extended {
+    inherit @Style Base;
+    font-size: 20px;
+}
+
+[Custom] @Element Card {
+    div { text { "Card" } }
+}
+
+// 主体
+body {
+    h1 { text { "Complex Test" } }
+    
+    // 使用组件
+    @Element Card;
+    
+    // 使用样式
+    div {
+        style { @Style Extended; }
+        text { "Styled Text" }
+    }
+}

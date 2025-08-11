@@ -1,0 +1,263 @@
+// CHTL 最终审查测试文件
+// 测试所有核心语法特性
+
+// 1. 配置系统
+[Configuration] {
+    INDEX_INITIAL_COUNT = 0;
+    DEBUG_MODE = false;
+    
+    [Name] {
+        CUSTOM_STYLE = [@Style, @样式];
+        CUSTOM_ELEMENT = [@Element, @元素];
+    }
+}
+
+// 2. 导入系统
+[Import] @Chtl from "./base.chtl";
+[Import] @Element Button as MyButton from "./components.chtl";
+
+// 3. 命名空间
+[Namespace] UI {
+    [Template] @Element Card {
+        div {
+            class: "ui-card";
+            style {
+                .ui-card {
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                }
+            }
+        }
+    }
+}
+
+// 4. 模板定义
+[Template] @Style DefaultTheme {
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+[Template] @Element Header {
+    header {
+        style {
+            @Style DefaultTheme;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            text { "CHTL 测试页面" }
+        }
+    }
+}
+
+[Template] @Var Colors {
+    primary: "#007bff";
+    secondary: "#6c757d";
+    success: "#28a745";
+}
+
+// 5. 自定义组件
+[Custom] @Element Box {
+    div {
+        class: "box";
+        style {
+            .box {
+                border: 2px solid Colors(primary);
+                margin: 10px;
+                padding: 15px;
+            }
+            &:hover {
+                background: #f8f9fa;
+            }
+        }
+    }
+    slot { }  // 插槽
+}
+
+[Custom] @Style FlexLayout {
+    display,
+    flex-direction,
+    gap;
+}
+
+// 6. 同名组件测试（全缀名）
+[Template] @Element Button {
+    button {
+        class: "template-button";
+        text { "Template Button" }
+    }
+}
+
+[Custom] @Element Button {
+    button {
+        class: "custom-button";
+        text { "Custom Button" }
+    }
+}
+
+// 7. 主体内容
+html {
+    head {
+        title { text { "CHTL 最终审查" } }
+        meta { charset: "UTF-8"; }
+    }
+    
+    body {
+        // 使用模板
+        @Element Header;
+        
+        // 测试容器
+        div {
+            id: "app";
+            style {
+                @Style FlexLayout {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+            }
+            
+            // 测试注释
+            -- 这是生成器识别的注释
+            
+            // 测试局部脚本
+            script {
+                console.log("应用初始化");
+                
+                // CHTL JS 增强语法
+                {{&}}->addEventListener('click', (e) => {
+                    if (e.target.matches('.custom-button')) {
+                        {{.custom-button}}->animate({
+                            duration: 300,
+                            begin: { transform: 'scale(1)' },
+                            end: { transform: 'scale(1.1)' }
+                        }).play();
+                    }
+                });
+            }
+            
+            // 使用命名空间组件
+            UI.Card {
+                h2 { text { "命名空间组件测试" } }
+                p { text { "这是一个来自 UI 命名空间的卡片组件" } }
+            }
+            
+            // 使用自定义组件
+            @Element Box {
+                h3 { text { "自定义盒子组件" } }
+                
+                // 插入操作
+                insert at bottom {
+                    p { text { "这是插入的内容" } }
+                }
+            }
+            
+            // 全缀名测试
+            div {
+                h3 { text { "全缀名引用测试" } }
+                
+                // 默认使用 Custom
+                @Element Button;
+                
+                // 明确使用 Template
+                [Template] @Element Button;
+                
+                // 明确使用 Custom
+                [Custom] @Element Button;
+            }
+            
+            // 继承测试
+            [Custom] @Element ExtendedBox {
+                inherit @Element Box;
+                div {
+                    style {
+                        background: Colors(success);
+                        color: white;
+                    }
+                }
+            }
+            
+            @Element ExtendedBox {
+                h3 { text { "继承的盒子" } }
+                text { "这个盒子继承了 Box 的样式" }
+            }
+            
+            // 删除操作测试
+            [Custom] @Element SimpleBox {
+                @Element Box;
+                p { text { "额外段落" } }
+            }
+            
+            @Element SimpleBox {
+                delete p;
+                h4 { text { "简化的盒子" } }
+            }
+            
+            // 约束测试
+            div {
+                except @Element Button;
+                
+                h3 { text { "约束容器" } }
+                p { text { "这个容器不允许 Button 组件" } }
+            }
+            
+            // 原始嵌入
+            [Origin] @Html {
+                <div class="raw-html">
+                    <p>这是原始 HTML 内容</p>
+                </div>
+            }
+            
+            [Origin] @JavaScript {
+                console.log('原始 JavaScript 代码');
+            }
+            
+            // 变量组特例化
+            div {
+                style {
+                    background: Colors(primary = "#ff0000");
+                    color: Colors(secondary);
+                }
+                text { "变量组特例化测试" }
+            }
+            
+            // 局部样式块测试
+            div {
+                style {
+                    .test-class {
+                        font-weight: bold;
+                        color: blue;
+                    }
+                    
+                    #test-id {
+                        text-decoration: underline;
+                    }
+                    
+                    &:hover {
+                        opacity: 0.8;
+                    }
+                }
+                
+                text { "局部样式测试" }
+            }
+            
+            // 文本节点各种形式
+            div {
+                text { "双引号字符串" }
+                text { '单引号字符串' }
+                text { 无引号字面量 }
+            }
+            
+            // 属性语法测试
+            div {
+                id: "test-attrs";
+                class: test-class another-class;
+                data-value = "123";
+                style {
+                    width: 100%;
+                    height: auto;
+                }
+            }
+        }
+    }
+}

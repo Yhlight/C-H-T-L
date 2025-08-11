@@ -1,0 +1,172 @@
+// CHTL 全面语法测试
+
+// ==================== 1. 基础定义 ====================
+
+// 模板定义
+[Template] @Style BaseColors {
+    color: #333;
+    background: white;
+}
+
+[Template] @Element BaseCard {
+    div {
+        class: "card";
+        h3 { text { "Card Title" } }
+        p { text { "Card Content" } }
+    }
+}
+
+[Template] @Var Theme {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+}
+
+// 自定义定义
+[Custom] @Style DarkTheme {
+    inherit @Style BaseColors;
+    color: white;
+    background: #333;
+}
+
+[Custom] @Element TodoItem {
+    li {
+        class: "todo-item";
+        text { "Todo Item" }
+    }
+}
+
+// ==================== 2. 继承测试 ====================
+[Custom] @Element ExtendedCard {
+    inherit @Element BaseCard;
+    div {
+        footer { text { "Card Footer" } }
+    }
+}
+
+// ==================== 3. 操作测试 ====================
+[Custom] @Element ModifiedList {
+    ul {
+        @Element TodoItem;
+        @Element TodoItem;
+        @Element TodoItem;
+        @Element TodoItem;
+    }
+}
+
+// ==================== 4. 主体内容 ====================
+body {
+    h1 { text { "CHTL 语法测试" } }
+    
+    // --- 1. 基本元素和属性 ---
+    section {
+        h2 { text { "1. 基本元素" } }
+        div {
+            id: "test-id";
+            class: "test-class";
+            data-value: "123";
+            
+            p { text { "带属性的段落" } }
+        }
+    }
+    
+    // --- 2. 样式测试 ---
+    section {
+        h2 { text { "2. 样式" } }
+        
+        // 内联样式
+        div {
+            style {
+                @Style DarkTheme;
+                font-size: 16px;
+            }
+            text { "深色主题文本" }
+        }
+        
+        // 局部样式
+        div {
+            style {
+                & {
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                }
+                &:hover {
+                    background: #f0f0f0;
+                }
+                p {
+                    margin: 5px 0;
+                }
+            }
+            p { text { "局部样式段落" } }
+        }
+    }
+    
+    // --- 3. 删除操作 ---
+    section {
+        h2 { text { "3. 删除操作" } }
+        
+        @Element ModifiedList {
+            delete @Element TodoItem[0], @Element TodoItem[2];
+        }
+        
+        p { text { "应该显示第2和第4个项目" } }
+    }
+    
+    // --- 4. 插入操作 ---
+    section {
+        h2 { text { "4. 插入操作" } }
+        
+        @Element BaseCard {
+            insert at top {
+                span { 
+                    class: "badge";
+                    text { "新" } 
+                }
+            }
+            insert after h3 {
+                p { 
+                    class: "subtitle";
+                    text { "副标题" } 
+                }
+            }
+        }
+    }
+    
+    // --- 5. 脚本块 ---
+    section {
+        h2 { text { "5. 脚本" } }
+        
+        div {
+            id: "interactive";
+            button {
+                text { "点击我" }
+            }
+            
+            script {
+                {{#interactive}} button->listen("click", () => {
+                    alert("按钮被点击了！");
+                });
+            }
+        }
+    }
+    
+    // --- 6. 文本和注释 ---
+    section {
+        h2 { text { "6. 文本和注释" } }
+        
+        // 这是单行注释
+        /* 这是多行注释
+           可以跨越多行 */
+        
+        p { 
+            text { "普通文本" }
+            -- 这是生成器注释，会保留到输出中
+        }
+    }
+    
+    // --- 7. 继承测试 ---
+    section {
+        h2 { text { "7. 继承" } }
+        @Element ExtendedCard;
+    }
+}

@@ -1,0 +1,24 @@
+# 测试 except 语法
+
+// 桌面版导航
+nav {
+    class: "desktop-nav";
+    style {
+        display: flex;
+        gap: 20px;
+    }
+} except mobile;
+
+// 移动版导航
+nav {
+    class: "mobile-nav";
+    style {
+        display: block;
+    }
+} except desktop;
+
+// 基本元素
+div {
+    class: "responsive-box";
+    text { "This is responsive content" }
+} except print;

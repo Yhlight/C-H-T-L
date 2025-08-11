@@ -1,0 +1,8 @@
+[Custom] @Element Box {
+    p { text { "Line 1" } }
+    p { text { "Line 2" } }
+}
+
+@Element Box {
+    delete p[0];
+};

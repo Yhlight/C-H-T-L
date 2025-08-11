@@ -1,0 +1,6 @@
+[Custom] @Element Box {
+    p { text { "Line 1" } }
+}
+
+@Element Box {
+}

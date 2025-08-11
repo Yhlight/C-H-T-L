@@ -1,0 +1,23 @@
+// Test ID selector
+
+div
+{
+    style
+    {
+        #testid
+        {
+            color: blue;
+        }
+    }
+}
+
+// Test with explicit hash
+p
+{
+    style
+    {
+        color: red;
+    }
+    
+    id: "myid";
+}

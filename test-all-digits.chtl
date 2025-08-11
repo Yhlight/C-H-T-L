@@ -1,0 +1,20 @@
+[Custom] @Element NumberTest {
+    div[0] { text { "div 0" } }
+    div[1] { text { "div 1" } }  
+    div[2] { text { "div 2" } }
+    div[3] { text { "div 3" } }
+    div[4] { text { "div 4" } }
+    div[5] { text { "div 5" } }
+    div[6] { text { "div 6" } }
+    div[7] { text { "div 7" } }
+    div[8] { text { "div 8" } }
+    div[9] { text { "div 9" } }
+}
+
+@Element NumberTest {
+    delete div[0];
+    delete div[2];
+    delete div[4];
+    delete div[6];
+    delete div[8];
+}

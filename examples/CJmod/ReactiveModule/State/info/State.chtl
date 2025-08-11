@@ -1,0 +1,41 @@
+[Info] @CJmod State
+{
+    name: "State"
+    version: "1.0.0"
+    description: "响应式状态管理子模块"
+    parent: "ReactiveModule"
+    
+    // 提供的语法
+    syntax: {
+        // 状态声明
+        state: {
+            pattern: "state\\s+(\\w+)\\s*=\\s*([^;]+);"
+            replacement: "const $1 = createState($2);"
+            priority: 100
+        }
+        
+        // 状态更新
+        update: {
+            pattern: "update\\s+(\\w+)\\(([^)]+)\\);"
+            replacement: "updateState($1, $2);"
+            priority: 90
+        }
+        
+        // 批量更新
+        batch: {
+            pattern: "batch\\s*\\{([^}]+)\\}"
+            replacement: "batchUpdate(() => {$1});"
+            priority: 80
+        }
+    }
+    
+    // 运行时依赖
+    requires: ["CHTLReactive"]
+    
+    // 导出的函数
+    exports: {
+        createState: "创建响应式状态"
+        updateState: "更新状态值"
+        batchUpdate: "批量更新状态"
+    }
+}

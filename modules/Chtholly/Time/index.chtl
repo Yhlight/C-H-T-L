@@ -1,0 +1,459 @@
+// Chtholly.Time Module
+// 时间操作模块 - 提供时间相关的组件和功能
+// "最幸福的时光，是和重要的人一起度过的每一秒"
+
+[Info] {
+    name: "Chtholly.Time"
+    version: "1.0.0"
+    description: "CHTL时间操作模块，提供时间显示、倒计时等功能"
+    author: "CHTL Development Team"
+    license: "MIT"
+}
+
+// 导入核心模块
+Import @Chtl from "Chtholly.Core.*"
+
+// 时钟组件
+[Custom] @Element Clock {
+    props: {
+        format: string = "HH:mm:ss"  // 时间格式
+        timezone: string = "local"    // 时区
+        showDate: boolean = false
+        updateInterval: number = 1000  // 更新间隔（毫秒）
+        className: string
+    }
+    
+    state: {
+        time: Date = new Date()
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            this.timer = setInterval(() => {
+                this.setState({ time: new Date() })
+            }, props.updateInterval)
+        }
+        
+        onUnmount: () => {
+            clearInterval(this.timer)
+        }
+    }
+    
+    render: {
+        @Text {
+            class: ["chtl-clock", props.className]
+            formatTime(state.time, props.format, props.showDate)
+        }
+    }
+}
+
+// 倒计时组件
+[Custom] @Element Countdown {
+    props: {
+        endTime: Date | string    // 结束时间
+        format: string = "D[天] HH:mm:ss"
+        onComplete: function      // 倒计时结束回调
+        autoStart: boolean = true
+        showDays: boolean = true
+    }
+    
+    state: {
+        remaining: number = 0
+        isActive: boolean = false
+    }
+    
+    methods: {
+        start: () => {
+            this.setState({ isActive: true })
+            this.updateCountdown()
+        }
+        
+        stop: () => {
+            this.setState({ isActive: false })
+            clearInterval(this.timer)
+        }
+        
+        updateCountdown: () => {
+            const now = new Date().getTime()
+            const end = new Date(props.endTime).getTime()
+            const remaining = Math.max(0, end - now)
+            
+            this.setState({ remaining })
+            
+            if (remaining === 0) {
+                this.stop()
+                props.onComplete?.()
+            }
+        }
+    }
+    
+    lifecycle: {
+        onMount: () => {
+            if (props.autoStart) {
+                this.start()
+            }
+        }
+        
+        onUnmount: () => {
+            this.stop()
+        }
+    }
+    
+    render: {
+        div {
+            class: "chtl-countdown"
+            @Text {
+                formatDuration(state.remaining, props.format, props.showDays)
+            }
+        }
+    }
+}
+
+// 时间线组件
+[Custom] @Element Timeline {
+    props: {
+        events: array = []       // 时间线事件列表
+        orientation: string = "vertical"  // vertical, horizontal
+        showConnector: boolean = true
+        activeIndex: number = -1
+    }
+    
+    render: {
+        div {
+            class: ["chtl-timeline", `chtl-timeline-${props.orientation}`]
+            
+            props.events.map((event, index) => {
+                @TimelineItem {
+                    key: index
+                    event: event
+                    isActive: index === props.activeIndex
+                    isLast: index === props.events.length - 1
+                    showConnector: props.showConnector && !isLast
+                    orientation: props.orientation
+                }
+            })
+        }
+    }
+}
+
+// 时间线项目
+[Custom] @Element TimelineItem {
+    props: {
+        event: object
+        isActive: boolean = false
+        isLast: boolean = false
+        showConnector: boolean = true
+        orientation: string = "vertical"
+    }
+    
+    render: {
+        div {
+            class: ["chtl-timeline-item", props.isActive ? "active" : ""]
+            
+            // 时间点标记
+            div {
+                class: "chtl-timeline-marker"
+                div {
+                    class: "chtl-timeline-dot"
+                }
+            }
+            
+            // 连接线
+            if (props.showConnector) {
+                div {
+                    class: "chtl-timeline-connector"
+                }
+            }
+            
+            // 内容
+            div {
+                class: "chtl-timeline-content"
+                
+                // 时间
+                @Text {
+                    class: "chtl-timeline-time"
+                    size: "14px"
+                    color: "#666"
+                    props.event.time
+                }
+                
+                // 标题
+                @Text {
+                    class: "chtl-timeline-title"
+                    weight: "bold"
+                    props.event.title
+                }
+                
+                // 描述
+                if (props.event.description) {
+                    @Text {
+                        class: "chtl-timeline-description"
+                        size: "14px"
+                        color: "#666"
+                        props.event.description
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 日期选择器（简化版）
+[Custom] @Element DatePicker {
+    props: {
+        value: Date
+        onChange: function
+        format: string = "YYYY-MM-DD"
+        placeholder: string = "选择日期"
+        minDate: Date
+        maxDate: Date
+    }
+    
+    state: {
+        isOpen: boolean = false
+        selectedDate: Date = props.value || new Date()
+    }
+    
+    render: {
+        div {
+            class: "chtl-datepicker"
+            
+            // 输入框
+            input {
+                type: "text"
+                class: "chtl-datepicker-input"
+                value: formatDate(state.selectedDate, props.format)
+                placeholder: props.placeholder
+                readonly: true
+                onclick: () => this.setState({ isOpen: !state.isOpen })
+            }
+            
+            // 日期面板（简化展示）
+            if (state.isOpen) {
+                div {
+                    class: "chtl-datepicker-panel"
+                    "日期选择面板（待实现）"
+                }
+            }
+        }
+    }
+}
+
+// 计时器组件
+[Custom] @Element Timer {
+    props: {
+        autoStart: boolean = false
+        onTick: function         // 每次更新回调
+        onStop: function         // 停止回调
+        interval: number = 100   // 更新间隔
+    }
+    
+    state: {
+        elapsed: number = 0      // 已过时间（毫秒）
+        isRunning: boolean = false
+        startTime: number = 0
+    }
+    
+    methods: {
+        start: () => {
+            this.setState({
+                isRunning: true,
+                startTime: Date.now() - state.elapsed
+            })
+            this.tick()
+        }
+        
+        stop: () => {
+            this.setState({ isRunning: false })
+            clearTimeout(this.timer)
+            props.onStop?.(state.elapsed)
+        }
+        
+        reset: () => {
+            this.setState({ elapsed: 0, startTime: Date.now() })
+        }
+        
+        tick: () => {
+            if (!state.isRunning) return
+            
+            const elapsed = Date.now() - state.startTime
+            this.setState({ elapsed })
+            props.onTick?.(elapsed)
+            
+            this.timer = setTimeout(() => this.tick(), props.interval)
+        }
+    }
+    
+    render: {
+        div {
+            class: "chtl-timer"
+            
+            @Text {
+                class: "chtl-timer-display"
+                size: "24px"
+                weight: "bold"
+                formatDuration(state.elapsed, "HH:mm:ss.SSS")
+            }
+            
+            div {
+                class: "chtl-timer-controls"
+                
+                @Button {
+                    onClick: state.isRunning ? this.stop : this.start
+                    state.isRunning ? "停止" : "开始"
+                }
+                
+                @Button {
+                    onClick: this.reset
+                    disabled: state.isRunning
+                    "重置"
+                }
+            }
+        }
+    }
+}
+
+// 时间样式
+[Style] @TimeStyles {
+    .chtl-clock {
+        font-variant-numeric: tabular-nums;
+    }
+    
+    .chtl-countdown {
+        font-variant-numeric: tabular-nums;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .chtl-timeline {
+        position: relative;
+    }
+    
+    .chtl-timeline-vertical .chtl-timeline-item {
+        display: flex;
+        padding-bottom: 32px;
+    }
+    
+    .chtl-timeline-horizontal .chtl-timeline-item {
+        display: inline-flex;
+        padding-right: 32px;
+    }
+    
+    .chtl-timeline-marker {
+        position: relative;
+        flex-shrink: 0;
+        margin-right: 16px;
+    }
+    
+    .chtl-timeline-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #67C3CC;
+        border: 2px solid white;
+        box-shadow: 0 0 0 4px rgba(103, 195, 204, 0.2);
+    }
+    
+    .chtl-timeline-item.active .chtl-timeline-dot {
+        background: #FF6B6B;
+        box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+    }
+    
+    .chtl-timeline-connector {
+        position: absolute;
+        left: 5px;
+        top: 20px;
+        width: 2px;
+        height: calc(100% + 16px);
+        background: #E8E8E8;
+    }
+    
+    .chtl-timeline-content {
+        flex: 1;
+        padding-top: 0;
+    }
+    
+    .chtl-timeline-time {
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .chtl-timeline-title {
+        display: block;
+        margin-bottom: 8px;
+    }
+    
+    .chtl-timer {
+        text-align: center;
+    }
+    
+    .chtl-timer-display {
+        margin-bottom: 16px;
+        font-family: monospace;
+    }
+    
+    .chtl-timer-controls {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+}
+
+// 时间格式化工具函数
+[Template] @Function formatTime(date, format, showDate) {
+    // 简化的时间格式化
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    const seconds = date.getSeconds().toString().padStart(2, '0')
+    
+    let result = format
+        .replace('HH', hours)
+        .replace('mm', minutes)
+        .replace('ss', seconds)
+    
+    if (showDate) {
+        const year = date.getFullYear()
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        result = `${year}-${month}-${day} ${result}`
+    }
+    
+    return result
+}
+
+[Template] @Function formatDuration(ms, format, showDays) {
+    // 格式化持续时间
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+    const milliseconds = ms % 1000
+    
+    let result = format
+        .replace('D', days.toString())
+        .replace('HH', hours.toString().padStart(2, '0'))
+        .replace('mm', minutes.toString().padStart(2, '0'))
+        .replace('ss', seconds.toString().padStart(2, '0'))
+        .replace('SSS', milliseconds.toString().padStart(3, '0'))
+    
+    return result
+}
+
+[Template] @Function formatDate(date, format) {
+    // 简化的日期格式化
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    
+    return format
+        .replace('YYYY', year)
+        .replace('MM', month)
+        .replace('DD', day)
+}
+
+// 导出时间模块
+[Export] {
+    @Element Clock, Countdown, Timeline, TimelineItem, DatePicker, Timer
+    @Style TimeStyles
+    @Var formatTime, formatDuration, formatDate
+}

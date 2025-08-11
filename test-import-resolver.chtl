@@ -1,0 +1,50 @@
+// 测试资源导入（@Html, @Style, @JavaScript）
+// 这些只在当前目录搜索
+
+[Import] @Html from "layout";           // 在当前目录搜索 layout.html
+[Import] @Html from "header.html";      // 在当前目录搜索 header.html
+[Import] @Html from "./nav/menu.html";  // 具体路径
+
+[Import] @Style from "main";            // 在当前目录搜索 main.css
+[Import] @Style from "theme.scss";      // 在当前目录搜索 theme.scss
+[Import] @Style from "../shared/base.css"; // 具体路径
+
+[Import] @JavaScript from "utils";      // 在当前目录搜索 utils.js
+[Import] @JavaScript from "app.js";     // 在当前目录搜索 app.js
+[Import] @JavaScript from "/lib/jquery.js"; // 绝对路径
+
+// 测试 CHTL 模块导入
+// 搜索顺序：官方模块 -> 当前目录/module -> 当前目录
+
+[Import] @Chtl from "Button";           // 模块名（无后缀）
+[Import] @Chtl from "Layout.cmod";      // 模块名（带后缀）
+[Import] @Chtl from "./components/Card.chtl"; // 具体路径
+
+// 通配符导入
+[Import] @Chtl from "./components/*";   // 所有 .cmod 和 .chtl
+[Import] @Chtl from "./components/*.cmod"; // 只导入 .cmod
+[Import] @Chtl from "./ui.*";           // 等价于 ./ui/*
+
+// 子模块导入
+[Import] @Chtl from "Chtholly.*";       // 导入所有子模块
+[Import] @Chtl from "Chtholly.Space";   // 具体子模块
+[Import] @Chtl from "Chtholly/Utils";   // 使用 / 分隔符
+
+// 测试 CJmod 导入
+// 只搜索 .cjmod 文件
+
+[Import] @CJmod from "reactive";        // 模块名
+[Import] @CJmod from "animation.cjmod"; // 带后缀
+[Import] @CJmod from "./mods/custom.cjmod"; // 具体路径
+
+// CJmod 不支持通配符和子模块
+// [Import] @CJmod from "./*";          // 错误：不支持
+// [Import] @CJmod from "core.*";       // 错误：不支持
+
+[Template] @Element TestImports
+{
+    div {
+        h1 { "Import Resolution Test" }
+        p { "Testing various import path formats" }
+    }
+}

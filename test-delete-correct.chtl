@@ -1,0 +1,103 @@
+// CHTL 删除功能测试（正确版本）
+
+// 所有组件定义必须在顶层
+[Custom] @Element Item {
+    li { text { "项目" } }
+}
+
+[Custom] @Element List {
+    ul {
+        @Element Item;
+        @Element Item;
+        @Element Item;
+        @Element Item;
+        @Element Item;
+    }
+}
+
+[Custom] @Element Card {
+    div {
+        class: "card";
+        h4 { text { "卡片" } }
+        p { text { "内容" } }
+    }
+}
+
+[Custom] @Element Dashboard {
+    div {
+        @Element List;
+        hr;
+        @Element Card;
+        @Element Card;
+        @Element Card;
+    }
+}
+
+[Custom] @Element Article {
+    article {
+        h3 { text { "文章" } }
+        p { text { "P1" } }
+        p { text { "P2" } }
+        p { text { "P3" } }
+        p { text { "P4" } }
+    }
+}
+
+body {
+    h1 { text { "CHTL 删除测试" } }
+    
+    // 1. 删除引用 - 特定索引
+    section {
+        h2 { text { "1. 删除特定项目" } }
+        @Element List {
+            delete @Element Item[1], @Element Item[3];
+        }
+        p { text { "结果：应该剩下3个项目（删除了第2和第4个）" } }
+    }
+    
+    // 2. 删除引用 - 全部
+    section {
+        h2 { text { "2. 删除所有项目" } }
+        @Element List {
+            delete @Element Item;
+        }
+        p { text { "结果：列表应该为空" } }
+    }
+    
+    // 3. 删除普通元素
+    section {
+        h2 { text { "3. 删除段落" } }
+        @Element Article {
+            delete p[0], p[2];
+        }
+        p { text { "结果：应该剩下P2和P4" } }
+    }
+    
+    // 4. 复合删除
+    section {
+        h2 { text { "4. 复合删除" } }
+        @Element Dashboard {
+            delete @Element Item[0], @Element Item[4];
+            delete @Element Card[1];
+        }
+        p { text { "结果：3个项目，2个卡片" } }
+    }
+    
+    // 5. 语法变体测试
+    section {
+        h2 { text { "5. 语法变体" } }
+        div {
+            h3 { text { "Custom 语法" } }
+            @Element List {
+                delete Custom @Element Item[2];
+            }
+        }
+        div {
+            h3 { text { "[Custom] 语法" } }
+            @Element List {
+                delete [Custom] @Element Item[1];
+            }
+        }
+        p { text { "结果：每个列表应该剩下4个项目" } }
+    }
+}

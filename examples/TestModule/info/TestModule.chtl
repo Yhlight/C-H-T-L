@@ -1,0 +1,20 @@
+// CMOD信息文件 - 这里[Info]和[Export]应该被正常解析
+
+[Info] {
+    name = "TestModule";
+    version = "1.0.0";
+    description = "测试模块 - 用于验证[Info]和[Export]在CMOD中的正确解析";
+    author = "CHTL Team";
+    license = "MIT";
+    dependencies = "";
+    category = "test";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
+}
+
+// 这是编译器自动生成的导出表
+[Export] {
+    @Element TestComponent;
+    @Style TestStyle;
+    @Var TestColors;
+}

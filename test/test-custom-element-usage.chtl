@@ -1,0 +1,56 @@
+// 测试 [Custom] @Element 的使用语法
+
+// 定义一个自定义元素
+[Custom] @Element Button {
+    button {
+        class: "custom-btn";
+        style {
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        text { "Click Me" }
+    }
+}
+
+// 使用自定义元素 - 正确的语法
+body {
+    h1 { text { "测试 Custom Element 使用" } }
+    
+    // 直接使用
+    [Custom] @Element Button;
+    
+    // 带特例化的使用
+    [Custom] @Element Button {
+        button {
+            style {
+                background-color: green;  // 覆盖背景色
+            }
+            text { "绿色按钮" }
+        }
+    }
+    
+    // 错误的语法（不应该支持）
+    // Custom @Element Button;  // 这个语法不正确
+}
+
+// 测试 [Template] @Element 的使用
+[Template] @Element Card {
+    div {
+        class: "card";
+        h3 { text { "卡片标题" } }
+        p { text { "卡片内容" } }
+    }
+}
+
+// 使用模板元素
+section {
+    // 模板使用正确语法
+    @Element Card;  // 模板可以直接用 @Element
+    
+    // 或者明确指定是模板
+    [Template] @Element Card;
+}

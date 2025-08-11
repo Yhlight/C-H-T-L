@@ -1,0 +1,19 @@
+// 定义
+[Custom] @Element MyList {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+// 使用引用
+div {
+    h2 { text { "Original List" } }
+    @Element MyList;
+    
+    h2 { text { "List with Delete" } }
+    @Element MyList {
+        delete li[1];
+    }
+}

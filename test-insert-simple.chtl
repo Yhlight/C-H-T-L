@@ -1,0 +1,15 @@
+[Custom] @Element Box {
+    div {
+        p { text { "Content" } }
+    }
+}
+
+body {
+    h1 { text { "插入测试" } }
+    
+    @Element Box {
+        insert at top {
+            h2 { text { "Title" } }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+.yarnrc
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/*.map
+**/*.ts
+node_modules/**
+!node_modules/vscode-languageclient/**
+!node_modules/vscode-languageserver/**
+!node_modules/vscode-languageserver-textdocument/**
+
+# 确保包含编译器和模块
+!bin/
+!bin/chtl
+!bin/chtl.exe
+!modules/
+!modules/**/*.chtl
+!modules/**/*.cmod
+!modules/**/*.cjmod
+!modules/**/*.json

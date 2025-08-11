@@ -1,0 +1,4 @@
+div {
+    style { color: red; font-size: 20px; }
+    text { "Style with content" }
+}

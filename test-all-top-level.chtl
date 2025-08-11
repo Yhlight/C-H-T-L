@@ -1,0 +1,17 @@
+// 测试1
+p { text { "P1" } }
+
+// 测试2
+div { text { "D1" } }
+
+// 测试3
+span { text { "S1" } }
+
+// 测试4：带 style
+div {
+    style { }
+    text { "D2" }
+}
+
+// 测试5
+p { text { "P2" } }

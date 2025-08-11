@@ -1,0 +1,106 @@
+// 测试Import/Export的as重命名和from namespace功能
+
+[Configuration] {
+    DEBUG_MODE = true;  // 开启调试模式以查看导入导出信息
+}
+
+// 定义一个命名空间
+[Namespace] UIComponents {
+    [Template] @Element Button {
+        button {
+            class: "ui-button";
+            style {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+    }
+    
+    [Template] @Style Theme {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+    }
+    
+    [Custom] @Var Colors {
+        primary: "#007bff";
+        secondary: "#6c757d";
+        success: "#28a745";
+    }
+}
+
+// 测试从命名空间导入（带别名）
+[Import] [Template] @Element Button from namespace UIComponents as UIButton;
+[Import] [Template] @Style Theme from namespace UIComponents as UITheme;
+[Import] [Custom] @Var Colors from namespace UIComponents as UIColors;
+
+// 测试从文件导入（带别名）
+[Import] @Chtl from "components/buttons.chtl" as ButtonLib;
+[Import] @Style from "styles/reset.css" as ResetStyles;
+[Import] @JavaScript from "utils/helpers.js" as Helpers;
+
+// 测试通配符导入
+[Import] * from "components/all.chtl";
+
+// 测试具体组件导入
+[Import] [Custom] @Element Card from "components/card.chtl" as CardComponent;
+[Import] [Template] @Style CardStyle from "components/card.chtl";
+
+// 定义另一个命名空间
+[Namespace] Forms {
+    [Custom] @Element Input {
+        input {
+            type: "text";
+            class: "form-input";
+        }
+    }
+    
+    [Custom] @Element Select {
+        select {
+            class: "form-select";
+        }
+    }
+}
+
+// 测试导出（从特定命名空间）
+[Export] from Forms {
+    @Element Input as FormInput;
+    @Element Select as FormSelect;
+}
+
+// 测试普通导出
+[Export] {
+    @Element Button;
+    @Style Theme as DefaultTheme;
+    @Var Colors;
+    namespace UIComponents as UI;
+    *;  // 导出所有
+}
+
+// 使用导入的组件
+body {
+    // 使用带别名的导入
+    @Element UIButton {
+        text { "Click Me" }
+    }
+    
+    // 使用样式
+    style {
+        @Style UITheme;
+        
+        body {
+            background-color: UIColors(primary);
+        }
+    }
+    
+    div {
+        class: "container";
+        
+        // 使用导入的Card组件
+        @Element CardComponent {
+            h3 { text { "Card Title" } }
+            p { text { "Card content" } }
+        }
+    }
+}

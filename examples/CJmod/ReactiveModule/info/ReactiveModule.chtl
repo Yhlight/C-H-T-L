@@ -1,0 +1,36 @@
+[Info] @CJmod ReactiveModule
+{
+    name: "ReactiveModule"
+    version: "1.0.0"
+    description: "响应式编程支持模块"
+    author: "CHTL Team"
+    
+    // 子模块列表（导入主模块时会自动加载所有子模块）
+    submodules: ["State", "Computed", "Watch"]
+    
+    // 子模块配置
+    submoduleConfig: {
+        autoLoadAll: true  // 导入主模块时自动加载所有子模块
+    }
+    
+    // 依赖
+    dependencies: {
+        chtl: ">=1.0.0"
+    }
+    
+    // 导出的主要功能
+    exports: {
+        // 主模块导出的语法
+        syntax: {
+            reactive: {
+                pattern: "reactive\\s+(\\w+)\\s*=\\s*\\{([^}]+)\\}"
+                description: "创建响应式对象"
+            }
+        }
+        
+        // 运行时函数
+        runtime: {
+            CHTLReactive: "全局响应式系统对象"
+        }
+    }
+}

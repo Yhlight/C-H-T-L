@@ -1,0 +1,269 @@
+[Import] @CJmod from "builtin:async-flow";
+
+div {
+    h1 { "Advanced Async Flow Control Demo" }
+    
+    div {
+        h2 { "API Request Status" }
+        div #status { "Ready" }
+        div #results {
+            style {
+                max-height: 400px;
+                overflow-y: auto;
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin: 10px 0;
+                font-family: monospace;
+            }
+        }
+    }
+    
+    div {
+        h2 { "Controls" }
+        button #startDemo { "Start Complex Async Demo" }
+        button #testStream { "Test Async Stream" }
+        button #testConcurrency { "Test Concurrency Control" }
+        button #clearResults { "Clear Results" }
+    }
+    
+    script {
+        // 日志函数
+        function log(message) {
+            let timestamp = new Date().toISOString().substr(11, 8);
+            {{#results}}.innerHTML += `[${timestamp}] ${message}<br>`;
+            {{#results}}.scrollTop = {{#results}}.scrollHeight;
+        }
+        
+        // 模拟 API 调用
+        async function fakeApiCall(id, delay = 1000) {
+            log(`API ${id}: Starting...`);
+            await new Promise(r => setTimeout(r, delay));
+            
+            // 20% 概率失败
+            if (Math.random() < 0.2) {
+                throw new Error(`API ${id} failed`);
+            }
+            
+            log(`API ${id}: Success`);
+            return { id, data: `Result from API ${id}` };
+        }
+        
+        // 1. 使用异步流处理事件
+        stream processUserEvents from {{#startDemo}} {
+            // 模拟事件流
+            let eventCount = 0;
+            
+            while (eventCount < 5) {
+                yield* { type: 'click', count: eventCount } when eventCount % 2 === 0;
+                yield* { type: 'special', count: eventCount } when eventCount === 3;
+                eventCount++;
+                await new Promise(r => setTimeout(r, 500));
+            }
+        } // stream end
+        
+        // 2. 主演示函数
+        {{#startDemo}}->onclick = async () => {
+            {{#status}}.textContent = "Running...";
+            log("=== Starting Complex Async Demo ===");
+            
+            // 使用 try* 自动记录错误
+            try* {
+                // 并发控制：最多3个同时运行
+                log("Testing concurrent(3) - limiting to 3 concurrent tasks");
+                concurrent(3) {
+                    let tasks = [];
+                    for (let i = 1; i <= 10; i++) {
+                        tasks.push(fakeApiCall(i, 500));
+                    }
+                    await Promise.all(tasks);
+                } // concurrent end
+                
+                log("---");
+                
+                // 重试机制
+                log("Testing retry mechanism");
+                let retryResult = await retry(3, 1000) {
+                    return fakeApiCall("retry-test", 300);
+                } // retry end
+                
+                log(`Retry result: ${JSON.stringify(retryResult)}`);
+                log("---");
+                
+                // 超时控制
+                log("Testing timeout (2 seconds)");
+                let timeoutResult = await timeout(2000) {
+                    return fakeApiCall("timeout-test", 1500);
+                } // timeout end
+                
+                log(`Timeout result: ${JSON.stringify(timeoutResult)}`);
+                log("---");
+                
+                // 并行执行
+                log("Testing parallel execution");
+                let parallelResults = await parallel {
+                    fakeApiCall("parallel-1", 800);
+                    fakeApiCall("parallel-2", 600);
+                    fakeApiCall("parallel-3", 1000);
+                } // parallel end
+                
+                log(`Parallel results: ${parallelResults.length} completed`);
+                log("---");
+                
+                // 竞速执行
+                log("Testing race execution");
+                let raceWinner = await race {
+                    fakeApiCall("race-1", 800);
+                    fakeApiCall("race-2", 600);
+                    fakeApiCall("race-3", 1000);
+                } // race end
+                
+                log(`Race winner: ${JSON.stringify(raceWinner)}`);
+                log("---");
+                
+                // 异步管道
+                log("Testing async pipe");
+                let pipeResult = async "hello world" 
+                    |> (s => s.toUpperCase())
+                    |> (s => fakeApiCall(s, 500))
+                    |> (r => r.data);
+                    
+                log(`Pipe result: ${await pipeResult}`);
+                
+                // 异步断言
+                assert* parallelResults.length === 3, "Should have 3 parallel results";
+                
+                // 延迟执行（清理）
+                defer {
+                    log("=== Deferred cleanup executed ===");
+                    {{#status}}.textContent = "Completed with cleanup";
+                } // defer end
+                
+            } // try* end
+            
+            {{#status}}.textContent = "Completed";
+            log("=== Demo completed ===");
+            
+            // 手动运行延迟任务
+            await runDeferred();
+        };
+        
+        // 3. 测试异步流
+        {{#testStream}}->onclick = async () => {
+            log("=== Testing Async Stream ===");
+            
+            // 创建数据源
+            async function* dataSource() {
+                for (let i = 1; i <= 20; i++) {
+                    yield { id: i, value: Math.random() * 100 };
+                    await new Promise(r => setTimeout(r, 200));
+                }
+            }
+            
+            // 使用增强的 for await
+            let count = 0;
+            for await item of createStream(dataSource()) where item.value > 50 {
+                log(`Stream item ${item.id}: ${item.value.toFixed(2)}`);
+                count++;
+                if (count >= 5) break;
+            }
+            
+            log("Stream processing completed");
+        };
+        
+        // 4. 测试并发控制和锁
+        {{#testConcurrency}}->onclick = async () => {
+            log("=== Testing Concurrency & Locks ===");
+            
+            let sharedResource = 0;
+            
+            // 使用锁保护共享资源
+            async function incrementResource(id) {
+                lock("resource") {
+                    log(`Worker ${id}: Acquiring lock`);
+                    let current = sharedResource;
+                    await new Promise(r => setTimeout(r, 100));
+                    sharedResource = current + 1;
+                    log(`Worker ${id}: Released lock, value = ${sharedResource}`);
+                } // lock end
+            }
+            
+            // 并发执行但使用锁保护
+            await parallel {
+                incrementResource(1);
+                incrementResource(2);
+                incrementResource(3);
+                incrementResource(4);
+                incrementResource(5);
+            } // parallel end
+            
+            log(`Final shared resource value: ${sharedResource}`);
+            assert* sharedResource === 5, "Shared resource should be 5";
+        };
+        
+        // 清除结果
+        {{#clearResults}}->onclick = () => {
+            {{#results}}.innerHTML = "";
+            {{#status}}.textContent = "Ready";
+        };
+    }
+}
+
+[Style] {
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+        background: #f5f5f5;
+    }
+    
+    h1 {
+        color: #333;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 10px;
+    }
+    
+    h2 {
+        color: #555;
+        margin-top: 30px;
+    }
+    
+    button {
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    button:hover {
+        background: #0056b3;
+    }
+    
+    button:active {
+        transform: scale(0.95);
+    }
+    
+    #status {
+        padding: 10px;
+        background: #e9ecef;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    #results {
+        background: white;
+        line-height: 1.6;
+    }
+    
+    #results:empty::before {
+        content: "No results yet...";
+        color: #999;
+        font-style: italic;
+    }
+}

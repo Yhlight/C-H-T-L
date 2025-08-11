@@ -1,0 +1,353 @@
+// CHTL 综合示例 - 展示所有语法特性
+
+[Configuration] {
+    // 配置选项
+    INDEX_INITIAL_COUNT = 0;
+    DISABLE_NAME_GROUP = false;
+    DEBUG_MODE = false;
+    
+    // 自定义关键字名称
+    [Name] {
+        CUSTOM_STYLE = [@Style, @样式];
+        CUSTOM_ELEMENT = [@Element, @元素];
+        CUSTOM_VAR = [@Var, @变量];
+    }
+}
+
+// 导入语句
+[Import] @Style BaseStyles from "./styles/base.chtl";
+[Import] @Element Button from "./components/button.chtl" as MyButton;
+[Import] * from "./utils.chtl";
+[Import] from namespace UIComponents;
+
+// 命名空间定义
+[Namespace] MyApp {
+    // 样式模板
+    [Template] @Style ThemeColors {
+        primaryColor: #3498db;
+        secondaryColor: #2ecc71;
+        dangerColor: #e74c3c;
+        darkBackground: #2c3e50;
+        lightBackground: #ecf0f1;
+    }
+    
+    // 元素模板
+    [Template] @Element Card {
+        div {
+            class: "card";
+            style {
+                .card {
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    background: white;
+                }
+                
+                &:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                    transform: translateY(-2px);
+                    transition: all 0.3s ease;
+                }
+            }
+            
+            // 插槽
+            slot {
+                name: "content";
+            }
+        }
+    }
+    
+    // 自定义元素
+    [Custom] @Element FlexContainer {
+        div {
+            style {
+                display: flex;
+                flex-direction: row;
+                gap: 16px;
+            }
+        }
+    }
+    
+    // 变量组
+    [Custom] @Var Spacing {
+        small: 8px;
+        medium: 16px;
+        large: 24px;
+        xlarge: 32px;
+    }
+}
+
+// 主应用
+html {
+    head {
+        title { text { "CHTL 综合示例" } }
+        meta { 
+            charset: "UTF-8";
+            name: "viewport";
+            content: "width=device-width, initial-scale=1.0";
+        }
+        
+        // 全局样式
+        style {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                line-height: 1.6;
+                color: #333;
+            }
+        }
+    }
+    
+    body {
+        // 使用命名空间
+        @Element MyApp.FlexContainer {
+            id: "app";
+            class: "container";
+            
+            // 局部样式
+            style {
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: MyApp.Spacing(large);
+                    min-height: 100vh;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }
+            }
+            
+            // 标题部分
+            header {
+                style {
+                    text-align: center;
+                    color: white;
+                    margin-bottom: MyApp.Spacing(xlarge);
+                }
+                
+                h1 { 
+                    text { "欢迎使用 CHTL" }
+                    style {
+                        font-size: 3rem;
+                        margin-bottom: 1rem;
+                    }
+                }
+                
+                p {
+                    text { "一个强大而灵活的模板语言" }
+                    style {
+                        font-size: 1.2rem;
+                        opacity: 0.9;
+                    }
+                }
+            }
+            
+            // 主内容区
+            main {
+                style {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: MyApp.Spacing(large);
+                }
+                
+                // 使用卡片模板
+                @Element MyApp.Card {
+                    h2 { text { "特性介绍" } }
+                    ul {
+                        li { text { "组件化开发" } }
+                        li { text { "样式作用域" } }
+                        li { text { "增强的 JavaScript" } }
+                        li { text { "模块系统" } }
+                    }
+                }
+                
+                // 自定义组件示例
+                [Custom] @Element FeatureCard {
+                    inherit @Element MyApp.Card;
+                    
+                    div {
+                        class: "feature-icon";
+                        style {
+                            .feature-icon {
+                                width: 64px;
+                                height: 64px;
+                                margin: 0 auto 16px;
+                                background: MyApp.ThemeColors(primaryColor);
+                                border-radius: 50%;
+                            }
+                        }
+                    }
+                    
+                    // 插入内容
+                    insert after div[0] {
+                        h3 { 
+                            text { "自定义功能" }
+                            style {
+                                text-align: center;
+                                color: MyApp.ThemeColors(primaryColor);
+                            }
+                        }
+                    }
+                }
+                
+                // 使用自定义组件
+                @Element FeatureCard {
+                    delete div[0]; // 删除图标
+                    
+                    h3 { text { "高级特性" } }
+                    p { text { "支持继承、删除和插入操作" } }
+                }
+                
+                // 表单示例
+                @Element MyApp.Card {
+                    h2 { text { "联系我们" } }
+                    
+                    form {
+                        id: "contact-form";
+                        
+                        style {
+                            display: flex;
+                            flex-direction: column;
+                            gap: MyApp.Spacing(medium);
+                        }
+                        
+                        input {
+                            type: "text";
+                            placeholder: "您的姓名";
+                            style {
+                                padding: 12px;
+                                border: 1px solid #ddd;
+                                border-radius: 4px;
+                                font-size: 16px;
+                                
+                                &:focus {
+                                    outline: none;
+                                    border-color: MyApp.ThemeColors(primaryColor);
+                                }
+                            }
+                        }
+                        
+                        textarea {
+                            placeholder: "留言内容";
+                            rows: 5;
+                            style {
+                                padding: 12px;
+                                border: 1px solid #ddd;
+                                border-radius: 4px;
+                                font-size: 16px;
+                                resize: vertical;
+                            }
+                        }
+                        
+                        button {
+                            type: "submit";
+                            text { "发送消息" }
+                            
+                            style {
+                                padding: 12px 24px;
+                                background: MyApp.ThemeColors(primaryColor);
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                font-size: 16px;
+                                cursor: pointer;
+                                transition: background 0.3s;
+                                
+                                &:hover {
+                                    background: MyApp.ThemeColors(secondaryColor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 页脚
+            footer {
+                style {
+                    text-align: center;
+                    padding: MyApp.Spacing(large);
+                    color: white;
+                    margin-top: MyApp.Spacing(xlarge);
+                }
+                
+                p {
+                    text { "© 2024 CHTL Project. All rights reserved." }
+                }
+            }
+            
+            // 局部脚本块 - CHTL JS 增强语法
+            script {
+                // 使用增强选择器
+                {{#contact-form}}->listen({
+                    submit: function(e) {
+                        e.preventDefault();
+                        
+                        // 获取表单数据
+                        const formData = new FormData(e.target);
+                        console.log('Form submitted:', Object.fromEntries(formData));
+                        
+                        // 显示成功消息
+                        {{&}}->animate({
+                            target: 'opacity',
+                            from: 1,
+                            to: 0.5,
+                            duration: 300,
+                            callback: function() {
+                                alert('消息已发送！');
+                                {{&}}->animate({
+                                    target: 'opacity',
+                                    from: 0.5,
+                                    to: 1,
+                                    duration: 300
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                // 事件委托
+                {{.card}}->delegate('h2', {
+                    click: function(e) {
+                        console.log('Card header clicked:', e.target.textContent);
+                        {{&}}->toggleClass('expanded');
+                    }
+                });
+                
+                // 动画效果
+                {{.feature-icon}}->animate({
+                    target: 'transform',
+                    from: 'scale(0)',
+                    to: 'scale(1)',
+                    duration: 500,
+                    easing: 'ease-out'
+                });
+            }
+        }
+    }
+}
+
+// 原始嵌入示例
+[Origin] @JavaScript analytics {
+    // Google Analytics 或其他第三方脚本
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+}
+
+// 导出定义（用于模块）
+[Export] {
+    @Element Card as CardComponent;
+    @Style ThemeColors;
+    @Var Spacing;
+    namespace MyApp;
+}
+
+// 生成器识别的注释
+-- 这个注释会出现在生成的 HTML 中
+-- 作者：CHTL 开发团队
+-- 版本：1.0.0

@@ -1,0 +1,78 @@
+// 全面测试索引删除功能
+
+// 1. 定义包含多个相同标签的自定义组件
+[Custom] @Element TestList {
+    h3 { text { "测试列表" } }
+    div { 
+        class: "item-1";
+        text { "项目 1" } 
+    }
+    div { 
+        class: "item-2";
+        text { "项目 2" } 
+    }
+    div { 
+        class: "item-3";
+        text { "项目 3" } 
+    }
+    span { text { "标签 A" } }
+    span { text { "标签 B" } }
+    span { text { "标签 C" } }
+    p { text { "段落文本" } }
+}
+
+// 2. 基础元素结构，确保生成输出
+div {
+    id: "container";
+    
+    h2 { text { "索引删除功能测试" } }
+    
+    // 测试1：原始组件（无删除）
+    div {
+        class: "test-1";
+        h4 { text { "测试1：原始组件" } }
+        @Element TestList;
+    }
+    
+    // 测试2：删除特定索引的元素
+    div {
+        class: "test-2";
+        h4 { text { "测试2：删除特定索引" } }
+        @Element TestList {
+            delete div[1];      // 删除 "项目 2"
+            delete span[2];     // 删除 "标签 C"
+        }
+    }
+    
+    // 测试3：删除多个索引
+    div {
+        class: "test-3";
+        h4 { text { "测试3：删除多个索引" } }
+        @Element TestList {
+            delete div[0];      // 删除 "项目 1"
+            delete div[1];      // 现在删除的是原来的 "项目 3"（因为索引更新）
+            delete span[0];     // 删除 "标签 A"
+            delete span[0];     // 现在删除的是原来的 "标签 B"
+        }
+    }
+    
+    // 测试4：删除所有某类元素
+    div {
+        class: "test-4";
+        h4 { text { "测试4：删除所有某类元素" } }
+        @Element TestList {
+            delete span;        // 删除所有 span
+            delete p;           // 删除所有 p
+        }
+    }
+    
+    // 测试5：混合删除
+    div {
+        class: "test-5";
+        h4 { text { "测试5：混合删除" } }
+        @Element TestList {
+            delete div[1];      // 删除特定 div
+            delete span;        // 删除所有 span
+        }
+    }
+}

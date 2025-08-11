@@ -1,0 +1,219 @@
+{
+  "name": "chtl-lang",
+  "displayName": "CHTL Language Support",
+  "description": "Language support for Component HTML Template Language (CHTL)",
+  "version": "1.0.0",
+  "publisher": "chtl-team",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": [
+    "chtl",
+    "template",
+    "component",
+    "html",
+    "珂朵莉"
+  ],
+  "activationEvents": [
+    "onLanguage:chtl"
+  ],
+  "main": "./out/extension.js",
+      "contributes": {
+        "languages": [{
+            "id": "chtl",
+            "aliases": ["CHTL", "chtl"],
+            "extensions": [".chtl"],
+            "configuration": "./language-configuration.json"
+        }],
+        "debuggers": [{
+            "type": "chtl",
+            "label": "CHTL Debug",
+            "program": "./out/debugAdapter.js",
+            "runtime": "node",
+            "configurationAttributes": {
+                "launch": {
+                    "required": ["program"],
+                    "properties": {
+                        "program": {
+                            "type": "string",
+                            "description": "Path to CHTL file to debug",
+                            "default": "${file}"
+                        },
+                        "stopOnEntry": {
+                            "type": "boolean",
+                            "description": "Automatically stop after launch",
+                            "default": false
+                        },
+                        "outputDirectory": {
+                            "type": "string",
+                            "description": "Output directory for compiled files",
+                            "default": "${workspaceFolder}/dist"
+                        },
+                        "sourceMaps": {
+                            "type": "boolean",
+                            "description": "Enable source maps",
+                            "default": true
+                        }
+                    }
+                }
+            },
+            "initialConfigurations": [{
+                "type": "chtl",
+                "request": "launch",
+                "name": "Debug CHTL File",
+                "program": "${file}",
+                "stopOnEntry": false,
+                "outputDirectory": "${workspaceFolder}/dist",
+                "sourceMaps": true
+            }],
+            "configurationSnippets": [{
+                "label": "CHTL: Debug Current File",
+                "description": "Debug the currently open CHTL file",
+                "body": {
+                    "type": "chtl",
+                    "request": "launch",
+                    "name": "Debug CHTL File",
+                    "program": "^\"\\${file}\"",
+                    "stopOnEntry": false,
+                    "outputDirectory": "^\"\\${workspaceFolder}/dist\"",
+                    "sourceMaps": true
+                }
+            }]
+        }],
+    "grammars": [{
+      "language": "chtl",
+      "scopeName": "source.chtl",
+      "path": "./syntaxes/chtl.tmLanguage.json"
+    }],
+    "snippets": [{
+      "language": "chtl",
+      "path": "./snippets/chtl.snippets.json"
+    }],
+    "themes": [{
+      "label": "CHTL Dark",
+      "uiTheme": "vs-dark",
+      "path": "./themes/chtl-dark.json"
+    }],
+    "configuration": {
+      "title": "CHTL",
+      "properties": {
+        "chtl.compiler.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to CHTL compiler executable (leave empty to use bundled compiler)"
+        },
+        "chtl.compiler.outputDirectory": {
+          "type": "string",
+          "default": "dist",
+          "description": "Output directory for compiled files"
+        },
+        "chtl.compiler.debugMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for compiler"
+        },
+        "chtl.compiler.moduleSearchPaths": {
+          "type": "array",
+          "default": ["./module", "./src/Module"],
+          "description": "Additional paths to search for CHTL modules"
+        },
+        "chtl.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CHTL formatting"
+        },
+        "chtl.format.indentSize": {
+          "type": "number",
+          "default": 2,
+          "description": "Number of spaces for indentation"
+        },
+        "chtl.lint.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CHTL linting"
+        },
+        "chtl.autocomplete.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CHTL autocompletion"
+        },
+        "chtl.autocomplete.showComponents": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show component suggestions"
+        }
+      }
+    },
+    "commands": [{
+      "command": "chtl.compile",
+      "title": "CHTL: Compile Current File"
+    }, {
+      "command": "chtl.preview",
+      "title": "CHTL: Preview in Browser"
+    }, {
+      "command": "chtl.createComponent",
+      "title": "CHTL: Create New Component"
+    }],
+    "keybindings": [{
+      "command": "chtl.compile",
+      "key": "ctrl+shift+c",
+      "mac": "cmd+shift+c",
+      "when": "editorTextFocus && resourceExtname == .chtl"
+    }],
+    "menus": {
+      "editor/context": [{
+        "when": "resourceExtname == .chtl",
+        "command": "chtl.compile",
+        "group": "1_chtl"
+      }, {
+        "when": "resourceExtname == .chtl",
+        "command": "chtl.preview",
+        "group": "1_chtl"
+      }]
+    },
+    "iconThemes": [{
+      "id": "chtl-icons",
+      "label": "CHTL Icons",
+      "path": "./icons/chtl-icon-theme.json"
+    }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "files": [
+    "out/**/*",
+    "syntaxes/**/*",
+    "snippets/**/*",
+    "language-configuration.json",
+    "compilers/**/*"
+  ],
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.3",
+    "@vscode/test-electron": "^2.2.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.0.2",
+    "vscode-languageserver": "^8.0.2",
+    "vscode-languageserver-textdocument": "^1.0.8",
+    "@vscode/debugadapter": "^1.58.0",
+    "@vscode/debugprotocol": "^1.58.0",
+    "await-notify": "^1.0.1"
+  }
+}

@@ -1,0 +1,54 @@
+// CHTL 删除和插入语法综合测试
+
+[Custom] @Element Item {
+    li { text { "Item" } }
+}
+
+[Custom] @Element List {
+    ul {
+        @Element Item;
+        @Element Item;
+        @Element Item;
+    }
+}
+
+body {
+    h1 { text { "CHTL 删除/插入语法测试" } }
+    
+    // 测试1：删除引用
+    h2 { text { "1. 删除引用测试" } }
+    div {
+        h3 { text { "原始列表（3个Item）" } }
+        @Element List;
+        
+        h3 { text { "删除第一个Item引用" } }
+        @Element List {
+            delete @Element Item[0];
+        }
+        
+        h3 { text { "删除所有Item引用" } }
+        @Element List {
+            delete @Element Item;
+        }
+    }
+    
+    // 测试2：使用不同语法删除
+    h2 { text { "2. 不同删除语法测试" } }
+    div {
+        h3 { text { "使用 Custom 语法删除" } }
+        @Element List {
+            delete Custom @Element Item[1];
+        }
+        
+        h3 { text { "使用 [Custom] 语法删除" } }
+        @Element List {
+            delete [Custom] @Element Item[2];
+        }
+    }
+    
+    // 测试3：链式删除
+    h2 { text { "3. 链式删除测试" } }
+    @Element List {
+        delete @Element Item[0], @Element Item[2];
+    }
+}

@@ -1,0 +1,61 @@
+// Simple CSS test
+
+div
+{
+    style
+    {
+        padding: 10px;
+        
+        .myclass
+        {
+            color: red;
+        }
+    }
+    
+    text
+    {
+        "Test"
+    }
+}
+
+// Test ID selector
+span  
+{
+    style
+    {
+        #myid
+        {
+            font-weight: bold;
+        }
+    }
+    
+    text
+    {
+        "ID test"
+    }
+}
+
+// Test hover
+p
+{
+    style
+    {
+        &:hover
+        {
+            color: blue;
+        }
+    }
+    
+    text
+    {
+        "Hover test"
+    }
+}
+
+// Global styles
+style
+{
+    body {
+        margin: 0;
+    }
+}

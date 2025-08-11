@@ -1,0 +1,435 @@
+// CHTL 局部Script块示例
+// 展示如何像style块一样使用script块
+
+Import @Chtl from "Chtholly.Core.*"
+
+// 1. 基础用法 - 在元素内使用script块
+div {
+    id: "app"
+    class: "container"
+    
+    h1 { "局部Script块示例" }
+    
+    // 局部script块，类似于style块
+    script {
+        console.log("Hello from local script block!");
+        
+        // 这个脚本在元素作用域内执行
+        const element = document.getElementById('app');
+        element.addEventListener('click', function() {
+            console.log('Container clicked!');
+        });
+    }
+    
+    // 局部style块
+    style {
+        .container {
+            padding: 20px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+// 2. 在组件中使用script块
+[Custom] @Element Counter {
+    props: {
+        initial: number = 0
+    }
+    
+    render: {
+        div {
+            class: "counter"
+            
+            h2 { "计数器组件" }
+            
+            div {
+                class: "count-display"
+                id: "count-" + this.id
+                props.initial
+            }
+            
+            button {
+                id: "btn-" + this.id
+                "增加"
+            }
+            
+            // 组件内的局部script
+            script {
+                // 组件特定的逻辑
+                let count = props.initial || 0;
+                const countDisplay = document.getElementById('count-' + this.id);
+                const button = document.getElementById('btn-' + this.id);
+                
+                button.addEventListener('click', () => {
+                    count++;
+                    countDisplay.textContent = count;
+                });
+            }
+            
+            // 组件样式
+            style {
+                .counter {
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 16px;
+                    margin: 16px 0;
+                }
+                
+                .count-display {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin: 16px 0;
+                }
+                
+                button {
+                    padding: 8px 16px;
+                    background: #67C3CC;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+                
+                button:hover {
+                    background: #5AB3BC;
+                }
+            }
+        }
+    }
+}
+
+// 3. 多个script块协同工作
+div {
+    class: "interactive-section"
+    
+    input {
+        type: "text"
+        id: "user-input"
+        placeholder: "输入一些文字..."
+    }
+    
+    button {
+        id: "process-btn"
+        "处理输入"
+    }
+    
+    div {
+        id: "output"
+        class: "output-area"
+    }
+    
+    // 第一个script块 - 处理输入
+    script {
+        const input = document.getElementById('user-input');
+        const processBtn = document.getElementById('process-btn');
+        const output = document.getElementById('output');
+        
+        // 定义处理函数
+        window.processUserInput = function() {
+            const value = input.value;
+            if (value) {
+                // 触发自定义事件
+                const event = new CustomEvent('inputProcessed', {
+                    detail: { value: value }
+                });
+                document.dispatchEvent(event);
+            }
+        };
+        
+        processBtn.addEventListener('click', window.processUserInput);
+    }
+    
+    // 第二个script块 - 显示结果
+    script {
+        // 监听自定义事件
+        document.addEventListener('inputProcessed', function(e) {
+            const output = document.getElementById('output');
+            const value = e.detail.value;
+            
+            // 创建结果元素
+            const result = document.createElement('div');
+            result.className = 'result-item';
+            result.textContent = `处理结果: ${value.toUpperCase()}`;
+            
+            output.appendChild(result);
+        });
+    }
+    
+    style {
+        .interactive-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .output-area {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+        
+        .result-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: #e8f4f8;
+            border-radius: 4px;
+        }
+    }
+}
+
+// 4. script块与模板结合
+[Template] @Element TodoItem(todo) {
+    li {
+        class: ["todo-item", todo.completed ? "completed" : ""]
+        data-id: todo.id
+        
+        span {
+            class: "todo-text"
+            todo.text
+        }
+        
+        button {
+            class: "delete-btn"
+            "删除"
+        }
+        
+        // 模板内的script
+        script {
+            // 获取当前元素
+            const item = document.querySelector(`[data-id="${todo.id}"]`);
+            const deleteBtn = item.querySelector('.delete-btn');
+            
+            // 点击切换完成状态
+            item.addEventListener('click', function(e) {
+                if (e.target !== deleteBtn) {
+                    this.classList.toggle('completed');
+                }
+            });
+            
+            // 删除功能
+            deleteBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                item.remove();
+            });
+        }
+    }
+}
+
+// 5. 嵌套元素中的script块
+div {
+    class: "nested-example"
+    
+    h3 { "嵌套Script示例" }
+    
+    div {
+        class: "parent"
+        
+        script {
+            console.log("Parent script");
+            const parent = document.querySelector('.parent');
+            parent.dataset.initialized = 'true';
+        }
+        
+        div {
+            class: "child"
+            
+            script {
+                // 子元素的script可以访问父元素
+                console.log("Child script");
+                const parent = document.querySelector('.parent');
+                console.log("Parent initialized:", parent.dataset.initialized);
+            }
+            
+            "子元素内容"
+        }
+    }
+    
+    style {
+        .nested-example {
+            border: 2px solid #67C3CC;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .parent {
+            background: #f0f0f0;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .child {
+            background: white;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    }
+}
+
+// 6. 使用示例应用
+div {
+    class: "app-container"
+    
+    h1 { "Todo应用示例" }
+    
+    div {
+        class: "todo-input"
+        
+        input {
+            type: "text"
+            id: "new-todo"
+            placeholder: "添加新任务..."
+        }
+        
+        button {
+            id: "add-todo"
+            "添加"
+        }
+    }
+    
+    ul {
+        id: "todo-list"
+        class: "todo-list"
+    }
+    
+    script {
+        // Todo应用逻辑
+        const todoList = document.getElementById('todo-list');
+        const input = document.getElementById('new-todo');
+        const addBtn = document.getElementById('add-todo');
+        
+        let todoId = 0;
+        
+        function addTodo() {
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const todo = {
+                id: ++todoId,
+                text: text,
+                completed: false
+            };
+            
+            // 使用模板创建todo项
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.dataset.id = todo.id;
+            li.innerHTML = `
+                <span class="todo-text">${todo.text}</span>
+                <button class="delete-btn">删除</button>
+            `;
+            
+            // 添加事件监听
+            li.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('delete-btn')) {
+                    this.classList.toggle('completed');
+                }
+            });
+            
+            li.querySelector('.delete-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                li.remove();
+            });
+            
+            todoList.appendChild(li);
+            input.value = '';
+        }
+        
+        addBtn.addEventListener('click', addTodo);
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTodo();
+        });
+    }
+    
+    style {
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .todo-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .todo-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .todo-input button {
+            padding: 10px 20px;
+            background: #67C3CC;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .todo-item:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        .delete-btn {
+            padding: 4px 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+    }
+}
+
+// 实例化组件
+@Counter { initial: 10 }
+@Counter { initial: 100 }

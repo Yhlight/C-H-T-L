@@ -1,0 +1,32 @@
+// 完整测试：文本、组件引用、索引删除
+
+[Custom] @Element MyList {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+div {
+    h1 { text { "完整功能测试" } }
+    
+    // 测试1：基础文本
+    p { text { "这是一个段落" } }
+    
+    // 测试2：组件引用
+    h2 { text { "原始列表" } }
+    @Element MyList;
+    
+    // 测试3：带删除的引用
+    h2 { text { "删除第二项" } }
+    @Element MyList {
+        delete li[1];
+    }
+    
+    // 测试4：删除所有
+    h2 { text { "删除所有项" } }
+    @Element MyList {
+        delete li;
+    }
+}

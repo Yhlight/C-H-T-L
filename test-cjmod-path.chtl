@@ -1,0 +1,41 @@
+[Import] @CJmod from "./examples/modules/ReactiveModule.cjmod";
+
+div {
+    h1 { "Testing CJmod Path Resolution" }
+    
+    script {
+        // 测试响应式语法
+        count := 0;
+        doubled => count.value * 2;
+        
+        console.log("Initial count:", count.value);
+        console.log("Doubled:", doubled.value);
+        
+        {{#increment}}->onclick = () => {
+            count.value++;
+            console.log("Count is now:", count.value);
+            console.log("Doubled is now:", doubled.value);
+        };
+        
+        watch count {
+            console.log("Count changed to:", count.value);
+        }
+    }
+    
+    button #increment { "Increment Count" }
+    
+    div {
+        "Count: "
+        span #countDisplay { "0" }
+        " | Doubled: "
+        span #doubledDisplay { "0" }
+    }
+    
+    script {
+        // 更新显示
+        watch count {
+            {{#countDisplay}}.textContent = count.value;
+            {{#doubledDisplay}}.textContent = doubled.value;
+        }
+    }
+}

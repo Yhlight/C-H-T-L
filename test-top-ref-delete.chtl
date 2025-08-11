@@ -1,0 +1,13 @@
+// 定义
+[Custom] @Element MyList {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+    }
+}
+
+// 顶级带删除的引用
+@Element MyList {
+    delete li[1];
+}

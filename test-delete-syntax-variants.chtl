@@ -1,0 +1,42 @@
+[Custom] @Element Item {
+    li { text { "Item" } }
+}
+
+[Custom] @Element List {
+    ul {
+        @Element Item;
+        @Element Item;
+        @Element Item;
+        @Element Item;
+    }
+}
+
+body {
+    h2 { text { "原始列表 (4个项目)" } }
+    @Element List;
+    
+    h2 { text { "删除 @Element Item[0]" } }
+    @Element List {
+        delete @Element Item[0];
+    }
+    
+    h2 { text { "删除 Custom @Element Item[1]" } }
+    @Element List {
+        delete Custom @Element Item[1];
+    }
+    
+    h2 { text { "删除 [Custom] @Element Item[2]" } }
+    @Element List {
+        delete [Custom] @Element Item[2];
+    }
+    
+    h2 { text { "链式删除 @Element Item[0], @Element Item[2]" } }
+    @Element List {
+        delete @Element Item[0], @Element Item[2];
+    }
+    
+    h2 { text { "删除所有 @Element Item" } }
+    @Element List {
+        delete @Element Item;
+    }
+}

@@ -1,0 +1,53 @@
+# 构建产物
+/build/
+/dist/
+/temp/
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 依赖
+node_modules/
+.npm/
+
+# 日志
+*.log
+logs/
+
+# 测试覆盖率
+coverage/
+*.gcov
+*.gcda
+*.gcno
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.temp
+
+# VS Code 扩展开发
+tools/vscode-extension/out/
+tools/vscode-extension/*.vsix
+tools/vscode-extension/.vscode-test/
+
+# 系统文件
+Thumbs.db
+desktop.ini

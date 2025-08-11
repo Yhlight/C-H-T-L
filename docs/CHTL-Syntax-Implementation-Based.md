@@ -411,9 +411,11 @@ body {
 1. **{{}}选择器** - CHTL JS功能
 2. **->操作符** - CHTL JS功能
 3. **listen/delegate/animate** - CHTL JS API
-4. **变量组函数调用** - 如`ThemeColor(primary)` - 需要确认实现位置
-5. **槽位系统（slot）** - 未见实现
-6. **Custom关键字** - 使用自定义元素时的语法
+
+### 官方语法但实现不完整：
+1. **变量组函数调用** - `ThemeColor(primary)` - 解析器已实现，但生成器处理不完整
+2. **Custom关键字** - `Custom @Element Name;` 使用语法未实现（只支持定义）
+3. **槽位系统（slot）** - 未见实现
 
 ### 建议确认的功能：
 1. 元素内直接字符串支持

@@ -3,9 +3,16 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <dlfcn.h>
+#include <cstdlib>
 
 namespace chtl {
 namespace cjmod {
+
+// 编译时包含路径
+#ifndef CHTL_INCLUDE_DIR
+#define CHTL_INCLUDE_DIR "/workspace/include"
+#endif
 
 CJmodLoader& CJmodLoader::getInstance() {
     static CJmodLoader instance;
@@ -363,17 +370,17 @@ std::shared_ptr<ICJmod> CJmodLoader::loadFromFile(const std::string& filePath) {
 }
 
 std::shared_ptr<ICJmod> CJmodLoader::loadFromPackage(const std::string& packagePath) {
-    // .cjmod 是一个压缩包，包含以下文件：
-    // - module.json: 模块元数据和规则定义
-    // - runtime.js: 运行时代码（可选）
-    // - README.md: 文档（可选）
+    // .cjmod 是一个压缩包，包含以下结构：
+    // CJmod文件夹/
+    //   src/      - C++ 源文件和头文件
+    //   info/     - 模块信息文件（.chtl格式）
     
     try {
         // 创建临时目录
         std::filesystem::path tempDir = std::filesystem::temp_directory_path() / "cjmod_temp";
         std::filesystem::create_directories(tempDir);
         
-        // 解压文件（使用系统命令，实际项目应使用 libzip 等库）
+        // 解压文件
         std::string unzipCmd = "unzip -q -o \"" + packagePath + "\" -d \"" + tempDir.string() + "\"";
         int result = std::system(unzipCmd.c_str());
         
@@ -382,49 +389,110 @@ std::shared_ptr<ICJmod> CJmodLoader::loadFromPackage(const std::string& packageP
             return nullptr;
         }
         
-        // 读取 module.json
-        std::filesystem::path moduleJsonPath = tempDir / "module.json";
-        if (!std::filesystem::exists(moduleJsonPath)) {
-            std::cerr << "[CJmod] module.json not found in package" << std::endl;
+        // 查找 CJmod 根目录（通常是第一个目录）
+        std::filesystem::path cjmodRoot;
+        for (const auto& entry : std::filesystem::directory_iterator(tempDir)) {
+            if (entry.is_directory()) {
+                cjmodRoot = entry.path();
+                break;
+            }
+        }
+        
+        if (cjmodRoot.empty()) {
+            std::cerr << "[CJmod] No CJmod directory found in package" << std::endl;
             std::filesystem::remove_all(tempDir);
             return nullptr;
         }
         
-        // 读取 JSON 内容
-        std::ifstream jsonFile(moduleJsonPath);
-        std::string jsonContent((std::istreambuf_iterator<char>(jsonFile)),
-                               std::istreambuf_iterator<char>());
-        jsonFile.close();
+        // 获取模块名称（目录名）
+        std::string moduleName = cjmodRoot.filename().string();
         
-        // 检查是否有单独的 runtime.js
-        std::filesystem::path runtimePath = tempDir / "runtime.js";
-        if (std::filesystem::exists(runtimePath)) {
-            std::ifstream runtimeFile(runtimePath);
-            std::string runtimeCode((std::istreambuf_iterator<char>(runtimeFile)),
-                                   std::istreambuf_iterator<char>());
-            runtimeFile.close();
-            
-            // 将 runtime.js 内容插入到 JSON 中
-            // 这里简化处理，实际应该正确解析和合并 JSON
-            size_t runtimePos = jsonContent.find("\"runtime\"");
-            if (runtimePos != std::string::npos) {
-                // 已有 runtime 部分，合并
-                // TODO: 实现合并逻辑
-            } else {
-                // 添加 runtime 部分
-                size_t lastBrace = jsonContent.rfind('}');
-                if (lastBrace != std::string::npos) {
-                    jsonContent.insert(lastBrace, ",\n  \"runtime\": {\n    \"before\": \"" + 
-                                      escapeString(runtimeCode) + "\"\n  }");
+        // 查找 info 目录中的 .chtl 文件
+        std::filesystem::path infoDir = cjmodRoot / "info";
+        std::filesystem::path infoChtl = infoDir / (moduleName + ".chtl");
+        
+        if (!std::filesystem::exists(infoChtl)) {
+            std::cerr << "[CJmod] Info file not found: " << infoChtl << std::endl;
+            std::filesystem::remove_all(tempDir);
+            return nullptr;
+        }
+        
+        // 读取并解析 .chtl 文件以获取模块信息
+        std::ifstream infoFile(infoChtl);
+        std::string infoContent((std::istreambuf_iterator<char>(infoFile)),
+                               std::istreambuf_iterator<char>());
+        infoFile.close();
+        
+        // 查找 src 目录中的 C++ 文件
+        std::filesystem::path srcDir = cjmodRoot / "src";
+        std::vector<std::string> cppFiles;
+        std::vector<std::string> headerFiles;
+        
+        if (std::filesystem::exists(srcDir)) {
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(srcDir)) {
+                if (entry.is_regular_file()) {
+                    std::string ext = entry.path().extension().string();
+                    if (ext == ".cpp" || ext == ".cc" || ext == ".cxx") {
+                        cppFiles.push_back(entry.path().string());
+                    } else if (ext == ".h" || ext == ".hpp" || ext == ".hxx") {
+                        headerFiles.push_back(entry.path().string());
+                    }
                 }
             }
+        }
+        
+        // 编译 C++ 文件为动态库
+        if (!cppFiles.empty()) {
+            std::string compileCmd = "g++ -shared -fPIC -std=c++17";
+            
+            // 添加包含路径
+            compileCmd += " -I\"" + srcDir.string() + "\"";
+            compileCmd += " -I\"" + std::string(CHTL_INCLUDE_DIR) + "\"";
+            
+            // 添加源文件
+            for (const auto& cpp : cppFiles) {
+                compileCmd += " \"" + cpp + "\"";
+            }
+            
+            // 输出动态库
+            std::filesystem::path outputLib = tempDir / (moduleName + ".so");
+            compileCmd += " -o \"" + outputLib.string() + "\"";
+            
+            std::cout << "[CJmod] Compiling module: " << moduleName << std::endl;
+            result = std::system(compileCmd.c_str());
+            
+            if (result == 0) {
+                // 加载动态库
+                void* handle = dlopen(outputLib.c_str(), RTLD_LAZY);
+                if (handle) {
+                    // 查找创建函数
+                    typedef std::shared_ptr<ICJmod> (*CreateFunc)();
+                    CreateFunc createModule = (CreateFunc)dlsym(handle, ("create" + moduleName + "Module").c_str());
+                    
+                    if (createModule) {
+                        auto module = createModule();
+                        
+                        // 清理临时目录
+                        std::filesystem::remove_all(tempDir);
+                        
+                        return module;
+                    } else {
+                        std::cerr << "[CJmod] Module creation function not found" << std::endl;
+                    }
+                } else {
+                    std::cerr << "[CJmod] Failed to load dynamic library: " << dlerror() << std::endl;
+                }
+            } else {
+                std::cerr << "[CJmod] Compilation failed" << std::endl;
+            }
+        } else {
+            std::cerr << "[CJmod] No C++ source files found in src/ directory" << std::endl;
         }
         
         // 清理临时目录
         std::filesystem::remove_all(tempDir);
         
-        // 解析 JSON 并创建模块
-        return loadFromJSON(jsonContent);
+        return nullptr;
         
     } catch (const std::exception& e) {
         std::cerr << "[CJmod] Error loading package: " << e.what() << std::endl;

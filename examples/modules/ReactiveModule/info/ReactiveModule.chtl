@@ -1,0 +1,43 @@
+[Info] {
+    name: "ReactiveModule"
+    version: "1.0.0"
+    author: "CHTL Team"
+    description: "Reactive programming support for CHTL JS"
+    
+    // 依赖
+    dependencies: []
+    
+    // 提供的语法
+    syntax: {
+        ":=" : "Reactive variable declaration"
+        "=>" : "Computed property"
+        "watch" : "Watch reactive changes"
+        ".value :=" : "Reactive value assignment"
+    }
+    
+    // 示例
+    example: {
+        div {
+            script {
+                // 响应式变量
+                count := 0;
+                
+                // 计算属性
+                doubled => count.value * 2;
+                
+                // 监听变化
+                watch count {
+                    console.log("Count changed:", count.value);
+                }
+                
+                // 更新值
+                {{#button}}->onclick = () => {
+                    count.value := count.value + 1;
+                };
+            }
+        }
+    }
+    
+    // 文档链接
+    documentation: "https://chtl.dev/modules/reactive"
+}

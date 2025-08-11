@@ -1,4 +1,4 @@
-[Import] @CJmod from "./examples/modules/reactive.cjmod.json";
+[Import] @CJmod from "./examples/modules/ReactiveModule.cjmod";
 
 div {
     h1 { "Testing CJmod Path Resolution" }

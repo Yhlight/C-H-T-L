@@ -23,6 +23,7 @@
 #include <sstream>
 #include "Runtime/ChtlJsRuntime.h"
 #include "Generator/ConfigManager.h"
+#include "Context/ChtlContext.h"
 
 namespace chtl {
 

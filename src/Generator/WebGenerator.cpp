@@ -899,23 +899,7 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
     }
 }
 
-void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
-    // 生成器识别的注释会被输出到HTML中
-    std::string content = comment->getContent();
-    
-    // 去除开头的 "--"（如果有的话）
-    if (content.substr(0, 2) == "--") {
-        content = content.substr(2);
-    }
-    
-    // 去除首尾空格
-    content = trim(content);
-    
-    // 生成HTML注释
-    htmlCollector_.append("<!-- ");
-    htmlCollector_.append(escape(content));
-    htmlCollector_.append(" -->");
-}
+
 
 void WebGenerator::visitOrigin(const std::shared_ptr<Origin>& origin) {
     std::string content = origin->getContent();

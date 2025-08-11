@@ -1715,7 +1715,12 @@ std::shared_ptr<Node> StandardParser::parseImport() {
             
             if (!moduleName.empty()) {
                 importNode->setName(moduleName);
-                currentContext_->addCJmodImport(moduleName);
+                // 在上下文中记录 CJmod 导入
+                if (context_) {
+                    if (auto chtlContext = std::dynamic_pointer_cast<ChtlContext>(context_)) {
+                        chtlContext->addCJmodImport(moduleName);
+                    }
+                }
             }
         }
     }

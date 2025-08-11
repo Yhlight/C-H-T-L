@@ -47,18 +47,37 @@ private:
         SPECIFIC_PATH_WITHOUT_FILE   // 具体路径（不包含文件信息）
     };
     
+    // 判断导入类型
+    bool isResourceImport(Import::ImportType type) const;
+    bool isChtlImport(Import::ImportType type) const;
+    
+    // 解析不同类型的导入
+    ImportResolveResult resolveResourceImport(const std::string& path,
+                                            Import::ImportType type,
+                                            const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveChtlImport(const std::string& path,
+                                        Import::ImportType type,
+                                        const std::filesystem::path& currentDir);
+    
+    ImportResolveResult resolveCJmodImport(const std::string& path,
+                                         const std::filesystem::path& currentDir);
+    
+    // 模块名称解析
+    ImportResolveResult resolveModuleName(const std::string& name,
+                                        Import::ImportType type,
+                                        const std::filesystem::path& currentDir,
+                                        bool includeChtl);
+    
+    ImportResolveResult resolveModuleNameWithExt(const std::string& name,
+                                               Import::ImportType type,
+                                               const std::filesystem::path& currentDir,
+                                               bool includeChtl);
+    
     // 判断路径类型
     PathType getPathType(const std::string& path) const;
     
-    // 解析不同类型的路径
-    ImportResolveResult resolveNameOnly(const std::string& name,
-                                       Import::ImportType type,
-                                       const std::filesystem::path& currentDir);
-    
-    ImportResolveResult resolveNameWithExtension(const std::string& name,
-                                                Import::ImportType type,
-                                                const std::filesystem::path& currentDir);
-    
+    // 解析具体路径
     ImportResolveResult resolveSpecificPath(const std::string& path,
                                           Import::ImportType type);
     

@@ -377,10 +377,16 @@ std::shared_ptr<ICJmod> CJmodLoader::loadFromFile(const std::string& filePath) {
     file.close();
     
     // 检查文件扩展名
-    if (filePath.ends_with(".cjmod")) {
+    std::string ext;
+    size_t dotPos = filePath.rfind('.');
+    if (dotPos != std::string::npos) {
+        ext = filePath.substr(dotPos);
+    }
+    
+    if (ext == ".cjmod") {
         // .cjmod 是压缩包格式，需要解压
         return loadFromPackage(filePath);
-    } else if (filePath.ends_with(".json")) {
+    } else if (ext == ".json") {
         // 直接的 JSON 文件
         return loadFromJSON(content);
     }

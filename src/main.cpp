@@ -11,6 +11,7 @@
 #include "Error/ErrorHandler.h"
 #include "Utils/FileUtils.h"
 #include "Cmod/CmodPacker.h"
+#include "CJmod/CJmodLoader.h"
 
 namespace fs = std::filesystem;
 

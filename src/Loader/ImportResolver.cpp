@@ -12,15 +12,15 @@ const std::unordered_map<Import::ImportType, std::vector<std::string>> ImportRes
     {Import::ImportType::HTML, {".html", ".htm", ".xhtml"}},
     {Import::ImportType::CSS, {".css", ".scss", ".sass", ".less"}},
     {Import::ImportType::JS, {".js", ".mjs", ".jsx", ".ts", ".tsx"}},
-    {Import::ImportType::CHTL, {".chtl", ".cmod"}},  // cmod优先
-    {Import::ImportType::CUSTOM_ELEMENT, {".chtl", ".cmod"}},
-    {Import::ImportType::CUSTOM_STYLE, {".chtl", ".cmod"}},
-    {Import::ImportType::CUSTOM_VAR, {".chtl", ".cmod"}},
-    {Import::ImportType::TEMPLATE_ELEMENT, {".chtl", ".cmod"}},
-    {Import::ImportType::TEMPLATE_STYLE, {".chtl", ".cmod"}},
-    {Import::ImportType::TEMPLATE_VAR, {".chtl", ".cmod"}},
-    {Import::ImportType::ALL, {".chtl", ".cmod"}},
-    {Import::ImportType::CJMOD, {".cjmod", ".cjmod.json", ".js"}}
+    {Import::ImportType::CHTL, {".cmod", ".chtl"}},  // cmod优先
+    {Import::ImportType::CUSTOM_ELEMENT, {".cmod", ".chtl"}},
+    {Import::ImportType::CUSTOM_STYLE, {".cmod", ".chtl"}},
+    {Import::ImportType::CUSTOM_VAR, {".cmod", ".chtl"}},
+    {Import::ImportType::TEMPLATE_ELEMENT, {".cmod", ".chtl"}},
+    {Import::ImportType::TEMPLATE_STYLE, {".cmod", ".chtl"}},
+    {Import::ImportType::TEMPLATE_VAR, {".cmod", ".chtl"}},
+    {Import::ImportType::ALL, {".cmod", ".chtl"}},
+    {Import::ImportType::CJMOD, {".cjmod"}}  // 只搜索 .cjmod
 };
 
 ImportResolver::ImportResolver() {
@@ -58,68 +58,180 @@ ImportResolveResult ImportResolver::resolve(const std::string& importPath,
     // 规范化导入路径
     std::string normalizedPath = normalizePath(importPath);
     
-    // 检查是否为通配符导入
-    if (isWildcardImport(normalizedPath)) {
-        return resolveWildcardImport(normalizedPath, type, currentDir);
+    // 根据导入类型选择不同的解析策略
+    if (isResourceImport(type)) {
+        // @Html, @Style, @JavaScript 等资源导入
+        return resolveResourceImport(normalizedPath, type, currentDir);
+    } else if (isChtlImport(type)) {
+        // @Chtl 及其相关导入（支持通配符和子模块）
+        return resolveChtlImport(normalizedPath, type, currentDir);
+    } else if (type == Import::ImportType::CJMOD) {
+        // @CJmod 导入
+        return resolveCJmodImport(normalizedPath, currentDir);
     }
     
-    // 检查是否为子模块导入（包含'.'但不是文件扩展名）
-    if (isSubmoduleImport(normalizedPath)) {
-        return resolveSubmoduleImport(normalizedPath, type, currentDir);
-    }
-    
-    // 判断路径类型
-    PathType pathType = getPathType(normalizedPath);
-    
-    switch (pathType) {
-        case PathType::NAME_ONLY:
-            // 只有名称，没有后缀名
-            return resolveNameOnly(normalizedPath, type, currentDir);
-            
-        case PathType::NAME_WITH_EXT:
-            // 有具体的后缀名
-            return resolveNameWithExtension(normalizedPath, type, currentDir);
-            
-        case PathType::SPECIFIC_PATH_WITH_FILE:
-            // 具体路径（包含文件信息）
-            return resolveSpecificPath(normalizedPath, type);
-            
-        case PathType::SPECIFIC_PATH_WITHOUT_FILE:
-            // 具体路径（不包含文件信息）
-            result.errorMessage = "Path must include a file name: " + normalizedPath;
-            return result;
-    }
-    
-    result.errorMessage = "Unable to resolve import path: " + normalizedPath;
+    result.errorMessage = "Unknown import type";
     return result;
 }
 
-ImportResolver::PathType ImportResolver::getPathType(const std::string& path) const {
-    // 检查是否包含路径分隔符
-    bool hasPathSep = (path.find('/') != std::string::npos || 
-                       path.find('\\') != std::string::npos);
-    
-    if (!hasPathSep) {
-        // 没有路径分隔符
-        if (hasExtension(path)) {
-            return PathType::NAME_WITH_EXT;
-        } else {
-            return PathType::NAME_ONLY;
-        }
-    } else {
-        // 有路径分隔符
-        fs::path p(path);
-        if (p.filename().empty()) {
-            return PathType::SPECIFIC_PATH_WITHOUT_FILE;
-        } else {
-            return PathType::SPECIFIC_PATH_WITH_FILE;
-        }
-    }
+bool ImportResolver::isResourceImport(Import::ImportType type) const {
+    return type == Import::ImportType::HTML ||
+           type == Import::ImportType::CSS ||
+           type == Import::ImportType::JS;
 }
 
-ImportResolveResult ImportResolver::resolveNameOnly(const std::string& name,
-                                                  Import::ImportType type,
-                                                  const fs::path& currentDir) {
+bool ImportResolver::isChtlImport(Import::ImportType type) const {
+    return type == Import::ImportType::CHTL ||
+           type == Import::ImportType::CUSTOM_ELEMENT ||
+           type == Import::ImportType::CUSTOM_STYLE ||
+           type == Import::ImportType::CUSTOM_VAR ||
+           type == Import::ImportType::TEMPLATE_ELEMENT ||
+           type == Import::ImportType::TEMPLATE_STYLE ||
+           type == Import::ImportType::TEMPLATE_VAR ||
+           type == Import::ImportType::ALL;
+}
+
+ImportResolveResult ImportResolver::resolveResourceImport(const std::string& path,
+                                                        Import::ImportType type,
+                                                        const fs::path& currentDir) {
+    ImportResolveResult result;
+    
+    // 判断路径类型
+    PathType pathType = getPathType(path);
+    
+    switch (pathType) {
+        case PathType::NAME_ONLY: {
+            // 文件名（不带后缀）- 在当前目录搜索
+            auto it = EXTENSION_MAP.find(type);
+            if (it != EXTENSION_MAP.end()) {
+                for (const auto& ext : it->second) {
+                    fs::path filePath = currentDir / (path + ext);
+                    if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+                        result.resolvedPath = filePath.string();
+                        result.fileExtension = ext;
+                        result.success = true;
+                        result.isRelative = true;
+                        return result;
+                    }
+                }
+            }
+            result.errorMessage = "File '" + path + "' not found in current directory";
+            break;
+        }
+        
+        case PathType::NAME_WITH_EXT: {
+            // 文件名（带后缀）- 在当前目录搜索
+            fs::path filePath = currentDir / path;
+            if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
+                result.resolvedPath = filePath.string();
+                result.fileExtension = getExtension(path);
+                result.success = true;
+                result.isRelative = true;
+                
+                // 验证扩展名
+                if (!validateExtension(result.fileExtension, type)) {
+                    result.success = false;
+                    result.errorMessage = "File extension '" + result.fileExtension + 
+                                        "' does not match import type";
+                }
+                return result;
+            }
+            result.errorMessage = "File '" + path + "' not found in current directory";
+            break;
+        }
+        
+        case PathType::SPECIFIC_PATH_WITH_FILE: {
+            // 具体路径指向文件
+            return resolveSpecificPath(path, type);
+        }
+        
+        case PathType::SPECIFIC_PATH_WITHOUT_FILE: {
+            // 路径是文件夹 - 报错
+            result.errorMessage = "Cannot import a directory. Please specify a file.";
+            break;
+        }
+    }
+    
+    return result;
+}
+
+ImportResolveResult ImportResolver::resolveChtlImport(const std::string& path,
+                                                    Import::ImportType type,
+                                                    const fs::path& currentDir) {
+    // 检查是否为通配符导入
+    if (isWildcardImport(path)) {
+        return resolveWildcardImport(path, type, currentDir);
+    }
+    
+    // 检查是否为子模块导入
+    if (isSubmoduleImport(path)) {
+        return resolveSubmoduleImport(path, type, currentDir);
+    }
+    
+    // 判断路径类型
+    PathType pathType = getPathType(path);
+    
+    switch (pathType) {
+        case PathType::NAME_ONLY:
+            // 只有名称，使用模块搜索路径
+            return resolveModuleName(path, type, currentDir, true);
+            
+        case PathType::NAME_WITH_EXT:
+            // 有后缀名，使用模块搜索路径
+            return resolveModuleNameWithExt(path, type, currentDir, true);
+            
+        case PathType::SPECIFIC_PATH_WITH_FILE:
+            // 具体路径
+            return resolveSpecificPath(path, type);
+            
+        case PathType::SPECIFIC_PATH_WITHOUT_FILE:
+            // 路径不包含文件信息
+            ImportResolveResult result;
+            result.errorMessage = "Path must include a file name: " + path;
+            return result;
+    }
+    
+    ImportResolveResult result;
+    result.errorMessage = "Unable to resolve import path: " + path;
+    return result;
+}
+
+ImportResolveResult ImportResolver::resolveCJmodImport(const std::string& path,
+                                                     const fs::path& currentDir) {
+    // CJmod 不支持通配符和子模块
+    
+    // 判断路径类型
+    PathType pathType = getPathType(path);
+    
+    switch (pathType) {
+        case PathType::NAME_ONLY:
+            // 只有名称，使用模块搜索路径
+            return resolveModuleName(path, Import::ImportType::CJMOD, currentDir, false);
+            
+        case PathType::NAME_WITH_EXT:
+            // 有后缀名，使用模块搜索路径
+            return resolveModuleNameWithExt(path, Import::ImportType::CJMOD, currentDir, false);
+            
+        case PathType::SPECIFIC_PATH_WITH_FILE:
+            // 具体路径
+            return resolveSpecificPath(path, Import::ImportType::CJMOD);
+            
+        case PathType::SPECIFIC_PATH_WITHOUT_FILE:
+            // 路径不包含文件信息
+            ImportResolveResult result;
+            result.errorMessage = "Path must include a file name: " + path;
+            return result;
+    }
+    
+    ImportResolveResult result;
+    result.errorMessage = "Unable to resolve import path: " + path;
+    return result;
+}
+
+ImportResolveResult ImportResolver::resolveModuleName(const std::string& name,
+                                                    Import::ImportType type,
+                                                    const fs::path& currentDir,
+                                                    bool includeChtl) {
     ImportResolveResult result;
     
     // 搜索顺序：
@@ -133,23 +245,14 @@ ImportResolveResult ImportResolver::resolveNameOnly(const std::string& name,
         currentDir
     };
     
-    // 获取该类型支持的扩展名（对于CHTL类型，.cmod优先）
+    // 获取扩展名列表
     std::vector<std::string> extensions;
-    if (type == Import::ImportType::CHTL || 
-        type == Import::ImportType::CUSTOM_ELEMENT ||
-        type == Import::ImportType::CUSTOM_STYLE ||
-        type == Import::ImportType::CUSTOM_VAR ||
-        type == Import::ImportType::TEMPLATE_ELEMENT ||
-        type == Import::ImportType::TEMPLATE_STYLE ||
-        type == Import::ImportType::TEMPLATE_VAR ||
-        type == Import::ImportType::ALL) {
-        // 对于CHTL相关类型，.cmod优先
-        extensions = {".cmod", ".chtl"};
+    if (type == Import::ImportType::CJMOD) {
+        extensions = {".cjmod"};
+    } else if (includeChtl) {
+        extensions = {".cmod", ".chtl"};  // cmod 优先
     } else {
-        auto it = EXTENSION_MAP.find(type);
-        if (it != EXTENSION_MAP.end()) {
-            extensions = it->second;
-        }
+        extensions = {".cmod"};
     }
     
     // 在每个搜索路径中查找
@@ -188,10 +291,22 @@ ImportResolveResult ImportResolver::resolveNameOnly(const std::string& name,
     return result;
 }
 
-ImportResolveResult ImportResolver::resolveNameWithExtension(const std::string& name,
+ImportResolveResult ImportResolver::resolveModuleNameWithExt(const std::string& name,
                                                            Import::ImportType type,
-                                                           const fs::path& currentDir) {
+                                                           const fs::path& currentDir,
+                                                           bool includeChtl) {
     ImportResolveResult result;
+    
+    // 验证扩展名
+    std::string ext = getExtension(name);
+    if (type == Import::ImportType::CJMOD && ext != ".cjmod") {
+        result.errorMessage = "CJmod imports only support .cjmod files";
+        return result;
+    }
+    if (!includeChtl && ext == ".chtl") {
+        result.errorMessage = "This import type does not support .chtl files";
+        return result;
+    }
     
     // 搜索顺序：
     // 1. 官方模块目录
@@ -214,18 +329,9 @@ ImportResolveResult ImportResolver::resolveNameWithExtension(const std::string& 
         
         if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
             result.resolvedPath = filePath.string();
-            result.fileExtension = getExtension(name);
+            result.fileExtension = ext;
             result.success = true;
             result.isRelative = false;
-            
-            // 验证扩展名是否匹配类型
-            if (!validateExtension(result.fileExtension, type)) {
-                result.success = false;
-                result.errorMessage = "File extension '" + result.fileExtension + 
-                                    "' does not match import type";
-                return result;
-            }
-            
             return result;
         }
     }
@@ -238,6 +344,29 @@ ImportResolveResult ImportResolver::resolveNameWithExtension(const std::string& 
     }
     
     return result;
+}
+
+ImportResolver::PathType ImportResolver::getPathType(const std::string& path) const {
+    // 检查是否包含路径分隔符
+    bool hasPathSep = (path.find('/') != std::string::npos || 
+                       path.find('\\') != std::string::npos);
+    
+    if (!hasPathSep) {
+        // 没有路径分隔符
+        if (hasExtension(path)) {
+            return PathType::NAME_WITH_EXT;
+        } else {
+            return PathType::NAME_ONLY;
+        }
+    } else {
+        // 有路径分隔符
+        fs::path p(path);
+        if (p.filename().empty()) {
+            return PathType::SPECIFIC_PATH_WITHOUT_FILE;
+        } else {
+            return PathType::SPECIFIC_PATH_WITH_FILE;
+        }
+    }
 }
 
 ImportResolveResult ImportResolver::resolveSpecificPath(const std::string& path,
@@ -374,7 +503,7 @@ ImportResolveResult ImportResolver::resolveWildcardImport(const std::string& pat
             }
         }
     } catch (const fs::filesystem_error& e) {
-        result.errorMessage = "Error reading directory: " + e.what();
+        result.errorMessage = std::string("Error reading directory: ") + e.what();
         return result;
     }
     
@@ -406,7 +535,7 @@ ImportResolveResult ImportResolver::resolveSubmoduleImport(const std::string& pa
     // 检查是否是通配符子模块导入
     if (submodulePath == "*") {
         // 先找到主模块
-        auto mainModuleResult = resolveNameOnly(moduleName, type, currentDir);
+        auto mainModuleResult = resolveModuleName(moduleName, type, currentDir, true);
         if (!mainModuleResult.success) {
             result.errorMessage = "Cannot find module '" + moduleName + 
                                 "' for submodule import";
@@ -436,7 +565,7 @@ ImportResolveResult ImportResolver::resolveSubmoduleImport(const std::string& pa
                 }
             }
         } catch (const fs::filesystem_error& e) {
-            result.errorMessage = "Error reading submodules: " + e.what();
+            result.errorMessage = std::string("Error reading submodules: ") + e.what();
             return result;
         }
         
@@ -451,7 +580,7 @@ ImportResolveResult ImportResolver::resolveSubmoduleImport(const std::string& pa
     } else {
         // 具体的子模块
         // 先找到主模块目录
-        auto mainModuleResult = resolveNameOnly(moduleName, type, currentDir);
+        auto mainModuleResult = resolveModuleName(moduleName, type, currentDir, true);
         if (!mainModuleResult.success) {
             result.errorMessage = "Cannot find module '" + moduleName + 
                                 "' for submodule import";

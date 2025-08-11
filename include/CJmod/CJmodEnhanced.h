@@ -6,6 +6,7 @@
 #include <memory>
 #include <functional>
 #include <variant>
+#include <regex>
 
 namespace chtl {
 namespace cjmod {

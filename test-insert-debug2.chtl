@@ -1,0 +1,21 @@
+[Custom] @Element SimpleList {
+    div {
+        p { text { "P1" } }
+        p { text { "P2" } }
+        p { text { "P3" } }
+    }
+}
+
+body {
+    h1 { text { "插入调试" } }
+    
+    // 测试 after
+    section {
+        h2 { text { "在 P2 后插入" } }
+        @Element SimpleList {
+            insert after p[1] {
+                p { text { "新段落" } }
+            }
+        }
+    }
+}

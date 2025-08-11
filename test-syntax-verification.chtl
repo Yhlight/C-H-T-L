@@ -1,0 +1,82 @@
+// CHTL 语法验证测试
+
+// 1. 继承测试
+[Template] @Style BaseStyle {
+    color: red;
+    font-size: 14px;
+}
+
+[Custom] @Style ExtendedStyle {
+    inherit @Style BaseStyle;
+    font-weight: bold;
+}
+
+// 2. 变量组测试
+[Template] @Var Colors {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+}
+
+// 3. 原始嵌入测试
+[Origin] @Html header {
+    <header class="site-header">
+        <h1>原始 HTML</h1>
+    </header>
+}
+
+[Origin] @JavaScript utils {
+    function customUtil() {
+        console.log("Custom utility function");
+    }
+}
+
+// 4. 配置测试
+[Configuration] {
+    output: "dist";
+    minify: true;
+    sourcemap: false;
+}
+
+// 5. 名称配置组测试
+[Name] Production {
+    debug: false;
+    optimize: true;
+}
+
+// 6. 约束测试
+[Custom] @Element ConditionalBox {
+    div {
+        except mobile {
+            class: "desktop-only";
+        }
+        text { "条件内容" }
+    }
+}
+
+// 7. 变量组函数调用
+[Custom] @Style ColoredBox {
+    background-color: @Var Colors(primary);
+    border: 1px solid @Var Colors(secondary);
+}
+
+body {
+    h1 { text { "语法验证" } }
+    
+    // 使用继承的样式
+    div {
+        style { @Style ExtendedStyle; }
+        text { "继承样式测试" }
+    }
+    
+    // 使用原始嵌入
+    @Html header;
+    
+    // 使用条件组件
+    @Element ConditionalBox;
+    
+    // 脚本中使用原始嵌入
+    script {
+        @JavaScript utils;
+    }
+}

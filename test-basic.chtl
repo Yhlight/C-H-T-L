@@ -1,3 +1,8 @@
-div {
-    text { "Hello World" }
+body {
+    h1 { text { "测试" } }
+    
+    section {
+        h2 { text { "Section" } }
+        p { text { "Paragraph" } }
+    }
 }

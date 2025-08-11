@@ -541,36 +541,43 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
                                           const std::shared_ptr<Operate>& insertOp) {
     auto position = insertOp->getPosition();
     auto insertTarget = insertOp->getTarget();
-    auto& children = target->getChildren();
     
-    switch (position) {
-        default:
-            // Handle all cases to avoid warning
-        case Operate::Position::AT_TOP:
-            // 插入到开头
-            for (auto it = insertOp->getChildren().rbegin(); 
-                 it != insertOp->getChildren().rend(); ++it) {
-                children.insert(children.begin(), (*it)->clone());
-            }
-            break;
-            
-        case Operate::Position::AT_BOTTOM:
-            // 插入到末尾
-            for (const auto& child : insertOp->getChildren()) {
-                children.push_back(child->clone());
-            }
-            break;
-            
-        case Operate::Position::BEFORE:
-        case Operate::Position::AFTER:
-        case Operate::Position::REPLACE:
-            {
-                // 使用新的 findTargetNode 方法查找目标
-                int currentIndex = 0;
-                auto targetIt = findTargetNode(const_cast<std::vector<std::shared_ptr<Node>>&>(children), 
-                                              insertTarget, currentIndex);
+    // 递归查找所有子节点
+    std::function<void(std::shared_ptr<Node>)> processNode = [&](std::shared_ptr<Node> node) {
+        auto& children = node->getChildren();
+        
+        switch (position) {
+            default:
+                // Handle all cases to avoid warning
+            case Operate::Position::AT_TOP:
+                // 插入到开头 - 只在根节点执行
+                if (node == target) {
+                    for (auto it = insertOp->getChildren().rbegin(); 
+                         it != insertOp->getChildren().rend(); ++it) {
+                        children.insert(children.begin(), (*it)->clone());
+                    }
+                }
+                break;
                 
-                if (targetIt != children.end()) {
+            case Operate::Position::AT_BOTTOM:
+                // 插入到末尾 - 只在根节点执行
+                if (node == target) {
+                    for (const auto& child : insertOp->getChildren()) {
+                        children.push_back(child->clone());
+                    }
+                }
+                break;
+                
+            case Operate::Position::BEFORE:
+            case Operate::Position::AFTER:
+            case Operate::Position::REPLACE:
+                {
+                    // 使用新的 findTargetNode 方法查找目标
+                    int currentIndex = 0;
+                    auto targetIt = findTargetNode(const_cast<std::vector<std::shared_ptr<Node>>&>(children), 
+                                                  insertTarget, currentIndex);
+                    
+                    if (targetIt != children.end()) {
                     if (position == Operate::Position::BEFORE) {
                         // 在目标前插入
                         for (const auto& child : insertOp->getChildren()) {
@@ -592,10 +599,20 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
                             ++targetIt;
                         }
                     }
+                    return;  // 找到并处理了，退出
                 }
             }
             break;
-    }
+        }
+        
+        // 递归处理子节点
+        for (auto& child : children) {
+            processNode(child);
+        }
+    };
+    
+    // 开始递归处理
+    processNode(target);
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {

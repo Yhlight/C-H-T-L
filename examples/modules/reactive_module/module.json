@@ -1,0 +1,37 @@
+{
+    "name": "reactive",
+    "version": "1.0.0",
+    "description": "Reactive programming support for CHTL JS",
+    "author": "CHTL Team",
+    "rules": [
+        {
+            "name": "reactive-declaration",
+            "pattern": "(\\w+)\\s*:=\\s*([^;]+);",
+            "replacement": "let $1 = reactive($2);",
+            "priority": 100,
+            "description": "Transform := to reactive variable declaration"
+        },
+        {
+            "name": "computed-property", 
+            "pattern": "(\\w+)\\s*=>\\s*([^;]+);",
+            "replacement": "let $1 = computed(() => $2);",
+            "priority": 90,
+            "description": "Transform => to computed property"
+        },
+        {
+            "name": "watch-syntax",
+            "pattern": "watch\\s+(\\w+)\\s*\\{",
+            "replacement": "watch($1, () => {",
+            "priority": 80,
+            "description": "Transform watch block syntax"
+        },
+        {
+            "name": "reactive-assignment",
+            "pattern": "(\\w+)\\.value\\s*:=\\s*([^;]+);",
+            "replacement": "$1.value = $2;",
+            "priority": 70,
+            "description": "Transform reactive value assignment"
+        }
+    ],
+    "overrides": {}
+}

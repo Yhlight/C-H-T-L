@@ -48,6 +48,7 @@ private:
     static size_t findMatchingBracket(const std::string& str, size_t start, char open, char close);
     static size_t findLastQuote(const std::string& str, size_t start);
     static std::string unescapeString(const std::string& str);
+    static std::string escapeString(const std::string& str);
 };
 
 } // namespace cjmod

@@ -350,22 +350,86 @@ std::shared_ptr<ICJmod> CJmodLoader::loadFromFile(const std::string& filePath) {
     file.close();
     
     // 检查文件扩展名
-    if (filePath.ends_with(".cjmod.json") || filePath.ends_with(".json")) {
+    if (filePath.ends_with(".cjmod")) {
+        // .cjmod 是压缩包格式，需要解压
+        return loadFromPackage(filePath);
+    } else if (filePath.ends_with(".json")) {
+        // 直接的 JSON 文件
         return loadFromJSON(content);
-    } else if (filePath.ends_with(".cjmod")) {
-        // 未来可以支持其他格式
-        std::cerr << "[CJmod] .cjmod format not yet supported, use .cjmod.json instead" << std::endl;
-        return nullptr;
     }
     
     std::cerr << "[CJmod] Unknown file format: " << filePath << std::endl;
     return nullptr;
 }
 
-std::shared_ptr<ICJmod> CJmodLoader::loadFromPackage(const std::string& packageName) {
-    // TODO: 实现从包管理器加载 CJmod
-    std::cerr << "[CJmod] Loading from package not yet implemented: " << packageName << std::endl;
-    return nullptr;
+std::shared_ptr<ICJmod> CJmodLoader::loadFromPackage(const std::string& packagePath) {
+    // .cjmod 是一个压缩包，包含以下文件：
+    // - module.json: 模块元数据和规则定义
+    // - runtime.js: 运行时代码（可选）
+    // - README.md: 文档（可选）
+    
+    try {
+        // 创建临时目录
+        std::filesystem::path tempDir = std::filesystem::temp_directory_path() / "cjmod_temp";
+        std::filesystem::create_directories(tempDir);
+        
+        // 解压文件（使用系统命令，实际项目应使用 libzip 等库）
+        std::string unzipCmd = "unzip -q -o \"" + packagePath + "\" -d \"" + tempDir.string() + "\"";
+        int result = std::system(unzipCmd.c_str());
+        
+        if (result != 0) {
+            std::cerr << "[CJmod] Failed to extract package: " << packagePath << std::endl;
+            return nullptr;
+        }
+        
+        // 读取 module.json
+        std::filesystem::path moduleJsonPath = tempDir / "module.json";
+        if (!std::filesystem::exists(moduleJsonPath)) {
+            std::cerr << "[CJmod] module.json not found in package" << std::endl;
+            std::filesystem::remove_all(tempDir);
+            return nullptr;
+        }
+        
+        // 读取 JSON 内容
+        std::ifstream jsonFile(moduleJsonPath);
+        std::string jsonContent((std::istreambuf_iterator<char>(jsonFile)),
+                               std::istreambuf_iterator<char>());
+        jsonFile.close();
+        
+        // 检查是否有单独的 runtime.js
+        std::filesystem::path runtimePath = tempDir / "runtime.js";
+        if (std::filesystem::exists(runtimePath)) {
+            std::ifstream runtimeFile(runtimePath);
+            std::string runtimeCode((std::istreambuf_iterator<char>(runtimeFile)),
+                                   std::istreambuf_iterator<char>());
+            runtimeFile.close();
+            
+            // 将 runtime.js 内容插入到 JSON 中
+            // 这里简化处理，实际应该正确解析和合并 JSON
+            size_t runtimePos = jsonContent.find("\"runtime\"");
+            if (runtimePos != std::string::npos) {
+                // 已有 runtime 部分，合并
+                // TODO: 实现合并逻辑
+            } else {
+                // 添加 runtime 部分
+                size_t lastBrace = jsonContent.rfind('}');
+                if (lastBrace != std::string::npos) {
+                    jsonContent.insert(lastBrace, ",\n  \"runtime\": {\n    \"before\": \"" + 
+                                      escapeString(runtimeCode) + "\"\n  }");
+                }
+            }
+        }
+        
+        // 清理临时目录
+        std::filesystem::remove_all(tempDir);
+        
+        // 解析 JSON 并创建模块
+        return loadFromJSON(jsonContent);
+        
+    } catch (const std::exception& e) {
+        std::cerr << "[CJmod] Error loading package: " << e.what() << std::endl;
+        return nullptr;
+    }
 }
 
 std::shared_ptr<ICJmod> CJmodLoader::loadFromJSON(const std::string& jsonContent) {
@@ -542,6 +606,22 @@ std::string CJmodLoader::unescapeString(const std::string& str) {
             }
         } else {
             result += str[i];
+        }
+    }
+    return result;
+}
+
+// 辅助函数：转义字符串用于 JSON
+std::string CJmodLoader::escapeString(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        switch (c) {
+            case '\n': result += "\\n"; break;
+            case '\t': result += "\\t"; break;
+            case '\r': result += "\\r"; break;
+            case '"': result += "\\\""; break;
+            case '\\': result += "\\\\"; break;
+            default: result += c; break;
         }
     }
     return result;

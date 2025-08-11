@@ -1,0 +1,187 @@
+# 变量组功能测试
+
+## 1. 基础变量组定义
+[Template] @Var ThemeColors {
+    primary type="color" {
+        #3498db
+    }
+    
+    secondary type="color" {
+        #2ecc71
+    }
+    
+    danger type="color" {
+        #e74c3c
+    }
+    
+    textColor type="color" default="#333" {
+        #2c3e50
+    }
+    
+    bgColor type="color" {
+        #ecf0f1
+    }
+}
+
+[Template] @Var Spacing {
+    small type="size" {
+        8px
+    }
+    
+    medium type="size" {
+        16px
+    }
+    
+    large type="size" {
+        24px
+    }
+    
+    huge type="size" {
+        48px
+    }
+}
+
+## 2. 继承变量组
+[Custom] @Var DarkTheme {
+    inherit @Var ThemeColors
+    
+    # 覆盖部分颜色
+    textColor {
+        #ecf0f1
+    }
+    
+    bgColor {
+        #2c3e50
+    }
+    
+    # 新增变量
+    borderColor type="color" {
+        #34495e
+    }
+}
+
+## 3. 动态变量组
+[Template] @Var Breakpoints {
+    mobile type="size" {
+        768px
+    }
+    
+    tablet type="size" {
+        1024px
+    }
+    
+    desktop type="size" {
+        1440px
+    }
+}
+
+## 4. 使用变量组
+
+# 4.1 在样式中使用
+div.card {
+    style {
+        # 直接引用
+        background: ThemeColors(bgColor);
+        color: ThemeColors(textColor);
+        
+        # 带参数覆盖
+        border: 1px solid ThemeColors(primary = #9b59b6);
+        
+        # 使用间距
+        padding: Spacing(medium);
+        margin: Spacing(large) auto;
+    }
+}
+
+# 4.2 响应式设计
+div.responsive {
+    style {
+        width: 100%;
+        max-width: Breakpoints(desktop);
+        
+        @media (max-width: Breakpoints(tablet)) {
+            padding: Spacing(medium);
+        }
+        
+        @media (max-width: Breakpoints(mobile)) {
+            padding: Spacing(small);
+        }
+    }
+}
+
+# 4.3 使用继承的变量组
+div.dark-mode {
+    style {
+        background: DarkTheme(bgColor);
+        color: DarkTheme(textColor);
+        border: 1px solid DarkTheme(borderColor);
+    }
+}
+
+## 5. 变量组引用和特例化
+div.custom-button {
+    @Style ButtonStyle {
+        @Var ThemeColors(
+            primary = #e67e22,
+            secondary = #d35400
+        )
+        
+        background: ThemeColors(primary);
+        
+        &:hover {
+            background: ThemeColors(secondary);
+        }
+    }
+}
+
+## 6. 计算变量（高级用法）
+[Template] @Var GridSystem {
+    columns type="number" {
+        12
+    }
+    
+    gutter type="size" {
+        20px
+    }
+    
+    # 计算列宽（需要运行时支持）
+    columnWidth type="computed" {
+        calc((100% - (GridSystem(columns) - 1) * GridSystem(gutter)) / GridSystem(columns))
+    }
+}
+
+div.grid-item {
+    style {
+        width: GridSystem(columnWidth);
+        margin-right: GridSystem(gutter);
+        
+        &:nth-child(GridSystem(columns)n) {
+            margin-right: 0;
+        }
+    }
+}
+
+## 7. CSS 变量生成
+[Custom] @Var CSSVars {
+    # 这些会生成为 CSS 自定义属性
+    --primary-color type="color" {
+        #3498db
+    }
+    
+    --font-size-base type="size" {
+        16px
+    }
+    
+    --line-height type="number" {
+        1.6
+    }
+}
+
+# 使用 CSS 变量
+div.with-css-vars {
+    style {
+        color: var(--chtl-CSSVars-primary-color);
+        font-size: var(--chtl-CSSVars-font-size-base);
+        line-height: var(--chtl-CSSVars-line-height);
+    }
+}

@@ -11,6 +11,7 @@
 #include "Runtime/ChtlJsRuntime.h"
 #include "CJmod/CJmodCorrect.h"
 #include "CJmod/CJmodLoader.h"
+#include "Utils/ConstraintEvaluator.h"
 #include <regex>
 #include <algorithm>
 #include <set>
@@ -242,29 +243,84 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         if (attrs.find("condition") != attrs.end()) {
             std::string condition = std::get<std::string>(attrs.at("condition"));
             
-            // 生成媒体查询或条件注释
-            if (condition == "mobile") {
-                cssCollector_.appendLine("@media (max-width: 768px) {");
-                
-                // 处理样式子节点
+            // 使用约束评估器生成条件代码
+            ConstraintEvaluator evaluator;
+            auto constraint = evaluator.parseConstraint(condition);
+            
+            // 生成媒体查询（用于 CSS）
+            std::string mediaQuery = evaluator.generateMediaQuery(constraint);
+            
+            // 生成 JavaScript 条件（用于动态内容）
+            std::string jsCondition = evaluator.generateJavaScriptCondition(constraint);
+            
+            // 根据内容类型决定如何处理
+            bool hasStyleContent = false;
+            bool hasScriptContent = false;
+            bool hasHtmlContent = false;
+            
+            for (const auto& child : element->getChildren()) {
+                if (child->getType() == NodeType::STYLE) {
+                    hasStyleContent = true;
+                } else if (child->getType() == NodeType::SCRIPT) {
+                    hasScriptContent = true;
+                } else {
+                    hasHtmlContent = true;
+                }
+            }
+            
+            // 处理样式内容
+            if (hasStyleContent && !mediaQuery.empty()) {
+                result.css += "@media " + mediaQuery + " {\n";
                 for (const auto& child : element->getChildren()) {
                     if (child->getType() == NodeType::STYLE) {
-                        auto styleNode = std::static_pointer_cast<Style>(child);
-                        std::string css = styleNode->getCssContent();
-                        cssCollector_.appendLine(css);
+                        visit(child);
+                    }
+                }
+                result.css += "}\n";
+            }
+            
+            // 处理 HTML 内容
+            if (hasHtmlContent && !jsCondition.empty()) {
+                // 生成条件渲染的 JavaScript
+                result.js += "(function() {\n";
+                result.js += "  if (" + jsCondition + ") {\n";
+                result.js += "    var tempDiv = document.createElement('div');\n";
+                result.js += "    tempDiv.innerHTML = `";
+                
+                // 临时保存当前 HTML，生成子元素
+                std::string tempHtml = result.html;
+                result.html.clear();
+                
+                for (const auto& child : element->getChildren()) {
+                    if (child->getType() != NodeType::STYLE && child->getType() != NodeType::SCRIPT) {
+                        visit(child);
                     }
                 }
                 
-                cssCollector_.appendLine("}");
+                result.js += result.html;
+                result.js += "`;\n";
+                result.js += "    while (tempDiv.firstChild) {\n";
+                result.js += "      document.currentScript.parentNode.insertBefore(tempDiv.firstChild, document.currentScript);\n";
+                result.js += "    }\n";
+                result.js += "  }\n";
+                result.js += "})();\n";
+                
+                // 恢复原始 HTML
+                result.html = tempHtml;
             }
-            // 可以添加更多条件处理
-        }
-        
-        // 处理非样式子节点
-        for (const auto& child : element->getChildren()) {
-            if (child->getType() != NodeType::STYLE) {
-                visit(child);
+            
+            // 处理脚本内容
+            if (hasScriptContent && !jsCondition.empty()) {
+                result.js += "if (" + jsCondition + ") {\n";
+                for (const auto& child : element->getChildren()) {
+                    if (child->getType() == NodeType::SCRIPT) {
+                        visit(child);
+                    }
+                }
+                result.js += "}\n";
             }
+            
+            return; // 不继续处理子元素，已经在上面处理过了
         }
         
         return;

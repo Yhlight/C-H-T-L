@@ -1,0 +1,119 @@
+# 约束功能测试
+
+## 1. 设备约束
+except mobile {
+    div.desktop-only {
+        style {
+            display: flex;
+            padding: 20px;
+        }
+    }
+}
+
+except desktop {
+    div.mobile-menu {
+        style {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    }
+}
+
+## 2. 特性约束
+except touch {
+    button.hover-effect {
+        style {
+            transition: all 0.3s;
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+except no-webgl {
+    canvas#3d-viewer {
+        width: 800;
+        height: 600;
+        
+        script {
+            // 初始化 WebGL 上下文
+            const gl = canvas.getContext('webgl');
+            // ... 3D 渲染代码
+        }
+    }
+}
+
+## 3. 浏览器约束
+except browser:chrome {
+    div.firefox-notice {
+        style {
+            background: #ff9500;
+            padding: 10px;
+        }
+        "此功能在 Firefox 中可能表现不同"
+    }
+}
+
+## 4. 复合约束
+except mobile, touch {
+    div.desktop-interactive {
+        style {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        script {
+            element.addEventListener('mouseenter', () => {
+                element.classList.add('hovered');
+            });
+        }
+    }
+}
+
+## 5. 打印约束
+except print {
+    nav.main-navigation {
+        style {
+            background: #333;
+            color: white;
+        }
+    }
+    
+    aside.sidebar {
+        style {
+            border-left: 1px solid #ddd;
+        }
+    }
+}
+
+except not print {
+    div.print-only {
+        style {
+            display: none;
+        }
+    }
+}
+
+## 6. 嵌套约束
+div.responsive-container {
+    except mobile {
+        style {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+    
+    except desktop {
+        style {
+            display: block;
+        }
+    }
+    
+    div.item {
+        style {
+            padding: 10px;
+        }
+    }
+}

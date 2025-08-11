@@ -747,16 +747,18 @@ ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::strin
         // 收集所有子模块
         result.wildcardResults.clear();
         try {
-            // 递归搜索所有 .cjmod.json 文件
+            // 递归搜索所有子模块的 .chtl 文件
             std::function<void(const fs::path&)> searchSubmodules = 
                 [&](const fs::path& dir) {
                     for (const auto& entry : fs::directory_iterator(dir)) {
-                        if (entry.is_regular_file()) {
-                            std::string filename = entry.path().filename().string();
-                            if (filename.ends_with(".cjmod.json")) {
-                                result.wildcardResults.push_back(entry.path().string());
+                        if (entry.is_directory()) {
+                            // 检查目录中是否有同名的 .chtl 文件
+                            std::string dirName = entry.path().filename().string();
+                            fs::path chtlFile = entry.path() / (dirName + ".chtl");
+                            if (fs::exists(chtlFile) && fs::is_regular_file(chtlFile)) {
+                                result.wildcardResults.push_back(chtlFile.string());
                             }
-                        } else if (entry.is_directory()) {
+                            // 继续递归搜索子目录
                             searchSubmodules(entry.path());
                         }
                     }
@@ -780,11 +782,11 @@ ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::strin
         // 在子模块目录中查找
         fs::path submoduleFile = moduleDir / submodulePath;
         
-        // 尝试不同的文件名格式
-        std::vector<std::string> possibleFiles = {
-            submoduleFile.string() + ".cjmod.json",
-            submoduleFile.string() + ".cjmod",
-            (submoduleFile / submoduleFile.filename()).string() + ".cjmod.json"
+        // 尝试不同的文件位置
+        std::vector<fs::path> possibleFiles = {
+            submoduleFile / (submoduleFile.filename().string() + ".chtl"),  // 子模块目录/子模块名.chtl
+            submoduleFile.parent_path() / (submoduleFile.filename().string() + ".chtl"),  // 同级目录
+            submoduleFile  // 如果路径已经包含 .chtl
         };
         
         for (const auto& testPath : possibleFiles) {

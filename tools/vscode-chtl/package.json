@@ -73,6 +73,16 @@
             {
                 "command": "chtl.importCJmod",
                 "title": "CHTL: Import CJmod Module"
+            },
+            {
+                "command": "chtl.exportBuiltinModules",
+                "title": "CHTL: Export Built-in Modules",
+                "category": "CHTL"
+            },
+            {
+                "command": "chtl.showModuleInfo",
+                "title": "CHTL: Show Module Information",
+                "category": "CHTL"
             }
         ],
         "configuration": {

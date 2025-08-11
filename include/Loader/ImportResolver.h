@@ -58,10 +58,12 @@ private:
     
     ImportResolveResult resolveChtlImport(const std::string& path,
                                         Import::ImportType type,
-                                        const std::filesystem::path& currentDir);
+                                        const std::filesystem::path& currentDir,
+                                        bool officialOnly = false);
     
     ImportResolveResult resolveCJmodImport(const std::string& path,
-                                         const std::filesystem::path& currentDir);
+                                         const std::filesystem::path& currentDir,
+                                         bool officialOnly = false);
     
     ImportResolveResult resolveCJmodWildcardImport(const std::string& pattern,
                                                  const std::filesystem::path& currentDir);
@@ -73,12 +75,14 @@ private:
     ImportResolveResult resolveModuleName(const std::string& name,
                                         Import::ImportType type,
                                         const std::filesystem::path& currentDir,
-                                        bool includeChtl);
+                                        bool includeChtl,
+                                        bool officialOnly = false);
     
     ImportResolveResult resolveModuleNameWithExt(const std::string& name,
                                                Import::ImportType type,
                                                const std::filesystem::path& currentDir,
-                                               bool includeChtl);
+                                               bool includeChtl,
+                                               bool officialOnly = false);
     
     // 判断路径类型
     PathType getPathType(const std::string& path) const;

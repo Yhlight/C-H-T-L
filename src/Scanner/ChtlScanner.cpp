@@ -1,4 +1,5 @@
 #include "Scanner/ChtlScanner.h"
+#include <iostream>
 #include <algorithm>
 #include <cctype>
 

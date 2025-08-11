@@ -210,150 +210,6 @@ pack_all_cmods/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pack_all_cmods.dir/build.make CMakeFiles/pack_all_cmods.dir/build
 .PHONY : pack_all_cmods/fast
 
-src/CJmod/CHTLJSProcessor.o: src/CJmod/CHTLJSProcessor.cpp.o
-.PHONY : src/CJmod/CHTLJSProcessor.o
-
-# target to build an object file
-src/CJmod/CHTLJSProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.o
-.PHONY : src/CJmod/CHTLJSProcessor.cpp.o
-
-src/CJmod/CHTLJSProcessor.i: src/CJmod/CHTLJSProcessor.cpp.i
-.PHONY : src/CJmod/CHTLJSProcessor.i
-
-# target to preprocess a source file
-src/CJmod/CHTLJSProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.i
-.PHONY : src/CJmod/CHTLJSProcessor.cpp.i
-
-src/CJmod/CHTLJSProcessor.s: src/CJmod/CHTLJSProcessor.cpp.s
-.PHONY : src/CJmod/CHTLJSProcessor.s
-
-# target to generate assembly for a file
-src/CJmod/CHTLJSProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.s
-.PHONY : src/CJmod/CHTLJSProcessor.cpp.s
-
-src/CJmod/CJmodLoader.o: src/CJmod/CJmodLoader.cpp.o
-.PHONY : src/CJmod/CJmodLoader.o
-
-# target to build an object file
-src/CJmod/CJmodLoader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.o
-.PHONY : src/CJmod/CJmodLoader.cpp.o
-
-src/CJmod/CJmodLoader.i: src/CJmod/CJmodLoader.cpp.i
-.PHONY : src/CJmod/CJmodLoader.i
-
-# target to preprocess a source file
-src/CJmod/CJmodLoader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.i
-.PHONY : src/CJmod/CJmodLoader.cpp.i
-
-src/CJmod/CJmodLoader.s: src/CJmod/CJmodLoader.cpp.s
-.PHONY : src/CJmod/CJmodLoader.s
-
-# target to generate assembly for a file
-src/CJmod/CJmodLoader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.s
-.PHONY : src/CJmod/CJmodLoader.cpp.s
-
-src/CJmod/CJmodProcessor.o: src/CJmod/CJmodProcessor.cpp.o
-.PHONY : src/CJmod/CJmodProcessor.o
-
-# target to build an object file
-src/CJmod/CJmodProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o
-.PHONY : src/CJmod/CJmodProcessor.cpp.o
-
-src/CJmod/CJmodProcessor.i: src/CJmod/CJmodProcessor.cpp.i
-.PHONY : src/CJmod/CJmodProcessor.i
-
-# target to preprocess a source file
-src/CJmod/CJmodProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.i
-.PHONY : src/CJmod/CJmodProcessor.cpp.i
-
-src/CJmod/CJmodProcessor.s: src/CJmod/CJmodProcessor.cpp.s
-.PHONY : src/CJmod/CJmodProcessor.s
-
-# target to generate assembly for a file
-src/CJmod/CJmodProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.s
-.PHONY : src/CJmod/CJmodProcessor.cpp.s
-
-src/CJmod/CJmodRegistry.o: src/CJmod/CJmodRegistry.cpp.o
-.PHONY : src/CJmod/CJmodRegistry.o
-
-# target to build an object file
-src/CJmod/CJmodRegistry.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o
-.PHONY : src/CJmod/CJmodRegistry.cpp.o
-
-src/CJmod/CJmodRegistry.i: src/CJmod/CJmodRegistry.cpp.i
-.PHONY : src/CJmod/CJmodRegistry.i
-
-# target to preprocess a source file
-src/CJmod/CJmodRegistry.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.i
-.PHONY : src/CJmod/CJmodRegistry.cpp.i
-
-src/CJmod/CJmodRegistry.s: src/CJmod/CJmodRegistry.cpp.s
-.PHONY : src/CJmod/CJmodRegistry.s
-
-# target to generate assembly for a file
-src/CJmod/CJmodRegistry.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.s
-.PHONY : src/CJmod/CJmodRegistry.cpp.s
-
-src/CJmod/SinglePassProcessor.o: src/CJmod/SinglePassProcessor.cpp.o
-.PHONY : src/CJmod/SinglePassProcessor.o
-
-# target to build an object file
-src/CJmod/SinglePassProcessor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o
-.PHONY : src/CJmod/SinglePassProcessor.cpp.o
-
-src/CJmod/SinglePassProcessor.i: src/CJmod/SinglePassProcessor.cpp.i
-.PHONY : src/CJmod/SinglePassProcessor.i
-
-# target to preprocess a source file
-src/CJmod/SinglePassProcessor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.i
-.PHONY : src/CJmod/SinglePassProcessor.cpp.i
-
-src/CJmod/SinglePassProcessor.s: src/CJmod/SinglePassProcessor.cpp.s
-.PHONY : src/CJmod/SinglePassProcessor.s
-
-# target to generate assembly for a file
-src/CJmod/SinglePassProcessor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.s
-.PHONY : src/CJmod/SinglePassProcessor.cpp.s
-
-src/CJmod/modules/ReactiveModule.o: src/CJmod/modules/ReactiveModule.cpp.o
-.PHONY : src/CJmod/modules/ReactiveModule.o
-
-# target to build an object file
-src/CJmod/modules/ReactiveModule.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o
-.PHONY : src/CJmod/modules/ReactiveModule.cpp.o
-
-src/CJmod/modules/ReactiveModule.i: src/CJmod/modules/ReactiveModule.cpp.i
-.PHONY : src/CJmod/modules/ReactiveModule.i
-
-# target to preprocess a source file
-src/CJmod/modules/ReactiveModule.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.i
-.PHONY : src/CJmod/modules/ReactiveModule.cpp.i
-
-src/CJmod/modules/ReactiveModule.s: src/CJmod/modules/ReactiveModule.cpp.s
-.PHONY : src/CJmod/modules/ReactiveModule.s
-
-# target to generate assembly for a file
-src/CJmod/modules/ReactiveModule.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.s
-.PHONY : src/CJmod/modules/ReactiveModule.cpp.s
-
 src/ChtlJs/ChtlJsContext.o: src/ChtlJs/ChtlJsContext.cpp.o
 .PHONY : src/ChtlJs/ChtlJsContext.o
 
@@ -1914,6 +1770,30 @@ src/Scanner/BridgeScanner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.s
 .PHONY : src/Scanner/BridgeScanner.cpp.s
 
+src/Scanner/ChtlScanner.o: src/Scanner/ChtlScanner.cpp.o
+.PHONY : src/Scanner/ChtlScanner.o
+
+# target to build an object file
+src/Scanner/ChtlScanner.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o
+.PHONY : src/Scanner/ChtlScanner.cpp.o
+
+src/Scanner/ChtlScanner.i: src/Scanner/ChtlScanner.cpp.i
+.PHONY : src/Scanner/ChtlScanner.i
+
+# target to preprocess a source file
+src/Scanner/ChtlScanner.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.i
+.PHONY : src/Scanner/ChtlScanner.cpp.i
+
+src/Scanner/ChtlScanner.s: src/Scanner/ChtlScanner.cpp.s
+.PHONY : src/Scanner/ChtlScanner.s
+
+# target to generate assembly for a file
+src/Scanner/ChtlScanner.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.s
+.PHONY : src/Scanner/ChtlScanner.cpp.s
+
 src/Scanner/Segment.o: src/Scanner/Segment.cpp.o
 .PHONY : src/Scanner/Segment.o
 
@@ -2058,6 +1938,30 @@ src/State/JsState.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/State/JsState.cpp.s
 .PHONY : src/State/JsState.cpp.s
 
+src/State/LocalStyleValidator.o: src/State/LocalStyleValidator.cpp.o
+.PHONY : src/State/LocalStyleValidator.o
+
+# target to build an object file
+src/State/LocalStyleValidator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.o
+.PHONY : src/State/LocalStyleValidator.cpp.o
+
+src/State/LocalStyleValidator.i: src/State/LocalStyleValidator.cpp.i
+.PHONY : src/State/LocalStyleValidator.i
+
+# target to preprocess a source file
+src/State/LocalStyleValidator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.i
+.PHONY : src/State/LocalStyleValidator.cpp.i
+
+src/State/LocalStyleValidator.s: src/State/LocalStyleValidator.cpp.s
+.PHONY : src/State/LocalStyleValidator.s
+
+# target to generate assembly for a file
+src/State/LocalStyleValidator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.s
+.PHONY : src/State/LocalStyleValidator.cpp.s
+
 src/State/StandardState.o: src/State/StandardState.cpp.o
 .PHONY : src/State/StandardState.o
 
@@ -2170,24 +2074,6 @@ help:
 	@echo "... pack_Chtholly_cmod"
 	@echo "... pack_all_cmods"
 	@echo "... chtl"
-	@echo "... src/CJmod/CHTLJSProcessor.o"
-	@echo "... src/CJmod/CHTLJSProcessor.i"
-	@echo "... src/CJmod/CHTLJSProcessor.s"
-	@echo "... src/CJmod/CJmodLoader.o"
-	@echo "... src/CJmod/CJmodLoader.i"
-	@echo "... src/CJmod/CJmodLoader.s"
-	@echo "... src/CJmod/CJmodProcessor.o"
-	@echo "... src/CJmod/CJmodProcessor.i"
-	@echo "... src/CJmod/CJmodProcessor.s"
-	@echo "... src/CJmod/CJmodRegistry.o"
-	@echo "... src/CJmod/CJmodRegistry.i"
-	@echo "... src/CJmod/CJmodRegistry.s"
-	@echo "... src/CJmod/SinglePassProcessor.o"
-	@echo "... src/CJmod/SinglePassProcessor.i"
-	@echo "... src/CJmod/SinglePassProcessor.s"
-	@echo "... src/CJmod/modules/ReactiveModule.o"
-	@echo "... src/CJmod/modules/ReactiveModule.i"
-	@echo "... src/CJmod/modules/ReactiveModule.s"
 	@echo "... src/ChtlJs/ChtlJsContext.o"
 	@echo "... src/ChtlJs/ChtlJsContext.i"
 	@echo "... src/ChtlJs/ChtlJsContext.s"
@@ -2383,6 +2269,9 @@ help:
 	@echo "... src/Scanner/BridgeScanner.o"
 	@echo "... src/Scanner/BridgeScanner.i"
 	@echo "... src/Scanner/BridgeScanner.s"
+	@echo "... src/Scanner/ChtlScanner.o"
+	@echo "... src/Scanner/ChtlScanner.i"
+	@echo "... src/Scanner/ChtlScanner.s"
 	@echo "... src/Scanner/Segment.o"
 	@echo "... src/Scanner/Segment.i"
 	@echo "... src/Scanner/Segment.s"
@@ -2401,6 +2290,9 @@ help:
 	@echo "... src/State/JsState.o"
 	@echo "... src/State/JsState.i"
 	@echo "... src/State/JsState.s"
+	@echo "... src/State/LocalStyleValidator.o"
+	@echo "... src/State/LocalStyleValidator.i"
+	@echo "... src/State/LocalStyleValidator.s"
 	@echo "... src/State/StandardState.o"
 	@echo "... src/State/StandardState.i"
 	@echo "... src/State/StandardState.s"

@@ -1005,14 +1005,15 @@ void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
         std::string modulePath = import->getFilePath();
         
         // 加载 CJmod 模块
-        auto& loader = cjmod::CJmodLoader::getInstance();
-        auto module = loader.loadModule(modulePath);
-        
-        if (!module) {
-            result_.errors.push_back("Failed to load CJmod: " + modulePath);
-        } else if (configManager_->isDebugMode()) {
-            result_.warnings.push_back("Loaded CJmod: " + module->getName() + " v" + module->getVersion());
-        }
+        // TODO: CJmod 系统需要重新实现
+        // auto& loader = cjmod::CJmodLoader::getInstance();
+        // auto module = loader.loadModule(modulePath);
+        // 
+        // if (!module) {
+        //     result_.errors.push_back("Failed to load CJmod: " + modulePath);
+        // } else if (configManager_->isDebugMode()) {
+        //     result_.warnings.push_back("Loaded CJmod: " + module->getName() + " v" + module->getVersion());
+        // }
         
         // 模块已经在 CJmodLoader 中注册到处理器
         return;
@@ -1419,8 +1420,10 @@ std::string WebGenerator::processJavaScriptWithCJmod(const std::string& jsCode) 
     std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
     
     // 使用 CJmod 处理器处理 JavaScript 代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    return processor.processJavaScript(jsCode, moduleVector);
+    // TODO: CJmod 系统需要重新实现
+    // auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    // return processor.processJavaScript(jsCode, moduleVector);
+    return jsCode; // 暂时返回原始代码
 }
 
 void WebGenerator::injectCJmodRuntime() {
@@ -1433,8 +1436,10 @@ void WebGenerator::injectCJmodRuntime() {
     std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
     
     // 生成 CJmod 运行时代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    std::string runtime = processor.getCombinedRuntime(moduleVector);
+    // TODO: CJmod 系统需要重新实现
+    // auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    // std::string runtime = processor.getCombinedRuntime(moduleVector);
+    std::string runtime = ""; // 暂时使用空运行时
     
     if (!runtime.empty()) {
         // 在用户代码之前注入 CJmod 运行时

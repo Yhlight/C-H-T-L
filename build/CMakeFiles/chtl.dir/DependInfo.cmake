@@ -8,12 +8,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/workspace/src/CJmod/CHTLJSProcessor.cpp" "CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.o.d"
-  "/workspace/src/CJmod/CJmodLoader.cpp" "CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.o.d"
-  "/workspace/src/CJmod/CJmodProcessor.cpp" "CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o.d"
-  "/workspace/src/CJmod/CJmodRegistry.cpp" "CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o.d"
-  "/workspace/src/CJmod/SinglePassProcessor.cpp" "CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o.d"
-  "/workspace/src/CJmod/modules/ReactiveModule.cpp" "CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o.d"
   "/workspace/src/ChtlJs/ChtlJsContext.cpp" "CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o.d"
   "/workspace/src/Cmod/CmodPacker.cpp" "CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o.d"
   "/workspace/src/CmodSystem/CmodExtractor.cpp" "CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o.d"
@@ -79,12 +73,14 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/src/Predefine/Registry.cpp" "CMakeFiles/chtl.dir/src/Predefine/Registry.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Predefine/Registry.cpp.o.d"
   "/workspace/src/Runtime/ChtlJsRuntime.cpp" "CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o.d"
   "/workspace/src/Scanner/BridgeScanner.cpp" "CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o.d"
+  "/workspace/src/Scanner/ChtlScanner.cpp" "CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o.d"
   "/workspace/src/Scanner/Segment.cpp" "CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o.d"
   "/workspace/src/Script/ScriptManager.cpp" "CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o.d"
   "/workspace/src/State/ChtlJsState.cpp" "CMakeFiles/chtl.dir/src/State/ChtlJsState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/ChtlJsState.cpp.o.d"
   "/workspace/src/State/ChtlState.cpp" "CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o.d"
   "/workspace/src/State/CssState.cpp" "CMakeFiles/chtl.dir/src/State/CssState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/CssState.cpp.o.d"
   "/workspace/src/State/JsState.cpp" "CMakeFiles/chtl.dir/src/State/JsState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/JsState.cpp.o.d"
+  "/workspace/src/State/LocalStyleValidator.cpp" "CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.o.d"
   "/workspace/src/State/StandardState.cpp" "CMakeFiles/chtl.dir/src/State/StandardState.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/StandardState.cpp.o.d"
   "/workspace/src/State/StateFactory.cpp" "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o.d"
   "/workspace/src/Utils/ConstraintValidator.cpp" "CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o" "gcc" "CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o.d"

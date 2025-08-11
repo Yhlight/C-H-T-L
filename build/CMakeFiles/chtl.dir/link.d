@@ -2,12 +2,6 @@ chtl: \
   /lib/x86_64-linux-gnu/Scrt1.o \
   /lib/x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
-  CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.o \
-  CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.o \
-  CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o \
-  CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o \
-  CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o \
-  CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o \
   CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o \
   CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o \
   CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o \
@@ -73,12 +67,14 @@ chtl: \
   CMakeFiles/chtl.dir/src/Predefine/Registry.cpp.o \
   CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o \
   CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o \
+  CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o \
   CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o \
   CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o \
   CMakeFiles/chtl.dir/src/State/ChtlJsState.cpp.o \
   CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o \
   CMakeFiles/chtl.dir/src/State/CssState.cpp.o \
   CMakeFiles/chtl.dir/src/State/JsState.cpp.o \
+  CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.o \
   CMakeFiles/chtl.dir/src/State/StandardState.cpp.o \
   CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o \
   CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o \
@@ -116,18 +112,6 @@ chtl: \
 /lib/x86_64-linux-gnu/crti.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o:
-
-CMakeFiles/chtl.dir/src/CJmod/CHTLJSProcessor.cpp.o:
-
-CMakeFiles/chtl.dir/src/CJmod/CJmodLoader.cpp.o:
-
-CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o:
-
-CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o:
-
-CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o:
-
-CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o:
 
 CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o:
 
@@ -259,6 +243,8 @@ CMakeFiles/chtl.dir/src/Runtime/ChtlJsRuntime.cpp.o:
 
 CMakeFiles/chtl.dir/src/Scanner/BridgeScanner.cpp.o:
 
+CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o:
+
 CMakeFiles/chtl.dir/src/Scanner/Segment.cpp.o:
 
 CMakeFiles/chtl.dir/src/Script/ScriptManager.cpp.o:
@@ -270,6 +256,8 @@ CMakeFiles/chtl.dir/src/State/ChtlState.cpp.o:
 CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
 
 CMakeFiles/chtl.dir/src/State/JsState.cpp.o:
+
+CMakeFiles/chtl.dir/src/State/LocalStyleValidator.cpp.o:
 
 CMakeFiles/chtl.dir/src/State/StandardState.cpp.o:
 

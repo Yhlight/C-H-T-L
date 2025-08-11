@@ -31,8 +31,8 @@ void printUsage(const std::string& programName) {
 
 int main(int argc, char* argv[]) {
     // 初始化内置 CJmod 模块
-    auto& cjmodLoader = chtl::cjmod::CJmodLoader::getInstance();
-    cjmodLoader.initializeBuiltins();
+    // auto& cjmodLoader = chtl::cjmod::CJmodLoader::getInstance();
+    // cjmodLoader.initializeBuiltins();
     if (argc < 2) {
         printUsage(argv[0]);
         return 1;
@@ -136,10 +136,8 @@ int main(int argc, char* argv[]) {
     std::string input = buffer.str();
     file.close();
     
-    // 创建增强上下文（带错误处理）
-    auto context = chtl::createEnhancedContext();
-    context->setSourceFile(inputFile);
-    context->setSourceCode(input);
+             // 创建增强上下文（带错误处理）
+   auto context = std::make_shared<chtl::EnhancedContext>();
     
     // 词法分析
     std::cout << "Lexing...\n";
@@ -169,9 +167,8 @@ int main(int argc, char* argv[]) {
     
     auto ast = parser.parse();
     
-    if (!ast || context->hasErrors()) {
-        std::cerr << "\n" << context->formatErrors() << "\n";
-        std::cerr << context->formatSummary() << "\n";
+    if (!ast) {
+        std::cerr << "Failed to parse input file\n";
         return 1;
     }
     

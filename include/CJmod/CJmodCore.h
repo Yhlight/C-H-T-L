@@ -7,6 +7,7 @@
 #include <functional>
 #include <unordered_map>
 #include <any>
+#include <set>
 
 namespace chtl {
 namespace cjmod {
@@ -171,7 +172,7 @@ public:
     
     // 简单替换
     SyntaxBuilder& replace(const std::string& replacement) {
-        generateFunc_ = [replacement](const ScanResult& result, GenerateContext* ctx) {
+        generateFunc_ = [replacement](const ScanResult& result, GenerateContext* /*ctx*/) {
             std::string output = replacement;
             // 替换捕获组 $1, $2, etc.
             for (const auto& [name, value] : result.captures) {

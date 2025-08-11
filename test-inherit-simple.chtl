@@ -1,0 +1,15 @@
+// 测试继承
+
+[Template] @Style BaseStyle {
+    color: red;
+    font-size: 16px;
+}
+
+[Custom] @Style ExtendedStyle {
+    inherit @Style BaseStyle;
+    background: yellow;
+}
+
+body {
+    div { text { "Test without style" } }
+}

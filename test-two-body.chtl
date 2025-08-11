@@ -1,0 +1,17 @@
+// 第一个 body
+body {
+    p { text { "Body 1" } }
+}
+
+// 第二个 body
+body {
+    div {
+        style { }
+        text { "Body 2" }
+    }
+}
+
+// 第三个 body
+body {
+    p { text { "Body 3" } }
+}

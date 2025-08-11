@@ -1,0 +1,28 @@
+body {
+    h1 { text { "Style 测试" } }
+    
+    // 测试1：内联样式
+    div {
+        style { 
+            color: blue;
+            font-size: 20px;
+        }
+        text { "蓝色文本" }
+    }
+    
+    // 测试2：空样式
+    div {
+        style { }
+        text { "无样式文本" }
+    }
+    
+    // 测试3：复杂样式
+    div {
+        class: "box";
+        style {
+            background: yellow;
+            padding: 10px;
+        }
+        p { text { "黄色背景" } }
+    }
+}

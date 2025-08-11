@@ -1,0 +1,4 @@
+div {
+    style { color: red  // 缺少分号和右大括号
+    text { "Test" }
+}

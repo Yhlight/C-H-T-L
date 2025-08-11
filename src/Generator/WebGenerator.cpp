@@ -203,6 +203,9 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     const std::string& tag = element->getTagName();
     
+    // 调试输出
+    // std::cout << "visitElement: " << tag << std::endl;
+    
 
 
     // 特殊处理引用节点
@@ -226,6 +229,50 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         return;  // delete 节点不应该生成任何输出
     }
     
+    // 特殊处理 except 块
+    if (tag == "_except") {
+        auto attrs = element->getAttributes();
+        if (attrs.find("condition") != attrs.end()) {
+            std::string condition = std::get<std::string>(attrs.at("condition"));
+            
+            // 生成媒体查询或条件注释
+            if (condition == "mobile") {
+                cssCollector_.appendLine("@media (max-width: 768px) {");
+                
+                // 处理样式子节点
+                for (const auto& child : element->getChildren()) {
+                    if (child->getType() == NodeType::STYLE) {
+                        auto styleNode = std::static_pointer_cast<Style>(child);
+                        std::string css = styleNode->getCssContent();
+                        cssCollector_.appendLine(css);
+                    }
+                }
+                
+                cssCollector_.appendLine("}");
+            }
+            // 可以添加更多条件处理
+        }
+        
+        // 处理非样式子节点
+        for (const auto& child : element->getChildren()) {
+            if (child->getType() != NodeType::STYLE) {
+                visit(child);
+            }
+        }
+        
+        return;
+    }
+    
+    // 特殊处理 body 节点
+    if (tag == "body") {
+        // body 元素不生成标签，只处理其子节点
+        // 因为 HTML 文档模板已经包含了 body 标签
+        for (const auto& child : element->getChildren()) {
+            visit(child);
+        }
+        return;
+    }
+    
     // 生成开始标签
     htmlCollector_.append("<" + tag);
     
@@ -244,8 +291,36 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         }
     }
     
+    // 检查是否有style子节点
+    std::string inlineStyles;
+    for (const auto& child : element->getChildren()) {
+        if (child->getType() == NodeType::STYLE) {
+            auto styleNode = std::static_pointer_cast<Style>(child);
+            std::string css = styleNode->getCssContent();
+            if (!css.empty()) {
+                if (!inlineStyles.empty() && inlineStyles.back() != ';') {
+                    inlineStyles += "; ";
+                }
+                inlineStyles += css;
+            }
+        }
+    }
+    
     // 处理属性
     auto attributes = element->getAttributes();
+    
+    // 如果有内联样式，添加或合并到 style 属性
+    if (!inlineStyles.empty()) {
+        if (attributes.find("style") != attributes.end()) {
+            std::string existingStyle = std::get<std::string>(attributes.at("style"));
+            if (!existingStyle.empty() && existingStyle.back() != ';') {
+                existingStyle += "; ";
+            }
+            attributes["style"] = existingStyle + inlineStyles;
+        } else {
+            attributes["style"] = inlineStyles;
+        }
+    }
     
     if (hasLocalScript && attributes.find("id") == attributes.end()) {
         // 需要ID但没有，生成一个
@@ -616,39 +691,22 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
-    // 检查是否是局部样式
-    bool isScoped = false;
+    // 检查是否是局部样式（在元素内的样式）
     auto parent = style->getParent();
     if (parent && parent->getType() == NodeType::ELEMENT) {
-        isScoped = true;
-        
-        // 为父元素生成作用域类
-        if (currentScope_.empty()) {
-            currentScope_ = generateUniqueId("scope");
-        }
+        // 局部样式应该作为父元素的 style 属性，而不是全局 CSS
+        // 不需要处理，因为我们将在 visitElement 中处理
+        return;
     }
     
+
+    // 全局样式处理
     std::string css = style->getCssContent();
     
     // 处理变量组引用
     css = processVarReferences(css);
     
-    // 处理嵌套规则
-    if (css.find("&") != std::string::npos && isScoped) {
-        // 替换 & 为父选择器
-        std::string parentSelector = "." + currentScope_;
-        size_t pos = 0;
-        while ((pos = css.find("&", pos)) != std::string::npos) {
-            css.replace(pos, 1, parentSelector);
-            pos += parentSelector.length();
-        }
-    }
-    
-    // 添加作用域
-    if (options_.scopeStyles && isScoped) {
-        css = scopeSelector(css, currentScope_);
-    }
-    
+    // 全局样式不需要作用域处理
     cssCollector_.appendLine(css);
 }
 
@@ -774,6 +832,29 @@ std::string WebGenerator::expandVarGroup(const std::string& varGroupName) {
     
     result_.warnings.push_back("Variable group not found: " + varGroupName);
     return "/* @Var " + varGroupName + " not found */";
+}
+
+void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
+    // 根据上下文生成不同格式的注释
+    std::string content = comment->getContent();
+    
+    // 判断当前上下文
+    auto parent = comment->getParent();
+    if (parent) {
+        if (parent->getType() == NodeType::SCRIPT) {
+            // JavaScript 注释
+            jsCollector_.appendLine("// " + content);
+        } else if (parent->getType() == NodeType::STYLE) {
+            // CSS 注释
+            cssCollector_.appendLine("/* " + content + " */");
+        } else {
+            // HTML 注释
+            htmlCollector_.append("<!-- " + content + " -->");
+        }
+    } else {
+        // 默认为 HTML 注释
+        htmlCollector_.append("<!-- " + content + " -->");
+    }
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {

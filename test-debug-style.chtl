@@ -1,0 +1,10 @@
+body {
+    // 测试1：没有样式
+    p { text { "Test 1" } }
+    
+    // 测试2：有样式但为空
+    div {
+        style { }
+        text { "Test 2" }
+    }
+}

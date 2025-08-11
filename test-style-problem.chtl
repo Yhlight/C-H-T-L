@@ -1,0 +1,10 @@
+body {
+    p { text { "Before style" } }
+    
+    div {
+        style { color: red; }
+        text { "With style" }
+    }
+    
+    p { text { "After style" } }
+}

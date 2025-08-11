@@ -1,0 +1,8 @@
+// 测试1：没有 style
+div { text { "Test 1" } }
+
+// 测试2：有 style
+div {
+    style { }
+    text { "Test 2" }
+}

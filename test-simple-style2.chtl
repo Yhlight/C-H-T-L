@@ -1,0 +1,8 @@
+body {
+    p { text { "Text 1" } }
+    div {
+        style { }
+        text { "Text 2" }
+    }
+    p { text { "Text 3" } }
+}

@@ -1,0 +1,12 @@
+[Template] @Style Base {
+    color: red;
+}
+
+[Custom] @Style MyStyle {
+    inherit @Style Base;
+    font-size: 20px;
+}
+
+body {
+    div { text { "Test" } }
+}

@@ -1,0 +1,7 @@
+[Custom] @Element Box {
+    div { text { "Box" } }
+}
+
+body {
+    @Element Box;
+}

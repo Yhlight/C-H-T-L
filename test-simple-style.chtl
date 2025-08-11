@@ -1,0 +1,4 @@
+body {
+    p { text { "Text 1" } }
+    p { text { "Text 2" } }
+}

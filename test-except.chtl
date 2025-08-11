@@ -1,0 +1,23 @@
+body {
+    h1 { text { "Except 测试" } }
+    
+    div {
+        class: "responsive";
+        
+        // 默认样式
+        style {
+            font-size: 16px;
+            padding: 20px;
+        }
+        
+        // 移动端约束
+        except mobile {
+            style {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+        
+        text { "响应式内容" }
+    }
+}

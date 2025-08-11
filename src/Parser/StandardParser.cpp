@@ -321,6 +321,7 @@ std::shared_ptr<Node> StandardParser::parseNode() {
     
     // style块
     if (currentToken_.value == "style") {
+        advance();  // 消费 'style'
         return parseStyleBlock();
     }
     
@@ -428,7 +429,7 @@ void StandardParser::parseAttributes(std::shared_ptr<Node> element) {
 }
 
 std::shared_ptr<Node> StandardParser::parseStyleBlock() {
-    consume(TokenType::IDENTIFIER, "style");
+    // style 已经在 parseNode 中被消费
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     
     auto styleNode = std::make_shared<Style>();
@@ -598,19 +599,13 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
         }
     }
     
-    // 将收集的内联样式设置到父元素的style属性
-    if (!inlineStyles.empty() && styleNode->getParent()) {
-        auto parent = styleNode->getParent();
-        auto existingStyle = parent->getAttribute("style");
-        if (std::holds_alternative<std::string>(existingStyle)) {
-            std::string existing = std::get<std::string>(existingStyle);
-            if (!existing.empty() && existing.back() != ';') {
-                existing += "; ";
-            }
-            inlineStyles = existing + inlineStyles;
-        }
-        parent->setAttribute("style", inlineStyles);
+    // 将收集的内联样式设置到Style节点的CSS内容
+    if (!inlineStyles.empty()) {
+        styleNode->setCssContent(inlineStyles);
     }
+    
+    // 注意：即使没有内联样式，也要确保正常结束
+    // 这样避免后续处理出现问题
 }
 
 void StandardParser::parseSelectorBlock(std::shared_ptr<Style> styleNode) {
@@ -763,7 +758,19 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     // 收集属性值直到分号
     while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
         auto token = advance();
-        cssContent += token.value + " ";
+        // 对于数字后面的单位，不添加空格
+        if (token.type == TokenType::NUMBER && 
+            !isAtEnd() && 
+            peek().type == TokenType::IDENTIFIER &&
+            (peek().value == "px" || peek().value == "em" || 
+             peek().value == "rem" || peek().value == "%")) {
+            cssContent += token.value;
+        } else {
+            cssContent += token.value;
+            if (!check(TokenType::SEMICOLON) && !isAtEnd()) {
+                cssContent += " ";
+            }
+        }
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");
@@ -1793,45 +1800,42 @@ void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceN
 void StandardParser::parseExcept(std::shared_ptr<Node> parent) {
     consume(TokenType::EXCEPT, "except");
     
-    // 收集约束项
-    std::vector<std::string> exceptItems;
+    // 解析条件（如 mobile, desktop 等）
+    std::string condition;
+    if (check(TokenType::IDENTIFIER)) {
+        condition = advance().value;
+    } else {
+        addError("Expected condition after 'except'");
+        skipToNextStatement();
+        return;
+    }
     
-    do {
-        if (check(TokenType::AT_HTML)) {
-            advance();
-            exceptItems.push_back("@Html");
-        } else if (check(TokenType::CUSTOM)) {
-            advance();
+    // 检查是否是块形式的 except
+    if (match(TokenType::LEFT_BRACE)) {
+        // 创建一个特殊的容器节点来保存条件内容
+        auto exceptBlock = std::make_shared<Element>("_except");
+        exceptBlock->setAttribute("condition", condition);
+        
+        // 解析块内容
+        while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+            skipWhitespaceAndComments();
             
-            // 可能有具体类型
-            if (check(TokenType::AT_ELEMENT) || check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
-                auto type = advance();
-                auto name = consume(TokenType::IDENTIFIER, "Expected name").value;
-                exceptItems.push_back("[Custom] " + type.value + " " + name);
-            } else {
-                exceptItems.push_back("[Custom]");
-            }
-        } else if (check(TokenType::TEMPLATE)) {
-            advance();
+            if (check(TokenType::RIGHT_BRACE)) break;
             
-            // 可能有具体类型
-            if (check(TokenType::AT_ELEMENT) || check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
-                auto type = advance();
-                exceptItems.push_back("[Template] " + type.value);
-            } else {
-                exceptItems.push_back("[Template]");
+            auto child = parseNode();
+            if (child) {
+                exceptBlock->addChild(child);
             }
-        } else if (check(TokenType::IDENTIFIER)) {
-            // HTML元素
-            exceptItems.push_back(advance().value);
         }
-    } while (match(TokenType::COMMA));
-    
-    consume(TokenType::SEMICOLON, "Expected ';'");
-    
-    // 添加约束到父节点
-    for (const auto& item : exceptItems) {
-        parent->addConstraint(item);
+        
+        consume(TokenType::RIGHT_BRACE, "Expected '}'");
+        
+        // 将 except 块添加到父节点
+        parent->addChild(exceptBlock);
+    } else {
+        // 简单形式的 except（只是约束）
+        consume(TokenType::SEMICOLON, "Expected ';' or '{'");
+        parent->addConstraint(condition);
     }
 }
 

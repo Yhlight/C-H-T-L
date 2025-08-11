@@ -1,0 +1,23 @@
+body {
+    h1 { text { "生成器注释测试" } }
+    
+    -- 这个注释应该在 HTML 中显示为 <!-- -->
+    
+    div {
+        -- 这是一个 div 的注释
+        text { "内容" }
+    }
+    
+    style {
+        -- CSS 中的注释应该是 /* */
+        body {
+            -- 另一个 CSS 注释
+            margin: 0;
+        }
+    }
+    
+    script {
+        -- JavaScript 中的注释应该是 //
+        console.log("test");
+    }
+}

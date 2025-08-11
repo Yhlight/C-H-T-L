@@ -1,0 +1,4 @@
+div {
+    style { color: red; }
+    text { "Test Inline Style" }
+}

@@ -1,0 +1,6 @@
+p { text { "1" } }
+div {
+    style { }
+    text { "2" }
+}
+p { text { "3" } }

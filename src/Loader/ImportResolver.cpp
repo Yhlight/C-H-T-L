@@ -728,11 +728,13 @@ ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::strin
     fs::path mainModulePath(mainModuleResult.resolvedPath);
     fs::path moduleDir;
     
-    // 如果主模块是 .cjmod 文件，则子模块在同名目录中
+    // 如果主模块是 .cjmod 压缩包，解压后的目录结构
     if (mainModulePath.extension() == ".cjmod") {
+        // 压缩包解压后，子模块在主模块目录内
+        // 例如：ReactiveModule.cjmod 解压后为 ReactiveModule/
         moduleDir = mainModulePath.parent_path() / mainModulePath.stem();
     } else {
-        // 否则假设是目录形式
+        // 如果是开发目录，直接使用模块名目录
         moduleDir = mainModulePath.parent_path() / moduleName;
     }
     
@@ -747,23 +749,27 @@ ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::strin
         // 收集所有子模块
         result.wildcardResults.clear();
         try {
-            // 递归搜索所有子模块的 .chtl 文件
-            std::function<void(const fs::path&)> searchSubmodules = 
-                [&](const fs::path& dir) {
-                    for (const auto& entry : fs::directory_iterator(dir)) {
-                        if (entry.is_directory()) {
-                            // 检查目录中是否有同名的 .chtl 文件
-                            std::string dirName = entry.path().filename().string();
-                            fs::path chtlFile = entry.path() / (dirName + ".chtl");
-                            if (fs::exists(chtlFile) && fs::is_regular_file(chtlFile)) {
-                                result.wildcardResults.push_back(chtlFile.string());
-                            }
-                            // 继续递归搜索子目录
-                            searchSubmodules(entry.path());
-                        }
+            // 搜索符合 CJmod 结构的子模块
+            for (const auto& entry : fs::directory_iterator(moduleDir)) {
+                if (entry.is_directory()) {
+                    std::string dirName = entry.path().filename().string();
+                    
+                    // 排除特殊目录
+                    if (dirName == "src" || dirName == "info") {
+                        continue;
                     }
-                };
-            searchSubmodules(moduleDir);
+                    
+                    // 检查是否是有效的子模块目录
+                    fs::path infoDir = entry.path() / "info";
+                    fs::path srcDir = entry.path() / "src";
+                    fs::path chtlFile = infoDir / (dirName + ".chtl");
+                    
+                    // 子模块必须有 info/子模块名.chtl 文件
+                    if (fs::exists(chtlFile) && fs::is_regular_file(chtlFile)) {
+                        result.wildcardResults.push_back(chtlFile.string());
+                    }
+                }
+            }
         } catch (const fs::filesystem_error& e) {
             result.errorMessage = std::string("Error reading submodules: ") + e.what();
             return result;
@@ -782,11 +788,15 @@ ImportResolveResult ImportResolver::resolveCJmodSubmoduleImport(const std::strin
         // 在子模块目录中查找
         fs::path submoduleFile = moduleDir / submodulePath;
         
-        // 尝试不同的文件位置
+        // CJmod 子模块的标准路径：模块目录/子模块名/info/子模块名.chtl
+        fs::path submoduleDir = moduleDir / submodulePath;
+        fs::path submoduleInfoFile = submoduleDir / "info" / (submodulePath + ".chtl");
+        
+        // 也支持直接指定 .chtl 文件
         std::vector<fs::path> possibleFiles = {
-            submoduleFile / (submoduleFile.filename().string() + ".chtl"),  // 子模块目录/子模块名.chtl
-            submoduleFile.parent_path() / (submoduleFile.filename().string() + ".chtl"),  // 同级目录
-            submoduleFile  // 如果路径已经包含 .chtl
+            submoduleInfoFile,  // 标准路径
+            moduleDir / (submodulePath + ".chtl"),  // 直接在模块目录下
+            submoduleFile  // 如果路径已经包含完整路径
         };
         
         for (const auto& testPath : possibleFiles) {

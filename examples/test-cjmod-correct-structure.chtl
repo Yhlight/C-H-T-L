@@ -1,0 +1,72 @@
+// 测试 CJmod 正确的子模块结构
+
+// 导入主模块（不自动加载子模块）
+[Import] @CJmod from "ReactiveModule";
+
+// 导入特定子模块
+[Import] @CJmod from "ReactiveModule.State";
+[Import] @CJmod from "ReactiveModule/Computed";
+
+// 导入所有子模块
+[Import] @CJmod from "ReactiveModule.*";
+
+[Template] @Element ReactiveTest
+{
+    div {
+        h1 { "CJmod 子模块测试" }
+        
+        script {
+            // 使用主模块的语法
+            reactive data = {
+                count: 0,
+                message: "Hello"
+            };
+            
+            // 使用 State 子模块的语法
+            state count = 0;
+            state message = "Hello World";
+            
+            // 批量更新
+            batch {
+                update count(10);
+                update message("Updated!");
+            };
+            
+            // 如果导入了 Computed 子模块
+            // computed double => count * 2;
+            
+            // 如果导入了 Watch 子模块
+            // watch count => console.log("Count:", count);
+        }
+        
+        button onclick="update count(count.get() + 1)" {
+            "增加计数"
+        }
+        
+        p { "当前计数: {{count.get()}}" }
+        p { "消息: {{message.get()}}" }
+    }
+}
+
+// 演示子模块的层级结构
+[Info]
+{
+    structure: {
+        "ReactiveModule/": {
+            "src/": ["ReactiveModule.cpp", "ReactiveModule.h"],
+            "info/": ["ReactiveModule.chtl"],
+            "State/": {
+                "src/": ["State.cpp", "State.h"],
+                "info/": ["State.chtl"]
+            },
+            "Computed/": {
+                "src/": ["Computed.cpp", "Computed.h"],
+                "info/": ["Computed.chtl"]
+            },
+            "Watch/": {
+                "src/": ["Watch.cpp", "Watch.h"],
+                "info/": ["Watch.chtl"]
+            }
+        }
+    }
+}

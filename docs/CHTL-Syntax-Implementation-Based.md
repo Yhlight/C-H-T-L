@@ -134,13 +134,11 @@ div {
 
 # 全局脚本
 script {
-    # 支持 {{ }} 增强选择器
-    {{.box}}
-    {{#id}}
-    {{element}}
-    
-    # 支持 {{&}} 特殊模式
-    {{&}}
+    # 脚本内容原样保留，由 CHTL JS 处理
+    # CHTL JS 会处理以下增强语法：
+    # - {{}} 选择器
+    # - -> 操作符
+    # - listen/delegate/animate API
 }
 ```
 
@@ -393,15 +391,29 @@ body {
 
 ### 已实现但与文档不同：
 1. **文本必须使用text块** - 不支持`div { "文本" }`直接语法
-2. **CJmod导入** - `@CJmod`不是专门的Token类型（如AT_CJMOD），而是作为IDENTIFIER通过字符串检查`checkIdentifier("@CJmod")`来识别
-3. **脚本中的{{}}** - 已解析但具体处理在运行时
+2. **@CJmod已修正为正式Token** - 现在是 AT_CJMOD 类型
 
-### 文档中提到但未见实现：
-1. **变量组函数调用** - 如`ThemeColor(primary)`
-2. **->操作符** - JavaScript增强语法
-3. **listen/delegate/animate** - JavaScript API
-4. **槽位系统（slot）**
-5. **Custom关键字** - 使用自定义元素时
+### CHTL 与 CHTL JS 的职责划分：
+
+#### CHTL 编译器负责：
+- HTML/CSS/JS 的基本结构生成
+- 模板和自定义系统的解析和展开
+- 样式块的处理和CSS生成
+- 脚本块内容的原样保留（传递给CHTL JS）
+
+#### CHTL JS 编译器负责：
+- `{{}}` 选择器语法的解析和转换
+- `->` 操作符的处理
+- `listen`、`delegate`、`animate` 等增强API的实现
+- 所有JavaScript增强语法的处理
+
+### 文档中提到但属于CHTL JS范畴的功能：
+1. **{{}}选择器** - CHTL JS功能
+2. **->操作符** - CHTL JS功能
+3. **listen/delegate/animate** - CHTL JS API
+4. **变量组函数调用** - 如`ThemeColor(primary)` - 需要确认实现位置
+5. **槽位系统（slot）** - 未见实现
+6. **Custom关键字** - 使用自定义元素时的语法
 
 ### 建议确认的功能：
 1. 元素内直接字符串支持

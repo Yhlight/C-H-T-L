@@ -53,7 +53,10 @@ const std::unordered_map<std::string, TokenType> GlobalMap::AT_PREFIX_MAP = {
     {"@js", TokenType::AT_JAVASCRIPT},
     {"@Chtl", TokenType::AT_CHTL},
     {"@chtl", TokenType::AT_CHTL},
-    {"@CHTL", TokenType::AT_CHTL}
+    {"@CHTL", TokenType::AT_CHTL},
+    {"@CJmod", TokenType::AT_CJMOD},
+    {"@cjmod", TokenType::AT_CJMOD},
+    {"@CJMOD", TokenType::AT_CJMOD}
 };
 
 // HTML标签集合定义
@@ -182,6 +185,7 @@ const std::unordered_map<TokenType, std::string> GlobalMap::TOKEN_TYPE_STRINGS =
     {TokenType::AT_HTML, "@Html"},
     {TokenType::AT_JAVASCRIPT, "@JavaScript"},
     {TokenType::AT_CHTL, "@Chtl"},
+    {TokenType::AT_CJMOD, "@CJmod"},
     {TokenType::COLON, "COLON"},
     {TokenType::SEMICOLON, "SEMICOLON"},
     {TokenType::EQUALS, "EQUALS"},

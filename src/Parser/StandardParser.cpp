@@ -470,25 +470,9 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
         Token token = currentToken_;
         advance();
         
-        // 检查 {{ 开始
+        // 注意：{{}} 语法应该由 CHTL JS 处理，不在这里特殊处理
         if (token.type == TokenType::DOUBLE_LEFT_BRACE) {
-            // 检查是否是 {{&}} 模式
-            if (!isAtEnd() && currentToken_.type == TokenType::AMPERSAND) {
-                Token ampToken = currentToken_;
-                advance();
-                if (!isAtEnd() && currentToken_.type == TokenType::DOUBLE_RIGHT_BRACE) {
-                    advance(); // 消费 }}
-                    // 替换 {{&}} 为 {{&}}（保留原样，让运行时处理）
-                    scriptContent += "{{&}}";
-                    continue;
-                } else {
-                    // 不是 {{&}} 模式，恢复
-                    scriptContent += "{{" + ampToken.value;
-                }
-            } else {
-                // 可能是 {{selector}} 语法
-                scriptContent += "{{";
-            }
+            scriptContent += "{{";
         }
         // 处理大括号以正确计算深度
         else if (token.type == TokenType::LEFT_BRACE) {
@@ -1671,8 +1655,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         importType = Import::ImportType::JS;
     } else if (match(TokenType::AT_CHTL)) {
         importType = Import::ImportType::CHTL;
-    } else if (checkIdentifier("@CJmod")) {
-        advance(); // 消费 @CJmod
+    } else if (match(TokenType::AT_CJMOD)) {
         importType = Import::ImportType::CJMOD;
         // CJmod 不需要名称，直接从文件路径导入
     } else if (match(TokenType::CUSTOM)) {

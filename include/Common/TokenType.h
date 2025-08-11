@@ -48,6 +48,7 @@ enum class TokenType {
     AT_HTML,              // @Html
     AT_JAVASCRIPT,        // @JavaScript
     AT_CHTL,              // @Chtl
+    AT_CJMOD,             // @CJmod
     
     // 运算符和分隔符
     COLON,                // :

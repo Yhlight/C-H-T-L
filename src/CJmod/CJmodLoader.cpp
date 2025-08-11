@@ -220,6 +220,92 @@ Element.prototype.animate = function() {
     
     registerBuiltinModule("reactive", std::make_shared<ReactiveModule>());
     registerBuiltinModule("animation", std::make_shared<AnimationModule>());
+    
+    // 注册异步流控制模块
+    class AsyncFlowModule : public ICJmod {
+    public:
+        std::string getName() const override { return "async-flow"; }
+        std::string getVersion() const override { return "2.0.0"; }
+        
+        std::vector<ScanCutRule> getScanCutRules() const override {
+            return {
+                // stream 语法
+                {
+                    "async-stream",
+                    std::regex(R"(stream\s+(\w+)\s+from\s+(\w+)\s*\{)"),
+                    "async function* $1() { const _source = $2; try {",
+                    150
+                },
+                // concurrent 语法
+                {
+                    "concurrent-block",
+                    std::regex(R"(concurrent\s*\((\d+)\)\s*\{)"),
+                    "await concurrent($1, async () => {",
+                    130
+                },
+                // retry 语法
+                {
+                    "retry-block",
+                    std::regex(R"(retry\s*\((\d+),\s*(\d+)\)\s*\{)"),
+                    "await retry($1, $2, async () => {",
+                    120
+                },
+                // try* 语法
+                {
+                    "try-star",
+                    std::regex(R"(try\*\s*\{)"),
+                    "await tryAsync(async () => {",
+                    100
+                },
+                // 特殊块结束
+                {
+                    "special-block-end",
+                    std::regex(R"(\}\s*//\s*(stream|concurrent|retry|try\*)\s*end)"),
+                    "})",
+                    40
+                }
+            };
+        }
+        
+        std::vector<RuntimeInjection> getRuntimeInjections() const override {
+            return {
+                {
+                    R"(
+// Async Flow Runtime (Simplified)
+window.concurrent = async (limit, fn) => {
+    // 简化版并发控制
+    return fn();
+};
+
+window.retry = async (times, delay, fn) => {
+    let lastError;
+    for (let i = 0; i < times; i++) {
+        try {
+            return await fn();
+        } catch (e) {
+            lastError = e;
+            if (i < times - 1) await new Promise(r => setTimeout(r, delay));
+        }
+    }
+    throw lastError;
+};
+
+window.tryAsync = async (fn) => {
+    try {
+        return await fn();
+    } catch (e) {
+        console.error('[AsyncFlow]', e);
+        return { error: e };
+    }
+};
+)",
+                    "before"
+                }
+            };
+        }
+    };
+    
+    registerBuiltinModule("async-flow", std::make_shared<AsyncFlowModule>());
 }
 
 std::pair<std::string, std::string> CJmodLoader::parseModulePath(const std::string& path) {

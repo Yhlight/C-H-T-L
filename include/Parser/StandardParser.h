@@ -118,7 +118,7 @@ private:
     // 命名空间解析
     std::shared_ptr<Node> parseNamespace();
     void parseNamespaceContent(std::shared_ptr<Namespace> namespaceNode);
-    void parseExcept(std::shared_ptr<Node> parent);
+
     
     // 信息和导出
     std::shared_ptr<Node> parseInfo();

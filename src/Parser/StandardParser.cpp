@@ -287,10 +287,6 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         if (checkAttribute()) {
             parseAttributes(element);
         }
-        // 检查except约束
-        else if (check(TokenType::EXCEPT)) {
-            parseExcept(element);
-        }
         // 检查特殊操作（delete, insert）
         else if (check(TokenType::DELETE_KW) || check(TokenType::INSERT)) {
             auto op = parseOperation();
@@ -308,6 +304,18 @@ std::shared_ptr<Node> StandardParser::parseElement() {
     }
     
     consume(TokenType::RIGHT_BRACE, "Expected '}'");
+    
+    // 检查 except 约束（在元素结束后）
+    if (check(TokenType::EXCEPT)) {
+        advance(); // 消费 except
+        if (check(TokenType::IDENTIFIER)) {
+            std::string condition = advance().value;
+            element->addConstraint(condition);
+            consume(TokenType::SEMICOLON, "Expected ';' after except condition");
+        } else {
+            addError("Expected condition after 'except'");
+        }
+    }
     
     return element;
 }
@@ -1808,9 +1816,10 @@ void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceN
         
         if (check(TokenType::RIGHT_BRACE)) break;
         
-        // except约束
+        // except约束 - 暂不支持在命名空间内使用
         if (check(TokenType::EXCEPT)) {
-            parseExcept(namespaceNode);
+            addError("except is not supported inside namespace blocks");
+            skipToNextStatement();
             continue;
         }
         
@@ -1842,47 +1851,7 @@ void StandardParser::parseNamespaceContent(std::shared_ptr<Namespace> namespaceN
     }
 }
 
-void StandardParser::parseExcept(std::shared_ptr<Node> parent) {
-    consume(TokenType::EXCEPT, "except");
-    
-    // 解析条件（如 mobile, desktop 等）
-    std::string condition;
-    if (check(TokenType::IDENTIFIER)) {
-        condition = advance().value;
-    } else {
-        addError("Expected condition after 'except'");
-        skipToNextStatement();
-        return;
-    }
-    
-    // 检查是否是块形式的 except
-    if (match(TokenType::LEFT_BRACE)) {
-        // 创建一个特殊的容器节点来保存条件内容
-        auto exceptBlock = std::make_shared<Element>("_except");
-        exceptBlock->setAttribute("condition", condition);
-        
-        // 解析块内容
-        while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
-            skipWhitespaceAndComments();
-            
-            if (check(TokenType::RIGHT_BRACE)) break;
-            
-            auto child = parseNode();
-            if (child) {
-                exceptBlock->addChild(child);
-            }
-        }
-        
-        consume(TokenType::RIGHT_BRACE, "Expected '}'");
-        
-        // 将 except 块添加到父节点
-        parent->addChild(exceptBlock);
-    } else {
-        // 简单形式的 except（只是约束）
-        consume(TokenType::SEMICOLON, "Expected ';' or '{'");
-        parent->addConstraint(condition);
-    }
-}
+// parseExcept removed - except is now handled after element closing brace
 
 std::shared_ptr<Node> StandardParser::parseInfo() {
     // [Info]已经被消费

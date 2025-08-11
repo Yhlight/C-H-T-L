@@ -1,0 +1,53 @@
+# 严格的 CHTL 语法测试
+
+[Configuration] {
+    INDEX_INITIAL_COUNT = 0;
+    DEBUG_MODE = false;
+    
+    [Name] {
+        BTN = [@Element, @按钮];
+    }
+}
+
+[Template] @Element Button {
+    button {
+        class: "btn";
+        type: "button";
+    }
+}
+
+[Custom] @Style Theme {
+    color: #333;
+    font-size: 14px;
+}
+
+// 使用 except 语法
+div {
+    class: "desktop-only";
+    text { "Desktop content" }
+} except mobile;
+
+div {
+    class: "mobile-only";
+    text { "Mobile content" }
+} except desktop;
+
+// 删除和插入语法
+@Element Button {
+    delete type;
+    insert at bottom {
+        span { class: "icon"; }
+    }
+}
+
+// 样式块
+style {
+    .btn {
+        @Style Theme;
+        padding: 10px;
+        
+        &:hover {
+            background: #f0f0f0;
+        }
+    }
+}

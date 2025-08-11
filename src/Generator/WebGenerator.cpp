@@ -11,7 +11,7 @@
 #include "Runtime/ChtlJsRuntime.h"
 #include "CJmod/CJmodCorrect.h"
 #include "CJmod/CJmodLoader.h"
-#include "Utils/ConstraintEvaluator.h"
+
 #include <regex>
 #include <algorithm>
 #include <set>
@@ -214,7 +214,36 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     // 调试输出
     // std::cout << "visitElement: " << tag << std::endl;
     
-
+    // 检查 except 约束
+    const auto& constraints = element->getConstraints();
+    if (!constraints.empty()) {
+        // 如果有约束，生成条件性渲染
+        for (const auto& constraint : constraints) {
+            // except mobile 表示：在非移动端显示
+            if (constraint == "mobile") {
+                // 使用 CSS 媒体查询控制显示
+                std::string className = "chtl-except-mobile-" + std::to_string(elementCounter_++);
+                element->setAttribute("class", className);
+                
+                // 添加 CSS 规则
+                cssCollector_.appendLine("@media (max-width: 767px) {");
+                cssCollector_.appendLine("  ." + className + " { display: none !important; }");
+                cssCollector_.appendLine("}");
+            } 
+            else if (constraint == "desktop") {
+                // except desktop 表示：在非桌面端显示
+                std::string className = "chtl-except-desktop-" + std::to_string(elementCounter_++);
+                element->setAttribute("class", className);
+                
+                // 添加 CSS 规则
+                cssCollector_.appendLine("@media (min-width: 768px) {");
+                cssCollector_.appendLine("  ." + className + " { display: none !important; }");
+                cssCollector_.appendLine("}");
+            }
+            // 其他约束可以扩展，但严格按照 CHTL 语法
+        }
+    }
+    
 
     // 特殊处理引用节点
     if (tag == "reference") {
@@ -236,95 +265,7 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     if (tag == "delete") {
         return;  // delete 节点不应该生成任何输出
     }
-    
-    // 特殊处理 except 块
-    if (tag == "_except") {
-        auto attrs = element->getAttributes();
-        if (attrs.find("condition") != attrs.end()) {
-            std::string condition = std::get<std::string>(attrs.at("condition"));
-            
-            // 使用约束评估器生成条件代码
-            ConstraintEvaluator evaluator;
-            auto constraint = evaluator.parseConstraint(condition);
-            
-            // 生成媒体查询（用于 CSS）
-            std::string mediaQuery = evaluator.generateMediaQuery(constraint);
-            
-            // 生成 JavaScript 条件（用于动态内容）
-            std::string jsCondition = evaluator.generateJavaScriptCondition(constraint);
-            
-            // 根据内容类型决定如何处理
-            bool hasStyleContent = false;
-            bool hasScriptContent = false;
-            bool hasHtmlContent = false;
-            
-            for (const auto& child : element->getChildren()) {
-                if (child->getType() == NodeType::STYLE) {
-                    hasStyleContent = true;
-                } else if (child->getType() == NodeType::SCRIPT) {
-                    hasScriptContent = true;
-                } else {
-                    hasHtmlContent = true;
-                }
-            }
-            
-            // 处理样式内容
-            if (hasStyleContent && !mediaQuery.empty()) {
-                result.css += "@media " + mediaQuery + " {\n";
-                for (const auto& child : element->getChildren()) {
-                    if (child->getType() == NodeType::STYLE) {
-                        visit(child);
-                    }
-                }
-                result.css += "}\n";
-            }
-            
-            // 处理 HTML 内容
-            if (hasHtmlContent && !jsCondition.empty()) {
-                // 生成条件渲染的 JavaScript
-                result.js += "(function() {\n";
-                result.js += "  if (" + jsCondition + ") {\n";
-                result.js += "    var tempDiv = document.createElement('div');\n";
-                result.js += "    tempDiv.innerHTML = `";
-                
-                // 临时保存当前 HTML，生成子元素
-                std::string tempHtml = result.html;
-                result.html.clear();
-                
-                for (const auto& child : element->getChildren()) {
-                    if (child->getType() != NodeType::STYLE && child->getType() != NodeType::SCRIPT) {
-                        visit(child);
-                    }
-                }
-                
-                result.js += result.html;
-                result.js += "`;\n";
-                result.js += "    while (tempDiv.firstChild) {\n";
-                result.js += "      document.currentScript.parentNode.insertBefore(tempDiv.firstChild, document.currentScript);\n";
-                result.js += "    }\n";
-                result.js += "  }\n";
-                result.js += "})();\n";
-                
-                // 恢复原始 HTML
-                result.html = tempHtml;
-            }
-            
-            // 处理脚本内容
-            if (hasScriptContent && !jsCondition.empty()) {
-                result.js += "if (" + jsCondition + ") {\n";
-                for (const auto& child : element->getChildren()) {
-                    if (child->getType() == NodeType::SCRIPT) {
-                        visit(child);
-                    }
-                }
-                result.js += "}\n";
-            }
-            
-            return; // 不继续处理子元素，已经在上面处理过了
-        }
-        
-        return;
-    }
+
     
     // 特殊处理 body 节点
     if (tag == "body") {

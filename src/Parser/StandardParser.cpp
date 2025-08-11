@@ -1623,12 +1623,7 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     } else if (checkIdentifier("@CJmod")) {
         advance(); // 消费 @CJmod
         importType = Import::ImportType::CJMOD;
-        // CJmod 名称在 @CJmod 后面
-        if (check(TokenType::IDENTIFIER)) {
-            importName = advance().value;
-        } else {
-            addError("Expected CJmod module name after '@CJmod'");
-        }
+        // CJmod 不需要名称，直接从文件路径导入
     } else if (match(TokenType::CUSTOM)) {
         // [Custom] @Type Name
         if (match(TokenType::AT_ELEMENT)) {
@@ -1663,11 +1658,6 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     if (!importName.empty()) {
         importNode->setName(importName);
         importNode->addImportItem(importName);
-        
-        // 如果是 CJmod 导入，记录到 context
-        if (importType == Import::ImportType::CJMOD) {
-            currentContext_->addCJmodImport(importName);
-        }
     }
     
     // 期望 'from' 关键字
@@ -1692,6 +1682,42 @@ std::shared_ptr<Node> StandardParser::parseImport() {
         // 解析文件路径
         auto pathToken = consume(TokenType::STRING_LITERAL, "Expected file path");
         importNode->setFilePath(pathToken.value);
+        
+        // 如果是 CJmod 导入，从路径提取模块名并记录到 context
+        if (importType == Import::ImportType::CJMOD) {
+            std::string modulePath = pathToken.value;
+            std::string moduleName;
+            
+            // 从路径中提取模块名
+            // 例如: "builtin:reactive" -> "reactive"
+            // 例如: "./my-module.cjmod" -> "my-module"
+            // 例如: "cjmod:animation@1.0.0" -> "animation"
+            
+            size_t colonPos = modulePath.find(':');
+            if (colonPos != std::string::npos) {
+                // builtin:name 或 cjmod:name@version 格式
+                moduleName = modulePath.substr(colonPos + 1);
+                size_t atPos = moduleName.find('@');
+                if (atPos != std::string::npos) {
+                    moduleName = moduleName.substr(0, atPos);
+                }
+            } else {
+                // 文件路径格式
+                size_t lastSlash = modulePath.find_last_of("/\\");
+                size_t start = (lastSlash == std::string::npos) ? 0 : lastSlash + 1;
+                size_t dotPos = modulePath.find('.', start);
+                if (dotPos != std::string::npos) {
+                    moduleName = modulePath.substr(start, dotPos - start);
+                } else {
+                    moduleName = modulePath.substr(start);
+                }
+            }
+            
+            if (!moduleName.empty()) {
+                importNode->setName(moduleName);
+                currentContext_->addCJmodImport(moduleName);
+            }
+        }
     }
     
     // 检查 'as' 重命名

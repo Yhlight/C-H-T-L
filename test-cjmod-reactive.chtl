@@ -1,4 +1,4 @@
-[Import] @CJmod Reactive from "builtin:reactive";
+[Import] @CJmod from "builtin:reactive";
 
 div {
     h1 { "Reactive Counter Example" }

@@ -1,0 +1,22 @@
+[  1%] Building CXX object CMakeFiles/chtl.dir/src/main.cpp.o
+[  2%] Linking CXX executable chtl
+[ 98%] Built target chtl
+[100%] Packing CMOD module: Chtholly
+[CJmod] Registered builtin module: reactive
+[CJmod] Registered builtin module: animation
+[CJmod] Registered builtin module: async-flow
+Error: No input file specified
+Usage: /workspace/build/chtl [options] <input-file>
+Options:
+  -o, --output <dir>      Output directory (default: ./dist)
+  -p, --platform <name>   Target platform: web, react, vue (default: web)
+  --inline-styles         Inline CSS in HTML
+  --inline-scripts        Inline JS in HTML
+  --no-scope-styles       Disable CSS scoping
+  --minify                Minify output
+  --source-map            Generate source maps
+  --pack-cmod <dir>       Pack a directory as CMOD module
+  -h, --help              Show this help message
+make[2]: *** [CMakeFiles/pack_Chtholly_cmod.dir/build.make:73: module/Chtholly.cmod] Error 1
+make[1]: *** [CMakeFiles/Makefile2:123: CMakeFiles/pack_Chtholly_cmod.dir/all] Error 2
+make: *** [Makefile:146: all] Error 2

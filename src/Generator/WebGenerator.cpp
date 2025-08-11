@@ -689,8 +689,8 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
 std::string WebGenerator::processVarReferences(const std::string& css) {
     std::string result = css;
     
-    // 查找所有的变量组引用，格式如：VarName(propertyName)
-    std::regex varRegex(R"((\w+)\((\w+)(?:\s*=\s*([^)]+))?\))");
+    // 查找所有的变量组引用，格式如：VarName(propertyName) 或 VarName ( propertyName )
+    std::regex varRegex(R"((\w+)\s*\(\s*(\w+)(?:\s*=\s*([^)]+))?\s*\))");
     std::smatch match;
     std::string::const_iterator searchStart(css.cbegin());
     

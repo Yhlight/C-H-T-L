@@ -31,9 +31,9 @@ public:
     virtual ~JSASTTransformer() = default;
     
     // 访问者模式处理 JavaScript AST
-    virtual void visitIdentifier(const std::string& name) {}
-    virtual void visitBinaryOp(const std::string& op, ASTNode* left, ASTNode* right) {}
-    virtual void visitFunctionCall(const std::string& name, const std::vector<ASTNode*>& args) {}
+    virtual void visitIdentifier(const std::string& /* name */) {}
+    virtual void visitBinaryOp(const std::string& /* op */, ASTNode* /* left */, ASTNode* /* right */) {}
+    virtual void visitFunctionCall(const std::string& /* name */, const std::vector<ASTNode*>& /* args */) {}
 };
 
 // 3. 基于状态机的转换器

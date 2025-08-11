@@ -16,7 +16,8 @@ std::vector<ScanCutRule> getScanCutRules() const override {
             "reactive-declaration",
             std::regex(R"((\w+)\s*:=\s*([^;]+);)"),
             "let $1 = reactive($2);",
-            100
+            100,
+            nullptr
         },
         
         // doubled => count.value * 2  ->  let doubled = computed(() => count.value * 2)
@@ -24,7 +25,8 @@ std::vector<ScanCutRule> getScanCutRules() const override {
             "computed-property",
             std::regex(R"((\w+)\s*=>\s*([^;]+);)"),
             "let $1 = computed(() => $2);",
-            90
+            90,
+            nullptr
         },
         
         // watch count { ... }  ->  watch(count, () => { ... })
@@ -32,7 +34,8 @@ std::vector<ScanCutRule> getScanCutRules() const override {
             "watch-syntax",
             std::regex(R"(watch\s+(\w+)\s*\{)"),
             "watch($1, () => {",
-            80
+            80,
+            nullptr
         },
         
         // 响应式赋值: count = 5  ->  count.value = 5

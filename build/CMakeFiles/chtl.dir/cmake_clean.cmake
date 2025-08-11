@@ -160,8 +160,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o.d"
   "CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o"
   "CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.o.d"
-  "CMakeFiles/chtl.dir/src/main-simple.cpp.o"
-  "CMakeFiles/chtl.dir/src/main-simple.cpp.o.d"
   "CMakeFiles/chtl.dir/src/main.cpp.o"
   "CMakeFiles/chtl.dir/src/main.cpp.o.d"
   "chtl"

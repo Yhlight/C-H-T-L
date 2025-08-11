@@ -2130,30 +2130,6 @@ src/Utils/ConstraintValidator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/Utils/ConstraintValidator.cpp.s
 .PHONY : src/Utils/ConstraintValidator.cpp.s
 
-src/main-simple.o: src/main-simple.cpp.o
-.PHONY : src/main-simple.o
-
-# target to build an object file
-src/main-simple.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/main-simple.cpp.o
-.PHONY : src/main-simple.cpp.o
-
-src/main-simple.i: src/main-simple.cpp.i
-.PHONY : src/main-simple.i
-
-# target to preprocess a source file
-src/main-simple.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/main-simple.cpp.i
-.PHONY : src/main-simple.cpp.i
-
-src/main-simple.s: src/main-simple.cpp.s
-.PHONY : src/main-simple.s
-
-# target to generate assembly for a file
-src/main-simple.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/main-simple.cpp.s
-.PHONY : src/main-simple.cpp.s
-
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -2434,9 +2410,6 @@ help:
 	@echo "... src/Utils/ConstraintValidator.o"
 	@echo "... src/Utils/ConstraintValidator.i"
 	@echo "... src/Utils/ConstraintValidator.s"
-	@echo "... src/main-simple.o"
-	@echo "... src/main-simple.i"
-	@echo "... src/main-simple.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

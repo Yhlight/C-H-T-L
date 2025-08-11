@@ -8,6 +8,7 @@
 #include "Node/Template.h"
 #include "Node/Custom.h"
 #include "Node/Style.h"
+#include "Common/GlobalMap.h"
 
 #include "Node/Config.h"
 #include "Node/Import.h"

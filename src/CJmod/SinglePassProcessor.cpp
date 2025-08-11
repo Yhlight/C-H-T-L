@@ -13,10 +13,7 @@ SinglePassProcessor::collectAllMatches(const std::string& code,
     
     // 构建一个字符到规则的映射，加速查找
     std::unordered_map<char, std::vector<const EnhancedScanRule*>> firstCharMap;
-    for (const auto& rule : rules) {
-        // 这里简化处理，实际应该从正则或模式中提取首字符
-        // ...
-    }
+    // TODO: 实现规则到首字符的映射
     
     // 单次遍历代码
     for (size_t i = 0; i < code.length(); ++i) {
@@ -90,10 +87,8 @@ public:
         // ...
         
         // 添加模块规则
-        for (const auto& moduleName : activeModules) {
-            // 获取模块规则并添加
-            // ...
-        }
+        // TODO: 实现模块规则收集
+        (void)activeModules; // 暂时未使用
         
         // 单次扫描处理
         SinglePassProcessor processor;

@@ -1663,9 +1663,21 @@ std::shared_ptr<Node> StandardParser::parseImport() {
     if (!importName.empty()) {
         importNode->setName(importName);
         importNode->addImportItem(importName);
+        
+        // 如果是 CJmod 导入，记录到 context
+        if (importType == Import::ImportType::CJMOD) {
+            currentContext_->addCJmodImport(importName);
+        }
     }
     
-    // 期望 'from' 关键字
+    // CJmod 不需要 'from' 关键字
+    if (importType == Import::ImportType::CJMOD) {
+        // CJmod 直接结束，可选分号
+        match(TokenType::SEMICOLON);
+        return importNode;
+    }
+    
+    // 其他导入类型期望 'from' 关键字
     if (!matchIdentifier("from")) {
         addError("Expected 'from' in import statement");
         skipToNextStatement();

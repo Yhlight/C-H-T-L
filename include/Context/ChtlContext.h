@@ -73,6 +73,9 @@ private:
     // 导入的文件
     std::set<std::string> importedFiles_;
     
+    // CJmod 模块导入
+    std::set<std::string> cjmodImports_;
+    
     // 当前元素栈（用于跟踪嵌套）
     std::stack<std::string> elementStack_;
     
@@ -131,6 +134,11 @@ public:
     bool addImport(const std::string& filePath);
     bool isImported(const std::string& filePath) const;
     const std::set<std::string>& getImportedFiles() const { return importedFiles_; }
+    
+    // CJmod 管理
+    void addCJmodImport(const std::string& moduleName) { cjmodImports_.insert(moduleName); }
+    bool hasCJmodImports() const { return !cjmodImports_.empty(); }
+    const std::set<std::string>& getCJmodImports() const { return cjmodImports_; }
     
     // 元素栈管理
     void pushElement(const std::string& element);

@@ -20,7 +20,8 @@ public:
         CUSTOM_VAR,       // [Custom] @Var
         TEMPLATE_ELEMENT, // [Template] @Element
         TEMPLATE_STYLE,   // [Template] @Style
-        TEMPLATE_VAR      // [Template] @Var
+        TEMPLATE_VAR,     // [Template] @Var
+        CJMOD             // @CJmod - CHTL JS 模块扩展
     };
     
 private:

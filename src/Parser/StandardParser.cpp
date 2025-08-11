@@ -122,6 +122,14 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         return parseImportStatement();
     }
     
+    // 检查 @Element, @Style, @Var 引用
+    if (currentToken_.type == TokenType::AT_ELEMENT || 
+        currentToken_.type == TokenType::AT_STYLE || 
+        currentToken_.type == TokenType::AT_VAR) {
+
+        return parseReference();
+    }
+    
     // 检查HTML元素
     if (currentToken_.type == TokenType::IDENTIFIER) {
         try {

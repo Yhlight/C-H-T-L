@@ -1,0 +1,44 @@
+// CHTL 完整功能测试
+
+// 1. 自定义组件定义
+[Custom] @Element Card {
+    div {
+        class: "card";
+        h3 { text { "Card Title" } }
+        p { text { "Card content goes here" } }
+    }
+}
+
+[Custom] @Element List {
+    ul {
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+        li { text { "Item 4" } }
+    }
+}
+
+// 2. 主要内容
+div {
+    h1 { text { "CHTL Complete Test" } }
+    
+    // 基础元素和文本
+    p { text { "This is a paragraph with text." } }
+    
+    // 组件引用
+    h2 { text { "Basic Component" } }
+    @Element Card;
+    
+    // 带删除的组件引用
+    h2 { text { "List with Deletions" } }
+    @Element List {
+        delete li[1];  // Remove "Item 2"
+        delete li[2];  // Remove "Item 4" (after index update)
+    }
+    
+    // 删除所有
+    h2 { text { "Empty List" } }
+    @Element List {
+        delete li;
+    }
+}

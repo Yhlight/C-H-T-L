@@ -29,6 +29,9 @@ void printUsage(const std::string& programName) {
 }
 
 int main(int argc, char* argv[]) {
+    // 初始化内置 CJmod 模块
+    auto& cjmodLoader = chtl::cjmod::CJmodLoader::getInstance();
+    cjmodLoader.initializeBuiltins();
     if (argc < 2) {
         printUsage(argv[0]);
         return 1;

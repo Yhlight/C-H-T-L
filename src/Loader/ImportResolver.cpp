@@ -16,7 +16,8 @@ const std::unordered_map<Import::ImportType, std::vector<std::string>> ImportRes
     {Import::ImportType::TEMPLATE_ELEMENT, {".chtl"}},
     {Import::ImportType::TEMPLATE_STYLE, {".chtl"}},
     {Import::ImportType::TEMPLATE_VAR, {".chtl"}},
-    {Import::ImportType::ALL, {".chtl"}}
+    {Import::ImportType::ALL, {".chtl"}},
+    {Import::ImportType::CJMOD, {".cjmod", ".js"}}
 };
 
 ImportResolver::ImportResolver() {

@@ -10,6 +10,7 @@
 #include "Node/Origin.h" // Added for Origin node
 #include "Runtime/ChtlJsRuntime.h"
 #include "CJmod/CJmodCorrect.h"
+#include "CJmod/CJmodLoader.h"
 #include <regex>
 #include <algorithm>
 #include <set>
@@ -1018,6 +1019,24 @@ std::shared_ptr<Origin> WebGenerator::findOriginDefinition(const std::string& ty
 
 void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
     // 处理导入
+    if (import->getType() == Import::ImportType::CJMOD) {
+        // CJmod 导入
+        std::string modulePath = import->getFilePath();
+        
+        // 加载 CJmod 模块
+        auto& loader = cjmod::CJmodLoader::getInstance();
+        auto module = loader.loadModule(modulePath);
+        
+        if (!module) {
+            result_.errors.push_back("Failed to load CJmod: " + modulePath);
+        } else if (configManager_->isDebugMode()) {
+            result_.warnings.push_back("Loaded CJmod: " + module->getName() + " v" + module->getVersion());
+        }
+        
+        // 模块已经在 CJmodLoader 中注册到处理器
+        return;
+    }
+    
     if (import->isNamespaceImport()) {
         // 从命名空间导入
         std::string namespaceName = import->getTargetNamespace();

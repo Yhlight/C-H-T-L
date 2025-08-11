@@ -1,0 +1,231 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "CHTL",
+    "patterns": [
+        {
+            "include": "#imports"
+        },
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#blocks"
+        },
+        {
+            "include": "#elements"
+        },
+        {
+            "include": "#chtl-js"
+        }
+    ],
+    "repository": {
+        "imports": {
+            "patterns": [
+                {
+                    "name": "meta.import.chtl",
+                    "match": "\\[Import\\]\\s+(@\\w+)\\s+from\\s+\"([^\"]+)\"\\s*;?",
+                    "captures": {
+                        "0": { "name": "keyword.control.import.chtl" },
+                        "1": { "name": "entity.name.type.module.chtl" },
+                        "2": { "name": "string.quoted.double.chtl" }
+                    }
+                }
+            ]
+        },
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.double-dash.chtl",
+                    "match": "--.*$"
+                },
+                {
+                    "name": "comment.block.chtl",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                }
+            ]
+        },
+        "blocks": {
+            "patterns": [
+                {
+                    "name": "meta.block.template.chtl",
+                    "begin": "\\[(Template|Custom)\\]\\s+(@\\w+)\\s+(\\w+)\\s*\\{",
+                    "beginCaptures": {
+                        "1": { "name": "storage.type.chtl" },
+                        "2": { "name": "entity.name.type.chtl" },
+                        "3": { "name": "entity.name.function.chtl" }
+                    },
+                    "end": "\\}",
+                    "patterns": [
+                        { "include": "#block-content" }
+                    ]
+                },
+                {
+                    "name": "meta.block.style.chtl",
+                    "begin": "\\[Style\\]\\s*\\{",
+                    "beginCaptures": {
+                        "0": { "name": "storage.type.style.chtl" }
+                    },
+                    "end": "\\}",
+                    "patterns": [
+                        { "include": "source.css" }
+                    ]
+                },
+                {
+                    "name": "meta.block.script.chtl",
+                    "begin": "script\\s*\\{",
+                    "beginCaptures": {
+                        "0": { "name": "entity.name.tag.script.chtl" }
+                    },
+                    "end": "\\}",
+                    "patterns": [
+                        { "include": "#chtl-js" },
+                        { "include": "source.js" }
+                    ]
+                },
+                {
+                    "name": "meta.block.style.inline.chtl",
+                    "begin": "style\\s*\\{",
+                    "beginCaptures": {
+                        "0": { "name": "entity.name.tag.style.chtl" }
+                    },
+                    "end": "\\}",
+                    "patterns": [
+                        { "include": "#css-properties" }
+                    ]
+                }
+            ]
+        },
+        "elements": {
+            "patterns": [
+                {
+                    "name": "meta.element.chtl",
+                    "begin": "(\\w+)\\s*(#[\\w-]+)?\\s*(\\.([\\w-]+))?\\s*\\{",
+                    "beginCaptures": {
+                        "1": { "name": "entity.name.tag.chtl" },
+                        "2": { "name": "entity.other.attribute-name.id.chtl" },
+                        "4": { "name": "entity.other.attribute-name.class.chtl" }
+                    },
+                    "end": "\\}",
+                    "patterns": [
+                        { "include": "#element-content" }
+                    ]
+                }
+            ]
+        },
+        "element-content": {
+            "patterns": [
+                { "include": "#string-content" },
+                { "include": "#attributes" },
+                { "include": "#operations" },
+                { "include": "#elements" },
+                { "include": "#blocks" },
+                { "include": "#comments" }
+            ]
+        },
+        "block-content": {
+            "patterns": [
+                { "include": "#element-content" }
+            ]
+        },
+        "attributes": {
+            "patterns": [
+                {
+                    "name": "meta.attribute.chtl",
+                    "match": "(\\w+)\\s*:\\s*\"([^\"]*)\"",
+                    "captures": {
+                        "1": { "name": "entity.other.attribute-name.chtl" },
+                        "2": { "name": "string.quoted.double.chtl" }
+                    }
+                }
+            ]
+        },
+        "operations": {
+            "patterns": [
+                {
+                    "name": "keyword.operator.delete.chtl",
+                    "match": "\\bdelete\\b\\s+[^;]+;"
+                },
+                {
+                    "name": "keyword.operator.insert.chtl",
+                    "match": "\\binsert\\s+(before|after|replace)\\b"
+                },
+                {
+                    "name": "keyword.control.inherit.chtl",
+                    "match": "\\binherit\\s+@\\w+\\s+\\w+;"
+                },
+                {
+                    "name": "keyword.control.except.chtl",
+                    "match": "\\bexcept\\s+\\w+\\s*\\{"
+                }
+            ]
+        },
+        "string-content": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.chtl",
+                    "match": "\"([^\"]*)\""
+                }
+            ]
+        },
+        "chtl-js": {
+            "patterns": [
+                {
+                    "name": "variable.language.chtl-js",
+                    "match": "\\{\\{&\\}\\}"
+                },
+                {
+                    "name": "variable.other.chtl-js",
+                    "match": "\\{\\{#([\\w-]+)\\}\\}",
+                    "captures": {
+                        "1": { "name": "entity.name.tag.id.chtl-js" }
+                    }
+                },
+                {
+                    "name": "variable.other.chtl-js",
+                    "match": "\\{\\{\\.([\\w-]+)\\}\\}",
+                    "captures": {
+                        "1": { "name": "entity.name.tag.class.chtl-js" }
+                    }
+                },
+                {
+                    "name": "keyword.operator.arrow.chtl-js",
+                    "match": "->"
+                },
+                {
+                    "name": "keyword.operator.reactive.chtl-js",
+                    "match": ":="
+                },
+                {
+                    "name": "keyword.operator.computed.chtl-js",
+                    "match": "=>"
+                },
+                {
+                    "name": "keyword.control.watch.chtl-js",
+                    "match": "\\bwatch\\b"
+                },
+                {
+                    "name": "keyword.control.foreach.chtl-js",
+                    "match": "\\bforeach\\b"
+                },
+                {
+                    "name": "support.class.chtl-js",
+                    "match": "@\\w+"
+                }
+            ]
+        },
+        "css-properties": {
+            "patterns": [
+                {
+                    "name": "meta.property.css",
+                    "match": "([\\w-]+)\\s*:\\s*([^;]+);",
+                    "captures": {
+                        "1": { "name": "support.type.property-name.css" },
+                        "2": { "name": "support.constant.property-value.css" }
+                    }
+                }
+            ]
+        }
+    },
+    "scopeName": "source.chtl"
+}

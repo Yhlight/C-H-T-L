@@ -1,0 +1,29 @@
+body
+{
+    div
+    {
+        except mobile
+        {
+            style
+            {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+        
+        text { "Responsive Content" }
+    }
+    
+    div
+    {
+        except desktop
+        {
+            style
+            {
+                font-size: 14px;
+            }
+        }
+        
+        text { "Mobile Optimized" }
+    }
+}

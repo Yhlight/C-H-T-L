@@ -143,6 +143,7 @@ private:
     void skipWhitespaceAndComments();
     TokenType peekNext();  // 查看下一个token的类型
     void skipToNextStatement();
+    void recoverToNextTopLevel();
     void skipBlock();
     
     // 错误处理

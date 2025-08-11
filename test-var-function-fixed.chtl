@@ -1,0 +1,65 @@
+// 测试变量组函数调用（修复后）
+
+[Template] @Var Colors {
+    primary: "#3498db";
+    secondary: "#2ecc71"; 
+    danger: "#e74c3c";
+    warning: "#f39c12";
+    info: "#3498db";
+}
+
+[Custom] @Var Sizes {
+    xs: "0.75rem";
+    sm: "0.875rem";
+    base: "1rem";
+    lg: "1.125rem";
+    xl: "1.25rem";
+}
+
+// 测试1：内联样式中的变量组函数
+div {
+    style {
+        // 基本用法
+        color: Colors(primary);
+        background-color: Colors(secondary);
+        
+        // 覆盖值
+        border-color: Colors(danger = "#ff6666");
+        
+        // 字体大小
+        font-size: Sizes(base);
+    }
+}
+
+// 测试2：复杂选择器中的变量组
+div {
+    style {
+        .card {
+            background: Colors(primary);
+            color: Colors(primary = "white");
+        }
+        
+        &:hover {
+            background: Colors(warning);
+            font-size: Sizes(lg = "1.5rem");
+        }
+    }
+}
+
+// 测试3：全局样式中的变量组
+style {
+    body {
+        font-size: Sizes(base);
+        color: Colors(primary);
+    }
+    
+    .btn-primary {
+        background: Colors(primary);
+        border-color: Colors(primary = "#2980b9");
+    }
+    
+    .btn-danger {
+        background: Colors(danger);
+        color: Colors(danger = "white");
+    }
+}

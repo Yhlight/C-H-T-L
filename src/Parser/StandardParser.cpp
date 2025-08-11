@@ -45,15 +45,22 @@ std::shared_ptr<Node> StandardParser::parse() {
 
             if (isAtEnd()) break;
             
-            auto node = parseTopLevel();
+            try {
+                auto node = parseTopLevel();
 
-            if (node) {
-
-                root->addChild(node);
+                if (node) {
+                    root->addChild(node);
+                }
+            } catch (const std::exception& e) {
+                // 记录错误并尝试恢复
+                addError("Parse error at line " + std::to_string(currentToken_.line) + 
+                        ": " + std::string(e.what()));
+                // 跳到下一个可能的顶级元素
+                recoverToNextTopLevel();
             }
         }
     } catch (const std::exception& e) {
-        addError("Parse error: " + std::string(e.what()));
+        addError("Fatal parse error: " + std::string(e.what()));
     }
     
     return root;
@@ -2301,6 +2308,50 @@ void StandardParser::skipToNextStatement() {
             match(TokenType::RIGHT_BRACE)) {
             break;
         }
+        advance();
+    }
+}
+
+void StandardParser::recoverToNextTopLevel() {
+    // 跳过当前错误的语句，找到下一个可能的顶级元素
+    int braceCount = 0;
+    
+    while (!isAtEnd()) {
+        if (currentToken_.type == TokenType::LEFT_BRACE) {
+            braceCount++;
+        } else if (currentToken_.type == TokenType::RIGHT_BRACE) {
+            braceCount--;
+            if (braceCount == 0) {
+                advance();
+                break;
+            }
+        }
+        
+        // 检查是否到达了新的顶级元素
+        if (braceCount == 0) {
+            // 检查特殊标记
+            if (currentToken_.type == TokenType::TEMPLATE ||
+                currentToken_.type == TokenType::CUSTOM ||
+                currentToken_.type == TokenType::ORIGIN ||
+                currentToken_.type == TokenType::CONFIGURATION ||
+                currentToken_.type == TokenType::IMPORT ||
+                currentToken_.type == TokenType::NAMESPACE_KW ||
+                currentToken_.type == TokenType::INFO ||
+                currentToken_.type == TokenType::EXPORT ||
+                currentToken_.type == TokenType::SCRIPT ||
+                currentToken_.type == TokenType::STYLE) {
+                break;
+            }
+            
+            // 检查HTML元素
+            if (currentToken_.type == TokenType::IDENTIFIER) {
+                std::string value = currentToken_.value;
+                if (GlobalMap::isHtmlTag(value) || value == "text") {
+                    break;
+                }
+            }
+        }
+        
         advance();
     }
 }

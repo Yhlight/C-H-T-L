@@ -272,6 +272,8 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
             auto styleNode = std::static_pointer_cast<Style>(child);
             std::string css = styleNode->getCssContent();
             if (!css.empty()) {
+                // 处理变量组引用
+                css = processVarReferences(css);
                 if (!inlineStyles.empty() && inlineStyles.back() != ';') {
                     inlineStyles += "; ";
                 }

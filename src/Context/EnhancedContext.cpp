@@ -1,216 +1,335 @@
 #include "Context/EnhancedContext.h"
+#include "Node/Node.h"
+#include <iostream>
 #include <sstream>
-#include <fstream>
 
 namespace chtl {
 
-EnhancedContext::EnhancedContext() 
-    : ChtlContext(),
-      errorHandler_(std::make_unique<ErrorHandler>()) {
+// ComponentTemplate 实现
+std::unique_ptr<Node> ComponentTemplate::instantiate() const {
+    // TODO: 实现深拷贝逻辑
+    // 这里需要一个 Node 的克隆方法
+    return nullptr;
 }
 
-void EnhancedContext::addError(const std::string& error) {
-    ErrorContext ctx = buildErrorContext(-1, -1);
-    errorHandler_->reportError(ErrorType::GENERAL, error, ctx);
-    updateStringCaches();
+EnhancedContext::EnhancedContext() : StandardContext() {
+    // 初始化为全局作用域
+    scopeStack_.push(Scope::GLOBAL);
 }
 
-void EnhancedContext::addWarning(const std::string& warning) {
-    ErrorContext ctx = buildErrorContext(-1, -1);
-    errorHandler_->reportWarning(warning, ctx);
-    updateStringCaches();
+// 作用域管理
+void EnhancedContext::pushScope(Scope scope) {
+    scopeStack_.push(scope);
 }
 
-void EnhancedContext::addInfo(const std::string& info) {
-    ErrorContext ctx = buildErrorContext(-1, -1);
-    errorHandler_->reportInfo(info, ctx);
-    updateStringCaches();
-}
-
-bool EnhancedContext::hasErrors() const {
-    return errorHandler_->hasErrors();
-}
-
-bool EnhancedContext::hasWarnings() const {
-    return errorHandler_->hasWarnings();
-}
-
-const std::vector<std::string>& EnhancedContext::getErrors() const {
-    updateStringCaches();
-    return errors_;
-}
-
-const std::vector<std::string>& EnhancedContext::getWarnings() const {
-    updateStringCaches();
-    return warnings_;
-}
-
-const std::vector<std::string>& EnhancedContext::getInfos() const {
-    updateStringCaches();
-    return infos_;
-}
-
-void EnhancedContext::clearErrors() {
-    errorHandler_->clearErrors();
-    errors_.clear();
-}
-
-void EnhancedContext::clearWarnings() {
-    // ErrorHandler doesn't have separate clear methods, so we'll clear all
-    warnings_.clear();
-}
-
-void EnhancedContext::clearAll() {
-    errorHandler_->clearErrors();
-    errors_.clear();
-    warnings_.clear();
-    infos_.clear();
-}
-
-void EnhancedContext::reportError(const ErrorDetail& error) {
-    errorHandler_->reportError(error.getType(), error.getMessage(), error.getContext());
-    updateStringCaches();
-}
-
-void EnhancedContext::reportWarning(const ErrorDetail& warning) {
-    errorHandler_->reportWarning(warning.getMessage(), warning.getContext());
-    updateStringCaches();
-}
-
-void EnhancedContext::setSourceCode(const std::string& sourceCode) {
-    sourceCode_ = sourceCode;
-    sourceLines_.clear();
-    
-    // 分割源码为行
-    std::istringstream iss(sourceCode);
-    std::string line;
-    while (std::getline(iss, line)) {
-        sourceLines_.push_back(line);
+void EnhancedContext::popScope() {
+    if (scopeStack_.size() > 1) {  // 保留全局作用域
+        scopeStack_.pop();
     }
 }
 
-std::string EnhancedContext::formatErrors(bool useColor) const {
-    std::stringstream ss;
-    const auto& errors = errorHandler_->getErrors();
-    
-    for (const auto& error : errors) {
-        ss << error.format(useColor) << "\n";
-    }
-    
-    return ss.str();
+Scope EnhancedContext::getCurrentScope() const {
+    return scopeStack_.empty() ? Scope::GLOBAL : scopeStack_.top();
 }
 
-std::string EnhancedContext::formatWarnings(bool useColor) const {
-    std::stringstream ss;
-    const auto& errors = errorHandler_->getErrors();
-    
-    for (const auto& error : errors) {
-        if (error.getSeverity() == ErrorSeverity::WARNING) {
-            ss << error.format(useColor) << "\n";
+bool EnhancedContext::isInScope(Scope scope) const {
+    std::stack<Scope> temp = scopeStack_;
+    while (!temp.empty()) {
+        if (temp.top() == scope) return true;
+        temp.pop();
+    }
+    return false;
+}
+
+// 元素上下文管理
+void EnhancedContext::pushElement(const ElementContext& ctx) {
+    elementStack_.push(ctx);
+}
+
+void EnhancedContext::popElement() {
+    if (!elementStack_.empty()) {
+        elementStack_.pop();
+    }
+}
+
+ElementContext* EnhancedContext::getCurrentElement() {
+    return elementStack_.empty() ? nullptr : &elementStack_.top();
+}
+
+// 模板注册
+void EnhancedContext::registerComponent(const std::string& name, ComponentTemplate&& tmpl) {
+    if (components_.find(name) != components_.end()) {
+        addWarning("Component '" + name + "' is already defined, overwriting");
+    }
+    components_[name] = std::move(tmpl);
+}
+
+void EnhancedContext::registerStyle(const std::string& name, StyleTemplate&& tmpl) {
+    if (styles_.find(name) != styles_.end()) {
+        addWarning("Style '" + name + "' is already defined, overwriting");
+    }
+    styles_[name] = std::move(tmpl);
+}
+
+void EnhancedContext::registerVariable(const std::string& name, VariableGroup&& vars) {
+    if (variables_.find(name) != variables_.end()) {
+        addWarning("Variable group '" + name + "' is already defined, overwriting");
+    }
+    variables_[name] = std::move(vars);
+}
+
+// 命名空间模板注册
+void EnhancedContext::registerNamespacedComponent(const std::string& ns, const std::string& name, ComponentTemplate&& tmpl) {
+    nsComponents_[ns][name] = std::move(tmpl);
+}
+
+void EnhancedContext::registerNamespacedStyle(const std::string& ns, const std::string& name, StyleTemplate&& tmpl) {
+    nsStyles_[ns][name] = std::move(tmpl);
+}
+
+void EnhancedContext::registerNamespacedVariable(const std::string& ns, const std::string& name, VariableGroup&& vars) {
+    nsVariables_[ns][name] = std::move(vars);
+}
+
+// 模板查找
+ComponentTemplate* EnhancedContext::findComponent(const std::string& name) {
+    // 先在当前命名空间查找
+    if (!currentNamespace_.empty()) {
+        auto nsIt = nsComponents_.find(currentNamespace_);
+        if (nsIt != nsComponents_.end()) {
+            auto it = nsIt->second.find(name);
+            if (it != nsIt->second.end()) {
+                return &it->second;
+            }
         }
     }
     
-    return ss.str();
+    // 再在全局查找
+    auto it = components_.find(name);
+    return it != components_.end() ? &it->second : nullptr;
 }
 
-std::string EnhancedContext::getContextLines(int line, int contextSize) const {
-    std::stringstream ss;
-    int startLine = std::max(1, line - contextSize);
-    int endLine = std::min(static_cast<int>(sourceLines_.size()), line + contextSize);
-    
-    for (int i = startLine; i <= endLine; ++i) {
-        ss << i << " | " << getSourceLine(i) << "\n";
-        if (i == line) {
-            ss << "   | ^~~~~ error here\n";
+StyleTemplate* EnhancedContext::findStyle(const std::string& name) {
+    // 先在当前命名空间查找
+    if (!currentNamespace_.empty()) {
+        auto nsIt = nsStyles_.find(currentNamespace_);
+        if (nsIt != nsStyles_.end()) {
+            auto it = nsIt->second.find(name);
+            if (it != nsIt->second.end()) {
+                return &it->second;
+            }
         }
     }
     
-    return ss.str();
+    // 再在全局查找
+    auto it = styles_.find(name);
+    return it != styles_.end() ? &it->second : nullptr;
 }
 
-void EnhancedContext::updateStringCaches() const {
-    errors_.clear();
-    warnings_.clear();
-    infos_.clear();
-    
-    const auto& allErrors = errorHandler_->getErrors();
-    for (const auto& error : allErrors) {
-        switch (error.getSeverity()) {
-            case ErrorSeverity::ERROR:
-                errors_.push_back(error.getMessage());
-                break;
-            case ErrorSeverity::WARNING:
-                warnings_.push_back(error.getMessage());
-                break;
-            case ErrorSeverity::INFO:
-                infos_.push_back(error.getMessage());
-                break;
-            case ErrorSeverity::FATAL:
-                errors_.push_back(error.getMessage());
-                break;
+VariableGroup* EnhancedContext::findVariable(const std::string& name) {
+    // 先在当前命名空间查找
+    if (!currentNamespace_.empty()) {
+        auto nsIt = nsVariables_.find(currentNamespace_);
+        if (nsIt != nsVariables_.end()) {
+            auto it = nsIt->second.find(name);
+            if (it != nsIt->second.end()) {
+                return &it->second;
+            }
         }
     }
+    
+    // 再在全局查找
+    auto it = variables_.find(name);
+    return it != variables_.end() ? &it->second : nullptr;
 }
 
-std::string EnhancedContext::getSourceLine(int line) const {
-    if (line > 0 && line <= static_cast<int>(sourceLines_.size())) {
-        return sourceLines_[line - 1];
+// 带命名空间的查找
+ComponentTemplate* EnhancedContext::findComponent(const std::string& ns, const std::string& name) {
+    auto nsIt = nsComponents_.find(ns);
+    if (nsIt != nsComponents_.end()) {
+        auto it = nsIt->second.find(name);
+        if (it != nsIt->second.end()) {
+            return &it->second;
+        }
     }
+    return nullptr;
+}
+
+StyleTemplate* EnhancedContext::findStyle(const std::string& ns, const std::string& name) {
+    auto nsIt = nsStyles_.find(ns);
+    if (nsIt != nsStyles_.end()) {
+        auto it = nsIt->second.find(name);
+        if (it != nsIt->second.end()) {
+            return &it->second;
+        }
+    }
+    return nullptr;
+}
+
+VariableGroup* EnhancedContext::findVariable(const std::string& ns, const std::string& name) {
+    auto nsIt = nsVariables_.find(ns);
+    if (nsIt != nsVariables_.end()) {
+        auto it = nsIt->second.find(name);
+        if (it != nsIt->second.end()) {
+            return &it->second;
+        }
+    }
+    return nullptr;
+}
+
+// 变量值查找
+std::optional<std::string> EnhancedContext::getVariableValue(const std::string& groupName, const std::string& key) {
+    auto* group = findVariable(groupName);
+    if (group) {
+        return group->getValue(key);
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> EnhancedContext::getVariableValue(const std::string& ns, const std::string& groupName, const std::string& key) {
+    auto* group = findVariable(ns, groupName);
+    if (group) {
+        return group->getValue(key);
+    }
+    return std::nullopt;
+}
+
+// & 符号推导
+std::string EnhancedContext::resolveAmpersand() const {
+    if (elementStack_.empty()) {
+        const_cast<EnhancedContext*>(this)->addError("Cannot use '&' outside of an element context");
+        return "";
+    }
+    
+    const ElementContext& ctx = elementStack_.top();
+    
+    // 优先使用类名
+    if (!ctx.classes.empty()) {
+        return "." + ctx.classes[0];
+    }
+    
+    // 其次使用 ID
+    if (!ctx.id.empty()) {
+        return "#" + ctx.id;
+    }
+    
+    // 最后使用标签名
+    if (!ctx.tagName.empty()) {
+        return ctx.tagName;
+    }
+    
+    const_cast<EnhancedContext*>(this)->addError("Cannot resolve '&' - no class, id, or tag name available");
     return "";
 }
 
-std::vector<std::string> EnhancedContext::getSourceLines(int startLine, int endLine) const {
-    std::vector<std::string> lines;
+// 命名空间管理
+void EnhancedContext::enterNamespace(const std::string& name) {
+    currentNamespace_ = name;
+    pushScope(Scope::NAMESPACE_BLOCK);
+}
+
+void EnhancedContext::exitNamespace() {
+    currentNamespace_.clear();
+    popScope();
+}
+
+// 验证方法
+bool EnhancedContext::isValidComponentName(const std::string& name) const {
+    // 组件名应该以大写字母开头
+    return !name.empty() && std::isupper(name[0]);
+}
+
+bool EnhancedContext::isValidStyleName(const std::string& name) const {
+    // 样式名应该以大写字母开头
+    return !name.empty() && std::isupper(name[0]);
+}
+
+bool EnhancedContext::isValidVariableName(const std::string& name) const {
+    // 变量组名应该以大写字母开头
+    return !name.empty() && std::isupper(name[0]);
+}
+
+// 错误报告增强
+void EnhancedContext::reportUndefinedComponent(const std::string& name) {
+    std::stringstream ss;
+    ss << "Component '" << name << "' is not defined";
     
-    if (sourceLines_.empty() && !sourceCode_.empty()) {
-        // 延迟解析源码
-        std::istringstream iss(sourceCode_);
-        std::string line;
-        while (std::getline(iss, line)) {
-            sourceLines_.push_back(line);
+    // 提供建议
+    if (!components_.empty()) {
+        ss << ". Available components: ";
+        bool first = true;
+        for (const auto& [compName, _] : components_) {
+            if (!first) ss << ", ";
+            ss << compName;
+            first = false;
         }
     }
     
-    for (int i = startLine; i <= endLine && i <= static_cast<int>(sourceLines_.size()); ++i) {
-        if (i > 0) {
-            lines.push_back(sourceLines_[i - 1]);
+    addError(ss.str());
+}
+
+void EnhancedContext::reportUndefinedStyle(const std::string& name) {
+    std::stringstream ss;
+    ss << "Style '" << name << "' is not defined";
+    
+    // 提供建议
+    if (!styles_.empty()) {
+        ss << ". Available styles: ";
+        bool first = true;
+        for (const auto& [styleName, _] : styles_) {
+            if (!first) ss << ", ";
+            ss << styleName;
+            first = false;
         }
     }
     
-    return lines;
+    addError(ss.str());
 }
 
-ErrorContext EnhancedContext::buildErrorContext(int line, int column) const {
-    ErrorContext context;
-    context.line = line;
-    context.column = column;
-    context.fileName = fileName_;
+void EnhancedContext::reportUndefinedVariable(const std::string& group, const std::string& key) {
+    std::stringstream ss;
+    ss << "Variable '" << group << "(" << key << ")' is not defined";
     
-    if (line > 0) {
-        // 获取上下文行并拼接成字符串
-        auto lines = getSourceLines(std::max(1, line - 2), line + 2);
-        std::stringstream ss;
-        int currentLine = std::max(1, line - 2);
-        for (const auto& lineContent : lines) {
-            ss << currentLine << " | " << lineContent << "\n";
-            currentLine++;
+    auto* varGroup = findVariable(group);
+    if (varGroup) {
+        ss << ". Available keys in '" << group << "': ";
+        bool first = true;
+        for (const auto& [k, _] : varGroup->values) {
+            if (!first) ss << ", ";
+            ss << k;
+            first = false;
         }
-        context.contextLines = ss.str();
-        
-        if (line <= static_cast<int>(sourceLines_.size())) {
-            context.sourceCode = sourceLines_[line - 1];
-        }
+    } else {
+        ss << ". Variable group '" << group << "' not found";
     }
     
-    return context;
+    addError(ss.str());
 }
 
-std::string EnhancedContext::formatSummary() const {
-    return errorHandler_->formatSummary();
-}
-
-std::shared_ptr<EnhancedContext> createEnhancedContext() {
-    return std::make_shared<EnhancedContext>();
+// 调试支持
+void EnhancedContext::dumpTemplates() const {
+    std::cout << "=== Registered Templates ===" << std::endl;
+    
+    std::cout << "\nComponents:" << std::endl;
+    for (const auto& [name, _] : components_) {
+        std::cout << "  - " << name << std::endl;
+    }
+    
+    std::cout << "\nStyles:" << std::endl;
+    for (const auto& [name, _] : styles_) {
+        std::cout << "  - " << name << std::endl;
+    }
+    
+    std::cout << "\nVariable Groups:" << std::endl;
+    for (const auto& [name, group] : variables_) {
+        std::cout << "  - " << name << ": ";
+        for (const auto& [key, value] : group.values) {
+            std::cout << key << "=" << value << " ";
+        }
+        std::cout << std::endl;
+    }
+    
+    std::cout << "\n==========================" << std::endl;
 }
 
 } // namespace chtl

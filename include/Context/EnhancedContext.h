@@ -1,86 +1,146 @@
 #ifndef CHTL_ENHANCED_CONTEXT_H
 #define CHTL_ENHANCED_CONTEXT_H
 
-#include "Context/BasicContext.h"
-#include "Context/ChtlContext.h"
-#include "Error/ErrorHandler.h"
+#include "Context/StandardContext.h"
 #include <memory>
-#include <string>
-#include <vector>
+#include <unordered_map>
+#include <stack>
+#include <optional>
+#include <variant>
 
 namespace chtl {
 
-// 增强的上下文，集成错误处理
-class EnhancedContext : public ChtlContext {
+// 作用域类型
+enum class Scope {
+    GLOBAL,              // 全局作用域
+    TOP_LEVEL,           // 文件顶层
+    TEMPLATE_DEFINITION, // 模板定义内部
+    CUSTOM_DEFINITION,   // 自定义组件定义内部
+    ELEMENT_BODY,        // 元素体内部
+    STYLE_BLOCK,         // style {} 块内部
+    SCRIPT_BLOCK,        // script {} 块内部
+    NAMESPACE_BLOCK      // 命名空间内部
+};
+
+// 组件模板
+struct ComponentTemplate {
+    std::string name;
+    std::string type;  // "Element"
+    std::unique_ptr<Node> content;  // 模板内容
+    std::unordered_map<std::string, std::string> defaultProps;
+    
+    // 克隆模板内容
+    std::unique_ptr<Node> instantiate() const;
+};
+
+// 样式模板
+struct StyleTemplate {
+    std::string name;
+    std::string cssContent;  // 纯 CSS 内容
+    std::vector<std::pair<std::string, std::string>> rules;  // 属性-值对
+};
+
+// 变量组
+struct VariableGroup {
+    std::string name;
+    std::unordered_map<std::string, std::string> values;
+    
+    // 获取变量值
+    std::optional<std::string> getValue(const std::string& key) const {
+        auto it = values.find(key);
+        return it != values.end() ? std::optional<std::string>(it->second) : std::nullopt;
+    }
+};
+
+// 当前元素上下文
+struct ElementContext {
+    std::string tagName;
+    std::vector<std::string> classes;
+    std::string id;
+    Node* currentNode;  // 当前正在处理的节点
+};
+
+class EnhancedContext : public StandardContext {
+private:
+    // 模板存储
+    std::unordered_map<std::string, ComponentTemplate> components_;
+    std::unordered_map<std::string, StyleTemplate> styles_;
+    std::unordered_map<std::string, VariableGroup> variables_;
+    
+    // 命名空间模板存储
+    std::unordered_map<std::string, std::unordered_map<std::string, ComponentTemplate>> nsComponents_;
+    std::unordered_map<std::string, std::unordered_map<std::string, StyleTemplate>> nsStyles_;
+    std::unordered_map<std::string, std::unordered_map<std::string, VariableGroup>> nsVariables_;
+    
+    // 作用域栈
+    std::stack<Scope> scopeStack_;
+    
+    // 元素上下文栈（用于 & 推导）
+    std::stack<ElementContext> elementStack_;
+    
+    // 当前命名空间
+    std::string currentNamespace_;
+    
 public:
     EnhancedContext();
     virtual ~EnhancedContext() = default;
     
-    // 增强的错误处理接口
-    void addError(const std::string& error);
-    void addWarning(const std::string& warning);
-    void addInfo(const std::string& info);
+    // 作用域管理
+    void pushScope(Scope scope);
+    void popScope();
+    Scope getCurrentScope() const;
+    bool isInScope(Scope scope) const;
     
-    bool hasErrors() const;
-    bool hasWarnings() const;
+    // 元素上下文管理
+    void pushElement(const ElementContext& ctx);
+    void popElement();
+    ElementContext* getCurrentElement();
     
-    const std::vector<std::string>& getErrors() const;
-    const std::vector<std::string>& getWarnings() const;
-    const std::vector<std::string>& getInfos() const;
+    // 模板注册（编译时）
+    void registerComponent(const std::string& name, ComponentTemplate&& tmpl);
+    void registerStyle(const std::string& name, StyleTemplate&& tmpl);
+    void registerVariable(const std::string& name, VariableGroup&& vars);
     
-    void clearErrors();
-    void clearWarnings();
-    void clearAll();
+    // 命名空间模板注册
+    void registerNamespacedComponent(const std::string& ns, const std::string& name, ComponentTemplate&& tmpl);
+    void registerNamespacedStyle(const std::string& ns, const std::string& name, StyleTemplate&& tmpl);
+    void registerNamespacedVariable(const std::string& ns, const std::string& name, VariableGroup&& vars);
     
-    // 详细错误报告
-    void reportError(const ErrorDetail& error);
-    void reportWarning(const ErrorDetail& warning);
+    // 模板查找
+    ComponentTemplate* findComponent(const std::string& name);
+    StyleTemplate* findStyle(const std::string& name);
+    VariableGroup* findVariable(const std::string& name);
     
-    // 设置源文件信息
-    void setSourceFile(const std::string& fileName) { fileName_ = fileName; }
-    void setSourceCode(const std::string& sourceCode);
-    const std::string& getSourceFile() const { return fileName_; }
+    // 带命名空间的查找
+    ComponentTemplate* findComponent(const std::string& ns, const std::string& name);
+    StyleTemplate* findStyle(const std::string& ns, const std::string& name);
+    VariableGroup* findVariable(const std::string& ns, const std::string& name);
     
-    // 错误恢复
-    void pushRecoveryPoint() { errorHandler_->pushRecoveryPoint(); }
-    void popRecoveryPoint() { errorHandler_->popRecoveryPoint(); }
+    // 变量值查找（用于编译时替换）
+    std::optional<std::string> getVariableValue(const std::string& groupName, const std::string& key);
+    std::optional<std::string> getVariableValue(const std::string& ns, const std::string& groupName, const std::string& key);
     
-    // 获取错误处理器
-    ErrorHandler* getErrorHandler() { return errorHandler_.get(); }
-    const ErrorHandler* getErrorHandler() const { return errorHandler_.get(); }
+    // & 符号推导
+    std::string resolveAmpersand() const;
     
-    // 格式化错误输出
-    std::string formatErrors(bool useColor = true) const;
-    std::string formatWarnings(bool useColor = true) const;
-    std::string formatSummary() const;
+    // 命名空间管理
+    void enterNamespace(const std::string& name);
+    void exitNamespace();
+    std::string getCurrentNamespace() const { return currentNamespace_; }
     
-    // 获取上下文行
-    std::string getContextLines(int line, int contextSize = 2) const;
+    // 验证方法
+    bool isValidComponentName(const std::string& name) const;
+    bool isValidStyleName(const std::string& name) const;
+    bool isValidVariableName(const std::string& name) const;
     
-private:
-    std::unique_ptr<ErrorHandler> errorHandler_;
-    std::string fileName_;
-    std::string sourceCode_;
-    mutable std::vector<std::string> sourceLines_;  // 源码行缓存
+    // 错误报告增强
+    void reportUndefinedComponent(const std::string& name);
+    void reportUndefinedStyle(const std::string& name);
+    void reportUndefinedVariable(const std::string& group, const std::string& key);
     
-    // 兼容旧接口的错误列表
-    mutable std::vector<std::string> errors_;
-    mutable std::vector<std::string> warnings_;
-    mutable std::vector<std::string> infos_;
-    
-    // 更新字符串缓存
-    void updateStringCaches() const;
-    
-    // 获取源码行
-    std::string getSourceLine(int line) const;
-    std::vector<std::string> getSourceLines(int startLine, int endLine) const;
-    
-    // 构建错误上下文
-    ErrorContext buildErrorContext(int line, int column) const;
+    // 调试支持
+    void dumpTemplates() const;
 };
-
-// 创建增强上下文的工厂函数
-std::shared_ptr<EnhancedContext> createEnhancedContext();
 
 } // namespace chtl
 

@@ -65,6 +65,26 @@ std::shared_ptr<ICJmod> CJmodLoader::loadModule(const std::string& path) {
                 return nullptr;
             } else {
                 module = loadFromFile(result.resolvedPath);
+                
+                // 如果是主模块，自动加载所有子模块
+                if (module && path.find('.') == std::string::npos && path.find('/') == std::string::npos) {
+                    auto moduleWithSub = std::dynamic_pointer_cast<ICJmodWithSubmodules>(module);
+                    if (moduleWithSub) {
+                        // 创建组合模块
+                        auto composite = std::make_shared<CompositeModule>(module);
+                        
+                        // 加载所有子模块
+                        for (const auto& subInfo : moduleWithSub->getSubmodules()) {
+                            auto sub = moduleWithSub->loadSubmodule(subInfo.name);
+                            if (sub) {
+                                composite->addSubmodule(subInfo.name, sub);
+                                std::cout << "[CJmod] Auto-loaded submodule: " << module->getName() << "." << subInfo.name << std::endl;
+                            }
+                        }
+                        
+                        module = composite;
+                    }
+                }
             }
         } else {
             std::cerr << "[CJmod] Failed to resolve module: " << result.errorMessage << std::endl;

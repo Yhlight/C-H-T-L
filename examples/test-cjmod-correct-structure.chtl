@@ -1,13 +1,13 @@
 // 测试 CJmod 正确的子模块结构
 
-// 导入主模块（不自动加载子模块）
+// 导入主模块（自动加载所有子模块）
 [Import] @CJmod from "ReactiveModule";
 
-// 导入特定子模块
+// 仅导入特定子模块
 [Import] @CJmod from "ReactiveModule.State";
 [Import] @CJmod from "ReactiveModule/Computed";
 
-// 导入所有子模块
+// 显式导入所有子模块（与导入主模块等价）
 [Import] @CJmod from "ReactiveModule.*";
 
 [Template] @Element ReactiveTest

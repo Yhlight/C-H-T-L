@@ -306,30 +306,6 @@ src/CJmod/CJmodRegistry.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.s
 .PHONY : src/CJmod/CJmodRegistry.cpp.s
 
-src/CJmod/CJmodSubmoduleLoader.o: src/CJmod/CJmodSubmoduleLoader.cpp.o
-.PHONY : src/CJmod/CJmodSubmoduleLoader.o
-
-# target to build an object file
-src/CJmod/CJmodSubmoduleLoader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSubmoduleLoader.cpp.o
-.PHONY : src/CJmod/CJmodSubmoduleLoader.cpp.o
-
-src/CJmod/CJmodSubmoduleLoader.i: src/CJmod/CJmodSubmoduleLoader.cpp.i
-.PHONY : src/CJmod/CJmodSubmoduleLoader.i
-
-# target to preprocess a source file
-src/CJmod/CJmodSubmoduleLoader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSubmoduleLoader.cpp.i
-.PHONY : src/CJmod/CJmodSubmoduleLoader.cpp.i
-
-src/CJmod/CJmodSubmoduleLoader.s: src/CJmod/CJmodSubmoduleLoader.cpp.s
-.PHONY : src/CJmod/CJmodSubmoduleLoader.s
-
-# target to generate assembly for a file
-src/CJmod/CJmodSubmoduleLoader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSubmoduleLoader.cpp.s
-.PHONY : src/CJmod/CJmodSubmoduleLoader.cpp.s
-
 src/CJmod/SinglePassProcessor.o: src/CJmod/SinglePassProcessor.cpp.o
 .PHONY : src/CJmod/SinglePassProcessor.o
 
@@ -2230,9 +2206,6 @@ help:
 	@echo "... src/CJmod/CJmodRegistry.o"
 	@echo "... src/CJmod/CJmodRegistry.i"
 	@echo "... src/CJmod/CJmodRegistry.s"
-	@echo "... src/CJmod/CJmodSubmoduleLoader.o"
-	@echo "... src/CJmod/CJmodSubmoduleLoader.i"
-	@echo "... src/CJmod/CJmodSubmoduleLoader.s"
 	@echo "... src/CJmod/SinglePassProcessor.o"
 	@echo "... src/CJmod/SinglePassProcessor.i"
 	@echo "... src/CJmod/SinglePassProcessor.s"

@@ -124,7 +124,8 @@ void CJmodLoader::initializeBuiltins() {
                     "reactive-declaration",
                     std::regex(R"((\w+)\s*:=\s*([^;]+);)"),
                     "let $1 = reactive($2);",
-                    100
+                    100,
+                    nullptr
                 },
                 
                 // doubled => count.value * 2  ->  let doubled = computed(() => count.value * 2)
@@ -132,7 +133,8 @@ void CJmodLoader::initializeBuiltins() {
                     "computed-property",
                     std::regex(R"((\w+)\s*=>\s*([^;]+);)"),
                     "let $1 = computed(() => $2);",
-                    90
+                    90,
+                    nullptr
                 },
                 
                 // watch count { ... }  ->  watch(count, () => { ... })
@@ -140,7 +142,8 @@ void CJmodLoader::initializeBuiltins() {
                     "watch-syntax",
                     std::regex(R"(watch\s+(\w+)\s*\{)"),
                     "watch($1, () => {",
-                    80
+                    80,
+                    nullptr
                 }
             };
         }
@@ -209,7 +212,8 @@ window.watch = function(target, callback) {
                     "animation-chain",
                     std::regex(R"(([\w\{\}#\.]+)\s*~>\s*(\w+))"),
                     "$1.animate().$2",
-                    100
+                    100,
+                    nullptr
                 },
                 
                 // delay(ms)
@@ -217,7 +221,8 @@ window.watch = function(target, callback) {
                     "delay-function",
                     std::regex(R"(delay\((\d+)\))"),
                     "await new Promise(r => setTimeout(r, $1))",
-                    80
+                    80,
+                    nullptr
                 }
             };
         }
@@ -288,35 +293,40 @@ Element.prototype.animate = function() {
                     "async-stream",
                     std::regex(R"(stream\s+(\w+)\s+from\s+(\w+)\s*\{)"),
                     "async function* $1() { const _source = $2; try {",
-                    150
+                    150,
+                    nullptr
                 },
                 // concurrent 语法
                 {
                     "concurrent-block",
                     std::regex(R"(concurrent\s*\((\d+)\)\s*\{)"),
                     "await concurrent($1, async () => {",
-                    130
+                    130,
+                    nullptr
                 },
                 // retry 语法
                 {
                     "retry-block",
                     std::regex(R"(retry\s*\((\d+),\s*(\d+)\)\s*\{)"),
                     "await retry($1, $2, async () => {",
-                    120
+                    120,
+                    nullptr
                 },
                 // try* 语法
                 {
                     "try-star",
                     std::regex(R"(try\*\s*\{)"),
                     "await tryAsync(async () => {",
-                    100
+                    100,
+                    nullptr
                 },
                 // 特殊块结束
                 {
                     "special-block-end",
                     std::regex(R"(\}\s*//\s*(stream|concurrent|retry|try\*)\s*end)"),
                     "})",
-                    40
+                    40,
+                    nullptr
                 }
             };
         }

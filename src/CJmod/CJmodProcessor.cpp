@@ -154,7 +154,7 @@ void CHTLJSSyntaxProcessor::initializeOfficialSyntax() {
     registerSyntax({
         "self-reference",
         std::regex(R"(\{\{&\}\})"),
-        [](const std::smatch& match) { return "this"; },
+        [](const std::smatch& /* match */) { return "this"; },
         true  // 可以被覆写
     });
     

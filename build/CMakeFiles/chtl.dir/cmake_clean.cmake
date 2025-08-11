@@ -8,8 +8,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/src/CJmod/CJmodProcessor.cpp.o.d"
   "CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o"
   "CMakeFiles/chtl.dir/src/CJmod/CJmodRegistry.cpp.o.d"
-  "CMakeFiles/chtl.dir/src/CJmod/CJmodSubmoduleLoader.cpp.o"
-  "CMakeFiles/chtl.dir/src/CJmod/CJmodSubmoduleLoader.cpp.o.d"
   "CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o"
   "CMakeFiles/chtl.dir/src/CJmod/SinglePassProcessor.cpp.o.d"
   "CMakeFiles/chtl.dir/src/CJmod/modules/ReactiveModule.cpp.o"

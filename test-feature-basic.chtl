@@ -1,0 +1,77 @@
+// 测试1: 基本元素和文本语法
+
+html {
+    head {
+        title { text { "CHTL 基础语法测试" } }
+        meta { charset: "UTF-8"; }
+        meta { 
+            name: "viewport"; 
+            content: "width=device-width, initial-scale=1.0"; 
+        }
+    }
+    
+    body {
+        // 基本元素
+        h1 { text { "标题文本" } }
+        p { text { "这是一个段落" } }
+        
+        // 嵌套元素
+        div {
+            h2 { text { "嵌套标题" } }
+            p { 
+                text { "段落中的文本 " }
+                span { text { "行内元素" } }
+                text { " 继续文本" }
+            }
+        }
+        
+        // 属性测试
+        div {
+            id: "test-id";
+            class: "test-class another-class";
+            data-custom: "custom-value";
+            
+            p { text { "带属性的元素" } }
+        }
+        
+        // 空元素
+        br { }
+        hr { }
+        
+        // 自闭合元素
+        img { src: "test.jpg"; alt: "测试图片"; }
+        input { type: "text"; placeholder: "输入框"; }
+        
+        // 列表
+        ul {
+            li { text { "列表项 1" } }
+            li { text { "列表项 2" } }
+            li { 
+                text { "嵌套列表" }
+                ul {
+                    li { text { "子项 1" } }
+                    li { text { "子项 2" } }
+                }
+            }
+        }
+        
+        // 表格
+        table {
+            tr {
+                th { text { "表头1" } }
+                th { text { "表头2" } }
+            }
+            tr {
+                td { text { "单元格1" } }
+                td { text { "单元格2" } }
+            }
+        }
+        
+        // 注释测试
+        // 单行注释
+        /* 多行
+           注释 */
+        -- 生成器注释（会出现在输出中）
+        div { text { "注释后的内容" } }
+    }
+}

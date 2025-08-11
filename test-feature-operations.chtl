@@ -1,0 +1,111 @@
+// 测试3: 组件特例化和操作（delete、insert、inherit）
+
+// 定义基础组件
+[Custom] @Element BaseList {
+    ul {
+        class: "base-list";
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+        li { text { "Item 4" } }
+        li { text { "Item 5" } }
+    }
+}
+
+[Custom] @Element ComplexComponent {
+    div {
+        class: "complex";
+        h2 { text { "Title" } }
+        p { id: "para1"; text { "Paragraph 1" } }
+        p { id: "para2"; text { "Paragraph 2" } }
+        p { id: "para3"; text { "Paragraph 3" } }
+        span { class: "note"; text { "Note" } }
+    }
+}
+
+// 定义可继承的组件
+[Template] @Element InheritableCard {
+    div {
+        class: "card";
+        h3 { text { "Card Header" } }
+        div { class: "card-body"; }
+    }
+}
+
+body {
+    h1 { text { "Delete 操作测试" } }
+    
+    // 删除单个元素
+    @Element BaseList {
+        delete li[1];  // 删除 "Item 2"
+    }
+    
+    // 删除多个元素
+    @Element BaseList {
+        delete li[0];  // 删除 "Item 1"
+        delete li[3];  // 删除 "Item 5"（索引已更新）
+    }
+    
+    // 删除所有同类元素
+    @Element ComplexComponent {
+        delete p;  // 删除所有 p 元素
+    }
+    
+    // 通过属性删除
+    @Element ComplexComponent {
+        delete #para2;  // 通过 ID 删除
+        delete .note;   // 通过 class 删除
+    }
+    
+    h1 { text { "Insert 操作测试" } }
+    
+    // 在指定位置插入
+    @Element BaseList {
+        insert after li[0] {
+            li { text { "Inserted after Item 1" } }
+        }
+        insert before li[2] {
+            li { text { "Inserted before Item 3" } }
+        }
+    }
+    
+    // 替换元素
+    @Element ComplexComponent {
+        insert replace h2 {
+            h1 { text { "Replaced Title" } }
+        }
+    }
+    
+    // 在顶部和底部插入
+    @Element ComplexComponent {
+        insert at top {
+            div { text { "Top insertion" } }
+        }
+        insert at bottom {
+            div { text { "Bottom insertion" } }
+        }
+    }
+    
+    h1 { text { "Inherit 操作测试" } }
+    
+    // 继承组件
+    div {
+        inherit @Element InheritableCard;
+        div {
+            class: "card-body";
+            text { "Inherited card content" }
+        }
+    }
+    
+    // 组合操作
+    @Element BaseList {
+        delete li[1];
+        delete li[2];
+        insert after li[0] {
+            li { text { "New Item" } }
+        }
+        insert at bottom {
+            li { text { "Last Item" } }
+        }
+    }
+}

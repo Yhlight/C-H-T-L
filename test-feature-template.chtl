@@ -1,0 +1,120 @@
+// 测试2: 模板系统（@Element、@Style、@Var）
+
+// 定义元素模板
+[Template] @Element Card {
+    div {
+        class: "card";
+        h3 { text { "Card Title" } }
+        div {
+            class: "card-body";
+            text { "Card content goes here" }
+        }
+    }
+}
+
+[Template] @Element Button {
+    button {
+        class: "btn";
+        text { "Click Me" }
+    }
+}
+
+// 定义样式模板
+[Template] @Style CardStyle {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+[Template] @Style ButtonStyle {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+// 定义变量模板
+[Template] @Var Colors {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+    danger: #dc3545;
+    warning: #ffc107;
+    info: #17a2b8;
+    light: #f8f9fa;
+    dark: #343a40;
+}
+
+[Template] @Var Spacing {
+    xs: 4px;
+    sm: 8px;
+    md: 16px;
+    lg: 24px;
+    xl: 32px;
+}
+
+// 自定义组件
+[Custom] @Element CustomCard {
+    div {
+        class: "custom-card";
+        style {
+            @Style CardStyle;
+            background: Colors(primary);
+            color: white;
+        }
+        h2 { text { "Custom Card" } }
+        p { text { "This is a custom card component" } }
+        @Element Button;
+    }
+}
+
+// 使用模板
+body {
+    // 直接使用元素模板
+    @Element Card;
+    @Element Button;
+    
+    // 使用带样式的元素
+    div {
+        style {
+            @Style CardStyle;
+        }
+        text { "Div with card style" }
+    }
+    
+    // 使用变量
+    div {
+        style {
+            background: Colors(light);
+            padding: Spacing(md);
+            margin: Spacing(sm);
+        }
+        text { "Using variables" }
+    }
+    
+    // 使用自定义组件
+    @Element CustomCard;
+    
+    // 特例化模板
+    @Element Card {
+        h3 { text { "Modified Title" } }
+        div {
+            class: "card-body";
+            text { "Modified content" }
+        }
+    }
+    
+    // 使用变量函数
+    button {
+        style {
+            background: Colors(success);
+            padding: Spacing(sm);
+        }
+        text { "Success Button" }
+    }
+}

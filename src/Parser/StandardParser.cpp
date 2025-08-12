@@ -566,6 +566,14 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
 void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
     std::string inlineStyles;  // 收集内联样式
     
+    // 保存当前状态
+    auto previousState = lexer_->getState();
+    
+    // 切换到 CSS 状态（如果词法分析器支持）
+    // 注意：这需要词法分析器实现相应的 CSS 状态
+    // 暂时我们使用一个标志来指示我们在 CSS 上下文中
+    bool inCssContext = true;
+    
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         
@@ -606,6 +614,11 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
         } else {
             advance();
         }
+    }
+    
+    // 恢复之前的状态
+    if (previousState) {
+        lexer_->setState(previousState);
     }
     
     // 将收集的内联样式设置到Style节点的CSS内容

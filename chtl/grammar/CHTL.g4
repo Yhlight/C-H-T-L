@@ -65,12 +65,12 @@ blockText
     ;
 
 textLine
-    : textPiece+ NEWLINE?
+    : textPiece+
     ;
 
 textPiece
     : STRING
-    | UNQUOTED
+    | IDENT
     | NUMBER
     | DOT
     | HASH
@@ -106,12 +106,12 @@ blockScript
     ;
 
 scriptLine
-    : scriptPiece+ NEWLINE?
+    : scriptPiece+
     ;
 
 scriptPiece
     : STRING
-    | UNQUOTED
+    | IDENT
     | NUMBER
     | DOT
     | HASH
@@ -133,7 +133,7 @@ value
 
 valuePiece
     : STRING
-    | UNQUOTED
+    | IDENT
     | NUMBER
     | DOT
     | HASH
@@ -181,7 +181,6 @@ importTarget
 
 importPath
     : STRING
-    | UNQUOTED
     ;
 
 // [Namespace] name (block)?
@@ -299,11 +298,6 @@ STRING
     ;
 
 fragment ESC: '\\' [btnfr"'\\];
-
-// Unquoted tokens that are not structural delimiters or whitespace
-UNQUOTED: (~[ \t\r\n;{}\[\]\(\):=,])+;
-
-NEWLINE: ('\r'? '\n');
 
 LINE_COMMENT: '//' ~[\r\n]* -> skip;
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;

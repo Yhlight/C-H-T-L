@@ -1,3 +1,9 @@
+[Template] @Style DefaultText
+{
+    color: black;
+    line-height: 1.6;
+}
+
 html
 {
     head { }
@@ -17,28 +23,6 @@ html
             {
                 width: 100px;
                 height: 200px;
-            }
-
-            script
-            {
-                {{box}}->listen({
-                    click: () => {
-                        console.log('clicked');
-                    }
-                });
-            }
-        }
-
-        [Template] @Style DefaultText
-        {
-            color: black;
-            line-height: 1.6;
-        }
-
-        div
-        {
-            style
-            {
                 @Style DefaultText;
             }
         }

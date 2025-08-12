@@ -58,10 +58,10 @@ PERCENT: '%';
 SLASH: '/';
 
 // 语法规则
-stylesheet: (charset | import | namespace | nestedStatement)*;
+stylesheet: (charset | importStatement | namespace | nestedStatement)*;
 
 charset: '@charset' STRING SEMICOLON;
-import: '@import' importList SEMICOLON;
+importStatement: '@import' importList SEMICOLON;
 importList: (STRING | url) (mediaQueryList)?;
 namespace: '@namespace' (prefix)? (STRING | url) SEMICOLON;
 prefix: IDENTIFIER;
@@ -109,8 +109,9 @@ url: URL LPAREN (STRING | urlContent) RPAREN;
 URL: 'url';
 urlContent: (PLUS | MINUS | DIMENSION | unknownDimension | NUMBER | IDENTIFIER | STRING | hexcolor | unicodeRange | subexpression)*;
 
-hexcolor: HASH (NUMBER | [a-fA-F])+;
-unicodeRange: U_PLUS (NUMBER | [a-fA-F])+ (QUESTION | [a-fA-F])* | U_PLUS QUESTION+;
+hexcolor: HASH (NUMBER | HEX_CHAR)+;
+HEX_CHAR: [a-fA-F];
+unicodeRange: U_PLUS (NUMBER | HEX_CHAR)+ (QUESTION | HEX_CHAR)* | U_PLUS QUESTION+;
 U_PLUS: 'U+' | 'u+';
 QUESTION: '?';
 

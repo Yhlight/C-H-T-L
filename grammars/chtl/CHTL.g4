@@ -60,8 +60,8 @@ AMPERSAND: '&';
 // 标识符
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER: [0-9]+ ('.' [0-9]+)?;
-STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
-LITERAL: ~[ \t\r\n{}[]();:="'\n\r]+;
+STRING: '"' (~["\\] | '\\' .)* '"';
+LITERAL: [a-zA-Z0-9_]+;
 
 // 语法规则
 program: (importStatement | namespaceStatement | configurationStatement | templateStatement | customStatement | originStatement | elementStatement)*;

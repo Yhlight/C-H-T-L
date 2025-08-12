@@ -179,6 +179,10 @@ enum class NodeType {
     ELEMENT,
     TEXT,
     ATTRIBUTE,
+    STYLE,          // 添加STYLE
+    SCRIPT,         // 添加SCRIPT
+    TEMPLATE,       // 添加TEMPLATE
+    CUSTOM,         // 添加CUSTOM
     STYLE_BLOCK,
     SCRIPT_BLOCK,
     
@@ -234,7 +238,8 @@ enum class SymbolType {
     IMPORT,
     VARIABLE,
     FUNCTION,
-    CLASS
+    CLASS,
+    CONFIG  // 添加CONFIG
 };
 
 /**

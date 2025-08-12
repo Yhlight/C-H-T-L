@@ -214,29 +214,26 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//Arguments to supply to pkg-config
-PKG_CONFIG_ARGN:STRING=
-
-//pkg-config executable
-PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
-
 //The directory containing a CMake configuration file for antlr4-runtime.
 antlr4-runtime_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/antlr4-runtime
 
 //Dependencies for the target
-chtl-chtljs_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-js;general;antlr4_shared;
+chtl-chtljs_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;general;chtl-js;general;antlr4_shared;
 
 //Dependencies for the target
-chtl-css_LIB_DEPENDS:STATIC=general;chtl-common;general;antlr4_shared;
+chtl-css_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;general;antlr4_shared;
 
 //Dependencies for the target
-chtl-generator_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-state;general;chtl-optimize;
+chtl-generator_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;general;chtl-state;general;chtl-optimize;
 
 //Dependencies for the target
-chtl-js_LIB_DEPENDS:STATIC=general;chtl-common;general;antlr4_shared;
+chtl-js_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;general;antlr4_shared;
 
 //Dependencies for the target
-chtl-parser_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-state;general;antlr4_shared;
+chtl-node_LIB_DEPENDS:STATIC=general;chtl-common;
+
+//Dependencies for the target
+chtl-parser_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;general;chtl-state;general;chtl-scanner;general;antlr4_shared;
 
 //Dependencies for the target
 chtl-scanner_LIB_DEPENDS:STATIC=general;chtl-common;
@@ -249,31 +246,6 @@ chtl-state_LIB_DEPENDS:STATIC=general;chtl-common;general;chtl-node;
 # INTERNAL cache entries
 ########################
 
-ANTLR4_CFLAGS:INTERNAL=
-ANTLR4_CFLAGS_I:INTERNAL=
-ANTLR4_CFLAGS_OTHER:INTERNAL=
-ANTLR4_FOUND:INTERNAL=
-ANTLR4_INCLUDEDIR:INTERNAL=
-ANTLR4_LIBDIR:INTERNAL=
-ANTLR4_LIBS:INTERNAL=
-ANTLR4_LIBS_L:INTERNAL=
-ANTLR4_LIBS_OTHER:INTERNAL=
-ANTLR4_LIBS_PATHS:INTERNAL=
-ANTLR4_MODULE_NAME:INTERNAL=
-ANTLR4_PREFIX:INTERNAL=
-ANTLR4_STATIC_CFLAGS:INTERNAL=
-ANTLR4_STATIC_CFLAGS_I:INTERNAL=
-ANTLR4_STATIC_CFLAGS_OTHER:INTERNAL=
-ANTLR4_STATIC_LIBDIR:INTERNAL=
-ANTLR4_STATIC_LIBS:INTERNAL=
-ANTLR4_STATIC_LIBS_L:INTERNAL=
-ANTLR4_STATIC_LIBS_OTHER:INTERNAL=
-ANTLR4_STATIC_LIBS_PATHS:INTERNAL=
-ANTLR4_VERSION:INTERNAL=
-ANTLR4_antlr4-runtime_INCLUDEDIR:INTERNAL=
-ANTLR4_antlr4-runtime_LIBDIR:INTERNAL=
-ANTLR4_antlr4-runtime_PREFIX:INTERNAL=
-ANTLR4_antlr4-runtime_VERSION:INTERNAL=
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -405,12 +377,6 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//Details about finding PkgConfig
-FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
-//ADVANCED property for variable: PKG_CONFIG_ARGN
-PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
-PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_CXX_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //linker supports push/pop state

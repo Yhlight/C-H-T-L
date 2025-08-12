@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-state.a "CMakeFiles/chtl-state.dir/SymbolTable.cpp.o" "CMakeFiles/chtl-state.dir/Symbol.cpp.o" "CMakeFiles/chtl-state.dir/Scope.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-state.a

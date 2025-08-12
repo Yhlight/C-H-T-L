@@ -45,7 +45,7 @@ singleExpression
     | singleExpression QUESTION singleExpression COLON singleExpression      
     | singleExpression EQUALS singleExpression                                
     | singleExpression assignmentOperator singleExpression                    
-    | singleExpression templateStringLiteral                                  
+    // | singleExpression templateStringLiteral  // 注释掉，使用父语法的TEMPLATE_STRING
     | THIS                                                                    
     | IDENTIFIER                                                              
     | SUPER                                                                   
@@ -56,6 +56,11 @@ singleExpression
     | typeofExpression                                                        
     ;
 
+// CHTL选择器扩展  
+chtlSelectorList
+    : chtlSelector (COMMA chtlSelector)*
+    ;
+
 // CHTL选择器
 chtlSelector: CHTL_SELECTOR_START chtlSelectorContent CHTL_SELECTOR_END;
 
@@ -63,8 +68,7 @@ chtlSelectorContent
     : IDENTIFIER                           // {{box}} - 类名或id
     | DOT IDENTIFIER                       // {{.box}} - 类名
     | HASH IDENTIFIER                      // {{#box}} - id
-    | IDENTIFIER LBRACKET NUMBER RBRACKET  // {{button[0]}} - 索引访问
-    | cssSelector                          // 复杂CSS选择器
+    | singleExpression                     // {{expr}} - 表达式
     ;
 
 cssSelector: cssSelectorPart+;
@@ -126,6 +130,9 @@ whenProperty
 CHTL_ARROW: '->';
 CHTL_SELECTOR_START: '{{';
 CHTL_SELECTOR_END: '}}';
+HASH: '#';         // 添加HASH
+AT: '@';           // 添加AT
+SPACE: ' ' -> skip; // 添加SPACE并设置为skip
 LISTEN: 'listen';
 DELEGATE: 'delegate';
 TARGET: 'target';
@@ -139,3 +146,24 @@ LOOP: 'loop';
 DIRECTION: 'direction';
 DELAY: 'delay';
 CALLBACK: 'callback';
+
+// 模板字符串
+BACKTICK: '`';
+TEMPLATE_STRING: '`' (TEMPLATE_STRING_ATOM | TEMPLATE_EXPRESSION)* '`';
+fragment TEMPLATE_STRING_ATOM: ~[`\\$]+ | '\\' . | '$' ~[{];
+fragment TEMPLATE_EXPRESSION: '${' .*? '}';
+
+// 正则表达式
+REGEX: '/' REGEX_BODY '/' REGEX_FLAGS?;
+fragment REGEX_BODY: (~[/\\\r\n] | '\\' .)+;
+fragment REGEX_FLAGS: [gimsuvy]+;
+
+// 标识符
+IDENTIFIER: [a-zA-Z_$][a-zA-Z0-9_$]*;
+
+// 注释
+LINE_COMMENT: '//' ~[\r\n]* -> skip;
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+
+// 空白
+WS: [ \t\r\n]+ -> skip;

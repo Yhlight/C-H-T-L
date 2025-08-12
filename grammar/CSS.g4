@@ -1,8 +1,9 @@
 grammar CSS;
 
-// CSS文档
+// CSS程序入口
 stylesheet: statement* EOF;
 
+// 语句
 statement
     : ruleset
     | media
@@ -10,20 +11,20 @@ statement
     | fontFace
     | keyframes
     | supports
-    | import
-    | namespace
-    | charset
+    | importRule  // 改名为importRule
+    | namespaceRule  // 改名为namespaceRule
+    | charsetRule  // 改名为charsetRule
     | nestedStatement
     ;
 
 // 字符集声明
-charset: CHARSET STRING SEMICOLON;
+charsetRule: CHARSET STRING SEMICOLON;
 
 // 导入
-import: IMPORT (STRING | url) mediaQueryList? SEMICOLON;
+importRule: IMPORT (STRING | url) mediaQueryList? SEMICOLON;
 
 // 命名空间
-namespace: NAMESPACE (IDENTIFIER)? (STRING | url) SEMICOLON;
+namespaceRule: NAMESPACE IDENT? (STRING | url) SEMICOLON;
 
 // 媒体查询
 media: MEDIA mediaQueryList LBRACE ruleset* RBRACE;
@@ -33,22 +34,22 @@ mediaQueryList: mediaQuery (COMMA mediaQuery)*;
 mediaQuery: (ONLY | NOT)? mediaType (AND mediaExpression)*
           | mediaExpression (AND mediaExpression)*;
 
-mediaType: IDENTIFIER;
+mediaType: IDENT;
 
 mediaExpression: LPAREN mediaFeature (COLON value)? RPAREN;
 
-mediaFeature: IDENTIFIER;
+mediaFeature: IDENT;
 
 // 页面规则
 page: PAGE pseudoPage? LBRACE declaration* RBRACE;
 
-pseudoPage: COLON IDENTIFIER;
+pseudoPage: COLON IDENT;
 
 // 字体规则
 fontFace: FONT_FACE LBRACE declaration* RBRACE;
 
 // 关键帧
-keyframes: KEYFRAMES IDENTIFIER LBRACE keyframeRule* RBRACE;
+keyframes: KEYFRAMES IDENT LBRACE keyframeRule* RBRACE;
 
 keyframeRule: keyframeSelector LBRACE declaration* RBRACE;
 
@@ -85,30 +86,33 @@ simpleSelector: (typeSelector | universal)? (idSelector | classSelector | attrib
 
 typeSelector: typeNamespacePrefix? elementName;
 
-typeNamespacePrefix: (IDENTIFIER | STAR)? PIPE;
+typeNamespacePrefix: (IDENT | STAR)? PIPE;
 
-elementName: IDENTIFIER;
+elementName: IDENT;
 
 universal: typeNamespacePrefix? STAR;
 
-idSelector: HASH IDENTIFIER;
+idSelector: HASH IDENT;
 
-classSelector: DOT IDENTIFIER;
+classSelector: DOT IDENT;
 
-attributeSelector: LBRACKET IDENTIFIER (attributeOperator (STRING | IDENTIFIER))? RBRACKET;
+attributeSelector: LBRACKET IDENT (attributeOperator (STRING | IDENT))? RBRACKET;
 
 attributeOperator: EQUALS | INCLUDES | DASHMATCH | PREFIXMATCH | SUFFIXMATCH | SUBSTRINGMATCH;
 
-pseudoClass: COLON COLON? (IDENTIFIER | functionalPseudoClass);
+pseudoClass: COLON COLON? (IDENT | functionalPseudoClass);
 
-functionalPseudoClass: FUNCTION (selector | NUMBER | STRING | IDENTIFIER)* RPAREN;
+// 功能性伪类
+functionalPseudoClass
+    : FUNCTION selectorList? RPAREN  // 移除COLON，使用FUNCTION token
+    ;
 
-pseudoElement: COLON COLON IDENTIFIER;
+pseudoElement: COLON COLON IDENT;
 
 // 声明
-declaration: property COLON value important? SEMICOLON?;
+declaration: property COLON value IMPORTANT?;
 
-property: IDENTIFIER (MINUS IDENTIFIER)*;
+property: IDENT (MINUS IDENT)*;
 
 value: term (operator? term)*;
 
@@ -122,7 +126,7 @@ term
     | TIME
     | FREQ
     | STRING
-    | IDENTIFIER
+    | IDENT
     | url
     | hexcolor
     | function
@@ -176,6 +180,7 @@ COMMA: ',';
 DOT: '.';
 HASH: '#';
 PLUS: '+';
+MINUS: '-';  // 添加MINUS定义
 GREATER: '>';
 TILDE: '~';
 STAR: '*';
@@ -198,13 +203,13 @@ FREQ: NUMBER ('hz' | 'khz');
 PERCENTAGE: NUMBER '%';
 
 // 函数
-FUNCTION: IDENTIFIER LPAREN;
+FUNCTION: IDENT LPAREN;
 URL: 'url';
 
 // 基本类型
 NUMBER: [0-9]+ ('.' [0-9]+)?;
 STRING: '"' (~["\\\r\n] | '\\' .)* '"' | '\'' (~['\\\r\n] | '\\' .)* '\'';
-IDENTIFIER: [a-zA-Z_-][a-zA-Z0-9_-]*;
+IDENT: [a-zA-Z_-][a-zA-Z0-9_-]*;
 HEXDIGIT: [0-9a-fA-F];
 
 // 注释

@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-js.a "CMakeFiles/chtl-js.dir/JsParser.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-js.a

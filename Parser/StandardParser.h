@@ -4,7 +4,12 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include "Node/Node.h"
+#include "Node/ElementNode.h"
+#include "Node/TextNode.h"
+#include "Node/StyleNode.h"
+#include "Node/ScriptNode.h"
 #include "State/SymbolTable.h"
 #include "Scanner/BridgeScanner/BridgeScanner.h"
 

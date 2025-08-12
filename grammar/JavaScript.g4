@@ -205,7 +205,7 @@ singleExpression
     | singleExpression QUESTION singleExpression COLON singleExpression      // 三元
     | singleExpression EQUALS singleExpression                                // 赋值
     | singleExpression assignmentOperator singleExpression                    // 复合赋值
-    | singleExpression templateStringLiteral                                  // 模板字符串
+    // | singleExpression templateStringLiteral                                  // 模板字符串 - 已注释，改用TEMPLATE_STRING
     | THIS                                                                    // this
     | IDENTIFIER                                                              // 标识符
     | SUPER                                                                   // super
@@ -235,21 +235,22 @@ assignmentOperator
 
 // 字面量
 literal
-    : NULL
-    | BOOLEAN
+    : NUMBER
     | STRING
-    | templateStringLiteral
+    | TEMPLATE_STRING  // 使用新的TEMPLATE_STRING token
+    | BOOLEAN
+    | NULL
+    | UNDEFINED
     | REGEX
-    | NUMBER
-    | BIGINT
     ;
 
-templateStringLiteral: BACKTICK templateStringAtom* BACKTICK;
+// 注释掉旧的模板字符串规则，因为现在使用TEMPLATE_STRING token
+// templateStringLiteral: BACKTICK templateStringAtom* BACKTICK;
 
-templateStringAtom
-    : TEMPLATE_STRING_ATOM
-    | DOLLAR_LBRACE singleExpression RBRACE
-    ;
+// templateStringAtom
+//     : TEMPLATE_STRING_ATOM
+//     | DOLLAR_LBRACE singleExpression RBRACE
+//     ;
 
 // 数组字面量
 arrayLiteral: LBRACKET elementList? RBRACKET;
@@ -359,6 +360,7 @@ SET: 'set';
 // 字面量
 NULL: 'null';
 BOOLEAN: 'true' | 'false';
+UNDEFINED: 'undefined';
 
 // 操作符
 LPAREN: '(';
@@ -425,8 +427,9 @@ STRING: '"' (~["\\\r\n] | '\\' .)* '"' | '\'' (~['\\\r\n] | '\\' .)* '\'';
 
 // 模板字符串
 BACKTICK: '`';
-DOLLAR_LBRACE: '${' -> pushMode(TEMPLATE_EXPRESSION);
-TEMPLATE_STRING_ATOM: ~[`\\$]+ | '\\' . | '$' ~[{];
+TEMPLATE_STRING: '`' (TEMPLATE_STRING_ATOM | TEMPLATE_EXPRESSION)* '`';
+fragment TEMPLATE_STRING_ATOM: ~[`\\$]+ | '\\' . | '$' ~[{];
+fragment TEMPLATE_EXPRESSION: '${' .*? '}';
 
 // 正则表达式
 REGEX: '/' REGEX_BODY '/' REGEX_FLAGS?;
@@ -442,9 +445,3 @@ BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
 // 空白
 WS: [ \t\r\n]+ -> skip;
-
-// 模板表达式模式
-mode TEMPLATE_EXPRESSION;
-TEMPLATE_EXPRESSION_RBRACE: '}' -> popMode;
-TEMPLATE_EXPRESSION_WS: [ \t\r\n]+ -> skip;
-TEMPLATE_EXPRESSION_CONTENT: ~[}]+;

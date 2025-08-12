@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-css.a "CMakeFiles/chtl-css.dir/CssParser.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-css.a

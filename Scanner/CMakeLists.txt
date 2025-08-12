@@ -1,5 +1,6 @@
 add_library(chtl-scanner STATIC
     BridgeScanner/BridgeScanner.cpp
+    Segment/Segment.cpp
 )
 
 target_include_directories(chtl-scanner PUBLIC

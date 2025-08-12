@@ -5,6 +5,8 @@
 #include <vector>
 #include <stack>
 #include <memory>
+#include <iostream>
+#include <cctype>
 #include "Scanner/Segment/Segment.h"
 
 namespace CHTL {
@@ -80,6 +82,7 @@ private:
     bool isWhitespace(char c) const;
     bool isNewline(char c) const;
     void updatePosition(char c, int& line, int& column);
+    void updatePosition(const std::string& str, int& line, int& column);
     void skipWhitespace(const std::string& content, size_t& pos);
     std::string extractIdentifier(const std::string& content, size_t& pos);
     std::string extractUntil(const std::string& content, size_t& pos, char delimiter);

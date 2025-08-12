@@ -184,6 +184,8 @@ private:
     
     // 辅助方法
     void collectSymbols(Scope* scope, std::vector<SymbolPtr>& symbols) const;
+    SymbolPtr lookupSymbolRecursive(Scope* scope, const std::string& qualifiedName) const;
+    void printScope(Scope* scope, int indent) const;
 };
 
 } // namespace CHTL

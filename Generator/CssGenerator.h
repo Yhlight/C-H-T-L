@@ -1,0 +1,10 @@
+#ifndef CHTL_GENERATOR_CSSGENERATOR_H
+#define CHTL_GENERATOR_CSSGENERATOR_H
+
+namespace CHTL {
+
+// TODO: 定义CSS生成器类
+
+} // namespace CHTL
+
+#endif // CHTL_GENERATOR_CSSGENERATOR_H

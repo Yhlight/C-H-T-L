@@ -1,0 +1,1 @@
+/usr/bin/c++ -Xlinker --dependency-file=CMakeFiles/chtl.dir/link.d CMakeFiles/chtl.dir/main.cpp.o -o ../bin/chtl  ../lib/libchtl-parser.a ../lib/libchtl-generator.a /usr/lib/x86_64-linux-gnu/libantlr4-runtime.so.4.10 -luuid ../lib/libchtl-state.a ../lib/libchtl-scanner.a ../lib/libchtl-node.a ../lib/libchtl-common.a

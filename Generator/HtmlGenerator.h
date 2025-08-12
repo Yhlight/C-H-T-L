@@ -1,0 +1,10 @@
+#ifndef CHTL_GENERATOR_HTMLGENERATOR_H
+#define CHTL_GENERATOR_HTMLGENERATOR_H
+
+namespace CHTL {
+
+// TODO: 定义HTML生成器类
+
+} // namespace CHTL
+
+#endif // CHTL_GENERATOR_HTMLGENERATOR_H

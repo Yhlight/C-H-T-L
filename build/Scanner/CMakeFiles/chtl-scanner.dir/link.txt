@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-scanner.a "CMakeFiles/chtl-scanner.dir/BridgeScanner/BridgeScanner.cpp.o" "CMakeFiles/chtl-scanner.dir/Segment/Segment.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-scanner.a

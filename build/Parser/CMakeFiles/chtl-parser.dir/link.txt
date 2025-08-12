@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-parser.a "CMakeFiles/chtl-parser.dir/StandardParser.cpp.o" "CMakeFiles/chtl-parser.dir/ChtlVisitor.cpp.o" "CMakeFiles/chtl-parser.dir/CssVisitor.cpp.o" "CMakeFiles/chtl-parser.dir/JsVisitor.cpp.o" "CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-parser.a

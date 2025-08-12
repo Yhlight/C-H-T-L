@@ -1,0 +1,30 @@
+[Template] @Style DefaultText
+{
+    color: black;
+    line-height: 1.6;
+}
+
+html
+{
+    head { }
+    body
+    {
+        div
+        {
+            id: box;
+            class: welcome;
+
+            text
+            {
+                "这是一段文本"
+            }
+
+            style
+            {
+                width: 100px;
+                height: 200px;
+                @Style DefaultText;
+            }
+        }
+    }
+}

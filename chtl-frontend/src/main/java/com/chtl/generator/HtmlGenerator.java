@@ -15,6 +15,7 @@ public class HtmlGenerator implements ChtlVisitor<String> {
     private Map<String, String> templateExpansions;
     private int indentLevel;
     private static final String INDENT = "    ";
+    private ElementNode currentElement;
     
     public HtmlGenerator() {
         this.globalStyles = new StringBuilder();
@@ -83,6 +84,9 @@ public class HtmlGenerator implements ChtlVisitor<String> {
     
     @Override
     public String visitElement(ElementNode node) {
+        ElementNode previousElement = currentElement;
+        currentElement = node;
+        
         StringBuilder result = new StringBuilder();
         String tagName = node.getTagName();
         
@@ -150,6 +154,7 @@ public class HtmlGenerator implements ChtlVisitor<String> {
             }
         }
         
+        currentElement = previousElement;
         return result.toString();
     }
     
@@ -235,7 +240,7 @@ public class HtmlGenerator implements ChtlVisitor<String> {
     public String visitCssRule(CssRuleNode node) {
         StringBuilder result = new StringBuilder();
         String selector = node.getResolvedSelector() != null ? 
-            node.getResolvedSelector() : node.getSelector();
+            node.getResolvedSelector() : processSelector(node.getSelector());
         
         result.append(selector).append(" {\n");
         indentLevel++;
@@ -246,6 +251,39 @@ public class HtmlGenerator implements ChtlVisitor<String> {
         result.append("}\n\n");
         
         return result.toString();
+    }
+    
+    private String processSelector(String selector) {
+        // Handle & symbol in selectors
+        if (selector.contains("&") && currentElement != null) {
+            String replacement = "";
+            
+            // Determine replacement based on element's generated class/id or tag name
+            if (currentElement.getAttributes() != null) {
+                for (AttributeNode attr : currentElement.getAttributes()) {
+                    if ("class".equals(attr.getName()) && attr.getValue() != null) {
+                        replacement = "." + attr.getValue().split("\\s+")[0]; // Use first class
+                        break;
+                    } else if ("id".equals(attr.getName()) && attr.getValue() != null) {
+                        replacement = "#" + attr.getValue();
+                        break;
+                    }
+                }
+            }
+            
+            // If no class/id found, use tag name
+            if (replacement.isEmpty()) {
+                replacement = currentElement.getTagName();
+            }
+            
+            // Handle special cases like &:hover, &::before
+            selector = selector.replace("&::", replacement + "::");
+            selector = selector.replace("&:", replacement + ":");
+            selector = selector.replace("& ", replacement + " ");
+            selector = selector.replace("&", replacement);
+        }
+        
+        return selector;
     }
     
     @Override

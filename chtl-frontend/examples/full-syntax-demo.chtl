@@ -1,0 +1,309 @@
+// CHTL完整语法演示文件
+
+// 模块信息（用于CMOD）
+[Info]
+{
+    name = "chtholly-theme";
+    version = "1.0.0";
+    description = "珂朵莉主题模块 - 世界上最幸福的女孩";
+    author = "CHTL Team";
+    license = "MIT";
+    dependencies = "";
+    category = "theme";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
+}
+
+// 导出声明
+[Export]
+{
+    @Style ChthollyStyle, ChthollyCard, ChthollyButton;
+    @Element ChthollyPage, ChthollySection;
+    @Var ChthollyColors, ChthollyFonts;
+}
+
+// 配置块
+[Configuration]
+{
+    // 基础配置
+    charset = "UTF-8";
+    title = "CHTL完整语法演示";
+    lang = "zh-CN";
+    
+    // 命名配置
+    name {
+        // 自动ID生成规则
+        id {
+            prefix = "chtl";
+            style = "kebab-case";
+            length = 8;
+        }
+        
+        // 自动类名生成规则  
+        class {
+            prefix = "chtl";
+            style = "kebab-case";
+        }
+    }
+}
+
+// 导入其他资源
+[Import] @Html from "./header.html" as SiteHeader;
+[Import] @Style from "./styles/main.css" as MainStyles;
+[Import] @JavaScript from "./scripts/utils.js" as UtilsScript;
+[Import] @Chtl from "Chtholly";  // 导入CMOD模块
+[Import] @CJmod from "AnimationExtensions";  // 导入CJMOD扩展
+
+// 命名空间
+[Namespace] Chtholly
+{
+    // 命名空间内的样式模板
+    [Template] @Style ChthollyStyle {
+        .chtholly-theme {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+        }
+        
+        & {
+            color: var(--text-color);
+            background: var(--bg-color);
+        }
+    }
+    
+    // 命名空间内的元素模板
+    [Template] @Element ChthollyCard {
+        div class="chtholly-card" {
+            @local style {
+                & {
+                    padding: 2rem;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    transition: transform 0.3s ease;
+                }
+                
+                &:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+                }
+            }
+            
+            h3 { "$title" }
+            p { "$content" }
+        }
+    }
+}
+
+// 自定义元素
+[Custom] @Element Button {
+    button class="btn $style" disabled="$disabled" {
+        span class="btn-icon" { "$icon" }
+        span class="btn-text" { "$text" }
+        
+        @local style {
+            & {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            &.primary {
+                background: var(--primary-color);
+                color: white;
+            }
+            
+            &.secondary {
+                background: var(--secondary-color);
+                color: white;
+            }
+            
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+
+// 带继承的模板
+[Template] @Element BaseLayout {
+    html {
+        head {
+            meta charset="UTF-8";
+            meta name="viewport" content="width=device-width, initial-scale=1.0";
+            title { "$pageTitle" }
+            @inherit;  // 允许子模板添加内容
+        }
+        body {
+            @inherit;  // 允许子模板添加内容
+        }
+    }
+}
+
+// 主页面定义
+[Template] @Element HomePage < BaseLayout {
+    @override $pageTitle = "CHTL演示主页";
+    
+    @specialize head {
+        link rel="stylesheet" href="theme.css";
+    }
+    
+    @specialize body {
+        header {
+            nav {
+                ul {
+                    li { a href="#home" { "主页" } }
+                    li { a href="#about" { "关于" } }
+                    li { a href="#contact" { "联系" } }
+                }
+            }
+        }
+        
+        main {
+            // 使用命名空间中的模板
+            @Chtholly.ChthollyCard {
+                $title = "欢迎使用CHTL";
+                $content = "这是一个展示CHTL所有语法特性的演示文件";
+            }
+            
+            // 使用自定义元素
+            @Button {
+                $style = "primary";
+                $icon = "🚀";
+                $text = "开始使用";
+                $disabled = "false";
+            }
+            
+            // 条件渲染
+            @if($showFeatures) {
+                section class="features" {
+                    h2 { "核心特性" }
+                    
+                    // 循环渲染
+                    @for(feature in $features) {
+                        div class="feature-item" {
+                            h3 { "$feature.title" }
+                            p { "$feature.description" }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 本地脚本（带作用域隔离）
+        @local script {
+            // 使用CHTL JS增强语法
+            {{.btn}}.listen('click', (e) => {
+                console.log('按钮被点击了');
+                
+                // 使用->操作符进行链式调用
+                e.target -> 
+                    classList.add('clicked') ->
+                    animate({
+                        scale: [1, 1.1, 1],
+                        duration: 300
+                    });
+            });
+            
+            // 事件委托
+            document.delegate('click', '.feature-item', function(e) {
+                this.classList.toggle('expanded');
+            });
+        }
+    }
+}
+
+// 原始嵌入内容
+[Origin] @Html RawComponent {
+    <div class="legacy-component">
+        <p>这是原始HTML内容，不会被CHTL处理</p>
+    </div>
+}
+
+[Origin] @Style {
+    /* 原始CSS样式 */
+    .legacy-component {
+        background: #f0f0f0;
+        padding: 1rem;
+    }
+}
+
+[Origin] @JavaScript {
+    // 原始JavaScript代码
+    console.log('这是原始JS代码');
+}
+
+// 变量定义
+[Var] ChthollyColors {
+    primary = "#ff6b6b";
+    secondary = "#4ecdc4";
+    accent = "#95e1d3";
+    dark = "#2c3e50";
+    light = "#ecf0f1";
+}
+
+// 高级特性演示
+[Template] @Element AdvancedFeatures {
+    div class="advanced" {
+        // 删除操作
+        @delete .unwanted-class;
+        @delete #old-id;
+        
+        // 插入操作
+        @insert before .target {
+            div class="inserted-before" { "插入的内容" }
+        }
+        
+        // 特殊化操作
+        @specialize .existing-element {
+            // 修改现有元素
+            class += " enhanced";
+            data-enhanced = "true";
+        }
+        
+        // 约束操作
+        div class="constrained" {
+            @except .excluded {
+                // 这些内容不会应用到.excluded类
+                color: red;
+            }
+        }
+    }
+}
+
+// 实际页面内容
+html {
+    head {
+        meta charset="UTF-8";
+        title { "CHTL完整语法演示" }
+        
+        // 应用全局样式
+        style {
+            @Chtholly.ChthollyStyle;
+            
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+        }
+    }
+    
+    body {
+        // 使用模板
+        @HomePage {
+            $showFeatures = "true";
+            $features = [
+                { title: "模板系统", description: "强大的模板和继承机制" },
+                { title: "命名空间", description: "模块化的代码组织" },
+                { title: "增强CSS", description: "支持&符号和本地样式" },
+                { title: "增强JS", description: "选择器语法和链式调用" }
+            ];
+        }
+    }
+}

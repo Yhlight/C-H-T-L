@@ -25,6 +25,7 @@ public class ImportManager {
         private Map<String, NamespaceNode> namespaces;
         private List<ImportError> errors;
         private List<ImportWarning> warnings;
+        private com.chtl.cmod.CmodLoader cmodLoader;
         
         public ImportContext(Path currentFile) {
             this.currentFile = currentFile.toAbsolutePath();
@@ -340,8 +341,8 @@ public class ImportManager {
             return processSubmoduleImport(sourcePath, context, importNode);
         }
         
-        // 搜索CHTL文件
-        List<Path> chtlFiles = findChtlFiles(sourcePath, context);
+        // 搜索CHTL文件（包括.cmod文件）
+        List<Path> chtlFiles = findChtlFilesWithCmod(sourcePath, context);
         if (chtlFiles.isEmpty()) {
             context.addError(new ImportError(
                 "找不到CHTL文件或模块: " + sourcePath,
@@ -354,31 +355,37 @@ public class ImportManager {
         
         // 处理每个找到的文件
         for (Path chtlFile : chtlFiles) {
-            // 检查循环依赖
-            if (context.wouldCauseCircularDependency(chtlFile)) {
-                context.addError(new ImportError(
-                    "检测到循环依赖: " + chtlFile,
-                    context.currentFile,
-                    importNode.getLine(),
-                    importNode.getColumn()
-                ));
-                continue;
+            if (chtlFile.toString().endsWith(".cmod")) {
+                // 处理CMOD文件
+                ImportResult cmodResult = processCmodFile(chtlFile, context, importNode);
+                result.merge(cmodResult);
+            } else {
+                // 检查循环依赖
+                if (context.wouldCauseCircularDependency(chtlFile)) {
+                    context.addError(new ImportError(
+                        "检测到循环依赖: " + chtlFile,
+                        context.currentFile,
+                        importNode.getLine(),
+                        importNode.getColumn()
+                    ));
+                    continue;
+                }
+                
+                // 检查重复导入
+                if (context.isAlreadyImported(chtlFile)) {
+                    context.addWarning(new ImportWarning(
+                        "文件已被导入，跳过: " + chtlFile,
+                        context.currentFile,
+                        importNode.getLine(),
+                        importNode.getColumn()
+                    ));
+                    continue;
+                }
+                
+                // 处理文件
+                ImportResult fileResult = processChtlFile(chtlFile, context);
+                result.merge(fileResult);
             }
-            
-            // 检查重复导入
-            if (context.isAlreadyImported(chtlFile)) {
-                context.addWarning(new ImportWarning(
-                    "文件已被导入，跳过: " + chtlFile,
-                    context.currentFile,
-                    importNode.getLine(),
-                    importNode.getColumn()
-                ));
-                continue;
-            }
-            
-            // 处理文件
-            ImportResult fileResult = processChtlFile(chtlFile, context);
-            result.merge(fileResult);
         }
         
         return result;
@@ -718,6 +725,82 @@ public class ImportManager {
         } catch (IOException e) {
             context.addError(new ImportError(
                 "处理CMOD模块失败: " + e.getMessage(),
+                context.currentFile,
+                importNode.getLine(),
+                importNode.getColumn()
+            ));
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 查找CHTL文件（包括.cmod文件）
+     */
+    private List<Path> findChtlFilesWithCmod(String sourcePath, ImportContext context) {
+        List<Path> files = new ArrayList<>();
+        
+        // 首先尝试查找.cmod文件
+        files.addAll(findCmodFiles(sourcePath, context));
+        
+        // 如果没有找到.cmod文件，查找.chtl文件
+        if (files.isEmpty()) {
+            files.addAll(findChtlFiles(sourcePath, context));
+        }
+        
+        return files;
+    }
+    
+    /**
+     * 查找CMOD文件
+     */
+    private List<Path> findCmodFiles(String sourcePath, ImportContext context) {
+        List<Path> files = new ArrayList<>();
+        
+        // 搜索顺序：官方模块 -> 本地module目录 -> 当前目录
+        List<Path> searchDirs = Arrays.asList(
+            context.officialModuleDirectory,
+            context.moduleDirectory,
+            context.currentDirectory
+        );
+        
+        for (Path searchDir : searchDirs) {
+            if (!Files.exists(searchDir)) {
+                continue;
+            }
+            
+            // 查找.cmod文件
+            Path cmodFile = searchDir.resolve(sourcePath + ".cmod");
+            if (Files.exists(cmodFile)) {
+                files.add(cmodFile);
+                return files; // 找到cmod就返回
+            }
+        }
+        
+        return files;
+    }
+    
+    /**
+     * 处理CMOD文件导入
+     */
+    private ImportResult processCmodFile(Path cmodFile, ImportContext context, ImportNode importNode) {
+        ImportResult result = new ImportResult();
+        
+        try {
+            // 使用CmodLoader加载模块
+            if (context.cmodLoader == null) {
+                context.cmodLoader = new com.chtl.cmod.CmodLoader();
+            }
+            
+            com.chtl.cmod.CmodLoader.LoadedModule module = context.cmodLoader.loadModule(cmodFile);
+            
+            // 处理解压后的模块目录
+            ImportResult moduleResult = processCmodDirectory(module.getExtractPath(), context, importNode);
+            result.merge(moduleResult);
+            
+        } catch (IOException e) {
+            context.addError(new ImportError(
+                "加载CMOD文件失败: " + e.getMessage(),
                 context.currentFile,
                 importNode.getLine(),
                 importNode.getColumn()

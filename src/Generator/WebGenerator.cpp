@@ -105,6 +105,8 @@ void WebGenerator::injectRuntimeCode() {
         // 在用户代码之前注入运行时
         result_.js = runtimeCode + "\n" + result_.js;
     }
+    
+
 }
 
 void WebGenerator::visit(const std::shared_ptr<Node>& node) {
@@ -399,25 +401,11 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 }
 
 void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
-    // 检查是否有名称 - 有名称的是定义
+    // Custom 定义在基类的 collectDefinitions 中已处理
+    // 只需要处理没有名称的实例（从引用克隆的）
+    
     if (!custom->getCustomName().empty()) {
-        // 这是一个定义，注册它
-        std::string key;
-        switch (custom->getCustomType()) {
-            case Custom::CustomType::ELEMENT:
-                key = "@Element " + custom->getCustomName();
-                break;
-            case Custom::CustomType::STYLE:
-                key = "@Style " + custom->getCustomName();
-                break;
-            case Custom::CustomType::VAR:
-                key = "@Var " + custom->getCustomName();
-                break;
-        }
-        
-        customDefinitions_[key] = custom;
-        
-        // 定义不生成内容
+        // 有名称的是定义，不生成内容
         return;
     }
     
@@ -774,6 +762,8 @@ std::string WebGenerator::processVarReferences(const std::string& css) {
 std::string WebGenerator::findVarValue(const std::string& varGroupName, const std::string& propertyName) {
     // 先在Custom定义中查找
     std::string key = "@Var " + varGroupName;
+    
+    
     auto customIt = customDefinitions_.find(key);
     if (customIt != customDefinitions_.end()) {
         auto custom = std::static_pointer_cast<Custom>(customIt->second);
@@ -788,6 +778,8 @@ std::string WebGenerator::findVarValue(const std::string& varGroupName, const st
     if (templateIt != templateDefinitions_.end()) {
         auto tmpl = std::static_pointer_cast<Template>(templateIt->second);
         auto params = tmpl->getParameters();
+        
+        
         if (params.find(propertyName) != params.end()) {
             return params.at(propertyName);
         }
@@ -875,24 +867,9 @@ void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
     }
 }
 
-void WebGenerator::visitTemplate(const std::shared_ptr<Template>& tmpl) {
-    // 注册模板定义
-    std::string key;
-    switch (tmpl->getTemplateType()) {
-        case Template::TemplateType::ELEMENT:
-            key = "@Element " + tmpl->getTemplateName();
-            break;
-        case Template::TemplateType::STYLE:
-            key = "@Style " + tmpl->getTemplateName();
-            break;
-        case Template::TemplateType::VAR:
-            key = "@Var " + tmpl->getTemplateName();
-            break;
-    }
-    
-    templateDefinitions_[key] = tmpl;
-    
-    // 不生成任何输出，模板只是定义
+void WebGenerator::visitTemplate(const std::shared_ptr<Template>& /*tmpl*/) {
+    // 模板定义已经在基类的 collectDefinitions 中处理
+    // 不需要生成任何输出
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {

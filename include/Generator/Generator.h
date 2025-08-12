@@ -171,10 +171,6 @@ protected:
     void visitExport(const std::shared_ptr<Export>& export_) override;
     
 private:
-    // 组件定义存储
-    std::unordered_map<std::string, std::shared_ptr<Node>> templateDefinitions_;
-    std::unordered_map<std::string, std::shared_ptr<Node>> customDefinitions_;
-    
     // 原始嵌入定义存储
     std::unordered_map<std::string, std::shared_ptr<Origin>> originDefinitions_;
     

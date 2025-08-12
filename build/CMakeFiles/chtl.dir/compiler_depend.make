@@ -83,17 +83,22 @@ CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o: /workspace/src/CJmod/CJmodSimpl
   /usr/include/c++/14/bits/concept_check.h \
   /usr/include/c++/14/bits/cpp_type_traits.h \
   /usr/include/c++/14/bits/cxxabi_forced.h \
+  /usr/include/c++/14/bits/enable_special_members.h \
+  /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
   /usr/include/c++/14/bits/exception_defines.h \
   /usr/include/c++/14/bits/functexcept.h \
   /usr/include/c++/14/bits/functional_hash.h \
   /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/hashtable.h \
+  /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/localefwd.h \
   /usr/include/c++/14/bits/memory_resource.h \
   /usr/include/c++/14/bits/memoryfwd.h \
   /usr/include/c++/14/bits/move.h \
   /usr/include/c++/14/bits/new_allocator.h \
+  /usr/include/c++/14/bits/node_handle.h \
   /usr/include/c++/14/bits/ostream_insert.h \
   /usr/include/c++/14/bits/postypes.h \
   /usr/include/c++/14/bits/predefined_ops.h \
@@ -118,6 +123,7 @@ CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o: /workspace/src/CJmod/CJmodSimpl
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
   /usr/include/c++/14/bits/uniform_int_dist.h \
+  /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
   /usr/include/c++/14/bits/uses_allocator_args.h \
   /usr/include/c++/14/bits/utility.h \
@@ -133,6 +139,7 @@ CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o: /workspace/src/CJmod/CJmodSimpl
   /usr/include/c++/14/cwchar \
   /usr/include/c++/14/debug/assertions.h \
   /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/ext/aligned_buffer.h \
   /usr/include/c++/14/ext/alloc_traits.h \
   /usr/include/c++/14/ext/numeric_traits.h \
   /usr/include/c++/14/ext/string_conversions.h \
@@ -147,6 +154,7 @@ CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o: /workspace/src/CJmod/CJmodSimpl
   /usr/include/c++/14/string_view \
   /usr/include/c++/14/tuple \
   /usr/include/c++/14/type_traits \
+  /usr/include/c++/14/unordered_map \
   /usr/include/c++/14/vector \
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
@@ -20872,8 +20880,6 @@ CMakeFiles/chtl.dir/src/Node/Delete.cpp.o:
 
 CMakeFiles/chtl.dir/src/CmodSystem/CmodValidator.cpp.o:
 
-/usr/include/c++/14/unordered_map:
-
 /usr/include/c++/14/typeinfo:
 
 /usr/include/c++/14/memory:
@@ -20889,8 +20895,6 @@ CMakeFiles/chtl.dir/src/CmodSystem/CmodValidator.cpp.o:
 /usr/include/c++/14/exception:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
-
-/usr/include/c++/14/bits/unordered_map.h:
 
 /usr/include/c++/14/bits/unique_ptr.h:
 
@@ -20915,10 +20919,6 @@ CMakeFiles/chtl.dir/src/CmodSystem/CmodValidator.cpp.o:
 /usr/include/c++/14/bits/exception_ptr.h:
 
 CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o:
-
-/usr/include/c++/14/bits/enable_special_members.h:
-
-/usr/include/c++/14/bits/std_function.h:
 
 /usr/include/c++/14/bits/allocated_ptr.h:
 
@@ -20998,14 +20998,6 @@ CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o:
 
 /workspace/src/Lexer/ConfigLexer.cpp:
 
-/usr/include/c++/14/bits/node_handle.h:
-
-/usr/include/features.h:
-
-CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o:
-
-/usr/lib/llvm-20/lib/clang/20/include/__stddef_wchar_t.h:
-
 /usr/lib/llvm-20/lib/clang/20/include/__stddef_size_t.h:
 
 /usr/include/c++/14/bits/nested_exception.h:
@@ -21028,6 +21020,8 @@ CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h:
 
+/usr/include/c++/14/unordered_map:
+
 /usr/include/c++/14/tuple:
 
 /usr/include/c++/14/bits/cxxabi_init_exception.h:
@@ -21041,14 +21035,6 @@ CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o:
 /usr/include/c++/14/pstl/glue_algorithm_defs.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/linux/stddef.h:
-
-/usr/include/c++/14/bits/stl_tempbuf.h:
-
-CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
-
-/workspace/src/Generator/WebGenerator.cpp:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h:
 
@@ -21074,6 +21060,14 @@ CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
 
 /workspace/include/State/JsState.h:
 
+/usr/include/linux/stddef.h:
+
+/usr/include/c++/14/bits/stl_tempbuf.h:
+
+CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
+
+/workspace/src/Generator/WebGenerator.cpp:
+
 /usr/include/c++/14/system_error:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
@@ -21090,7 +21084,7 @@ CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
 
 /workspace/include/Loader/FileLoader.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+/usr/include/c++/14/concepts:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h:
 
@@ -21136,13 +21130,13 @@ CMakeFiles/chtl.dir/src/State/CssState.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
-
-/workspace/include/Node/Operate.h:
-
 /usr/include/asm-generic/posix_types.h:
 
 /usr/include/stdc-predef.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
+
+/workspace/include/Node/Operate.h:
 
 /usr/include/c++/14/bits/invoke.h:
 
@@ -21167,6 +21161,10 @@ CMakeFiles/chtl.dir/src/Generator/ReactGenerator.cpp.o:
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 
 /usr/include/c++/14/bits/regex_constants.h:
+
+/usr/include/c++/14/bits/enable_special_members.h:
+
+/usr/include/c++/14/bits/std_function.h:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
@@ -21244,10 +21242,6 @@ CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o:
 
 CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o:
 
-/usr/include/c++/14/bits/hashtable.h:
-
-/usr/include/x86_64-linux-gnu/bits/errno.h:
-
 /usr/include/c++/14/bits/functional_hash.h:
 
 /usr/include/c++/14/iomanip:
@@ -21290,6 +21284,10 @@ CMakeFiles/chtl.dir/src/Node/Info.cpp.o:
 
 /usr/include/c++/14/bits/ptr_traits.h:
 
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/c++/14/bits/hashtable.h:
+
 /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h:
 
 /usr/include/features-time64.h:
@@ -21297,10 +21295,6 @@ CMakeFiles/chtl.dir/src/Node/Info.cpp.o:
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/c++/14/bits/streambuf.tcc:
-
-/usr/include/c++/14/bits/erase_if.h:
-
-/workspace/src/Node/Import.cpp:
 
 /usr/include/c++/14/bits/locale_facets.h:
 
@@ -21335,6 +21329,14 @@ CMakeFiles/chtl.dir/src/Module/CmodHandler.cpp.o:
 /usr/include/c++/14/bits/memoryfwd.h:
 
 /usr/include/c++/14/bits/unordered_set.h:
+
+/usr/lib/llvm-20/lib/clang/20/include/__stddef_wchar_t.h:
+
+/usr/include/c++/14/bits/node_handle.h:
+
+/usr/include/features.h:
+
+CMakeFiles/chtl.dir/src/Loader/DependencyGraph.cpp.o:
 
 /workspace/include/Node/Info.h:
 
@@ -21416,6 +21418,12 @@ CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o:
 
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+
+/workspace/src/Node/Import.cpp:
+
+/usr/include/c++/14/bits/erase_if.h:
+
 /usr/lib/llvm-20/lib/clang/20/include/__stddef_nullptr_t.h:
 
 /usr/include/c++/14/cctype:
@@ -21431,8 +21439,6 @@ CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o:
 /usr/include/string.h:
 
 /usr/include/c++/14/bits/fs_dir.h:
-
-/usr/include/c++/14/concepts:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
@@ -21503,6 +21509,8 @@ CMakeFiles/chtl.dir/src/Node/Config.cpp.o:
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/c++/14/bits/stl_iterator_base_types.h:
+
+/usr/include/c++/14/bits/unordered_map.h:
 
 /usr/include/c++/14/bits/vector.tcc:
 

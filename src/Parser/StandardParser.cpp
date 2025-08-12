@@ -540,6 +540,13 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
             if (needSpace) {
                 scriptContent += " ";
             }
+            
+            // 如果原始token后有换行，保留换行
+            if (token.type == TokenType::SEMICOLON || 
+                token.type == TokenType::RIGHT_BRACE ||
+                token.type == TokenType::LEFT_BRACE) {
+                scriptContent += "\n";
+            }
         }
     }
     

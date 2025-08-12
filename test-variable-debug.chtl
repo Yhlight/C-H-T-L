@@ -1,0 +1,18 @@
+// 变量系统调试
+
+[Template] @Var TestColors {
+    primary: #ff0000;
+    secondary: #00ff00;
+}
+
+html {
+    body {
+        div {
+            style {
+                color: TestColors(primary);
+                background: TestColors(secondary);
+            }
+            text { "测试变量替换" }
+        }
+    }
+}

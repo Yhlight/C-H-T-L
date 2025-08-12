@@ -33,7 +33,12 @@ void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std:
         wrapped << "  if (!element) return;\n";
         wrapped << "  const {{&}} = element;\n";
     }
-    wrapped << processedCode << "\n";
+    // 添加处理后的代码，保持缩进
+    std::istringstream iss(processedCode);
+    std::string line;
+    while (std::getline(iss, line)) {
+        wrapped << "  " << line << "\n";
+    }
     wrapped << "})();\n";
     
     collectedScripts_.push_back(wrapped.str());

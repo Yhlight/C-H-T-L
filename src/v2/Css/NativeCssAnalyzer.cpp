@@ -2,6 +2,8 @@
 #include "v2/Css/CssParser.h"
 #include <iostream>
 #include <set>
+#include <map>
+#include <algorithm>
 
 namespace chtl::v2::css {
 
@@ -54,10 +56,13 @@ private:
                     result.properties[decl.property]++;
                     
                     // 检查供应商前缀
-                    if (decl.property.starts_with("-webkit-") ||
-                        decl.property.starts_with("-moz-") ||
-                        decl.property.starts_with("-ms-") ||
-                        decl.property.starts_with("-o-")) {
+                    auto hasPrefix = [](const std::string& str, const char* prefix) {
+                        return str.rfind(prefix, 0) == 0; // prefix match
+                    };
+                    if (hasPrefix(decl.property, "-webkit-") ||
+                        hasPrefix(decl.property, "-moz-") ||
+                        hasPrefix(decl.property, "-ms-") ||
+                        hasPrefix(decl.property, "-o-")) {
                         result.warnings.push_back("Vendor prefix used: " + decl.property);
                     }
                 }

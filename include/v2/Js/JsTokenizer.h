@@ -150,7 +150,7 @@ struct JsToken {
  */
 class JsTokenizer {
 public:
-    explicit JsTokenizer(const std::string& input);
+    explicit JsTokenizer(const std::string& source);
     
     /**
      * 获取下一个 Token
@@ -166,6 +166,11 @@ public:
      * 是否到达结尾
      */
     bool isAtEnd() const;
+
+    /**
+     * 扫描单个 Token（内部使用）
+     */
+    void scanToken();
     
     /**
      * 获取所有 Token
@@ -173,10 +178,12 @@ public:
     std::vector<JsToken> tokenize();
     
 private:
+    char advance();
+
     /**
-     * 消费字符
+     * 与期望的字符匹配
      */
-    char consume();
+    bool match(char expected);
     
     /**
      * 查看当前字符
@@ -202,73 +209,70 @@ private:
      * 扫描注释
      */
     bool scanComment();
+
+    // 模板字面量
+    void scanTemplateLiteral();
+
+    // 块注释
+    void scanBlockComment();
     
     /**
      * 扫描标识符或关键字
      */
-    JsToken scanIdentifier();
+    void scanIdentifier();
     
     /**
      * 扫描数字
      */
-    JsToken scanNumber();
+    void scanNumber();
     
     /**
      * 扫描字符串
      */
-    JsToken scanString(char quote);
+    void scanString(char quote);
     
     /**
      * 扫描模板字符串
      */
-    JsToken scanTemplate();
+    JsToken scanTemplate(); // TODO remove if unused
     
     /**
      * 扫描正则表达式
      */
-    JsToken scanRegex();
+    void scanRegex();
     
     /**
      * 判断是否可能是正则表达式
      */
-    bool isRegexContext() const;
+    bool isRegexContext();
     
     /**
      * 检查是否是标识符开始字符
      */
-    bool isIdentStart(char c) const;
-    
-    /**
-     * 检查是否是标识符字符
-     */
-    bool isIdent(char c) const;
-    
-    /**
-     * 检查是否是数字
-     */
+    bool isAlpha(char c) const;
+    bool isAlphaNumeric(char c) const;
+    // 检查是否是数字
     bool isDigit(char c) const;
     
     /**
      * 创建 Token
      */
     JsToken makeToken(JsTokenType type);
-    
+
     /**
-     * 获取关键字类型
+     * 标识符对应的 Token 类型
      */
-    JsTokenType getKeywordType(const std::string& word) const;
+    JsTokenType getIdentifierType(const std::string& identifier);
     
 private:
-    std::string input_;
-    size_t current_ = 0;
-    size_t start_ = 0;
+    std::string source_;
+    size_t position_ = 0;
     int line_ = 1;
     int column_ = 1;
     int tokenStartLine_ = 1;
     int tokenStartColumn_ = 1;
     
-    std::vector<JsToken> tokenBuffer_;
-    JsToken lastToken_;  // 用于判断正则表达式上下文
+    std::vector<JsToken> tokens_;
 };
 
 } // namespace chtl::v2::js

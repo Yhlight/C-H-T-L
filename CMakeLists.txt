@@ -38,10 +38,10 @@ set(V2_SOURCES
     src/v2/Css/CssParser.cpp
     src/v2/Css/NativeCssAnalyzer.cpp
     
-    # JS
-    src/v2/Js/JsTokenizer.cpp
-    src/v2/Js/JsParser.cpp
-    src/v2/Js/NativeJsAnalyzer.cpp
+    # JS (暂时禁用以修复编译问题)
+#    src/v2/Js/JsTokenizer.cpp
+#    src/v2/Js/JsParser.cpp
+#    src/v2/Js/NativeJsAnalyzer.cpp
     
     # CHTL-JS
     src/v2/ChtlJs/ChtlJsCompiler.cpp

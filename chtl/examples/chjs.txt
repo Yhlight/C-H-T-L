@@ -1,0 +1,2 @@
+{{box}}->listen({ click: () => { console.log('x'); } });
+{{.box button}}->textContent('ok');

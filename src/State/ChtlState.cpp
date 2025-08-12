@@ -160,9 +160,13 @@ std::shared_ptr<BasicState> ChtlState::handleIdentifier(char ch) {
     // 特殊处理：如果是style或script，可能需要切换状态
     if (type == TokenType::STYLE && ch == '{') {
         inStyleBlock_ = true;
+        // 切换到 CSS 状态
+        return StateFactory::createState(StateType::CSS, lexer_);
     }
     if (type == TokenType::SCRIPT_KW && ch == '{') {
         inScriptBlock_ = true;
+        // 切换到 JS 状态
+        return StateFactory::createState(StateType::JS, lexer_);
     }
     
     subState_ = SubState::INITIAL;

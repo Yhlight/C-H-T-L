@@ -572,7 +572,7 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
     // 切换到 CSS 状态（如果词法分析器支持）
     // 注意：这需要词法分析器实现相应的 CSS 状态
     // 暂时我们使用一个标志来指示我们在 CSS 上下文中
-    bool inCssContext = true;
+    // bool inCssContext = true;  // 删除未使用的变量
     
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
@@ -782,9 +782,6 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     int parenDepth = 0;
     int braceDepth = 0;
     
-    // 调试：打印属性名
-    // std::cerr << "CSS Property: " << propertyName.value << std::endl;
-    
     // 收集所有 token 直到分号（考虑括号平衡）
     while (!isAtEnd()) {
         // 检查是否到达分号（且不在括号内）
@@ -799,29 +796,6 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
         }
         
         auto token = advance();
-        
-        // 调试：打印每个 token
-        // std::cerr << "  Token: '" << token.value << "' (type: " << static_cast<int>(token.type) << ")" << std::endl;
-        
-        // 修复词法分析器的问题：在CSS值上下文中，冒号可能是被错误识别的 #
-        if (token.type == TokenType::COLON) {
-            // 在CSS属性值中，冒号通常不应该出现（除了在url()等函数中）
-            // 如果是在值的开始或者在某些关键字后面，很可能是 # 被错误识别
-            if (propertyValue.empty() || 
-                propertyValue.find("solid") != std::string::npos ||
-                propertyValue.find("dotted") != std::string::npos ||
-                propertyValue.find("dashed") != std::string::npos) {
-                token.value = "#";  // 将错误的冒号改为 #
-                // 继续正常处理
-            }
-        }
-        
-        // 特殊处理："solid" 作为 token type (89) 的情况
-        if (token.type == TokenType::COLON && token.value == "solid") {
-            // 这是词法分析器的另一个bug：将 "solid" 识别为了 COLON 类型
-            token.value = "#";
-            token.type = TokenType::IDENTIFIER;
-        }
         
         // 跟踪括号深度
         if (token.type == TokenType::LEFT_PAREN) parenDepth++;
@@ -858,6 +832,21 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
             // # 后面不需要空格（颜色值）
             else if (token.value == "#" || lastChar == '#') {
                 needSpace = false;
+            }
+            // 如果前一个 token 值以 # 开头（颜色值），后面不需要空格
+            else if (!propertyValue.empty()) {
+                // 查找最后一个非空格字符序列的开始
+                size_t lastTokenStart = propertyValue.find_last_of(" ");
+                if (lastTokenStart == std::string::npos) {
+                    lastTokenStart = 0;
+                } else {
+                    lastTokenStart++;
+                }
+                
+                // 检查最后一个 token 是否以 # 开头
+                if (lastTokenStart < propertyValue.length() && propertyValue[lastTokenStart] == '#') {
+                    needSpace = false;
+                }
             }
             
             if (needSpace && lastChar != ' ') {

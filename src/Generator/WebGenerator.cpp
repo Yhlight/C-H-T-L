@@ -52,10 +52,35 @@ std::string WebGenerator::generateHTMLDocument() {
     // 获取当前的 HTML 内容
     std::string bodyContent = htmlCollector_.getCode();
     
-    // 如果已经有完整的html结构，直接使用
-    if (bodyContent.find("<html") != std::string::npos) {
+    // 检查是否已经有完整的 HTML 文档结构（包含 DOCTYPE）
+    if (bodyContent.find("<!DOCTYPE") != std::string::npos) {
         result_.html = bodyContent;
         return result_.html;
+    }
+    
+    // 提取 head 和 body 内容
+    std::string headContent;
+    std::string mainContent;
+    
+    // 查找 head 标签内容
+    size_t headStart = bodyContent.find("<head>");
+    size_t headEnd = bodyContent.find("</head>");
+    if (headStart != std::string::npos && headEnd != std::string::npos) {
+        headStart += 6; // 跳过 "<head>"
+        headContent = bodyContent.substr(headStart, headEnd - headStart);
+        
+        // 移除 head 部分（包括标签）
+        bodyContent.erase(headStart - 6, headEnd - headStart + 13); // 包括 "</head>"
+    }
+    
+    // 如果有 <html> 标签，提取其内容
+    size_t htmlStart = bodyContent.find("<html>");
+    size_t htmlEnd = bodyContent.find("</html>");
+    if (htmlStart != std::string::npos && htmlEnd != std::string::npos) {
+        htmlStart += 6; // 跳过 "<html>"
+        mainContent = bodyContent.substr(htmlStart, htmlEnd - htmlStart);
+    } else {
+        mainContent = bodyContent;
     }
     
     std::stringstream doc;
@@ -66,7 +91,13 @@ std::string WebGenerator::generateHTMLDocument() {
     doc << "<head>\n";
     doc << "  <meta charset=\"UTF-8\">\n";
     doc << "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-    doc << "  <title>CHTL Generated Page</title>\n";
+    
+    // 如果有提取的 head 内容，使用它；否则使用默认标题
+    if (!headContent.empty()) {
+        doc << headContent;
+    } else {
+        doc << "  <title>CHTL Generated Page</title>\n";
+    }
     
     // 内联或外部样式
     if (!result_.css.empty()) {
@@ -86,7 +117,7 @@ std::string WebGenerator::generateHTMLDocument() {
     doc << "<body>\n";
     
     // 主体内容 - 使用 htmlCollector 的内容
-    doc << bodyContent;
+    doc << mainContent;
     
     // 脚本
     if (!result_.js.empty()) {

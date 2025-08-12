@@ -15,7 +15,8 @@ ChtlState::ChtlState(BasicLexer* lexer)
       inStyleBlock_(false),
       inScriptBlock_(false),
       braceDepth_(0),
-      inTextBlock_(false) {
+      inTextBlock_(false),
+      inCssProperty_(false) {
     // 暂时使用这些成员变量避免编译警告
     (void)braceDepth_;
     (void)inTextBlock_;
@@ -48,15 +49,17 @@ std::shared_ptr<BasicState> ChtlState::handleChar(char ch) {
         case SubState::SPECIAL_MARKER:
             return handleSpecialMarker(ch);
         case SubState::WHITESPACE:
-            if (!isWhitespace(ch)) {
-                subState_ = SubState::INITIAL;
-                return handleChar(ch);
-            }
-            return nullptr;
+            return handleWhitespace(ch);
         case SubState::IN_TEXT_BLOCK:
-            // 暂时处理为普通标识符
-            return handleIdentifier(ch);
+            return handleTextBlock(ch);
+        case SubState::CSS_PROPERTY_NAME:
+            return handleCssPropertyName(ch);
+        case SubState::CSS_PROPERTY_VALUE:
+            return handleCssPropertyValue(ch);
+        case SubState::CSS_COLOR_VALUE:
+            return handleCssColorValue(ch);
     }
+    
     return nullptr;
 }
 
@@ -94,6 +97,13 @@ std::shared_ptr<BasicState> ChtlState::handleInitial(char ch) {
     
     // 标识符
     if (isIdentifierStart(ch)) {
+        // 如果在 style 块内，可能是 CSS 属性名
+        if (inStyleBlock_ && !inCssProperty_) {
+            subState_ = SubState::CSS_PROPERTY_NAME;
+            buffer_ = ch;
+            return nullptr;
+        }
+        
         subState_ = SubState::IDENTIFIER;
         buffer_ = ch;
         return nullptr;
@@ -129,6 +139,13 @@ std::shared_ptr<BasicState> ChtlState::handleInitial(char ch) {
     
     // 操作符
     if (isOperatorChar(ch)) {
+        // 特殊处理：如果是 # 且在 CSS 属性值中
+        if (ch == '#' && inStyleBlock_ && inCssProperty_) {
+            subState_ = SubState::CSS_COLOR_VALUE;
+            buffer_ = ch;
+            return nullptr;
+        }
+        
         subState_ = SubState::OPERATOR;
         buffer_ = ch;
         return nullptr;
@@ -145,7 +162,7 @@ std::shared_ptr<BasicState> ChtlState::handleIdentifier(char ch) {
         return nullptr;
     }
     
-    // 标识符结束
+    // 标识符结束，判断类型
     TokenType type = determineIdentifierType();
     
     // 检查是否在text块内，且后面是左大括号
@@ -160,13 +177,23 @@ std::shared_ptr<BasicState> ChtlState::handleIdentifier(char ch) {
     // 特殊处理：如果是style或script，可能需要切换状态
     if (type == TokenType::STYLE && ch == '{') {
         inStyleBlock_ = true;
-        // 切换到 CSS 状态
-        return StateFactory::createState(StateType::CSS, lexer_);
+        // 不切换到 CSS 状态，继续使用 CHTL 状态处理局部样式块
     }
     if (type == TokenType::SCRIPT_KW && ch == '{') {
         inScriptBlock_ = true;
         // 切换到 JS 状态
         return StateFactory::createState(StateType::JS, lexer_);
+    }
+    
+    // 如果在 style 块内且是标识符，可能是 CSS 属性名
+    if (inStyleBlock_ && type == TokenType::IDENTIFIER) {
+        // 检查后面是否是冒号，如果是则进入 CSS 属性名状态
+        if (ch == ':') {
+            inCssProperty_ = true;
+            subState_ = SubState::CSS_PROPERTY_VALUE;
+            buffer_.clear();
+            return nullptr;
+        }
     }
     
     subState_ = SubState::INITIAL;
@@ -251,31 +278,56 @@ std::shared_ptr<BasicState> ChtlState::handleOperator(char ch) {
     if (buffer_ == "-" && ch == '>') {
         // 箭头操作符
         buffer_ += ch;
-        emitTokenAndReset(TokenType::ARROW);
+        emitToken(TokenType::ARROW, buffer_);
+        buffer_.clear();
         subState_ = SubState::INITIAL;
         return nullptr;
     }
     if (buffer_ == "{" && ch == '{') {
         // 双左大括号（JavaScript增强语法）
         buffer_ += ch;
-        emitTokenAndReset(TokenType::DOUBLE_LEFT_BRACE);
+        emitToken(TokenType::DOUBLE_LEFT_BRACE, buffer_);
+        buffer_.clear();
         subState_ = SubState::INITIAL;
         // 可能需要切换到CHTL_JS状态
         if (inScriptBlock_) {
-            return std::make_shared<ChtlJsState>(lexer_);
+            return StateFactory::createState(StateType::CHTL_JS, lexer_);
         }
         return nullptr;
     }
     if (buffer_ == "}" && ch == '}') {
         // 双右大括号
         buffer_ += ch;
-        emitTokenAndReset(TokenType::DOUBLE_RIGHT_BRACE);
+        emitToken(TokenType::DOUBLE_RIGHT_BRACE, buffer_);
+        buffer_.clear();
         subState_ = SubState::INITIAL;
         return nullptr;
     }
     
-    // 单字符操作符
+    // 继续累积操作符字符（最多2个）
+    if (isOperatorChar(ch) && buffer_.length() < 2) {
+        buffer_ += ch;
+        return nullptr;
+    }
+    
+    // 操作符结束
     TokenType type = determineOperatorType();
+    
+    // 特殊处理：如果是冒号且在 style 块内
+    if (type == TokenType::COLON && inStyleBlock_ && !inCssProperty_) {
+        emitToken(type);
+        inCssProperty_ = true;
+        subState_ = SubState::CSS_PROPERTY_VALUE;
+        buffer_.clear();
+        return nullptr;
+    }
+    
+    // 特殊处理：如果是右大括号且在 style 块内
+    if (type == TokenType::RIGHT_BRACE && inStyleBlock_) {
+        inStyleBlock_ = false;
+        inCssProperty_ = false;
+    }
+    
     emitToken(type);
     subState_ = SubState::INITIAL;
     return handleChar(ch);
@@ -426,20 +478,20 @@ void ChtlState::reset() {
     startColumn_ = 1;
 }
 
-bool ChtlState::isIdentifierStart(char ch) const {
-    return std::isalpha(ch) || ch == '_';
+bool ChtlState::isIdentifierStart(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '$';
 }
 
-bool ChtlState::isIdentifierContinue(char ch) const {
-    return std::isalnum(ch) || ch == '_' || ch == '-';
+bool ChtlState::isIdentifierContinue(char ch) {
+    return isIdentifierStart(ch) || (ch >= '0' && ch <= '9');
 }
 
-bool ChtlState::isOperatorChar(char ch) const {
-    static const std::string operators = ":;=,.->&{}()[]*/";
+bool ChtlState::isOperatorChar(char ch) {
+    static const std::string operators = ":;=,.->&{}()[]*/+!#";
     return operators.find(ch) != std::string::npos;
 }
 
-bool ChtlState::isWhitespace(char ch) const {
+bool ChtlState::isWhitespace(char ch) {
     return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
 }
 
@@ -526,7 +578,14 @@ TokenType ChtlState::determineOperatorType() {
 }
 
 TokenType ChtlState::determineAtPrefixType() {
-    return GlobalMap::getAtPrefixType(buffer_);
+    if (buffer_ == "@Style") return TokenType::AT_STYLE;
+    if (buffer_ == "@Element") return TokenType::AT_ELEMENT;
+    if (buffer_ == "@Var") return TokenType::AT_VAR;
+    if (buffer_ == "@Html") return TokenType::AT_HTML;
+    if (buffer_ == "@JavaScript") return TokenType::AT_JAVASCRIPT;
+    if (buffer_ == "@Chtl") return TokenType::AT_CHTL;
+    if (buffer_ == "@CJmod") return TokenType::AT_CJMOD;
+    return TokenType::IDENTIFIER;
 }
 
 std::shared_ptr<BasicState> ChtlState::transitionToState(StateType newStateType) {
@@ -540,6 +599,186 @@ std::shared_ptr<BasicState> ChtlState::transitionToState(StateType newStateType)
         default:
             return nullptr;
     }
+}
+
+std::shared_ptr<BasicState> ChtlState::handleWhitespace(char ch) {
+    if (!isWhitespace(ch)) {
+        subState_ = SubState::INITIAL;
+        return handleChar(ch);
+    }
+    return nullptr;
+}
+
+std::shared_ptr<BasicState> ChtlState::handleTextBlock(char ch) {
+    // 暂时处理为普通标识符
+    return handleIdentifier(ch);
+}
+
+std::shared_ptr<BasicState> ChtlState::handleCssPropertyName(char ch) {
+    if (isIdentifierContinue(ch) || ch == '-') {
+        buffer_ += ch;
+        return nullptr;
+    }
+    
+    // 属性名结束
+    if (ch == ':') {
+        emitToken(TokenType::IDENTIFIER, buffer_);
+        buffer_.clear();
+        emitToken(TokenType::COLON, ":");
+        subState_ = SubState::CSS_PROPERTY_VALUE;
+        inCssProperty_ = true;
+        return nullptr;
+    }
+    
+    // 其他情况，回到初始状态
+    emitToken(TokenType::IDENTIFIER, buffer_);
+    buffer_.clear();
+    subState_ = SubState::INITIAL;
+    return handleChar(ch);
+}
+
+std::shared_ptr<BasicState> ChtlState::handleCssPropertyValue(char ch) {
+    // 跳过属性值开始的空白
+    if (buffer_.empty() && isWhitespace(ch)) {
+        return nullptr;
+    }
+    
+    // 检查是否是颜色值
+    if (ch == '#') {
+        // 如果当前 buffer 不为空，先发出
+        if (!buffer_.empty()) {
+            if (std::isdigit(buffer_[0]) || (buffer_[0] == '-' && buffer_.length() > 1 && std::isdigit(buffer_[1]))) {
+                emitToken(TokenType::NUMBER, buffer_);
+            } else {
+                emitToken(TokenType::IDENTIFIER, buffer_);
+            }
+            buffer_.clear();
+        }
+        buffer_ = "#";
+        subState_ = SubState::CSS_COLOR_VALUE;
+        return nullptr;
+    }
+    
+    // 检查是否是字符串
+    if (ch == '"' || ch == '\'') {
+        subState_ = (ch == '"') ? SubState::STRING_DOUBLE : SubState::STRING_SINGLE;
+        buffer_ = ch;
+        startLine_ = lexer_->getCurrentLine();
+        startColumn_ = lexer_->getCurrentColumn();
+        return nullptr;
+    }
+    
+    // 检查是否是分号（值结束）
+    if (ch == ';') {
+        if (!buffer_.empty()) {
+            // 发出最后的值 token
+            if (std::isdigit(buffer_[0]) || (buffer_[0] == '-' && buffer_.length() > 1 && std::isdigit(buffer_[1]))) {
+                emitToken(TokenType::NUMBER, buffer_);
+            } else {
+                emitToken(TokenType::IDENTIFIER, buffer_);
+            }
+            buffer_.clear();
+        }
+        emitToken(TokenType::SEMICOLON, ";");
+        inCssProperty_ = false;
+        subState_ = SubState::INITIAL;
+        return nullptr;
+    }
+    
+    // 检查是否是右大括号（style 块结束）
+    if (ch == '}') {
+        if (!buffer_.empty()) {
+            // 发出最后的值 token
+            if (std::isdigit(buffer_[0]) || (buffer_[0] == '-' && buffer_.length() > 1 && std::isdigit(buffer_[1]))) {
+                emitToken(TokenType::NUMBER, buffer_);
+            } else {
+                emitToken(TokenType::IDENTIFIER, buffer_);
+            }
+            buffer_.clear();
+        }
+        inCssProperty_ = false;
+        inStyleBlock_ = false;
+        subState_ = SubState::INITIAL;
+        return handleChar(ch);  // 重新处理 }
+    }
+    
+    // 检查是否需要分割 token
+    if (isWhitespace(ch)) {
+        if (!buffer_.empty()) {
+            // 发出当前 token
+            if (std::isdigit(buffer_[0]) || (buffer_[0] == '-' && buffer_.length() > 1 && std::isdigit(buffer_[1]))) {
+                emitToken(TokenType::NUMBER, buffer_);
+            } else {
+                emitToken(TokenType::IDENTIFIER, buffer_);
+            }
+            buffer_.clear();
+        }
+        // 空白字符直接忽略，不产生 token
+        return nullptr;
+    }
+    
+    // 特殊字符处理
+    if (ch == ',' || ch == '(' || ch == ')') {
+        if (!buffer_.empty()) {
+            // 发出当前 token
+            if (std::isdigit(buffer_[0]) || (buffer_[0] == '-' && buffer_.length() > 1 && std::isdigit(buffer_[1]))) {
+                emitToken(TokenType::NUMBER, buffer_);
+            } else {
+                emitToken(TokenType::IDENTIFIER, buffer_);
+            }
+            buffer_.clear();
+        }
+        
+        // 处理特殊字符
+        if (ch == ',') {
+            emitToken(TokenType::COMMA, ",");
+        } else if (ch == '(') {
+            emitToken(TokenType::LEFT_PAREN, "(");
+        } else if (ch == ')') {
+            emitToken(TokenType::RIGHT_PAREN, ")");
+        }
+        
+        return nullptr;
+    }
+    
+    // 累积字符
+    buffer_ += ch;
+    return nullptr;
+}
+
+std::shared_ptr<BasicState> ChtlState::handleCssColorValue(char ch) {
+    // 颜色值可以是 3、4、6 或 8 位十六进制
+    if (isHexDigit(ch)) {
+        buffer_ += ch;
+        return nullptr;
+    }
+    
+    // 颜色值结束
+    if (!buffer_.empty() && buffer_[0] == '#' && buffer_.length() > 1) {
+        emitToken(TokenType::IDENTIFIER, buffer_);  // 将颜色值作为标识符发出
+        buffer_.clear();
+    }
+    
+    subState_ = SubState::CSS_PROPERTY_VALUE;
+    return handleChar(ch);
+}
+
+bool ChtlState::isHexDigit(char ch) {
+    return (ch >= '0' && ch <= '9') || 
+           (ch >= 'a' && ch <= 'f') || 
+           (ch >= 'A' && ch <= 'F');
+}
+
+bool ChtlState::isIdentifierPart(char ch) {
+    return isIdentifierStart(ch) || isDigit(ch);
+}
+
+bool ChtlState::isDigit(char ch) {
+    return ch >= '0' && ch <= '9';
+}
+
+void ChtlState::emitToken(TokenType type, const std::string& value) {
+    lexer_->emitToken(type, value, startLine_, startColumn_);
 }
 
 } // namespace chtl

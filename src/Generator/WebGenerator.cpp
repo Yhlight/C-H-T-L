@@ -190,9 +190,7 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         // 特殊处理文档根节点
     if (tag == "document") {
         // 只处理子节点，不生成 document 标签
-        std::cerr << "[DEBUG] Processing document node with " << element->getChildren().size() << " children\n";
         for (const auto& child : element->getChildren()) {
-            std::cerr << "[DEBUG] Visiting child type: " << static_cast<int>(child->getType()) << "\n";
             visit(child);
         }
         return;
@@ -660,7 +658,15 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
     
     // 检查是否是局部样式（在元素内的样式）
     auto parent = style->getParent();
-    bool isLocal = (parent && parent->getType() == NodeType::ELEMENT);
+    bool isLocal = false;
+    
+    if (parent && parent->getType() == NodeType::ELEMENT) {
+        auto element = std::static_pointer_cast<Element>(parent);
+        // document 节点的子 style 是全局样式，不是局部样式
+        if (element->getTagName() != "document") {
+            isLocal = true;
+        }
+    }
     
     if (isLocal) {
         // 局部样式 - 已经在 visitElement 中作为 style 属性处理

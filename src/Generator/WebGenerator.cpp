@@ -388,15 +388,6 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     
     // 处理子节点
     for (const auto& child : element->getChildren()) {
-        if (child->getType() == NodeType::SCRIPT) {
-            auto script = std::static_pointer_cast<Script>(child);
-            if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-                // 设置作用域ID
-                script->setScope(elementId);
-            }
-            // Scripts 在后面单独处理，这里跳过
-            continue;
-        }
         if (child->getType() == NodeType::STYLE) {
             // Style 已经在前面处理过了，跳过
             continue;
@@ -882,25 +873,41 @@ void WebGenerator::visitTemplate(const std::shared_ptr<Template>& /*tmpl*/) {
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
+    std::cerr << "[DEBUG] WebGenerator::visitScript called" << std::endl;
     
-    if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
+    // 判断是否为局部脚本：脚本的父节点是元素节点（且不是 body 或 html）
+    auto parent = script->getParent();
+    bool isLocalScript = false;
+    
+    if (parent && parent->getType() == NodeType::ELEMENT) {
+        auto element = std::static_pointer_cast<Element>(parent);
+        std::string tagName = element->getTagName();
+        std::cerr << "[DEBUG] Script parent tag: " << tagName << std::endl;
+        // body 和 html 内的脚本被认为是全局脚本
+        if (tagName != "body" && tagName != "html" && tagName != "head") {
+            isLocalScript = true;
+        }
+    }
+    
+    std::cerr << "[DEBUG] isLocalScript: " << (isLocalScript ? "true" : "false") << std::endl;
+    
+    if (isLocalScript) {
         // 局部脚本
         std::string elementId = script->getScope();
-        if (elementId.empty()) {
+        if (elementId.empty() && parent) {
             // 如果没有作用域，尝试从父节点获取
-            auto parent = script->getParent();
-            if (parent && parent->getType() == NodeType::ELEMENT) {
-                auto element = std::static_pointer_cast<Element>(parent);
-                auto attrs = element->getAttributes();
-                if (attrs.find("id") != attrs.end()) {
-                    if (std::holds_alternative<std::string>(attrs.at("id"))) {
-                        elementId = std::get<std::string>(attrs.at("id"));
-                    }
-                } else {
-                    elementId = generateUniqueId("element");
+            auto element = std::static_pointer_cast<Element>(parent);
+            auto attrs = element->getAttributes();
+            if (attrs.find("id") != attrs.end()) {
+                if (std::holds_alternative<std::string>(attrs.at("id"))) {
+                    elementId = std::get<std::string>(attrs.at("id"));
                 }
+            } else {
+                elementId = generateUniqueId("element");
             }
         }
+        
+        std::cerr << "[DEBUG] Collecting local script with elementId: " << elementId << std::endl;
         
         // 收集局部脚本
         try {

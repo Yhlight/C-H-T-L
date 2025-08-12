@@ -1,12 +1,17 @@
 #include "Runtime/ChtlJsRuntime.h"
 #include <sstream>
-#include <regex>
+#include <iostream>
 #include <algorithm>
+#include <regex>
 #include <iomanip>
 
 namespace chtl {
 
 void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std::string& elementId) {
+    // 调试输出
+    std::cerr << "[DEBUG] collectLocalScript called with elementId: " << elementId 
+              << ", code length: " << scriptCode.length() << std::endl;
+    
     // 创建增强器处理代码
     ChtlJsEnhancer enhancer;
     enhancer.setElementContext(elementId);
@@ -42,6 +47,10 @@ void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std:
     wrapped << "})();\n";
     
     collectedScripts_.push_back(wrapped.str());
+    
+    // 调试输出
+    std::cerr << "[DEBUG] collectLocalScript: collectedScripts_ size is now " 
+              << collectedScripts_.size() << std::endl;
 }
 
 void ChtlJsRuntime::registerEventDelegation(const EventDelegation& delegation) {
@@ -56,6 +65,10 @@ void ChtlJsRuntime::registerEventDelegation(const EventDelegation& delegation) {
 }
 
 std::string ChtlJsRuntime::generateRuntimeCode() {
+    // 调试输出
+    std::cerr << "[DEBUG] generateRuntimeCode called, collectedScripts_ size: " 
+              << collectedScripts_.size() << std::endl;
+    
     std::stringstream code;
     
     // CHTL JS运行时环境
@@ -103,10 +116,13 @@ std::string ChtlJsRuntime::generateRuntimeCode() {
     
     // 添加收集的局部脚本
     if (!collectedScripts_.empty()) {
+        std::cerr << "[DEBUG] Adding " << collectedScripts_.size() << " collected scripts" << std::endl;
         code << "// Collected local scripts\n";
         for (const auto& script : collectedScripts_) {
             code << script << "\n";
         }
+    } else {
+        std::cerr << "[DEBUG] No collected scripts to add" << std::endl;
     }
     
     return code.str();

@@ -1,0 +1,8 @@
+// 最小局部脚本测试
+
+div {
+    id: "test";
+    script {
+        console.log("局部脚本执行");
+    }
+}

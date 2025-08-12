@@ -8,20 +8,11 @@ namespace chtl {
 std::string Script::generateWrappedCode() const {
     std::stringstream ss;
     
-    // 如果是局部内联脚本，使用运行时处理
-    if (scriptType_ == ScriptType::INLINE && isScoped()) {
-        // 获取运行时实例
-        auto& runtime = ChtlJsRuntime::getInstance();
-        
-        // 获取或生成元素ID
-        std::string elementId = scope_.empty() ? 
-            runtime.generateElementId() : scope_;
-        
-        // 收集局部脚本
-        runtime.collectLocalScript(content_, elementId);
-        
-        // 返回空字符串，因为代码已被收集
-        return "";
+    // 对于父节点是元素的脚本（局部脚本），不进行包装
+    // 包装逻辑由 WebGenerator 处理
+    auto parent = getParent();
+    if (parent && parent->getType() == NodeType::ELEMENT) {
+        return content_;  // 直接返回内容，不包装
     }
     
     // 原有的包装逻辑

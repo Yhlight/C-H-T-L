@@ -1,1 +1,1 @@
-/usr/bin/c++ -Xlinker --dependency-file=CMakeFiles/chtl.dir/link.d CMakeFiles/chtl.dir/src/CLI/main.cpp.o -o chtl  libchtl_v2.a -lstdc++fs
+/usr/bin/c++ -g -Xlinker --dependency-file=CMakeFiles/chtl.dir/link.d CMakeFiles/chtl.dir/src/CLI/main.cpp.o -o chtl  libchtl_v2.a -lstdc++fs

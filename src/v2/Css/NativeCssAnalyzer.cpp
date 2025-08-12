@@ -54,10 +54,10 @@ private:
                     result.properties[decl.property]++;
                     
                     // 检查供应商前缀
-                    if (decl.property.starts_with("-webkit-") ||
-                        decl.property.starts_with("-moz-") ||
-                        decl.property.starts_with("-ms-") ||
-                        decl.property.starts_with("-o-")) {
+                    if (decl.property.find("-webkit-") == 0 ||
+                        decl.property.find("-moz-") == 0 ||
+                        decl.property.find("-ms-") == 0 ||
+                        decl.property.find("-o-") == 0) {
                         result.warnings.push_back("Vendor prefix used: " + decl.property);
                     }
                 }

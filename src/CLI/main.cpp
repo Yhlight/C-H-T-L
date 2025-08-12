@@ -131,8 +131,8 @@ void compile(const CompileOptions& options) {
             std::cout << "Parsing...\n";
         }
         
-        ChtlParser parser(source);
-        auto parseResult = parser.parse();
+        ChtlParser parser;
+        auto parseResult = parser.parse(source);
         
         // 检查解析错误
         if (!parseResult.errors.empty()) {
@@ -162,10 +162,10 @@ void compile(const CompileOptions& options) {
         ChtlGenerator generator;
         GeneratorOptions genOptions;
         genOptions.minify = options.minify;
-        genOptions.generateSourceMap = options.sourceMap;
+        // Source map generation not yet implemented
         generator.setOptions(genOptions);
         
-        auto genResult = generator.generate(parseResult.ast.get());
+        auto genResult = generator.generate(parseResult.ast);
         
         // 检查生成错误
         if (!genResult.errors.empty()) {

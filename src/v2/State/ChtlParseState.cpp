@@ -23,6 +23,14 @@ const char* getStateName(ChtlParseState state) {
     }
 }
 
+const char* getContextName(ChtlContext context) {
+    switch (context) {
+        case ChtlContext::GLOBAL: return "GLOBAL";
+        case ChtlContext::LOCAL: return "LOCAL";
+        default: return "UNKNOWN";
+    }
+}
+
 const char* getSubStateName(ChtlSubState subState) {
     switch (subState) {
         case ChtlSubState::NONE: return "NONE";

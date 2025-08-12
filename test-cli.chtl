@@ -1,0 +1,53 @@
+[Import] @Style "styles/main.css"
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+</style>
+
+[Template] @Element Card {
+    div .card {
+        style {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            
+            &:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+        }
+        
+        {{slot}}
+    }
+}
+
+html {
+    head {
+        title { "CHTL Test Page" }
+    }
+    
+    body {
+        h1 { "Welcome to CHTL v2!" }
+        
+        @Card {
+            h2 { "This is a card component" }
+            p { "CHTL makes HTML templating easier." }
+        }
+        
+        div #main {
+            style {
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+            }
+            
+            script {
+                console.log("CHTL page loaded!");
+            }
+        }
+    }
+}

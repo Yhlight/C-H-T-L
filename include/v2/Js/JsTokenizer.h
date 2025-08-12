@@ -249,6 +249,16 @@ private:
     bool isDigit(char c) const;
     
     /**
+     * 检查是否是字母
+     */
+    bool isAlpha(char c) const;
+    
+    /**
+     * 检查是否是字母或数字
+     */
+    bool isAlphaNumeric(char c) const;
+    
+    /**
      * 创建 Token
      */
     JsToken makeToken(JsTokenType type);

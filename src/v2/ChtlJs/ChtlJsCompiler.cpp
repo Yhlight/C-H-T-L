@@ -94,7 +94,7 @@ private:
         std::string trimmed = trim(expr.raw);
         
         if (trimmed.empty()) {
-            expr.type = ExpressionType::EMPTY;
+            expr.type = ExpressionType::TEMPLATE_LITERAL;
             expr.compiled = "";
             return;
         }
@@ -110,8 +110,8 @@ private:
             // 方法调用: {{&}}.method() 或 {{#id}}.method()
             compileMethodCall(expr, trimmed, context);
         } else {
-            // 其他表达式
-            expr.type = ExpressionType::OTHER;
+            // 其他表达式，作为变量处理
+            expr.type = ExpressionType::VARIABLE;
             expr.compiled = trimmed;
         }
     }
@@ -130,7 +130,7 @@ private:
         
         // 生成选择器代码
         expr.compiled = "document.getElementById('" + escapeString(id) + "')";
-        expr.metadata["elementId"] = id;
+        // Store ID for reference
     }
     
     void compileCurrentElement(Expression& expr,
@@ -152,7 +152,7 @@ private:
     
     void compileMethodCall(Expression& expr, const std::string& call,
                           const std::map<std::string, std::string>& context) {
-        expr.type = ExpressionType::METHOD_CALL;
+        expr.type = ExpressionType::MEMBER_ACCESS;
         
         // 解析方法调用
         size_t dotPos = call.find('.');
@@ -171,7 +171,7 @@ private:
         
         // 检查是否是 listen 方法
         if (methodPart.find("listen") == 0) {
-            expr.type = ExpressionType::LISTEN_METHOD;
+            expr.type = ExpressionType::FUNCTION_CALL;
             expr.compiled = compileListenMethod(targetExpr.compiled, methodPart);
         } else {
             // 普通方法调用
@@ -211,8 +211,11 @@ private:
             case ExpressionType::CURRENT_ELEMENT:
                 result.hasCurrentElement = true;
                 break;
-            case ExpressionType::LISTEN_METHOD:
-                result.hasListenMethod = true;
+            case ExpressionType::FUNCTION_CALL:
+                // Check if it's a listen method
+                if (expr.raw.find("listen") != std::string::npos) {
+                    result.dependencies.push_back("listen");
+                }
                 if (std::find(result.dependencies.begin(),
                             result.dependencies.end(),
                             "chtl.listen") == result.dependencies.end()) {
@@ -284,7 +287,7 @@ void ChtlJsCompiler::setOption(const std::string& name, bool value) {
 }
 
 // ChtlJsRuntime 实现
-std::string ChtlJsRuntime::generateRuntime() {
+std::string ChtlJsRuntime::generateFullRuntime() {
     return R"(
 // CHTL-JS Runtime
 (function(window) {
@@ -348,47 +351,43 @@ std::string ChtlJsRuntime::generateRuntime() {
 )";
 }
 
-std::string ChtlJsRuntime::generateModuleRuntime() {
+
+
+std::string ChtlJsRuntime::generateSelectorFunction() {
     return R"(
-// CHTL-JS Module Runtime
-export const chtl = {
-    select(selector) {
-        if (typeof selector === 'string') {
-            if (selector[0] === '#') {
-                return document.getElementById(selector.slice(1));
-            }
-            return document.querySelector(selector);
+function chtlSelect(selector) {
+    if (typeof selector === 'string') {
+        if (selector[0] === '#') {
+            return document.getElementById(selector.slice(1));
         }
-        return selector;
-    },
-    
-    listen(element, event, handler) {
-        if (element && element.addEventListener) {
-            element.addEventListener(event, handler);
-            return () => element.removeEventListener(event, handler);
-        }
-        return () => {};
-    },
-    
-    delegate(parent, selector, event, handler) {
-        parent = this.select(parent);
-        if (!parent) return () => {};
-        
-        const delegateHandler = (e) => {
-            let target = e.target;
-            while (target && target !== parent) {
-                if (target.matches && target.matches(selector)) {
-                    handler.call(target, e);
-                    break;
-                }
-                target = target.parentElement;
-            }
-        };
-        
-        parent.addEventListener(event, delegateHandler);
-        return () => parent.removeEventListener(event, delegateHandler);
+        return document.querySelector(selector);
     }
-};
+    return selector;
+}
+)";
+}
+
+std::string ChtlJsRuntime::generateCurrentElementFunction() {
+    return R"(
+let chtlCurrentElement = null;
+function chtlSetCurrent(element) {
+    chtlCurrentElement = element;
+}
+function chtlGetCurrent() {
+    return chtlCurrentElement;
+}
+)";
+}
+
+std::string ChtlJsRuntime::generateEventExtensions() {
+    return R"(
+function chtlListen(element, event, handler) {
+    if (element && element.addEventListener) {
+        element.addEventListener(event, handler);
+        return () => element.removeEventListener(event, handler);
+    }
+    return () => {};
+}
 )";
 }
 

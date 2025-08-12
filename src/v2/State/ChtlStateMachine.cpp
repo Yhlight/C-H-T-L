@@ -115,6 +115,10 @@ void ChtlStateMachine::reset() {
     }
 }
 
+void ChtlStateMachine::switchSubState(ChtlSubState newSubState) {
+    currentSubState_ = newSubState;
+}
+
 void ChtlStateMachine::printState() const {
     std::cout << "=== State Machine Status ===\n";
     std::cout << "Current State: " << getStateName(currentState_) << "\n";

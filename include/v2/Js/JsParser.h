@@ -161,6 +161,13 @@ struct JsVariableDeclaration : JsDeclaration {
     JsVariableDeclaration() : JsDeclaration(JsNodeType::VAR_DECLARATION) {}
 };
 
+// 表达式语句
+struct JsExpressionStatement : JsStatement {
+    std::unique_ptr<JsExpression> expression;
+    
+    JsExpressionStatement() : JsStatement(JsNodeType::EXPRESSION_STMT) {}
+};
+
 // 程序节点
 struct JsProgram : JsNode {
     std::vector<std::unique_ptr<JsStatement>> body;
@@ -234,18 +241,24 @@ private:
     std::unique_ptr<JsExpression> parseShiftExpression();
     std::unique_ptr<JsExpression> parseAdditiveExpression();
     std::unique_ptr<JsExpression> parseMultiplicativeExpression();
+    std::unique_ptr<JsExpression> parseExponentiationExpression();
     std::unique_ptr<JsExpression> parseUnaryExpression();
     std::unique_ptr<JsExpression> parsePostfixExpression();
     std::unique_ptr<JsExpression> parseCallExpression();
     std::unique_ptr<JsExpression> parseMemberExpression();
+    std::unique_ptr<JsExpression> parseNewExpression();
     std::unique_ptr<JsExpression> parsePrimaryExpression();
+    std::unique_ptr<JsExpression> parseObjectLiteral();
+    std::unique_ptr<JsExpression> parseArrayLiteral();
+    std::unique_ptr<JsExpression> parseFunctionExpression();
+    std::unique_ptr<JsExpression> parseArrowFunction();
     
     // 辅助方法
-    bool match(JsTokenType type);
-    bool matchAny(std::initializer_list<JsTokenType> types);
-    bool consume(JsTokenType type, const std::string& message = "");
     JsToken advance();
-    JsToken peek();
+    bool check(JsTokenType type);
+    bool match(JsTokenType type);
+    bool match(std::initializer_list<JsTokenType> types);
+    JsToken consume(JsTokenType type, const std::string& message);
     bool isAtEnd();
     void synchronize();
     

@@ -33,6 +33,25 @@ struct JsAnalysisResult {
     // 导入/导出
     std::vector<std::string> imports;
     std::vector<std::string> exports;
+    
+    // 统计信息
+    int functionCount = 0;
+    int classCount = 0;
+    
+    // 功能检测
+    struct Features {
+        bool hasClasses = false;
+        bool hasLoops = false;
+        bool hasErrorHandling = false;
+        bool hasModules = false;
+        bool hasAsyncAwait = false;
+        bool hasGenerators = false;
+        bool hasConsistentSemicolons = true;
+        bool hasArrowFunctions = false;
+        bool hasDestructuring = false;
+        bool hasTemplateLiterals = false;
+        bool hasSpreadOperator = false;
+    } features;
 };
 
 /**

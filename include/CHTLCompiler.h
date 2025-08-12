@@ -50,6 +50,9 @@ private:
     // 错误监听器
     class ErrorListener;
     std::unique_ptr<ErrorListener> errorListener_;
+    
+    // 辅助方法
+    std::shared_ptr<ASTNode> parseSimpleCHTL(const std::string& code);
 };
 
 } // namespace CHTL

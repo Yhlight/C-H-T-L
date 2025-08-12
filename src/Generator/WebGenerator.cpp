@@ -8,9 +8,10 @@
 #include "Node/Template.h"
 // #include "Node/Reference.h" // Not implemented yet
 #include "Node/Origin.h" // Added for Origin node
+#include "CJmod/CJmodSimple.h"
 #include "Runtime/ChtlJsRuntime.h"
-#include "CJmod/CJmodCorrect.h"
-#include "CJmod/CJmodLoader.h"
+// #include "CJmod/CJmodCorrect.h"
+// #include "CJmod/CJmodLoader.h"
 
 #include <regex>
 #include <algorithm>
@@ -398,12 +399,25 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 }
 
 void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
-    // Custom 节点通常是定义，不应该直接生成内容
-    // 但如果是从引用克隆的实例，需要生成其子节点
-    
     // 检查是否有名称 - 有名称的是定义
     if (!custom->getCustomName().empty()) {
-        // 这是一个定义，不生成内容
+        // 这是一个定义，注册它
+        std::string key;
+        switch (custom->getCustomType()) {
+            case Custom::CustomType::ELEMENT:
+                key = "@Element " + custom->getCustomName();
+                break;
+            case Custom::CustomType::STYLE:
+                key = "@Style " + custom->getCustomName();
+                break;
+            case Custom::CustomType::VAR:
+                key = "@Var " + custom->getCustomName();
+                break;
+        }
+        
+        customDefinitions_[key] = custom;
+        
+        // 定义不生成内容
         return;
     }
     
@@ -861,6 +875,26 @@ void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
     }
 }
 
+void WebGenerator::visitTemplate(const std::shared_ptr<Template>& tmpl) {
+    // 注册模板定义
+    std::string key;
+    switch (tmpl->getTemplateType()) {
+        case Template::TemplateType::ELEMENT:
+            key = "@Element " + tmpl->getTemplateName();
+            break;
+        case Template::TemplateType::STYLE:
+            key = "@Style " + tmpl->getTemplateName();
+            break;
+        case Template::TemplateType::VAR:
+            key = "@Var " + tmpl->getTemplateName();
+            break;
+    }
+    
+    templateDefinitions_[key] = tmpl;
+    
+    // 不生成任何输出，模板只是定义
+}
+
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
     if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
         // 局部脚本
@@ -1003,17 +1037,17 @@ void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
     if (import->getType() == Import::ImportType::CJMOD) {
         // CJmod 导入
         std::string modulePath = import->getFilePath();
+        std::string moduleName = import->getName(); // 获取模块名
         
         // 加载 CJmod 模块
-        // TODO: CJmod 系统需要重新实现
-        // auto& loader = cjmod::CJmodLoader::getInstance();
-        // auto module = loader.loadModule(modulePath);
-        // 
-        // if (!module) {
-        //     result_.errors.push_back("Failed to load CJmod: " + modulePath);
-        // } else if (configManager_->isDebugMode()) {
-        //     result_.warnings.push_back("Loaded CJmod: " + module->getName() + " v" + module->getVersion());
-        // }
+        auto& loader = cjmod::CJmodLoader::getInstance();
+        bool loaded = loader.loadModule(moduleName);
+        
+        if (!loaded) {
+            result_.errors.push_back("Failed to load CJmod: " + modulePath);
+        } else if (configManager_->isDebugMode()) {
+            result_.warnings.push_back("Loaded CJmod: " + moduleName);
+        }
         
         // 模块已经在 CJmodLoader 中注册到处理器
         return;
@@ -1101,8 +1135,8 @@ void WebGenerator::applyReferenceModifications(std::shared_ptr<Node> target,
                     deleteFromNode(target, deleteTarget);
                 }
             } else {
-                // 查找目标中对应的元素并合并属性和子节点
-                mergeElement(target, element);
+                // 对于普通元素，直接添加到目标
+                target->addChild(element->clone(true));
             }
         } else if (child->getType() == NodeType::OPERATE) {
             auto op = std::static_pointer_cast<Operate>(child);
@@ -1346,7 +1380,6 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     
     // 构建查找键
     std::string key = type + " " + name;
-
     
     // 根据 kind 属性决定查找 Template 还是 Custom
     std::shared_ptr<Node> definition = nullptr;
@@ -1395,7 +1428,6 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         
         // 应用实例修改（如果有特例化内容）
         if (!refNode->getChildren().empty()) {
-
             applyReferenceModifications(cloned, refNode);
         }
         
@@ -1420,10 +1452,8 @@ std::string WebGenerator::processJavaScriptWithCJmod(const std::string& jsCode) 
     std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
     
     // 使用 CJmod 处理器处理 JavaScript 代码
-    // TODO: CJmod 系统需要重新实现
-    // auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    // return processor.processJavaScript(jsCode, moduleVector);
-    return jsCode; // 暂时返回原始代码
+    auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    return processor.processJavaScript(jsCode, moduleVector);
 }
 
 void WebGenerator::injectCJmodRuntime() {
@@ -1436,10 +1466,8 @@ void WebGenerator::injectCJmodRuntime() {
     std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
     
     // 生成 CJmod 运行时代码
-    // TODO: CJmod 系统需要重新实现
-    // auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    // std::string runtime = processor.getCombinedRuntime(moduleVector);
-    std::string runtime = ""; // 暂时使用空运行时
+    auto& processor = cjmod::CHTLJSProcessor::getInstance();
+    std::string runtime = processor.getCombinedRuntime(moduleVector);
     
     if (!runtime.empty()) {
         // 在用户代码之前注入 CJmod 运行时

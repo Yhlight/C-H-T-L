@@ -21,6 +21,9 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
+# 排除被禁用的文件
+list(FILTER SOURCES EXCLUDE REGEX ".*\\.disabled$")
+
 # 收集头文件
 file(GLOB_RECURSE HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"

@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/chtl.dir/link.d"
+  "CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o"
+  "CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o.d"
   "CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o"
   "CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o.d"
   "CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o"

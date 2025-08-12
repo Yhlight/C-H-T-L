@@ -2,6 +2,7 @@ chtl: \
   /lib/x86_64-linux-gnu/Scrt1.o \
   /lib/x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
+  CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o \
   CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o \
   CMakeFiles/chtl.dir/src/Cmod/CmodPacker.cpp.o \
   CMakeFiles/chtl.dir/src/CmodSystem/CmodExtractor.cpp.o \
@@ -112,6 +113,8 @@ chtl: \
 /lib/x86_64-linux-gnu/crti.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o:
+
+CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o:
 
 CMakeFiles/chtl.dir/src/ChtlJs/ChtlJsContext.cpp.o:
 

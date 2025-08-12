@@ -210,6 +210,30 @@ pack_all_cmods/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pack_all_cmods.dir/build.make CMakeFiles/pack_all_cmods.dir/build
 .PHONY : pack_all_cmods/fast
 
+src/CJmod/CJmodSimple.o: src/CJmod/CJmodSimple.cpp.o
+.PHONY : src/CJmod/CJmodSimple.o
+
+# target to build an object file
+src/CJmod/CJmodSimple.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o
+.PHONY : src/CJmod/CJmodSimple.cpp.o
+
+src/CJmod/CJmodSimple.i: src/CJmod/CJmodSimple.cpp.i
+.PHONY : src/CJmod/CJmodSimple.i
+
+# target to preprocess a source file
+src/CJmod/CJmodSimple.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.i
+.PHONY : src/CJmod/CJmodSimple.cpp.i
+
+src/CJmod/CJmodSimple.s: src/CJmod/CJmodSimple.cpp.s
+.PHONY : src/CJmod/CJmodSimple.s
+
+# target to generate assembly for a file
+src/CJmod/CJmodSimple.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl.dir/build.make CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.s
+.PHONY : src/CJmod/CJmodSimple.cpp.s
+
 src/ChtlJs/ChtlJsContext.o: src/ChtlJs/ChtlJsContext.cpp.o
 .PHONY : src/ChtlJs/ChtlJsContext.o
 
@@ -2074,6 +2098,9 @@ help:
 	@echo "... pack_Chtholly_cmod"
 	@echo "... pack_all_cmods"
 	@echo "... chtl"
+	@echo "... src/CJmod/CJmodSimple.o"
+	@echo "... src/CJmod/CJmodSimple.i"
+	@echo "... src/CJmod/CJmodSimple.s"
 	@echo "... src/ChtlJs/ChtlJsContext.o"
 	@echo "... src/ChtlJs/ChtlJsContext.i"
 	@echo "... src/ChtlJs/ChtlJsContext.s"

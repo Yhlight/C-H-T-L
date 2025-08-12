@@ -1,0 +1,23 @@
+// 测试插槽功能
+
+[Template] @Element Card {
+    div {
+        class: "card";
+        h2 {
+            slot { name: "title"; }
+        }
+        div {
+            class: "content";
+            slot { name: "body"; }
+        }
+    }
+}
+
+html {
+    body {
+        @Element Card {
+            title: "欢迎";
+            body: "这是卡片内容";
+        }
+    }
+}

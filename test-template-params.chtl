@@ -1,0 +1,22 @@
+// 测试模板参数
+
+[Template] @Element Alert {
+    div {
+        class: "alert";
+        p {
+            text { "这是一个警告框" }
+        }
+    }
+}
+
+html {
+    body {
+        // 直接使用，无参数
+        @Element Alert;
+        
+        // 带特例化块（添加额外内容）
+        @Element Alert {
+            p { text { "额外的内容" } }
+        }
+    }
+}

@@ -162,6 +162,7 @@ public:
 protected:
     void visitElement(const std::shared_ptr<Element>& element) override;
     void visitCustom(const std::shared_ptr<Custom>& custom) override;
+    void visitTemplate(const std::shared_ptr<Template>& tmpl) override;
     void visitStyle(const std::shared_ptr<Style>& style) override;
     void visitScript(const std::shared_ptr<Script>& script) override;
     virtual void visitComment(const std::shared_ptr<Comment>& comment);
@@ -170,6 +171,10 @@ protected:
     void visitExport(const std::shared_ptr<Export>& export_) override;
     
 private:
+    // 组件定义存储
+    std::unordered_map<std::string, std::shared_ptr<Node>> templateDefinitions_;
+    std::unordered_map<std::string, std::shared_ptr<Node>> customDefinitions_;
+    
     // 原始嵌入定义存储
     std::unordered_map<std::string, std::shared_ptr<Origin>> originDefinitions_;
     

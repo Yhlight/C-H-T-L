@@ -1,0 +1,19 @@
+// 最终验证 - 有意省略最后的分号
+
+[Template] @Var FinalTest {
+    first: red;
+    second: green;
+    third: blue
+}
+
+html {
+    body {
+        div {
+            style {
+                color: FinalTest(first);
+                background: FinalTest(third);
+            }
+            text { "最终验证测试" }
+        }
+    }
+}

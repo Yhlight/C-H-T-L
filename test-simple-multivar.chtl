@@ -1,0 +1,17 @@
+[Template] @Var Colors {
+    red: #ff0000;
+    green: #00ff00;
+    blue: #0000ff
+}
+
+html {
+    body {
+        div {
+            style {
+                color: Colors(red);
+                background: Colors(blue);
+            }
+            text { "多变量测试" }
+        }
+    }
+}

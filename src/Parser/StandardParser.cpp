@@ -958,7 +958,12 @@ void StandardParser::parseVarTemplateContent(std::shared_ptr<Template> templateN
         
         // 变量定义
         if (checkAttribute()) {
-            parseTemplateProperty(templateNode);
+            try {
+                parseTemplateProperty(templateNode);
+            } catch (const std::exception& e) {
+                // 如果解析属性失败，跳到下一个语句
+                skipToNextStatement();
+            }
         } else {
             advance();
         }
@@ -987,7 +992,18 @@ void StandardParser::parseTemplateProperty(std::shared_ptr<Template> templateNod
     
     templateNode->addProperty(nameToken.value, value);
     
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    // 尝试消费分号，但如果下一个是右大括号或另一个属性，则不强制要求
+    if (check(TokenType::SEMICOLON)) {
+        advance();
+    } else {
+        // 跳过任何空白和注释
+        skipWhitespaceAndComments();
+        
+        if (!check(TokenType::RIGHT_BRACE) && !checkAttribute() && !isAtEnd()) {
+            // 只有在不是结束、下一个属性或文件结束时才报错
+            addError("Expected ';' after property");
+        }
+    }
 }
 
 std::shared_ptr<Node> StandardParser::parseCustom() {

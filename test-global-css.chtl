@@ -1,0 +1,88 @@
+// 测试全局样式块 - 使用 CSS 编译器
+
+html {
+    head {
+        title { text { "全局 CSS 测试" } }
+        
+        // 全局样式块 - 应该由 CSS 编译器处理
+        style {
+            text {
+                "
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                }
+                
+                .color-box {
+                    background: #ff6b6b;
+                    padding: 20px;
+                    border: 2px solid #ff4757;
+                    border-radius: 8px;
+                    color: #ffffff;
+                    margin: 20px;
+                }
+                
+                h1 {
+                    color: #2d3436;
+                    font-size: 24px;
+                    text-align: center;
+                }
+                
+                .gradient-box {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    padding: 15px;
+                    color: #fff;
+                    text-align: center;
+                    margin: 20px;
+                }
+                
+                ul.color-list {
+                    list-style: none;
+                    padding: 0;
+                }
+                
+                ul.color-list li:nth-child(1) { color: #0984e3; }
+                ul.color-list li:nth-child(2) { color: #00b894; }
+                ul.color-list li:nth-child(3) { color: #fdcb6e; }
+                "
+            }
+        }
+    }
+    
+    body {
+        h1 { text { "全局样式 vs 局部样式" } }
+        
+        // 使用全局样式类
+        div {
+            class = "color-box"
+            text { "这是使用全局样式的盒子" }
+        }
+        
+        // 使用局部样式（CHTL 编译器处理）
+        div {
+            style {
+                background: #74b9ff;
+                padding: 20px;
+                border: 2px solid #0984e3;
+                border-radius: 8px;
+                color: #ffffff;
+                margin: 20px;
+            }
+            text { "这是使用局部样式的盒子" }
+        }
+        
+        div {
+            class = "gradient-box"
+            text { "渐变背景（全局样式）" }
+        }
+        
+        ul {
+            class = "color-list"
+            li { text { "蓝色项目" } }
+            li { text { "绿色项目" } }
+            li { text { "黄色项目" } }
+        }
+    }
+}

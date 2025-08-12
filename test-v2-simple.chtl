@@ -1,0 +1,43 @@
+// 全局样式
+style {
+    body { 
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+// 模板定义
+[Template] @Element Card(title, content) {
+    div .card {
+        style {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        h3 { text { title } }
+        p { text { content } }
+    }
+}
+
+// HTML 片段
+div #app {
+    // 引用模板
+    @Element Card("Hello", "This is a test card")
+    
+    // 嵌套元素
+    div .container {
+        h1 { text { "Welcome to CHTL v2" } }
+        
+        // 局部脚本
+        script {
+            const element = {{&}};
+            console.log('Container ready');
+        }
+    }
+}

@@ -184,11 +184,17 @@ Token ChtlLexer::scanInTopLevel() {
     
     // 标识符或关键字
     if (isAlpha(c)) {
+        // 回退一个字符，因为已经 advance 了
+        current_--;
+        column_--;
         return scanIdentifier();
     }
     
     // 数字
     if (isDigit(c)) {
+        // 回退一个字符
+        current_--;
+        column_--;
         return scanNumber();
     }
     
@@ -354,16 +360,12 @@ TokenType ChtlLexer::determineIdentifierType(const std::string& text) {
         return it->second;
     }
     
-    // 根据当前状态和上下文决定
+    // 创建标识符 token
     Token token(TokenType::IDENTIFIER, text, tokenStartLine_, tokenStartColumn_);
     
     // 设置元数据
-    if (isHtmlTag(text)) {
-        token.metadata.isHtmlTag = true;
-    }
-    if (isCssProperty(text)) {
-        token.metadata.isCssProperty = true;
-    }
+    token.metadata.isHtmlTag = isHtmlTag(text);
+    token.metadata.isCssProperty = isCssProperty(text);
     
     return TokenType::IDENTIFIER;
 }
@@ -449,7 +451,15 @@ Token ChtlLexer::makeToken(TokenType type, const std::string& value) {
     std::string tokenValue = value.empty() ? 
         input_.substr(start_, current_ - start_) : value;
     
-    return Token(type, tokenValue, tokenStartLine_, tokenStartColumn_);
+    Token token(type, tokenValue, tokenStartLine_, tokenStartColumn_);
+    
+    // 如果是标识符，设置元数据
+    if (type == TokenType::IDENTIFIER) {
+        token.metadata.isHtmlTag = isHtmlTag(tokenValue);
+        token.metadata.isCssProperty = isCssProperty(tokenValue);
+    }
+    
+    return token;
 }
 
 Token ChtlLexer::makeToken(TokenType type) {

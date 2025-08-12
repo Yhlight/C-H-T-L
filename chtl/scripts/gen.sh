@@ -11,14 +11,15 @@ mkdir -p "$OUT_DIR"
 # Generate CHTL
 java -jar "$JAR" -Dlanguage=Java -visitor -no-listener -package chtl.parser -o "$OUT_DIR" "$GRAMMAR_DIR/CHTL.g4"
 
-# Generate CSS
+# Generate CSS (lexer+parser)
 CSS_GRAMMAR_DIR="$GRAMMAR_DIR/css"
 CSS_OUT_DIR="$OUT_DIR/css"
 mkdir -p "$CSS_OUT_DIR"
-if [[ -f "$CSS_GRAMMAR_DIR/CSS3.g4" ]]; then
-  java -jar "$JAR" -Dlanguage=Java -visitor -no-listener -package chtl.css.parser -o "$CSS_OUT_DIR" "$CSS_GRAMMAR_DIR/CSS3.g4"
+if [[ -f "$CSS_GRAMMAR_DIR/CSSLexer.g4" && -f "$CSS_GRAMMAR_DIR/CSSParser.g4" ]]; then
+  java -jar "$JAR" -Dlanguage=Java -visitor -no-listener -package chtl.css.parser -o "$CSS_OUT_DIR" "$CSS_GRAMMAR_DIR/CSSLexer.g4"
+  java -jar "$JAR" -Dlanguage=Java -visitor -no-listener -package chtl.css.parser -o "$CSS_OUT_DIR" "$CSS_GRAMMAR_DIR/CSSParser.g4"
 else
-  echo "[warn] CSS3.g4 not found; skipping CSS parser generation" >&2
+  echo "[warn] CSSLexer.g4 or CSSParser.g4 not found; skipping CSS parser generation" >&2
 fi
 
 # Generate JS (ECMAScript)

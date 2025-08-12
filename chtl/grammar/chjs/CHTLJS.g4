@@ -32,7 +32,7 @@ simpleSelector
   ;
 
 argChunk
-  : ~[()]+ | LPAREN | RPAREN
+  : ARGCHUNK | LPAREN | RPAREN
   ;
 
 LBRACE2: '{{';
@@ -55,6 +55,8 @@ IDENT: [a-zA-Z_] [a-zA-Z0-9_-]*;
 LISTEN: 'listen';
 DELEGATE: 'delegate';
 ANIMATE: 'animate';
+
+ARGCHUNK: ~[()]+;
 
 OTHER: .;
 

@@ -79,14 +79,14 @@ public:
     void setTagName(const std::string& tagName) { tagName_ = tagName; }
     
     // 属性管理（通用接口）
-    void setAttribute(const std::string& name, const AttributeValue& value) {
+    virtual void setAttribute(const std::string& name, const AttributeValue& value) {
         attributes_[name] = value;
     }
-    AttributeValue getAttribute(const std::string& name) const {
+    virtual AttributeValue getAttribute(const std::string& name) const {
         auto it = attributes_.find(name);
         return it != attributes_.end() ? it->second : AttributeValue("");
     }
-    bool hasAttribute(const std::string& name) const {
+    virtual bool hasAttribute(const std::string& name) const {
         return attributes_.find(name) != attributes_.end();
     }
     
@@ -205,9 +205,9 @@ public:
     void setTagName(const std::string& tagName) { tagName_ = tagName; }
     
     // 属性管理
-    void setAttribute(const std::string& name, const AttributeValue& value);
-    AttributeValue getAttribute(const std::string& name) const;
-    bool hasAttribute(const std::string& name) const;
+    void setAttribute(const std::string& name, const AttributeValue& value) override;
+    AttributeValue getAttribute(const std::string& name) const override;
+    bool hasAttribute(const std::string& name) const override;
     void removeAttribute(const std::string& name);
     const std::unordered_map<std::string, AttributeValue>& getAttributes() const { return attributes_; }
     

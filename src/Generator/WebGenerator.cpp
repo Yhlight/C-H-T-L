@@ -221,7 +221,6 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     
     std::string tag = element->getTagName();
     
-
     // 特殊处理引用节点
     if (tag == "reference") {
         try {
@@ -315,33 +314,32 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     }
     
     // 处理属性
-    auto attributes = element->getAttributes();
-    
     // 如果有内联样式，添加或合并到 style 属性
     if (!inlineStyles.empty()) {
-        if (attributes.find("style") != attributes.end()) {
-            std::string existingStyle = std::get<std::string>(attributes.at("style"));
-            if (!existingStyle.empty() && existingStyle.back() != ';') {
-                existingStyle += "; ";
+        auto existingStyle = element->getAttribute("style");
+        if (std::holds_alternative<std::string>(existingStyle)) {
+            std::string styleStr = std::get<std::string>(existingStyle);
+            if (!styleStr.empty() && styleStr.back() != ';') {
+                styleStr += "; ";
             }
-            attributes["style"] = existingStyle + inlineStyles;
+            element->setAttribute("style", styleStr + inlineStyles);
         } else {
-            attributes["style"] = inlineStyles;
+            element->setAttribute("style", inlineStyles);
         }
     }
     
     // 首先检查元素是否已经有ID
-    if (attributes.find("id") != attributes.end()) {
-        if (std::holds_alternative<std::string>(attributes.at("id"))) {
-            elementId = std::get<std::string>(attributes.at("id"));
-        }
+    auto idAttr = element->getAttribute("id");
+    if (std::holds_alternative<std::string>(idAttr)) {
+        elementId = std::get<std::string>(idAttr);
     } else if (hasLocalScript) {
         // 只有在没有ID且有局部脚本时才生成ID
         elementId = generateUniqueId("element");
-        attributes["id"] = elementId;  // 添加到本地副本中
+        element->setAttribute("id", elementId);
     }
     
     // 输出所有属性
+    const auto& attributes = element->getAttributes();
     for (const auto& [key, value] : attributes) {
         // 处理特殊属性
         if (key == "class") {
@@ -1372,8 +1370,9 @@ void WebGenerator::mergeElement(std::shared_ptr<Node> target,
     if (target->getType() == NodeType::ELEMENT) {
         auto targetElement = std::static_pointer_cast<Element>(target);
         if (targetElement->getTagName() == source->getTagName()) {
-            // 合并属性
-            for (const auto& [key, value] : source->getAttributes()) {
+            // 合并属性 - 直接设置到目标元素
+            const auto& sourceAttrs = source->getAttributes();
+            for (const auto& [key, value] : sourceAttrs) {
                 targetElement->setAttribute(key, value);
             }
             // 合并子节点

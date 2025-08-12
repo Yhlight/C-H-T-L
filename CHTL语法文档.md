@@ -600,6 +600,32 @@ div
 }
 ```
 
+### 全缀名
+CHTL允许使用全缀名来访问模板元素，样式组，变量组，自定义元素，样式组，变量组  
+这在处理命名冲突时非常有用  
+
+```chtl
+[Custom] @Element Box
+{
+    div
+    {
+
+    }
+
+    div
+    {
+
+    }
+}
+
+body
+{
+    @Element Box;  // 使用全缀名访问自定义元素Box
+
+    [Custom] @Element Box;  // 使用全缀名访问自定义元素Box
+}
+```
+
 ## 原始嵌入
 在CHTL中，你可以使用[Origin]表示这是一段原始的代码，这部分代码不会被CHTL处理，而是让生成器直接生成  
 原始嵌入是CHTL的兼容处理机制，避免CHTL考虑不到的极端问题  
@@ -610,6 +636,14 @@ div
 [Origin] @Html
 {
 
+}
+
+body
+{
+    [Origin] @Html
+    {
+
+    }
 }
 ```
 
@@ -626,6 +660,19 @@ div
 [Origin] @JavaScript
 {
 
+}
+```
+
+### 增强原始嵌入
+```chtl
+[Origin] @Html box
+{
+
+}
+
+body
+{
+    [Origin] @Html box;
 }
 ```
 
@@ -713,9 +760,6 @@ div
 
 导入一个chtl文件  
 [Import] @Chtl from chtl文件路径  
-
-通配导入
-[Import] * from 路径  
 
 可以使用'.'来表示'/'  
 
@@ -865,6 +909,31 @@ div
 ## JavaScript
 由于CHTL实现了CSS和JS的静态分析器  
 现在CHTL能够实现一些扩展的语法了  
+
+### 局部script
+CHTL允许在局部样式块中使用script{}来编写JS代码  
+
+```chtl
+div
+{
+    style
+    {
+        .box
+        {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    }
+
+    script
+    {
+        {{box}}.addEventListener('click', () => {
+            console.log('Box clicked!');
+        });
+    }
+}
+```
 
 ### 增强选择器
 你可以使用{{CSS选择器}}来创建一个DOM对象  

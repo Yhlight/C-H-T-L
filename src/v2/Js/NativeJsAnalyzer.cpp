@@ -1,6 +1,8 @@
 #include "v2/Js/NativeJsAnalyzer.h"
-#include <regex>
-#include <sstream>
+#include "v2/Js/JsParser.h"
+#include <set>
+#include <map>
+#include <algorithm>
 
 namespace chtl::v2::js {
 
@@ -8,203 +10,343 @@ class NativeJsAnalyzer::Impl {
 public:
     JsAnalysisResult analyze(const std::string& js) {
         JsAnalysisResult result;
+        result.valid = true;
         
-        if (js.empty()) {
-            return result;
+        try {
+            // 使用新的 JavaScript 解析器
+            JsParser parser(js);
+            auto parseResult = parser.parse();
+            
+            if (!parseResult.errors.empty()) {
+                result.valid = false;
+                result.errors = parseResult.errors;
+            }
+            
+            result.warnings = parseResult.warnings;
+            
+            // 分析 AST
+            if (parseResult.ast) {
+                analyzeProgram(*parseResult.ast, result);
+            }
+            
+            // 执行额外的检查
+            performLintChecks(result);
+            
+        } catch (const std::exception& e) {
+            result.valid = false;
+            result.errors.push_back("JS parse error: " + std::string(e.what()));
         }
-        
-        // 简单的 JS 语法检查
-        checkSyntax(js, result);
-        
-        // 提取结构信息
-        extractStructure(js, result);
         
         return result;
     }
     
-    void setOption(const std::string& name, bool value) {
-        if (name == "strict") {
-            strict_ = value;
-        } else if (name == "esModules") {
-            esModules_ = value;
-        }
-    }
-    
 private:
-    void checkSyntax(const std::string& js, JsAnalysisResult& result) {
-        // 基本的括号匹配
-        int parenDepth = 0;
-        int braceDepth = 0;
-        int bracketDepth = 0;
-        
-        bool inString = false;
-        bool inComment = false;
-        char stringChar = 0;
-        
-        for (size_t i = 0; i < js.length(); ++i) {
-            char ch = js[i];
-            char next = (i + 1 < js.length()) ? js[i + 1] : 0;
-            
-            // 处理注释
-            if (!inString && !inComment && ch == '/' && next == '/') {
-                // 单行注释，跳到行尾
-                while (i < js.length() && js[i] != '\n') i++;
-                continue;
-            }
-            
-            if (!inString && !inComment && ch == '/' && next == '*') {
-                inComment = true;
-                i++; // 跳过 *
-                continue;
-            }
-            
-            if (inComment && ch == '*' && next == '/') {
-                inComment = false;
-                i++; // 跳过 /
-                continue;
-            }
-            
-            if (inComment) continue;
-            
-            // 处理字符串
-            if (!inString && (ch == '"' || ch == '\'' || ch == '`')) {
-                inString = true;
-                stringChar = ch;
-            } else if (inString && ch == stringChar && js[i-1] != '\\') {
-                inString = false;
-            }
-            
-            if (inString) continue;
-            
-            // 检查括号匹配
-            switch (ch) {
-                case '(': parenDepth++; break;
-                case ')': 
-                    parenDepth--; 
-                    if (parenDepth < 0) {
-                        result.errors.push_back("Unmatched ')' at position " + 
-                                              std::to_string(i));
-                        result.valid = false;
-                    }
-                    break;
-                case '{': braceDepth++; break;
-                case '}': 
-                    braceDepth--; 
-                    if (braceDepth < 0) {
-                        result.errors.push_back("Unmatched '}' at position " + 
-                                              std::to_string(i));
-                        result.valid = false;
-                    }
-                    break;
-                case '[': bracketDepth++; break;
-                case ']': 
-                    bracketDepth--; 
-                    if (bracketDepth < 0) {
-                        result.errors.push_back("Unmatched ']' at position " + 
-                                              std::to_string(i));
-                        result.valid = false;
-                    }
-                    break;
-            }
+    /**
+     * 分析程序 AST
+     */
+    void analyzeProgram(const JsProgram& program, JsAnalysisResult& result) {
+        // 遍历所有语句
+        for (const auto& stmt : program.body) {
+            analyzeStatement(stmt.get(), result);
         }
         
-        // 检查最终深度
-        if (parenDepth != 0) {
-            result.errors.push_back("Unclosed parentheses");
-            result.valid = false;
-        }
-        if (braceDepth != 0) {
-            result.errors.push_back("Unclosed braces");
-            result.valid = false;
-        }
-        if (bracketDepth != 0) {
-            result.errors.push_back("Unclosed brackets");
-            result.valid = false;
+        // 分析复杂度
+        analyzeComplexity(program, result);
+        
+        // 检查最佳实践
+        checkBestPractices(result);
+    }
+    
+    /**
+     * 分析语句
+     */
+    void analyzeStatement(const JsStatement* stmt, JsAnalysisResult& result) {
+        if (!stmt) return;
+        
+        switch (stmt->type) {
+            case JsNodeType::VAR_DECLARATION: {
+                auto* varDecl = static_cast<const JsVariableDeclaration*>(stmt);
+                analyzeVariableDeclaration(varDecl, result);
+                break;
+            }
+            
+            case JsNodeType::FUNCTION_DECLARATION: {
+                auto* funcDecl = static_cast<const JsFunction*>(stmt);
+                analyzeFunctionDeclaration(funcDecl, result);
+                break;
+            }
+            
+            case JsNodeType::CLASS_DECLARATION: {
+                result.features.hasClasses = true;
+                result.classCount++;
+                break;
+            }
+            
+            case JsNodeType::IF_STMT:
+            case JsNodeType::SWITCH_STMT:
+            case JsNodeType::FOR_STMT:
+            case JsNodeType::FOR_IN_STMT:
+            case JsNodeType::FOR_OF_STMT:
+            case JsNodeType::WHILE_STMT:
+            case JsNodeType::DO_WHILE_STMT: {
+                result.features.hasLoops = true;
+                break;
+            }
+            
+            case JsNodeType::TRY_STMT: {
+                result.features.hasErrorHandling = true;
+                break;
+            }
+            
+            case JsNodeType::IMPORT_DECLARATION:
+            case JsNodeType::EXPORT_DECLARATION: {
+                result.features.hasModules = true;
+                break;
+            }
+            
+            case JsNodeType::BLOCK_STMT: {
+                // 递归分析块内的语句
+                auto* block = static_cast<const JsStatement*>(stmt);
+                // 这里需要具体的块语句实现
+                break;
+            }
+            
+            case JsNodeType::EXPRESSION_STMT: {
+                // 分析表达式语句
+                // 这里需要具体的表达式语句实现
+                break;
+            }
+            
+            default:
+                break;
         }
     }
     
-    void extractStructure(const std::string& js, JsAnalysisResult& result) {
-        // 提取变量声明
-        extractVariables(js, result);
-        
-        // 提取函数声明
-        extractFunctions(js, result);
-        
-        // 提取导入导出
-        if (esModules_) {
-            extractImportsExports(js, result);
-        }
-    }
-    
-    void extractVariables(const std::string& js, JsAnalysisResult& result) {
-        // 匹配 var/let/const 声明
-        std::regex varRegex(R"(\b(var|let|const)\s+([a-zA-Z_$][a-zA-Z0-9_$]*))");
-        std::sregex_iterator it(js.begin(), js.end(), varRegex);
-        std::sregex_iterator end;
-        
-        int lineNum = 1;
-        for (; it != end; ++it) {
-            JsAnalysisResult::Variable var;
-            var.type = (*it)[1];
-            var.name = (*it)[2];
-            var.line = lineNum; // 简化的行号计算
+    /**
+     * 分析变量声明
+     */
+    void analyzeVariableDeclaration(const JsVariableDeclaration* decl, JsAnalysisResult& result) {
+        for (const auto& [name, init] : decl->declarations) {
+            result.variables.push_back(name);
             
-            result.variables.push_back(var);
-        }
-    }
-    
-    void extractFunctions(const std::string& js, JsAnalysisResult& result) {
-        // 匹配函数声明
-        std::regex funcRegex(R"(\b(async\s+)?function\s+([a-zA-Z_$][a-zA-Z0-9_$]*))");
-        std::sregex_iterator it(js.begin(), js.end(), funcRegex);
-        std::sregex_iterator end;
-        
-        for (; it != end; ++it) {
-            JsAnalysisResult::Function func;
-            func.isAsync = !(*it)[1].str().empty();
-            func.name = (*it)[2];
-            func.isArrow = false;
-            func.line = 1; // 简化的行号
+            // 检查变量命名
+            if (!isValidVariableName(name)) {
+                result.warnings.push_back("Non-conventional variable name: " + name);
+            }
             
-            result.functions.push_back(func);
+            // 检查未初始化的 const
+            if (decl->kind == "const" && !init) {
+                result.errors.push_back("Missing initializer in const declaration: " + name);
+            }
         }
         
-        // 匹配箭头函数
-        std::regex arrowRegex(R"(\b(const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(async\s*)?\([^)]*\)\s*=>)");
-        it = std::sregex_iterator(js.begin(), js.end(), arrowRegex);
+        // 警告使用 var
+        if (decl->kind == "var") {
+            result.warnings.push_back("Consider using 'let' or 'const' instead of 'var'");
+        }
+    }
+    
+    /**
+     * 分析函数声明
+     */
+    void analyzeFunctionDeclaration(const JsFunction* func, JsAnalysisResult& result) {
+        result.functionCount++;
         
-        for (; it != end; ++it) {
-            JsAnalysisResult::Function func;
-            func.name = (*it)[2];
-            func.isAsync = !(*it)[3].str().empty();
-            func.isArrow = true;
-            func.line = 1; // 简化的行号
+        if (func->name) {
+            result.functions.push_back(*func->name);
             
-            result.functions.push_back(func);
+            // 检查函数命名
+            if (!isValidFunctionName(*func->name)) {
+                result.warnings.push_back("Non-conventional function name: " + *func->name);
+            }
+        }
+        
+        // 检查异步函数
+        if (func->isAsync) {
+            result.features.hasAsyncAwait = true;
+        }
+        
+        // 检查生成器函数
+        if (func->isGenerator) {
+            result.features.hasGenerators = true;
+        }
+        
+        // 检查参数数量
+        if (func->parameters.size() > 5) {
+            result.warnings.push_back("Function has too many parameters (" + 
+                                    std::to_string(func->parameters.size()) + ")");
         }
     }
     
-    void extractImportsExports(const std::string& js, JsAnalysisResult& result) {
-        // 匹配 import 语句
-        std::regex importRegex(R"(import\s+.*?\s+from\s+['"](.*?)['"])");
-        std::sregex_iterator it(js.begin(), js.end(), importRegex);
-        std::sregex_iterator end;
+    /**
+     * 分析复杂度
+     */
+    void analyzeComplexity(const JsProgram& program, JsAnalysisResult& result) {
+        // 计算圈复杂度
+        int complexity = calculateCyclomaticComplexity(program);
         
-        for (; it != end; ++it) {
-            result.imports.push_back((*it)[1]);
+        if (complexity > 10) {
+            result.warnings.push_back("High cyclomatic complexity: " + 
+                                    std::to_string(complexity));
         }
         
-        // 匹配 export 语句
-        std::regex exportRegex(R"(export\s+(default\s+)?(?:function|class|const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*))");
-        it = std::sregex_iterator(js.begin(), js.end(), exportRegex);
+        // 计算嵌套深度
+        int maxNesting = calculateMaxNestingDepth(program);
         
-        for (; it != end; ++it) {
-            result.exports.push_back((*it)[2]);
+        if (maxNesting > 4) {
+            result.warnings.push_back("Deep nesting detected (depth: " + 
+                                    std::to_string(maxNesting) + ")");
         }
     }
     
-    bool strict_ = false;
-    bool esModules_ = true;
+    /**
+     * 检查最佳实践
+     */
+    void checkBestPractices(JsAnalysisResult& result) {
+        // 检查全局变量
+        if (hasGlobalVariables(result)) {
+            result.warnings.push_back("Global variables detected - consider using modules");
+        }
+        
+        // 检查重复声明
+        checkDuplicateDeclarations(result);
+        
+        // 检查未使用的变量
+        checkUnusedVariables(result);
+    }
+    
+    /**
+     * 执行代码检查
+     */
+    void performLintChecks(JsAnalysisResult& result) {
+        // 检查分号使用
+        if (!result.features.hasConsistentSemicolons) {
+            result.warnings.push_back("Inconsistent semicolon usage");
+        }
+        
+        // 检查缩进
+        if (!result.features.hasConsistentIndentation) {
+            result.warnings.push_back("Inconsistent indentation");
+        }
+        
+        // 检查引号使用
+        if (result.features.hasMixedQuotes) {
+            result.warnings.push_back("Mixed quote styles - use consistent quotes");
+        }
+    }
+    
+    /**
+     * 辅助方法
+     */
+    
+    bool isValidVariableName(const std::string& name) {
+        // 检查驼峰命名或下划线命名
+        return !name.empty() && 
+               (std::islower(name[0]) || name[0] == '_' || name[0] == '$');
+    }
+    
+    bool isValidFunctionName(const std::string& name) {
+        // 函数名应该是动词或动词短语
+        return !name.empty() && std::islower(name[0]);
+    }
+    
+    int calculateCyclomaticComplexity(const JsProgram& program) {
+        // 简化的圈复杂度计算
+        int complexity = 1;
+        
+        // 每个决策点增加复杂度
+        for (const auto& stmt : program.body) {
+            complexity += countDecisionPoints(stmt.get());
+        }
+        
+        return complexity;
+    }
+    
+    int countDecisionPoints(const JsStatement* stmt) {
+        if (!stmt) return 0;
+        
+        switch (stmt->type) {
+            case JsNodeType::IF_STMT:
+            case JsNodeType::WHILE_STMT:
+            case JsNodeType::FOR_STMT:
+            case JsNodeType::FOR_IN_STMT:
+            case JsNodeType::FOR_OF_STMT:
+            case JsNodeType::DO_WHILE_STMT:
+                return 1;
+                
+            case JsNodeType::SWITCH_STMT:
+                // switch 语句的每个 case 都是一个决策点
+                return 2; // 简化计算
+                
+            case JsNodeType::TRY_STMT:
+                return 1; // catch 块
+                
+            default:
+                return 0;
+        }
+    }
+    
+    int calculateMaxNestingDepth(const JsProgram& program) {
+        int maxDepth = 0;
+        
+        for (const auto& stmt : program.body) {
+            maxDepth = std::max(maxDepth, calculateNestingDepth(stmt.get(), 0));
+        }
+        
+        return maxDepth;
+    }
+    
+    int calculateNestingDepth(const JsStatement* stmt, int currentDepth) {
+        if (!stmt) return currentDepth;
+        
+        // 增加嵌套深度的语句
+        switch (stmt->type) {
+            case JsNodeType::IF_STMT:
+            case JsNodeType::WHILE_STMT:
+            case JsNodeType::FOR_STMT:
+            case JsNodeType::FOR_IN_STMT:
+            case JsNodeType::FOR_OF_STMT:
+            case JsNodeType::DO_WHILE_STMT:
+            case JsNodeType::SWITCH_STMT:
+            case JsNodeType::TRY_STMT:
+            case JsNodeType::BLOCK_STMT:
+                return currentDepth + 1;
+                
+            default:
+                return currentDepth;
+        }
+    }
+    
+    bool hasGlobalVariables(const JsAnalysisResult& result) {
+        // 简化检查：如果没有使用模块，所有顶级变量都是全局的
+        return !result.features.hasModules && !result.variables.empty();
+    }
+    
+    void checkDuplicateDeclarations(JsAnalysisResult& result) {
+        std::set<std::string> seen;
+        
+        for (const auto& var : result.variables) {
+            if (!seen.insert(var).second) {
+                result.warnings.push_back("Duplicate variable declaration: " + var);
+            }
+        }
+        
+        for (const auto& func : result.functions) {
+            if (!seen.insert(func).second) {
+                result.warnings.push_back("Duplicate function declaration: " + func);
+            }
+        }
+    }
+    
+    void checkUnusedVariables(JsAnalysisResult& result) {
+        // 这需要更复杂的分析，包括变量使用跟踪
+        // 这里只是一个简化的实现
+        for (const auto& var : result.variables) {
+            if (var.starts_with("_unused")) {
+                result.warnings.push_back("Potentially unused variable: " + var);
+            }
+        }
+    }
 };
 
 NativeJsAnalyzer::NativeJsAnalyzer() 
@@ -215,10 +357,6 @@ NativeJsAnalyzer::~NativeJsAnalyzer() = default;
 
 JsAnalysisResult NativeJsAnalyzer::analyze(const std::string& js) {
     return impl_->analyze(js);
-}
-
-void NativeJsAnalyzer::setOption(const std::string& name, bool value) {
-    impl_->setOption(name, value);
 }
 
 } // namespace chtl::v2::js

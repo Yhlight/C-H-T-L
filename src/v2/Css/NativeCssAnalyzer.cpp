@@ -1,6 +1,7 @@
 #include "v2/Css/NativeCssAnalyzer.h"
-#include <regex>
-#include <sstream>
+#include "v2/Css/CssParser.h"
+#include <iostream>
+#include <set>
 
 namespace chtl::v2::css {
 
@@ -8,138 +9,232 @@ class NativeCssAnalyzer::Impl {
 public:
     CssAnalysisResult analyze(const std::string& css) {
         CssAnalysisResult result;
+        result.valid = true;
         
-        if (css.empty()) {
-            return result;
+        try {
+            // 使用新的 CSS 解析器
+            CssParser parser(css);
+            auto parseResult = parser.parse();
+            
+            if (!parseResult.errors.empty()) {
+                result.valid = false;
+                result.errors = parseResult.errors;
+            }
+            
+            result.warnings = parseResult.warnings;
+            
+            // 分析样式表
+            if (parseResult.stylesheet) {
+                analyzeStylesheet(*parseResult.stylesheet, result);
+            }
+            
+        } catch (const std::exception& e) {
+            result.valid = false;
+            result.errors.push_back("CSS parse error: " + std::string(e.what()));
         }
-        
-        // 简单的 CSS 解析
-        parseRules(css, result);
         
         return result;
-    }
-    
-    void setOption(const std::string& name, bool value) {
-        if (name == "strict") {
-            strict_ = value;
-        }
     }
     
 private:
-    void parseRules(const std::string& css, CssAnalysisResult& result) {
-        // 移除注释
-        std::string cleanCss = removeComments(css);
+    void analyzeStylesheet(const CssStylesheet& stylesheet, CssAnalysisResult& result) {
+        // 收集选择器
+        std::set<std::string> uniqueSelectors;
         
-        // 查找 @规则
-        findAtRules(cleanCss, result);
-        
-        // 查找普通规则
-        findStyleRules(cleanCss, result);
-    }
-    
-    std::string removeComments(const std::string& css) {
-        std::string result = css;
-        
-        // 移除 /* */ 注释
-        std::regex blockComment("/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/");
-        result = std::regex_replace(result, blockComment, "");
-        
-        return result;
-    }
-    
-    void findAtRules(const std::string& css, CssAnalysisResult& result) {
-        // 简单匹配 @规则
-        std::regex atRule("@[a-zA-Z-]+[^{;]*[{;]");
-        std::sregex_iterator it(css.begin(), css.end(), atRule);
-        std::sregex_iterator end;
-        
-        for (; it != end; ++it) {
-            result.atRules.push_back(it->str());
-        }
-    }
-    
-    void findStyleRules(const std::string& css, CssAnalysisResult& result) {
-        // 简单的规则解析
-        size_t pos = 0;
-        while (pos < css.length()) {
-            // 查找选择器
-            size_t bracePos = css.find('{', pos);
-            if (bracePos == std::string::npos) break;
-            
-            // 提取选择器
-            std::string selector = css.substr(pos, bracePos - pos);
-            selector = trim(selector);
-            
-            // 跳过 @规则
-            if (selector.empty() || selector[0] == '@') {
-                pos = css.find('}', bracePos);
-                if (pos != std::string::npos) pos++;
-                continue;
-            }
-            
-            // 查找规则体结束
-            size_t endBrace = findMatchingBrace(css, bracePos);
-            if (endBrace == std::string::npos) {
-                result.errors.push_back("Unmatched brace at position " + 
-                                      std::to_string(bracePos));
-                break;
-            }
-            
-            // 提取属性
-            std::string body = css.substr(bracePos + 1, endBrace - bracePos - 1);
-            
-            CssAnalysisResult::Rule rule;
-            rule.selector = selector;
-            parseProperties(body, rule.properties);
-            
-            result.rules.push_back(rule);
-            
-            pos = endBrace + 1;
-        }
-    }
-    
-    void parseProperties(const std::string& body, 
-                        std::vector<std::pair<std::string, std::string>>& properties) {
-        std::istringstream stream(body);
-        std::string property;
-        
-        while (std::getline(stream, property, ';')) {
-            property = trim(property);
-            if (property.empty()) continue;
-            
-            size_t colonPos = property.find(':');
-            if (colonPos != std::string::npos) {
-                std::string name = trim(property.substr(0, colonPos));
-                std::string value = trim(property.substr(colonPos + 1));
+        for (const auto& rule : stylesheet.rules) {
+            if (rule->type == RuleType::STYLE_RULE) {
+                // 收集选择器
+                for (const auto& selector : rule->selectors) {
+                    std::string selectorStr = selector->toString();
+                    uniqueSelectors.insert(selectorStr);
+                }
                 
-                if (!name.empty() && !value.empty()) {
-                    properties.push_back({name, value});
+                // 收集属性
+                for (const auto& decl : rule->declarations) {
+                    result.properties[decl.property]++;
+                    
+                    // 检查供应商前缀
+                    if (decl.property.starts_with("-webkit-") ||
+                        decl.property.starts_with("-moz-") ||
+                        decl.property.starts_with("-ms-") ||
+                        decl.property.starts_with("-o-")) {
+                        result.warnings.push_back("Vendor prefix used: " + decl.property);
+                    }
+                }
+                
+                // 统计规则
+                result.ruleCount++;
+                
+            } else if (rule->type == RuleType::MEDIA_RULE) {
+                result.features.hasMediaQueries = true;
+                // 递归分析嵌套规则
+                for (const auto& nestedRule : rule->nestedRules) {
+                    if (nestedRule->type == RuleType::STYLE_RULE) {
+                        result.ruleCount++;
+                    }
+                }
+                
+            } else if (rule->type == RuleType::KEYFRAMES_RULE) {
+                result.features.hasAnimations = true;
+                
+            } else if (rule->type == RuleType::SUPPORTS_RULE) {
+                result.features.hasSupports = true;
+                
+            } else if (rule->type == RuleType::IMPORT_RULE) {
+                result.features.hasImports = true;
+            }
+        }
+        
+        // 转换选择器集合为向量
+        result.selectors.assign(uniqueSelectors.begin(), uniqueSelectors.end());
+        
+        // 检查复杂度
+        checkComplexity(stylesheet, result);
+        
+        // 检查最佳实践
+        checkBestPractices(stylesheet, result);
+    }
+    
+    void checkComplexity(const CssStylesheet& stylesheet, CssAnalysisResult& result) {
+        int maxSelectorComplexity = 0;
+        int totalComplexity = 0;
+        int selectorCount = 0;
+        
+        for (const auto& rule : stylesheet.rules) {
+            if (rule->type == RuleType::STYLE_RULE) {
+                for (const auto& selector : rule->selectors) {
+                    int complexity = calculateSelectorComplexity(*selector);
+                    maxSelectorComplexity = std::max(maxSelectorComplexity, complexity);
+                    totalComplexity += complexity;
+                    selectorCount++;
+                }
+            }
+        }
+        
+        if (maxSelectorComplexity > 4) {
+            result.warnings.push_back("Complex selector detected (complexity: " + 
+                                    std::to_string(maxSelectorComplexity) + ")");
+        }
+        
+        if (selectorCount > 0) {
+            double avgComplexity = static_cast<double>(totalComplexity) / selectorCount;
+            if (avgComplexity > 2.5) {
+                result.warnings.push_back("High average selector complexity: " + 
+                                        std::to_string(avgComplexity));
+            }
+        }
+    }
+    
+    int calculateSelectorComplexity(const CssSelector& selector) {
+        int complexity = 1;
+        const CssSelector* current = &selector;
+        
+        while (current) {
+            // 伪类和伪元素增加复杂度
+            if (current->type == SelectorType::PSEUDO_CLASS ||
+                current->type == SelectorType::PSEUDO_ELEMENT) {
+                complexity++;
+            }
+            
+            // 属性选择器增加复杂度
+            if (current->type == SelectorType::ATTRIBUTE) {
+                complexity++;
+            }
+            
+            // 组合器增加复杂度
+            if (current->combinator != CombinatorType::NONE) {
+                complexity++;
+            }
+            
+            current = current->next.get();
+        }
+        
+        return complexity;
+    }
+    
+    void checkBestPractices(const CssStylesheet& stylesheet, CssAnalysisResult& result) {
+        // 检查是否使用了 ID 选择器
+        bool hasIdSelectors = false;
+        bool hasUniversalSelectors = false;
+        bool hasImportantDeclarations = false;
+        
+        for (const auto& rule : stylesheet.rules) {
+            if (rule->type == RuleType::STYLE_RULE) {
+                for (const auto& selector : rule->selectors) {
+                    if (hasIdSelector(*selector)) {
+                        hasIdSelectors = true;
+                    }
+                    if (hasUniversalSelector(*selector)) {
+                        hasUniversalSelectors = true;
+                    }
+                }
+                
+                for (const auto& decl : rule->declarations) {
+                    if (decl.important) {
+                        hasImportantDeclarations = true;
+                    }
+                }
+            }
+        }
+        
+        if (hasIdSelectors) {
+            result.warnings.push_back("ID selectors found - consider using classes for better reusability");
+        }
+        
+        if (hasUniversalSelectors) {
+            result.warnings.push_back("Universal selector (*) found - may impact performance");
+        }
+        
+        if (hasImportantDeclarations) {
+            result.warnings.push_back("!important declarations found - consider specificity instead");
+        }
+        
+        // 检查重复的声明
+        checkDuplicateDeclarations(stylesheet, result);
+    }
+    
+    bool hasIdSelector(const CssSelector& selector) {
+        const CssSelector* current = &selector;
+        while (current) {
+            if (current->type == SelectorType::ID) {
+                return true;
+            }
+            current = current->next.get();
+        }
+        return false;
+    }
+    
+    bool hasUniversalSelector(const CssSelector& selector) {
+        const CssSelector* current = &selector;
+        while (current) {
+            if (current->type == SelectorType::UNIVERSAL) {
+                return true;
+            }
+            current = current->next.get();
+        }
+        return false;
+    }
+    
+    void checkDuplicateDeclarations(const CssStylesheet& stylesheet, CssAnalysisResult& result) {
+        std::map<std::string, std::set<std::string>> selectorProperties;
+        
+        for (const auto& rule : stylesheet.rules) {
+            if (rule->type == RuleType::STYLE_RULE) {
+                for (const auto& selector : rule->selectors) {
+                    std::string selectorStr = selector->toString();
+                    auto& props = selectorProperties[selectorStr];
+                    
+                    for (const auto& decl : rule->declarations) {
+                        if (props.count(decl.property) > 0) {
+                            result.warnings.push_back("Duplicate property '" + decl.property + 
+                                                    "' in selector '" + selectorStr + "'");
+                        }
+                        props.insert(decl.property);
+                    }
                 }
             }
         }
     }
-    
-    size_t findMatchingBrace(const std::string& str, size_t start) {
-        int depth = 1;
-        for (size_t i = start + 1; i < str.length(); ++i) {
-            if (str[i] == '{') depth++;
-            else if (str[i] == '}') {
-                depth--;
-                if (depth == 0) return i;
-            }
-        }
-        return std::string::npos;
-    }
-    
-    std::string trim(const std::string& str) {
-        size_t first = str.find_first_not_of(" \t\n\r");
-        if (first == std::string::npos) return "";
-        
-        size_t last = str.find_last_not_of(" \t\n\r");
-        return str.substr(first, last - first + 1);
-    }
-    
-    bool strict_ = false;
 };
 
 NativeCssAnalyzer::NativeCssAnalyzer() 
@@ -150,10 +245,6 @@ NativeCssAnalyzer::~NativeCssAnalyzer() = default;
 
 CssAnalysisResult NativeCssAnalyzer::analyze(const std::string& css) {
     return impl_->analyze(css);
-}
-
-void NativeCssAnalyzer::setOption(const std::string& name, bool value) {
-    impl_->setOption(name, value);
 }
 
 } // namespace chtl::v2::css

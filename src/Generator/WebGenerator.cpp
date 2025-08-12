@@ -3,21 +3,26 @@
 #include "Node/Text.h"
 #include "Node/Style.h"
 #include "Node/Script.h"
-#include "Node/Custom.h"
-#include "Node/Operate.h"
 #include "Node/Template.h"
-// #include "Node/Reference.h" // Not implemented yet
-#include "Node/Origin.h" // Added for Origin node
-#include "CJmod/CJmodSimple.h"
+#include "Node/Custom.h"
+#include "Node/Origin.h"
+#include "Node/Import.h"
+#include "Node/Export.h"
+#include "Node/Config.h"
+#include "Node/Namespace.h"
+#include "Node/Operate.h"
+#include "Node/Delete.h"
+#include "Node/Info.h"
+#include "Scanner/ChtlScanner.h"
+#include "Loader/ImportResolver.h"
+#include "CJmod/CJmodProcessor.h"
 #include "Runtime/ChtlJsRuntime.h"
-// #include "CJmod/CJmodCorrect.h"
-// #include "CJmod/CJmodLoader.h"
-
-#include <regex>
+#include <sstream>
+#include <iostream>
 #include <algorithm>
+#include <regex>
 #include <set>
 #include <variant>
-#include <tuple>
 
 
 namespace chtl {
@@ -962,6 +967,38 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
     }
 }
 
+void WebGenerator::visitScriptWithCJmod(const std::shared_ptr<Script>& script, bool isLocal) {
+    if (!script) return;
+    
+    std::string scriptContent = script->getContent();
+    
+    // 使用 ChtlScanner 进行精确切割
+    ChtlScanner scanner;
+    auto segments = scanner.scan(scriptContent, SegmentType::JS);
+    
+    // 处理每个片段
+    std::string processedContent;
+    for (const auto& segment : segments) {
+        if (segment.type == SegmentType::CHTL_JS) {
+            // 使用新的 CJmod 系统处理 CHTL-JS
+            auto& processor = cjmod::CJmodProcessor::getInstance();
+            std::string processed = processor.processScript(segment.content);
+            processedContent += processed;
+        } else {
+            // 纯 JavaScript 代码保持不变
+            processedContent += segment.content;
+        }
+    }
+    
+    // 处理后的脚本内容
+    if (isLocal) {
+        // 局部脚本已经在 visitScript 中处理
+    } else {
+        // 全局脚本
+        jsCollector_.appendLine(processedContent);
+    }
+}
+
 
 
 void WebGenerator::visitOrigin(const std::shared_ptr<Origin>& origin) {
@@ -1065,23 +1102,27 @@ std::shared_ptr<Origin> WebGenerator::findOriginDefinition(const std::string& ty
 }
 
 void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
+    // 使用 ImportResolver 解析路径
+    ImportResolver resolver;
+    
+    auto result = resolver.resolve(import->getFilePath(), import->getType(), ".");
+    
+    if (!result.success) {
+        addError("Failed to resolve import: " + import->getFilePath());
+        return;
+    }
+    
     // 处理导入
     if (import->getType() == Import::ImportType::CJMOD) {
-        // CJmod 导入
-        std::string modulePath = import->getFilePath();
-        std::string moduleName = import->getName(); // 获取模块名
+        // CJmod 模块
+        // 初始化 CJmod 系统
+        cjmod::integration::initialize();
         
-        // 加载 CJmod 模块
-        auto& loader = cjmod::CJmodLoader::getInstance();
-        bool loaded = loader.loadModule(moduleName);
+        // 处理导入
+        cjmod::integration::processImport(import->getName(), result.resolvedPath);
         
-        if (!loaded) {
-            result_.errors.push_back("Failed to load CJmod: " + modulePath);
-        } else if (configManager_->isDebugMode()) {
-            result_.warnings.push_back("Loaded CJmod: " + moduleName);
-        }
-        
-        // 模块已经在 CJmodLoader 中注册到处理器
+        // 记录活跃模块
+        activeCJmodModules_.insert(import->getName());
         return;
     }
     
@@ -1476,31 +1517,25 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
 }
 
 std::string WebGenerator::processJavaScriptWithCJmod(const std::string& jsCode) {
-    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+    if (activeCJmodModules_.empty()) {
         return jsCode;
     }
     
-    // 获取激活的 CJmod 模块列表
-    std::set<std::string> activeModules = currentContext_->getCJmodImports();
-    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
-    
     // 使用 CJmod 处理器处理 JavaScript 代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    return processor.processJavaScript(jsCode, moduleVector);
+    auto& processor = cjmod::CJmodProcessor::getInstance();
+    std::vector<std::string> modules(activeCJmodModules_.begin(), activeCJmodModules_.end());
+    return processor.processScript(jsCode, modules);
 }
 
 void WebGenerator::injectCJmodRuntime() {
-    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+    if (activeCJmodModules_.empty()) {
         return;
     }
     
-    // 获取激活的 CJmod 模块列表
-    std::set<std::string> activeModules = currentContext_->getCJmodImports();
-    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
-    
     // 生成 CJmod 运行时代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    std::string runtime = processor.getCombinedRuntime(moduleVector);
+    auto& processor = cjmod::CJmodProcessor::getInstance();
+    std::vector<std::string> modules(activeCJmodModules_.begin(), activeCJmodModules_.end());
+    std::string runtime = processor.getRuntimeCode(modules);
     
     if (!runtime.empty()) {
         // 在用户代码之前注入 CJmod 运行时

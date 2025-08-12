@@ -220,8 +220,12 @@ private:
     std::string trim(const std::string& str);
     
     // CJmod 集成
+    void visitScriptWithCJmod(const std::shared_ptr<Script>& script, bool isLocal);
     std::string processJavaScriptWithCJmod(const std::string& jsCode);
     void injectCJmodRuntime();
+    
+    // 活跃的 CJmod 模块
+    std::set<std::string> activeCJmodModules_;
 };
 
 // React平台生成器

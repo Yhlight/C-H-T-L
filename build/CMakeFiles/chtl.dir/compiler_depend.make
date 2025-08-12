@@ -7648,6 +7648,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/asm-generic/posix_types.h \
   /usr/include/asm-generic/types.h \
   /usr/include/ctype.h \
+  /usr/include/dlfcn.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
   /usr/include/features-time64.h \
@@ -7676,6 +7677,8 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/byteswap.h \
   /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
+  /usr/include/x86_64-linux-gnu/bits/dl_find_object.h \
+  /usr/include/x86_64-linux-gnu/bits/dlfcn.h \
   /usr/include/x86_64-linux-gnu/bits/endian.h \
   /usr/include/x86_64-linux-gnu/bits/endianness.h \
   /usr/include/x86_64-linux-gnu/bits/errno.h \
@@ -7741,6 +7744,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/include/c++/14/algorithm \
+  /usr/include/c++/14/any \
   /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
@@ -7758,6 +7762,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/bits/basic_string.tcc \
   /usr/include/c++/14/bits/char_traits.h \
   /usr/include/c++/14/bits/charconv.h \
+  /usr/include/c++/14/bits/chrono.h \
   /usr/include/c++/14/bits/codecvt.h \
   /usr/include/c++/14/bits/concept_check.h \
   /usr/include/c++/14/bits/cpp_type_traits.h \
@@ -7769,6 +7774,10 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/bits/exception.h \
   /usr/include/c++/14/bits/exception_defines.h \
   /usr/include/c++/14/bits/exception_ptr.h \
+  /usr/include/c++/14/bits/fs_dir.h \
+  /usr/include/c++/14/bits/fs_fwd.h \
+  /usr/include/c++/14/bits/fs_ops.h \
+  /usr/include/c++/14/bits/fs_path.h \
   /usr/include/c++/14/bits/functexcept.h \
   /usr/include/c++/14/bits/functional_hash.h \
   /usr/include/c++/14/bits/hash_bytes.h \
@@ -7797,6 +7806,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/bits/postypes.h \
   /usr/include/c++/14/bits/predefined_ops.h \
   /usr/include/c++/14/bits/ptr_traits.h \
+  /usr/include/c++/14/bits/quoted_string.h \
   /usr/include/c++/14/bits/range_access.h \
   /usr/include/c++/14/bits/refwrap.h \
   /usr/include/c++/14/bits/regex.h \
@@ -7829,6 +7839,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
   /usr/include/c++/14/bits/stl_map.h \
+  /usr/include/c++/14/bits/stl_multimap.h \
   /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
@@ -7854,9 +7865,11 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/cctype \
   /usr/include/c++/14/cerrno \
   /usr/include/c++/14/clocale \
+  /usr/include/c++/14/codecvt \
   /usr/include/c++/14/compare \
   /usr/include/c++/14/concepts \
   /usr/include/c++/14/cstddef \
+  /usr/include/c++/14/cstdint \
   /usr/include/c++/14/cstdio \
   /usr/include/c++/14/cstdlib \
   /usr/include/c++/14/ctime \
@@ -7873,13 +7886,17 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/ext/numeric_traits.h \
   /usr/include/c++/14/ext/string_conversions.h \
   /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/filesystem \
   /usr/include/c++/14/functional \
   /usr/include/c++/14/initializer_list \
+  /usr/include/c++/14/iomanip \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
   /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
+  /usr/include/c++/14/limits \
   /usr/include/c++/14/locale \
+  /usr/include/c++/14/map \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/new \
   /usr/include/c++/14/optional \
@@ -7888,6 +7905,7 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/ratio \
   /usr/include/c++/14/regex \
   /usr/include/c++/14/set \
   /usr/include/c++/14/sstream \
@@ -7929,19 +7947,23 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /usr/lib/llvm-20/lib/clang/20/include/stdarg.h \
   /usr/lib/llvm-20/lib/clang/20/include/stddef.h \
   /usr/lib/llvm-20/lib/clang/20/include/stdint.h \
-  /workspace/include/CJmod/CJmodSimple.h \
+  /workspace/include/CJmod/CJmodCore.h \
+  /workspace/include/CJmod/CJmodProcessor.h \
   /workspace/include/Common/Token.h \
   /workspace/include/Common/TokenType.h \
   /workspace/include/Context/BasicContext.h \
   /workspace/include/Context/ChtlContext.h \
   /workspace/include/Generator/ConfigManager.h \
   /workspace/include/Generator/Generator.h \
+  /workspace/include/Loader/ImportResolver.h \
   /workspace/include/Node/Comment.h \
   /workspace/include/Node/Config.h \
   /workspace/include/Node/Custom.h \
+  /workspace/include/Node/Delete.h \
   /workspace/include/Node/Element.h \
   /workspace/include/Node/Export.h \
   /workspace/include/Node/Import.h \
+  /workspace/include/Node/Info.h \
   /workspace/include/Node/Namespace.h \
   /workspace/include/Node/Node.h \
   /workspace/include/Node/Operate.h \
@@ -7950,7 +7972,8 @@ CMakeFiles/chtl.dir/src/Generator/WebGenerator.cpp.o: /workspace/src/Generator/W
   /workspace/include/Node/Style.h \
   /workspace/include/Node/Template.h \
   /workspace/include/Node/Text.h \
-  /workspace/include/Runtime/ChtlJsRuntime.h
+  /workspace/include/Runtime/ChtlJsRuntime.h \
+  /workspace/include/Scanner/ChtlScanner.h
 
 CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o: /workspace/src/Js/JsAnalyzer.cpp \
   /usr/include/alloca.h \
@@ -20890,6 +20913,14 @@ CMakeFiles/chtl.dir/src/Node/Export.cpp.o:
 
 CMakeFiles/chtl.dir/src/Node/Delete.cpp.o:
 
+CMakeFiles/chtl.dir/src/Node/Custom.cpp.o:
+
+CMakeFiles/chtl.dir/src/Node/Config.cpp.o:
+
+CMakeFiles/chtl.dir/src/Module/CmodHandler.cpp.o:
+
+CMakeFiles/chtl.dir/src/Loader/ModuleLoader.cpp.o:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h:
@@ -20960,8 +20991,6 @@ CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o:
 
 /workspace/src/Lexer/BasicLexer.cpp:
 
-/workspace/include/Script/ScriptManager.h:
-
 /usr/include/time.h:
 
 /usr/include/wctype.h:
@@ -21021,6 +21050,8 @@ CMakeFiles/chtl.dir/src/Js/JsAnalyzer.cpp.o:
 /workspace/include/Module/CmodFormat.h:
 
 /usr/lib/llvm-20/lib/clang/20/include/__stddef_offsetof.h:
+
+/workspace/include/CJmod/CJmodCore.h:
 
 /workspace/src/Generator/ReactGenerator.cpp:
 
@@ -21238,6 +21269,8 @@ CMakeFiles/chtl.dir/src/State/JsState.cpp.o:
 
 CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o:
 
+/usr/include/x86_64-linux-gnu/bits/dl_find_object.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
 /usr/include/c++/14/debug/debug.h:
@@ -21257,6 +21290,10 @@ CMakeFiles/chtl.dir/src/CJmod/CJmodSimple.cpp.o:
 CMakeFiles/chtl.dir/src/Parser/BasicParser.cpp.o:
 
 CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o:
+
+/workspace/include/Script/ScriptManager.h:
+
+/workspace/include/CJmod/CJmodProcessor.h:
 
 /usr/include/c++/14/bits/functional_hash.h:
 
@@ -21295,6 +21332,10 @@ CMakeFiles/chtl.dir/src/Generator/VueGenerator.cpp.o:
 CMakeFiles/chtl.dir/src/Node/Info.cpp.o:
 
 /usr/include/alloca.h:
+
+CMakeFiles/chtl.dir/src/Node/Comment.cpp.o:
+
+/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
 /usr/include/c++/14/bits/algorithmfwd.h:
 
@@ -21335,8 +21376,6 @@ CMakeFiles/chtl.dir/src/Scanner/ChtlScanner.cpp.o:
 /workspace/include/Context/NamespaceManager.h:
 
 /workspace/src/Js/JsBlockExtractor.cpp:
-
-CMakeFiles/chtl.dir/src/Module/CmodHandler.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
@@ -21389,6 +21428,10 @@ CMakeFiles/chtl.dir/src/Generator/BasicGenerator.cpp.o:
 /usr/include/c++/14/bits/shared_ptr.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
+
+CMakeFiles/chtl.dir/src/Module/ModuleResolver.cpp.o:
+
+/workspace/include/Node/Namespace.h:
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
@@ -21517,10 +21560,6 @@ CMakeFiles/chtl.dir/src/Node/Namespace.cpp.o:
 /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
 
 /workspace/include/Parser/StandardParser.h:
-
-CMakeFiles/chtl.dir/src/Context/ChtlContext.cpp.o:
-
-CMakeFiles/chtl.dir/src/Node/Config.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
@@ -21786,6 +21825,16 @@ CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o:
 
 /workspace/include/Node/Text.h:
 
+/usr/include/dlfcn.h:
+
+/usr/include/x86_64-linux-gnu/bits/dlfcn.h:
+
+/workspace/include/Module/ModuleResolver.h:
+
+CMakeFiles/chtl.dir/src/Context/ChtlContext.cpp.o:
+
+/usr/include/c++/14/any:
+
 /workspace/include/Js/JsBlockExtractor.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
@@ -21824,8 +21873,6 @@ CMakeFiles/chtl.dir/src/Error/ErrorHandler.cpp.o:
 
 /workspace/include/Module/ModuleInfo.h:
 
-/workspace/include/Module/ModuleResolver.h:
-
 /workspace/src/Node/Config.cpp:
 
 CMakeFiles/chtl.dir/src/State/StateFactory.cpp.o:
@@ -21857,8 +21904,6 @@ CMakeFiles/chtl.dir/src/Node/Node.cpp.o:
 /workspace/src/Node/Template.cpp:
 
 CMakeFiles/chtl.dir/src/Generator/ConfigGenerator.cpp.o:
-
-CMakeFiles/chtl.dir/src/Loader/ModuleLoader.cpp.o:
 
 /workspace/src/Parser/ConfigParser.cpp:
 
@@ -21983,13 +22028,3 @@ CMakeFiles/chtl.dir/src/Loader/ImportManager.cpp.o:
 /usr/include/c++/14/bits/stl_raw_storage_iter.h:
 
 CMakeFiles/chtl.dir/src/Loader/ImportProcessor.cpp.o:
-
-/workspace/include/Node/Namespace.h:
-
-CMakeFiles/chtl.dir/src/Module/ModuleResolver.cpp.o:
-
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
-
-CMakeFiles/chtl.dir/src/Node/Comment.cpp.o:
-
-CMakeFiles/chtl.dir/src/Node/Custom.cpp.o:

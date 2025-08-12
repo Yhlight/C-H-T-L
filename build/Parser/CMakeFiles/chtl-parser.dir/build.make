@@ -142,13 +142,253 @@ Parser/CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.s"
 	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Parser/ChtlJsVisitor.cpp -o CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.s
 
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o: generated/CHTL/CHTLBaseVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o -c /workspace/build/generated/CHTL/CHTLBaseVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/CHTL/CHTLBaseVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/CHTL/CHTLBaseVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o: generated/CHTL/CHTLLexer.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o -c /workspace/build/generated/CHTL/CHTLLexer.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/CHTL/CHTLLexer.cpp > CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/CHTL/CHTLLexer.cpp -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o: generated/CHTL/CHTLParser.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o -c /workspace/build/generated/CHTL/CHTLParser.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/CHTL/CHTLParser.cpp > CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/CHTL/CHTLParser.cpp -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o: generated/CHTL/CHTLVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o -c /workspace/build/generated/CHTL/CHTLVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/CHTL/CHTLVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/CHTL/CHTLVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o: generated/Css/CSSBaseVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o -c /workspace/build/generated/Css/CSSBaseVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Css/CSSBaseVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Css/CSSBaseVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o: generated/Css/CSSLexer.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o -c /workspace/build/generated/Css/CSSLexer.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Css/CSSLexer.cpp > CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Css/CSSLexer.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o: generated/Css/CSSParser.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o -c /workspace/build/generated/Css/CSSParser.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Css/CSSParser.cpp > CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Css/CSSParser.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o: generated/Css/CSSVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o -c /workspace/build/generated/Css/CSSVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Css/CSSVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Css/CSSVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o: generated/Js/JavaScriptBaseVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o -c /workspace/build/generated/Js/JavaScriptBaseVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Js/JavaScriptBaseVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Js/JavaScriptBaseVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o: generated/Js/JavaScriptLexer.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o -c /workspace/build/generated/Js/JavaScriptLexer.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Js/JavaScriptLexer.cpp > CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Js/JavaScriptLexer.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o: generated/Js/JavaScriptParser.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o -c /workspace/build/generated/Js/JavaScriptParser.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Js/JavaScriptParser.cpp > CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Js/JavaScriptParser.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o: generated/Js/JavaScriptVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o -c /workspace/build/generated/Js/JavaScriptVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Js/JavaScriptVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Js/JavaScriptVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o: generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o -c /workspace/build/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o: generated/Chtl_Js/CHTLJavaScriptLexer.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o -c /workspace/build/generated/Chtl_Js/CHTLJavaScriptLexer.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Chtl_Js/CHTLJavaScriptLexer.cpp > CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Chtl_Js/CHTLJavaScriptLexer.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o: generated/Chtl_Js/CHTLJavaScriptParser.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o -c /workspace/build/generated/Chtl_Js/CHTLJavaScriptParser.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Chtl_Js/CHTLJavaScriptParser.cpp > CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Chtl_Js/CHTLJavaScriptParser.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.s
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/flags.make
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o: generated/Chtl_Js/CHTLJavaScriptVisitor.cpp
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o: Parser/CMakeFiles/chtl-parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o -MF CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o.d -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o -c /workspace/build/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.i"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/build/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp > CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.i
+
+Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.s"
+	cd /workspace/build/Parser && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/build/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp -o CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.s
+
 # Object files for target chtl-parser
 chtl__parser_OBJECTS = \
 "CMakeFiles/chtl-parser.dir/StandardParser.cpp.o" \
 "CMakeFiles/chtl-parser.dir/ChtlVisitor.cpp.o" \
 "CMakeFiles/chtl-parser.dir/CssVisitor.cpp.o" \
 "CMakeFiles/chtl-parser.dir/JsVisitor.cpp.o" \
-"CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.o"
+"CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o" \
+"CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o"
 
 # External object files for target chtl-parser
 chtl__parser_EXTERNAL_OBJECTS =
@@ -158,9 +398,25 @@ lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/ChtlVisitor.cpp.o
 lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/CssVisitor.cpp.o
 lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/JsVisitor.cpp.o
 lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/ChtlJsVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLBaseVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLLexer.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLParser.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/CHTL/CHTLVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSBaseVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSLexer.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSParser.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Css/CSSVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptBaseVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptLexer.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptParser.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Js/JavaScriptVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptBaseVisitor.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptLexer.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptParser.cpp.o
+lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/__/generated/Chtl_Js/CHTLJavaScriptVisitor.cpp.o
 lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/build.make
 lib/libchtl-parser.a: Parser/CMakeFiles/chtl-parser.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library ../lib/libchtl-parser.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX static library ../lib/libchtl-parser.a"
 	cd /workspace/build/Parser && $(CMAKE_COMMAND) -P CMakeFiles/chtl-parser.dir/cmake_clean_target.cmake
 	cd /workspace/build/Parser && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl-parser.dir/link.txt --verbose=$(VERBOSE)
 

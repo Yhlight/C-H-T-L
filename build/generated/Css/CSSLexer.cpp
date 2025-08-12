@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CSS.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CSS.g4 by ANTLR 4.10
 
 
 #include "CSSLexer.h"
@@ -41,20 +41,11 @@ struct CSSLexerStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag csslexerLexerOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag csslexerLexerOnceFlag;
 CSSLexerStaticData *csslexerLexerStaticData = nullptr;
 
 void csslexerLexerInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (csslexerLexerStaticData != nullptr) {
-    return;
-  }
-#else
   assert(csslexerLexerStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<CSSLexerStaticData>(
     std::vector<std::string>{
       "CHARSET", "IMPORT", "NAMESPACE", "MEDIA", "PAGE", "FONT_FACE", "KEYFRAMES", 
@@ -304,9 +295,5 @@ const atn::ATN& CSSLexer::getATN() const {
 
 
 void CSSLexer::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  csslexerLexerInitialize();
-#else
-  ::antlr4::internal::call_once(csslexerLexerOnceFlag, csslexerLexerInitialize);
-#endif
+  std::call_once(csslexerLexerOnceFlag, csslexerLexerInitialize);
 }

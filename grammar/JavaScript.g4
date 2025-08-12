@@ -233,15 +233,14 @@ assignmentOperator
     | NULLISH_EQUALS
     ;
 
-// 字面量
+// Literals
 literal
     : NUMBER
     | STRING
-    | TEMPLATE_STRING  // 使用新的TEMPLATE_STRING token
     | BOOLEAN
-    | NULL
+    | NULL_LITERAL
     | UNDEFINED
-    | REGEX
+    | TEMPLATE_STRING
     ;
 
 // 注释掉旧的模板字符串规则，因为现在使用TEMPLATE_STRING token
@@ -301,7 +300,7 @@ typeofExpression: TYPEOF singleExpression;
 // 标识符名称
 identifierName: IDENTIFIER | reservedWord;
 
-reservedWord: keyword | NULL | BOOLEAN;
+reservedWord: keyword | NULL_LITERAL | BOOLEAN;
 
 keyword
     : BREAK | DO | INSTANCEOF | TYPEOF | CASE | ELSE | NEW | VAR | CATCH
@@ -358,7 +357,7 @@ GET: 'get';
 SET: 'set';
 
 // 字面量
-NULL: 'null';
+NULL_LITERAL: 'null';
 BOOLEAN: 'true' | 'false';
 UNDEFINED: 'undefined';
 

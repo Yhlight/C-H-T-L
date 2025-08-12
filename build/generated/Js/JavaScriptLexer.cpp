@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.10
 
 
 #include "JavaScriptLexer.h"
@@ -41,20 +41,11 @@ struct JavaScriptLexerStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag javascriptlexerLexerOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag javascriptlexerLexerOnceFlag;
 JavaScriptLexerStaticData *javascriptlexerLexerStaticData = nullptr;
 
 void javascriptlexerLexerInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (javascriptlexerLexerStaticData != nullptr) {
-    return;
-  }
-#else
   assert(javascriptlexerLexerStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<JavaScriptLexerStaticData>(
     std::vector<std::string>{
       "BREAK", "DO", "INSTANCEOF", "TYPEOF", "CASE", "ELSE", "NEW", "VAR", 
@@ -62,7 +53,7 @@ void javascriptlexerLexerInitialize() {
       "WHILE", "DEBUGGER", "FUNCTION", "THIS", "WITH", "DEFAULT", "IF", 
       "THROW", "DELETE", "IN", "TRY", "CLASS", "ENUM", "EXTENDS", "SUPER", 
       "CONST", "EXPORT", "IMPORT", "ASYNC", "AWAIT", "YIELD", "LET", "STATIC", 
-      "FROM", "AS", "OF", "GET", "SET", "NULL", "BOOLEAN", "UNDEFINED", 
+      "FROM", "AS", "OF", "GET", "SET", "NULL_LITERAL", "BOOLEAN", "UNDEFINED", 
       "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", 
       "COMMA", "DOT", "QUESTION", "COLON", "ELLIPSIS", "EQUALS", "STAR_EQUALS", 
       "SLASH_EQUALS", "PERCENT_EQUALS", "PLUS_EQUALS", "MINUS_EQUALS", "LSHIFT_EQUALS", 
@@ -104,7 +95,7 @@ void javascriptlexerLexerInitialize() {
       "WHILE", "DEBUGGER", "FUNCTION", "THIS", "WITH", "DEFAULT", "IF", 
       "THROW", "DELETE", "IN", "TRY", "CLASS", "ENUM", "EXTENDS", "SUPER", 
       "CONST", "EXPORT", "IMPORT", "ASYNC", "AWAIT", "YIELD", "LET", "STATIC", 
-      "FROM", "AS", "OF", "GET", "SET", "NULL", "BOOLEAN", "UNDEFINED", 
+      "FROM", "AS", "OF", "GET", "SET", "NULL_LITERAL", "BOOLEAN", "UNDEFINED", 
       "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", 
       "COMMA", "DOT", "QUESTION", "COLON", "ELLIPSIS", "EQUALS", "STAR_EQUALS", 
       "SLASH_EQUALS", "PERCENT_EQUALS", "PLUS_EQUALS", "MINUS_EQUALS", "LSHIFT_EQUALS", 
@@ -444,9 +435,5 @@ const atn::ATN& JavaScriptLexer::getATN() const {
 
 
 void JavaScriptLexer::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  javascriptlexerLexerInitialize();
-#else
-  ::antlr4::internal::call_once(javascriptlexerLexerOnceFlag, javascriptlexerLexerInitialize);
-#endif
+  std::call_once(javascriptlexerLexerOnceFlag, javascriptlexerLexerInitialize);
 }

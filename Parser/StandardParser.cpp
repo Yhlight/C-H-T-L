@@ -1,4 +1,8 @@
 #include "StandardParser.h"
+#include "ChtlVisitor.h"
+#include "CHTL/CHTLLexer.h"
+#include "CHTL/CHTLParser.h"
+#include <antlr4-runtime.h>
 #include <fstream>
 #include <sstream>
 
@@ -26,7 +30,7 @@ NodePtr StandardParser::parse(const std::string& content) {
     
     if (!segments.empty() && errors_.empty()) {
         // 创建根节点
-        auto root = std::make_shared<ElementNode>("root");
+        auto root = std::make_shared<ElementNode>("document");
         
         // 处理每个代码段
         for (const auto& segment : segments) {
@@ -48,6 +52,7 @@ NodePtr StandardParser::parse(const std::string& content) {
                 case LanguageType::HTML:
                     // HTML段直接作为原始内容
                     node = std::make_shared<TextNode>(segment->getContent());
+                    static_cast<TextNode*>(node.get())->setRaw(true);
                     break;
                 default:
                     addWarning("未知的语言类型段");
@@ -92,12 +97,38 @@ void StandardParser::setOption(const std::string& key, const std::string& value)
 }
 
 NodePtr StandardParser::parseCHTLSegment(const Segment& segment) {
-    // TODO: 使用ANTLR4解析CHTL段
-    // 暂时返回一个包含原始内容的文本节点
-    auto node = std::make_shared<TextNode>(segment.getContent());
-    node->setLocation(segment.getStartLine(), segment.getStartColumn(),
-                     segment.getEndLine(), segment.getEndColumn());
-    return node;
+    try {
+        // 创建ANTLR4输入流
+        antlr4::ANTLRInputStream input(segment.getContent());
+        
+        // 创建词法分析器
+        CHTLLexer lexer(&input);
+        antlr4::CommonTokenStream tokens(&lexer);
+        
+        // 创建语法分析器
+        CHTLParser parser(&tokens);
+        
+        // 设置错误处理
+        parser.removeErrorListeners();
+        parser.addErrorListener(&antlr4::ConsoleErrorListener::INSTANCE);
+        
+        // 解析
+        CHTLParser::ProgramContext* tree = parser.program();
+        
+        // 创建访问者并构建AST
+        ChtlVisitor visitor(symbolTable_.get());
+        auto result = visitor.visit(tree);
+        
+        // 提取AST节点
+        if (result.has_value()) {
+            return std::any_cast<NodePtr>(result);
+        }
+    } catch (const std::exception& e) {
+        addError(std::string("CHTL解析错误: ") + e.what(), 
+                segment.getStartLine(), segment.getStartColumn());
+    }
+    
+    return nullptr;
 }
 
 NodePtr StandardParser::parseCSSSegment(const Segment& segment) {
@@ -130,6 +161,18 @@ NodePtr StandardParser::parseCHTLJavaScriptSegment(const Segment& segment) {
 
 void StandardParser::mergeAST(NodePtr root, NodePtr node, const Segment& segment) {
     if (!root || !node) return;
+    
+    // 如果是document节点（来自CHTL段），合并其子节点
+    if (node->getType() == NodeType::ELEMENT) {
+        auto elementNode = std::dynamic_pointer_cast<ElementNode>(node);
+        if (elementNode && elementNode->getTagName() == "document") {
+            // 合并document的所有子节点到根节点
+            for (size_t i = 0; i < node->getChildCount(); ++i) {
+                root->addChild(node->getChild(i));
+            }
+            return;
+        }
+    }
     
     // 根据上下文信息决定如何合并节点
     if (segment.getContext() == "style" || segment.getContext() == "script") {

@@ -71,7 +71,7 @@ CMakeFiles/generate_JavaScript: generated/Js/JavaScriptParser.cpp
 
 generated/Js/JavaScriptLexer.cpp: /workspace/grammar/JavaScript.g4
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating JavaScript parser with ANTLR4"
-	java -jar /workspace/lib/antlr-4.13.1-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Js /workspace/grammar/JavaScript.g4
+	java -jar /workspace/lib/antlr-4.10-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Js /workspace/grammar/JavaScript.g4
 
 generated/Js/JavaScriptParser.cpp: generated/Js/JavaScriptLexer.cpp
 	@$(CMAKE_COMMAND) -E touch_nocreate generated/Js/JavaScriptParser.cpp

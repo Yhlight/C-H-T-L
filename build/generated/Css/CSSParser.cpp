@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CSS.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CSS.g4 by ANTLR 4.10
 
 
 #include "CSSVisitor.h"
@@ -36,20 +36,11 @@ struct CSSParserStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag cssParserOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag cssParserOnceFlag;
 CSSParserStaticData *cssParserStaticData = nullptr;
 
 void cssParserInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (cssParserStaticData != nullptr) {
-    return;
-  }
-#else
   assert(cssParserStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<CSSParserStaticData>(
     std::vector<std::string>{
       "stylesheet", "statement", "charsetRule", "importRule", "namespaceRule", 
@@ -344,7 +335,28 @@ CSSParser::StylesheetContext* CSSParser::stylesheet() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 20266206641783294) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::CHARSET)
+      | (1ULL << CSSParser::IMPORT)
+      | (1ULL << CSSParser::NAMESPACE)
+      | (1ULL << CSSParser::MEDIA)
+      | (1ULL << CSSParser::PAGE)
+      | (1ULL << CSSParser::FONT_FACE)
+      | (1ULL << CSSParser::KEYFRAMES)
+      | (1ULL << CSSParser::SUPPORTS)
+      | (1ULL << CSSParser::LBRACE)
+      | (1ULL << CSSParser::LBRACKET)
+      | (1ULL << CSSParser::COLON)
+      | (1ULL << CSSParser::SEMICOLON)
+      | (1ULL << CSSParser::COMMA)
+      | (1ULL << CSSParser::DOT)
+      | (1ULL << CSSParser::HASH)
+      | (1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::STAR)
+      | (1ULL << CSSParser::PIPE)
+      | (1ULL << CSSParser::IDENT)
+      | (1ULL << CSSParser::SPACE))) != 0)) {
       setState(102);
       statement();
       setState(107);
@@ -673,7 +685,10 @@ CSSParser::ImportRuleContext* CSSParser::importRule() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2251799813752320) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::ONLY)
+      | (1ULL << CSSParser::NOT)
+      | (1ULL << CSSParser::LPAREN)
+      | (1ULL << CSSParser::IDENT))) != 0)) {
       setState(131);
       mediaQueryList();
     }
@@ -851,7 +866,19 @@ CSSParser::MediaContext* CSSParser::media() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 20266206633394176) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::LBRACE)
+      | (1ULL << CSSParser::LBRACKET)
+      | (1ULL << CSSParser::COLON)
+      | (1ULL << CSSParser::COMMA)
+      | (1ULL << CSSParser::DOT)
+      | (1ULL << CSSParser::HASH)
+      | (1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::STAR)
+      | (1ULL << CSSParser::PIPE)
+      | (1ULL << CSSParser::IDENT)
+      | (1ULL << CSSParser::SPACE))) != 0)) {
       setState(149);
       ruleset();
       setState(154);
@@ -1553,7 +1580,9 @@ CSSParser::KeyframesContext* CSSParser::keyframes() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 70368744202240) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::FROM)
+      | (1ULL << CSSParser::TO)
+      | (1ULL << CSSParser::PERCENTAGE))) != 0)) {
       setState(227);
       keyframeRule();
       setState(232);
@@ -1721,7 +1750,9 @@ CSSParser::KeyframeSelectorContext* CSSParser::keyframeSelector() {
     setState(245);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 70368744202240) != 0))) {
+      ((1ULL << _la) & ((1ULL << CSSParser::FROM)
+      | (1ULL << CSSParser::TO)
+      | (1ULL << CSSParser::PERCENTAGE))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1737,7 +1768,9 @@ CSSParser::KeyframeSelectorContext* CSSParser::keyframeSelector() {
       setState(247);
       _la = _input->LA(1);
       if (!((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 70368744202240) != 0))) {
+        ((1ULL << _la) & ((1ULL << CSSParser::FROM)
+        | (1ULL << CSSParser::TO)
+        | (1ULL << CSSParser::PERCENTAGE))) != 0))) {
       _errHandler->recoverInline(this);
       }
       else {
@@ -1826,7 +1859,19 @@ CSSParser::SupportsContext* CSSParser::supports() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 20266206633394176) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::LBRACE)
+      | (1ULL << CSSParser::LBRACKET)
+      | (1ULL << CSSParser::COLON)
+      | (1ULL << CSSParser::COMMA)
+      | (1ULL << CSSParser::DOT)
+      | (1ULL << CSSParser::HASH)
+      | (1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::STAR)
+      | (1ULL << CSSParser::PIPE)
+      | (1ULL << CSSParser::IDENT)
+      | (1ULL << CSSParser::SPACE))) != 0)) {
       setState(256);
       ruleset();
       setState(261);
@@ -2389,7 +2434,60 @@ CSSParser::GeneralEnclosedContext* CSSParser::generalEnclosed() {
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 72057594037796862) != 0));
+      ((1ULL << _la) & ((1ULL << CSSParser::CHARSET)
+      | (1ULL << CSSParser::IMPORT)
+      | (1ULL << CSSParser::NAMESPACE)
+      | (1ULL << CSSParser::MEDIA)
+      | (1ULL << CSSParser::PAGE)
+      | (1ULL << CSSParser::FONT_FACE)
+      | (1ULL << CSSParser::KEYFRAMES)
+      | (1ULL << CSSParser::SUPPORTS)
+      | (1ULL << CSSParser::ONLY)
+      | (1ULL << CSSParser::NOT)
+      | (1ULL << CSSParser::AND)
+      | (1ULL << CSSParser::OR)
+      | (1ULL << CSSParser::FROM)
+      | (1ULL << CSSParser::TO)
+      | (1ULL << CSSParser::IMPORTANT)
+      | (1ULL << CSSParser::LPAREN)
+      | (1ULL << CSSParser::LBRACE)
+      | (1ULL << CSSParser::RBRACE)
+      | (1ULL << CSSParser::LBRACKET)
+      | (1ULL << CSSParser::RBRACKET)
+      | (1ULL << CSSParser::COLON)
+      | (1ULL << CSSParser::SEMICOLON)
+      | (1ULL << CSSParser::COMMA)
+      | (1ULL << CSSParser::DOT)
+      | (1ULL << CSSParser::HASH)
+      | (1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::MINUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::STAR)
+      | (1ULL << CSSParser::PIPE)
+      | (1ULL << CSSParser::SLASH)
+      | (1ULL << CSSParser::EQUALS)
+      | (1ULL << CSSParser::INCLUDES)
+      | (1ULL << CSSParser::DASHMATCH)
+      | (1ULL << CSSParser::PREFIXMATCH)
+      | (1ULL << CSSParser::SUFFIXMATCH)
+      | (1ULL << CSSParser::SUBSTRINGMATCH)
+      | (1ULL << CSSParser::LENGTH)
+      | (1ULL << CSSParser::EMS)
+      | (1ULL << CSSParser::EXS)
+      | (1ULL << CSSParser::ANGLE)
+      | (1ULL << CSSParser::TIME)
+      | (1ULL << CSSParser::FREQ)
+      | (1ULL << CSSParser::PERCENTAGE)
+      | (1ULL << CSSParser::FUNCTION)
+      | (1ULL << CSSParser::URL)
+      | (1ULL << CSSParser::NUMBER)
+      | (1ULL << CSSParser::STRING)
+      | (1ULL << CSSParser::IDENT)
+      | (1ULL << CSSParser::HEXDIGIT)
+      | (1ULL << CSSParser::COMMENT)
+      | (1ULL << CSSParser::SPACE)
+      | (1ULL << CSSParser::ANY))) != 0));
     setState(310);
     match(CSSParser::RPAREN);
    
@@ -2612,7 +2710,10 @@ CSSParser::SelectorContext* CSSParser::selector() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 18014400254312448) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::SPACE))) != 0)) {
       setState(331);
       combinator();
       setState(332);
@@ -2684,7 +2785,10 @@ CSSParser::CombinatorContext* CSSParser::combinator() {
     setState(339);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 18014400254312448) != 0))) {
+      ((1ULL << _la) & ((1ULL << CSSParser::PLUS)
+      | (1ULL << CSSParser::GREATER)
+      | (1ULL << CSSParser::TILDE)
+      | (1ULL << CSSParser::SPACE))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -2810,7 +2914,10 @@ CSSParser::SimpleSelectorContext* CSSParser::simpleSelector() {
       _errHandler->sync(this);
       _la = _input->LA(1);
       while ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 105906176) != 0)) {
+        ((1ULL << _la) & ((1ULL << CSSParser::LBRACKET)
+        | (1ULL << CSSParser::COLON)
+        | (1ULL << CSSParser::DOT)
+        | (1ULL << CSSParser::HASH))) != 0)) {
         setState(350);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx)) {
@@ -2900,7 +3007,10 @@ CSSParser::SimpleSelectorContext* CSSParser::simpleSelector() {
         _errHandler->sync(this);
         _la = _input->LA(1);
       } while ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 105906176) != 0));
+        ((1ULL << _la) & ((1ULL << CSSParser::LBRACKET)
+        | (1ULL << CSSParser::COLON)
+        | (1ULL << CSSParser::DOT)
+        | (1ULL << CSSParser::HASH))) != 0));
       break;
     }
 
@@ -3352,7 +3462,12 @@ CSSParser::AttributeSelectorContext* CSSParser::attributeSelector() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 1082331758592) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::EQUALS)
+      | (1ULL << CSSParser::INCLUDES)
+      | (1ULL << CSSParser::DASHMATCH)
+      | (1ULL << CSSParser::PREFIXMATCH)
+      | (1ULL << CSSParser::SUFFIXMATCH)
+      | (1ULL << CSSParser::SUBSTRINGMATCH))) != 0)) {
       setState(391);
       attributeOperator();
       setState(392);
@@ -3440,7 +3555,12 @@ CSSParser::AttributeOperatorContext* CSSParser::attributeOperator() {
     setState(398);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 1082331758592) != 0))) {
+      ((1ULL << _la) & ((1ULL << CSSParser::EQUALS)
+      | (1ULL << CSSParser::INCLUDES)
+      | (1ULL << CSSParser::DASHMATCH)
+      | (1ULL << CSSParser::PREFIXMATCH)
+      | (1ULL << CSSParser::SUFFIXMATCH)
+      | (1ULL << CSSParser::SUBSTRINGMATCH))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3889,7 +4009,9 @@ CSSParser::ValueContext* CSSParser::value() {
 
         _la = _input->LA(1);
         if ((((_la & ~ 0x3fULL) == 0) &&
-          ((1ULL << _la) & 18014407116193792) != 0)) {
+          ((1ULL << _la) & ((1ULL << CSSParser::COMMA)
+          | (1ULL << CSSParser::SLASH)
+          | (1ULL << CSSParser::SPACE))) != 0)) {
           setState(433);
           operator_();
         }
@@ -4157,7 +4279,19 @@ CSSParser::FunctionContext* CSSParser::function() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 4502500182851584) != 0)) {
+      ((1ULL << _la) & ((1ULL << CSSParser::HASH)
+      | (1ULL << CSSParser::LENGTH)
+      | (1ULL << CSSParser::EMS)
+      | (1ULL << CSSParser::EXS)
+      | (1ULL << CSSParser::ANGLE)
+      | (1ULL << CSSParser::TIME)
+      | (1ULL << CSSParser::FREQ)
+      | (1ULL << CSSParser::PERCENTAGE)
+      | (1ULL << CSSParser::FUNCTION)
+      | (1ULL << CSSParser::URL)
+      | (1ULL << CSSParser::NUMBER)
+      | (1ULL << CSSParser::STRING)
+      | (1ULL << CSSParser::IDENT))) != 0)) {
       setState(458);
       value();
       setState(463);
@@ -4360,7 +4494,9 @@ CSSParser::OperatorContext* CSSParser::operator_() {
     setState(477);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 18014407116193792) != 0))) {
+      ((1ULL << _la) & ((1ULL << CSSParser::COMMA)
+      | (1ULL << CSSParser::SLASH)
+      | (1ULL << CSSParser::SPACE))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4477,9 +4613,5 @@ CSSParser::NestedStatementContext* CSSParser::nestedStatement() {
 }
 
 void CSSParser::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  cssParserInitialize();
-#else
-  ::antlr4::internal::call_once(cssParserOnceFlag, cssParserInitialize);
-#endif
+  std::call_once(cssParserOnceFlag, cssParserInitialize);
 }

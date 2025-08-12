@@ -167,3 +167,13 @@ BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
 // 空白
 WS: [ \t\r\n]+ -> skip;
+
+// Literals
+literal
+    : NUMBER
+    | STRING
+    | BOOLEAN
+    | NULL_LITERAL
+    | UNDEFINED
+    | TEMPLATE_STRING
+    ;

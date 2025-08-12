@@ -26,10 +26,13 @@ public:
     void addClassSelector(const std::string& className);
     void addClassRule(const std::string& className, const std::string& property, const std::string& value);
     const std::vector<std::string>& getClassSelectors() const { return classSelectors_; }
+    const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getClassRules() const { return classRules_; }
     
     // ID选择器
     void addIdSelector(const std::string& id);
     void addIdRule(const std::string& id, const std::string& property, const std::string& value);
+    const std::vector<std::string>& getIdSelectors() const { return idSelectors_; }
+    const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getIdRules() const { return idRules_; }
     
     // 原始CSS内容
     void setRawCSS(const std::string& css) { rawCSS_ = css; }

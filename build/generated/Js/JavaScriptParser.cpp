@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.10
 
 
 #include "JavaScriptVisitor.h"
@@ -36,20 +36,11 @@ struct JavaScriptParserStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag javascriptParserOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag javascriptParserOnceFlag;
 JavaScriptParserStaticData *javascriptParserStaticData = nullptr;
 
 void javascriptParserInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (javascriptParserStaticData != nullptr) {
-    return;
-  }
-#else
   assert(javascriptParserStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<JavaScriptParserStaticData>(
     std::vector<std::string>{
       "program", "statement", "block", "variableStatement", "variableDeclarationList", 
@@ -92,7 +83,7 @@ void javascriptParserInitialize() {
       "WHILE", "DEBUGGER", "FUNCTION", "THIS", "WITH", "DEFAULT", "IF", 
       "THROW", "DELETE", "IN", "TRY", "CLASS", "ENUM", "EXTENDS", "SUPER", 
       "CONST", "EXPORT", "IMPORT", "ASYNC", "AWAIT", "YIELD", "LET", "STATIC", 
-      "FROM", "AS", "OF", "GET", "SET", "NULL", "BOOLEAN", "UNDEFINED", 
+      "FROM", "AS", "OF", "GET", "SET", "NULL_LITERAL", "BOOLEAN", "UNDEFINED", 
       "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", 
       "COMMA", "DOT", "QUESTION", "COLON", "ELLIPSIS", "EQUALS", "STAR_EQUALS", 
       "SLASH_EQUALS", "PERCENT_EQUALS", "PLUS_EQUALS", "MINUS_EQUALS", "LSHIFT_EQUALS", 
@@ -175,7 +166,7 @@ void javascriptParserInitialize() {
   	62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,
   	106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,0,10,
   	3,0,8,8,31,31,37,37,2,0,103,103,107,107,1,0,80,82,1,0,76,77,1,0,85,87,
-  	1,0,88,91,1,0,92,95,1,0,60,72,4,0,44,46,101,101,103,103,105,106,1,0,1,
+  	1,0,88,91,1,0,92,95,1,0,60,72,4,0,44,46,101,101,103,103,105,105,1,0,1,
   	41,906,0,141,1,0,0,0,2,164,1,0,0,0,4,166,1,0,0,0,6,175,1,0,0,0,8,178,
   	1,0,0,0,10,187,1,0,0,0,12,189,1,0,0,0,14,194,1,0,0,0,16,196,1,0,0,0,18,
   	199,1,0,0,0,20,272,1,0,0,0,22,274,1,0,0,0,24,280,1,0,0,0,26,286,1,0,0,
@@ -493,8 +484,49 @@ JavaScriptParser::ProgramContext* JavaScriptParser::program() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 12086037129853334) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::SEMICOLON))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(138);
       statement();
       setState(143);
@@ -815,8 +847,49 @@ JavaScriptParser::BlockContext* JavaScriptParser::block() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 12086037129853334) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::SEMICOLON))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(167);
       statement();
       setState(172);
@@ -1019,7 +1092,9 @@ JavaScriptParser::VarModifierContext* JavaScriptParser::varModifier() {
     setState(187);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 139586437376) != 0))) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::LET))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1452,7 +1527,7 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::SUPER:
         case JavaScriptParser::ASYNC:
         case JavaScriptParser::AWAIT:
-        case JavaScriptParser::NULL_:
+        case JavaScriptParser::NULL_LITERAL:
         case JavaScriptParser::BOOLEAN:
         case JavaScriptParser::UNDEFINED:
         case JavaScriptParser::LPAREN:
@@ -1467,7 +1542,6 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::NUMBER:
         case JavaScriptParser::STRING:
         case JavaScriptParser::TEMPLATE_STRING:
-        case JavaScriptParser::REGEX:
         case JavaScriptParser::IDENTIFIER: {
           setState(224);
           expressionSequence();
@@ -1496,8 +1570,31 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
 
       _la = _input->LA(1);
       if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 3078685188690064) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+        ((1ULL << _la) & ((1ULL << JavaScriptParser::TYPEOF)
+        | (1ULL << JavaScriptParser::NEW)
+        | (1ULL << JavaScriptParser::VOID)
+        | (1ULL << JavaScriptParser::FUNCTION)
+        | (1ULL << JavaScriptParser::THIS)
+        | (1ULL << JavaScriptParser::DELETE)
+        | (1ULL << JavaScriptParser::SUPER)
+        | (1ULL << JavaScriptParser::ASYNC)
+        | (1ULL << JavaScriptParser::AWAIT)
+        | (1ULL << JavaScriptParser::NULL_LITERAL)
+        | (1ULL << JavaScriptParser::BOOLEAN)
+        | (1ULL << JavaScriptParser::UNDEFINED)
+        | (1ULL << JavaScriptParser::LPAREN)
+        | (1ULL << JavaScriptParser::LBRACE)
+        | (1ULL << JavaScriptParser::LBRACKET))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+        ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+        | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+        | (1ULL << (JavaScriptParser::PLUS - 74))
+        | (1ULL << (JavaScriptParser::MINUS - 74))
+        | (1ULL << (JavaScriptParser::TILDE - 74))
+        | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+        | (1ULL << (JavaScriptParser::NUMBER - 74))
+        | (1ULL << (JavaScriptParser::STRING - 74))
+        | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+        | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
         setState(229);
         expressionSequence();
       }
@@ -1508,8 +1605,31 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
 
       _la = _input->LA(1);
       if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 3078685188690064) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+        ((1ULL << _la) & ((1ULL << JavaScriptParser::TYPEOF)
+        | (1ULL << JavaScriptParser::NEW)
+        | (1ULL << JavaScriptParser::VOID)
+        | (1ULL << JavaScriptParser::FUNCTION)
+        | (1ULL << JavaScriptParser::THIS)
+        | (1ULL << JavaScriptParser::DELETE)
+        | (1ULL << JavaScriptParser::SUPER)
+        | (1ULL << JavaScriptParser::ASYNC)
+        | (1ULL << JavaScriptParser::AWAIT)
+        | (1ULL << JavaScriptParser::NULL_LITERAL)
+        | (1ULL << JavaScriptParser::BOOLEAN)
+        | (1ULL << JavaScriptParser::UNDEFINED)
+        | (1ULL << JavaScriptParser::LPAREN)
+        | (1ULL << JavaScriptParser::LBRACE)
+        | (1ULL << JavaScriptParser::LBRACKET))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+        ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+        | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+        | (1ULL << (JavaScriptParser::PLUS - 74))
+        | (1ULL << (JavaScriptParser::MINUS - 74))
+        | (1ULL << (JavaScriptParser::TILDE - 74))
+        | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+        | (1ULL << (JavaScriptParser::NUMBER - 74))
+        | (1ULL << (JavaScriptParser::STRING - 74))
+        | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+        | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
         setState(233);
         expressionSequence();
       }
@@ -1538,7 +1658,7 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::SUPER:
         case JavaScriptParser::ASYNC:
         case JavaScriptParser::AWAIT:
-        case JavaScriptParser::NULL_:
+        case JavaScriptParser::NULL_LITERAL:
         case JavaScriptParser::BOOLEAN:
         case JavaScriptParser::UNDEFINED:
         case JavaScriptParser::LPAREN:
@@ -1553,7 +1673,6 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::NUMBER:
         case JavaScriptParser::STRING:
         case JavaScriptParser::TEMPLATE_STRING:
-        case JavaScriptParser::REGEX:
         case JavaScriptParser::IDENTIFIER: {
           setState(240);
           singleExpression(0);
@@ -1600,7 +1719,7 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::SUPER:
         case JavaScriptParser::ASYNC:
         case JavaScriptParser::AWAIT:
-        case JavaScriptParser::NULL_:
+        case JavaScriptParser::NULL_LITERAL:
         case JavaScriptParser::BOOLEAN:
         case JavaScriptParser::UNDEFINED:
         case JavaScriptParser::LPAREN:
@@ -1615,7 +1734,6 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::NUMBER:
         case JavaScriptParser::STRING:
         case JavaScriptParser::TEMPLATE_STRING:
-        case JavaScriptParser::REGEX:
         case JavaScriptParser::IDENTIFIER: {
           setState(251);
           singleExpression(0);
@@ -1664,7 +1782,7 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::SUPER:
         case JavaScriptParser::ASYNC:
         case JavaScriptParser::AWAIT:
-        case JavaScriptParser::NULL_:
+        case JavaScriptParser::NULL_LITERAL:
         case JavaScriptParser::BOOLEAN:
         case JavaScriptParser::UNDEFINED:
         case JavaScriptParser::LPAREN:
@@ -1679,7 +1797,6 @@ JavaScriptParser::IterationStatementContext* JavaScriptParser::iterationStatemen
         case JavaScriptParser::NUMBER:
         case JavaScriptParser::STRING:
         case JavaScriptParser::TEMPLATE_STRING:
-        case JavaScriptParser::REGEX:
         case JavaScriptParser::IDENTIFIER: {
           setState(263);
           singleExpression(0);
@@ -1910,8 +2027,31 @@ JavaScriptParser::ReturnStatementContext* JavaScriptParser::returnStatement() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 3078685188690064) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(287);
       expressionSequence();
     }
@@ -2352,8 +2492,49 @@ JavaScriptParser::CaseClauseContext* JavaScriptParser::caseClause() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 12086037129853334) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::SEMICOLON))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(328);
       statement();
       setState(333);
@@ -2428,8 +2609,49 @@ JavaScriptParser::DefaultClauseContext* JavaScriptParser::defaultClause() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 12086037129853334) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::SEMICOLON))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(336);
       statement();
       setState(341);
@@ -2825,7 +3047,10 @@ JavaScriptParser::FunctionDeclarationContext* JavaScriptParser::functionDeclarat
 
     _la = _input->LA(1);
     if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+      ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+      | (1ULL << (JavaScriptParser::LBRACKET - 49))
+      | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
       setState(376);
       formalParameterList();
     }
@@ -2979,8 +3204,57 @@ JavaScriptParser::ClassTailContext* JavaScriptParser::classTail() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 11329367812603902) != 0) || ((((_la - 80) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 80)) & 144703489) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::INSTANCEOF)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::CASE)
+      | (1ULL << JavaScriptParser::ELSE)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::CATCH)
+      | (1ULL << JavaScriptParser::FINALLY)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::DEBUGGER)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::DEFAULT)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::IN)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::ENUM)
+      | (1ULL << JavaScriptParser::EXTENDS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::YIELD)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::STATIC)
+      | (1ULL << JavaScriptParser::FROM)
+      | (1ULL << JavaScriptParser::AS)
+      | (1ULL << JavaScriptParser::OF)
+      | (1ULL << JavaScriptParser::GET)
+      | (1ULL << JavaScriptParser::SET)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::SEMICOLON))) != 0) || ((((_la - 80) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 80)) & ((1ULL << (JavaScriptParser::STAR - 80))
+      | (1ULL << (JavaScriptParser::NUMBER - 80))
+      | (1ULL << (JavaScriptParser::STRING - 80))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 80)))) != 0)) {
       setState(391);
       classElement();
       setState(396);
@@ -3198,7 +3472,10 @@ JavaScriptParser::MethodDefinitionContext* JavaScriptParser::methodDefinition() 
 
       _la = _input->LA(1);
       if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+        ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+        | (1ULL << (JavaScriptParser::LBRACKET - 49))
+        | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+        | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
         setState(413);
         formalParameterList();
       }
@@ -3471,7 +3748,10 @@ JavaScriptParser::GeneratorMethodContext* JavaScriptParser::generatorMethod() {
 
     _la = _input->LA(1);
     if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+      ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+      | (1ULL << (JavaScriptParser::LBRACKET - 49))
+      | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
       setState(441);
       formalParameterList();
     }
@@ -3558,7 +3838,10 @@ JavaScriptParser::AsyncMethodContext* JavaScriptParser::asyncMethod() {
 
     _la = _input->LA(1);
     if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+      ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+      | (1ULL << (JavaScriptParser::LBRACKET - 49))
+      | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
       setState(450);
       formalParameterList();
     }
@@ -4875,7 +5158,7 @@ JavaScriptParser::PropertyNameContext* JavaScriptParser::propertyName() {
       case JavaScriptParser::FROM:
       case JavaScriptParser::AS:
       case JavaScriptParser::OF:
-      case JavaScriptParser::NULL_:
+      case JavaScriptParser::NULL_LITERAL:
       case JavaScriptParser::BOOLEAN:
       case JavaScriptParser::IDENTIFIER: {
         enterOuterAlt(_localctx, 1);
@@ -5475,7 +5758,9 @@ JavaScriptParser::SingleExpressionContext* JavaScriptParser::singleExpression(in
           setState(632);
           _la = _input->LA(1);
           if (!(((((_la - 80) & ~ 0x3fULL) == 0) &&
-            ((1ULL << (_la - 80)) & 7) != 0))) {
+            ((1ULL << (_la - 80)) & ((1ULL << (JavaScriptParser::STAR - 80))
+            | (1ULL << (JavaScriptParser::SLASH - 80))
+            | (1ULL << (JavaScriptParser::PERCENT - 80)))) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
@@ -5518,7 +5803,9 @@ JavaScriptParser::SingleExpressionContext* JavaScriptParser::singleExpression(in
           setState(638);
           _la = _input->LA(1);
           if (!(((((_la - 85) & ~ 0x3fULL) == 0) &&
-            ((1ULL << (_la - 85)) & 7) != 0))) {
+            ((1ULL << (_la - 85)) & ((1ULL << (JavaScriptParser::LSHIFT - 85))
+            | (1ULL << (JavaScriptParser::RSHIFT - 85))
+            | (1ULL << (JavaScriptParser::URSHIFT - 85)))) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
@@ -5539,7 +5826,10 @@ JavaScriptParser::SingleExpressionContext* JavaScriptParser::singleExpression(in
           setState(641);
           _la = _input->LA(1);
           if (!(((((_la - 88) & ~ 0x3fULL) == 0) &&
-            ((1ULL << (_la - 88)) & 15) != 0))) {
+            ((1ULL << (_la - 88)) & ((1ULL << (JavaScriptParser::LT - 88))
+            | (1ULL << (JavaScriptParser::GT - 88))
+            | (1ULL << (JavaScriptParser::LE - 88))
+            | (1ULL << (JavaScriptParser::GE - 88)))) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
@@ -5586,7 +5876,10 @@ JavaScriptParser::SingleExpressionContext* JavaScriptParser::singleExpression(in
           setState(650);
           _la = _input->LA(1);
           if (!(((((_la - 92) & ~ 0x3fULL) == 0) &&
-            ((1ULL << (_la - 92)) & 15) != 0))) {
+            ((1ULL << (_la - 92)) & ((1ULL << (JavaScriptParser::EQUALS_OP - 92))
+            | (1ULL << (JavaScriptParser::NOT_EQUALS - 92))
+            | (1ULL << (JavaScriptParser::STRICT_EQUALS - 92))
+            | (1ULL << (JavaScriptParser::STRICT_NOT_EQUALS - 92)))) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
@@ -5885,7 +6178,19 @@ JavaScriptParser::AssignmentOperatorContext* JavaScriptParser::assignmentOperato
     setState(702);
     _la = _input->LA(1);
     if (!(((((_la - 60) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 60)) & 8191) != 0))) {
+      ((1ULL << (_la - 60)) & ((1ULL << (JavaScriptParser::STAR_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::SLASH_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::PERCENT_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::PLUS_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::MINUS_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::LSHIFT_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::RSHIFT_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::URSHIFT_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::AMPERSAND_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::CARET_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::PIPE_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::POWER_EQUALS - 60))
+      | (1ULL << (JavaScriptParser::NULLISH_EQUALS - 60)))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -5917,24 +6222,20 @@ tree::TerminalNode* JavaScriptParser::LiteralContext::STRING() {
   return getToken(JavaScriptParser::STRING, 0);
 }
 
-tree::TerminalNode* JavaScriptParser::LiteralContext::TEMPLATE_STRING() {
-  return getToken(JavaScriptParser::TEMPLATE_STRING, 0);
-}
-
 tree::TerminalNode* JavaScriptParser::LiteralContext::BOOLEAN() {
   return getToken(JavaScriptParser::BOOLEAN, 0);
 }
 
-tree::TerminalNode* JavaScriptParser::LiteralContext::NULL_() {
-  return getToken(JavaScriptParser::NULL_, 0);
+tree::TerminalNode* JavaScriptParser::LiteralContext::NULL_LITERAL() {
+  return getToken(JavaScriptParser::NULL_LITERAL, 0);
 }
 
 tree::TerminalNode* JavaScriptParser::LiteralContext::UNDEFINED() {
   return getToken(JavaScriptParser::UNDEFINED, 0);
 }
 
-tree::TerminalNode* JavaScriptParser::LiteralContext::REGEX() {
-  return getToken(JavaScriptParser::REGEX, 0);
+tree::TerminalNode* JavaScriptParser::LiteralContext::TEMPLATE_STRING() {
+  return getToken(JavaScriptParser::TEMPLATE_STRING, 0);
 }
 
 
@@ -5967,7 +6268,12 @@ JavaScriptParser::LiteralContext* JavaScriptParser::literal() {
     setState(704);
     _la = _input->LA(1);
     if (!(((((_la - 44) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 44)) & 7638104968020361223) != 0))) {
+      ((1ULL << (_la - 44)) & ((1ULL << (JavaScriptParser::NULL_LITERAL - 44))
+      | (1ULL << (JavaScriptParser::BOOLEAN - 44))
+      | (1ULL << (JavaScriptParser::UNDEFINED - 44))
+      | (1ULL << (JavaScriptParser::NUMBER - 44))
+      | (1ULL << (JavaScriptParser::STRING - 44))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 44)))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6037,8 +6343,33 @@ JavaScriptParser::ArrayLiteralContext* JavaScriptParser::arrayLiteral() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 309323459849883792) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::COMMA)
+      | (1ULL << JavaScriptParser::ELLIPSIS))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(707);
       elementList();
     }
@@ -6185,7 +6516,7 @@ JavaScriptParser::ArrayElementContext* JavaScriptParser::arrayElement() {
       case JavaScriptParser::SUPER:
       case JavaScriptParser::ASYNC:
       case JavaScriptParser::AWAIT:
-      case JavaScriptParser::NULL_:
+      case JavaScriptParser::NULL_LITERAL:
       case JavaScriptParser::BOOLEAN:
       case JavaScriptParser::UNDEFINED:
       case JavaScriptParser::LPAREN:
@@ -6201,7 +6532,6 @@ JavaScriptParser::ArrayElementContext* JavaScriptParser::arrayElement() {
       case JavaScriptParser::NUMBER:
       case JavaScriptParser::STRING:
       case JavaScriptParser::TEMPLATE_STRING:
-      case JavaScriptParser::REGEX:
       case JavaScriptParser::IDENTIFIER: {
         enterOuterAlt(_localctx, 1);
         setState(721);
@@ -6520,8 +6850,32 @@ JavaScriptParser::ArgumentsContext* JavaScriptParser::arguments() {
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 291309061340401808) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 74)) & 15703474239) != 0)) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::NULL_LITERAL)
+      | (1ULL << JavaScriptParser::BOOLEAN)
+      | (1ULL << JavaScriptParser::UNDEFINED)
+      | (1ULL << JavaScriptParser::LPAREN)
+      | (1ULL << JavaScriptParser::LBRACE)
+      | (1ULL << JavaScriptParser::LBRACKET)
+      | (1ULL << JavaScriptParser::ELLIPSIS))) != 0) || ((((_la - 74) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 74)) & ((1ULL << (JavaScriptParser::PLUSPLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUSMINUS - 74))
+      | (1ULL << (JavaScriptParser::PLUS - 74))
+      | (1ULL << (JavaScriptParser::MINUS - 74))
+      | (1ULL << (JavaScriptParser::TILDE - 74))
+      | (1ULL << (JavaScriptParser::EXCLAMATION - 74))
+      | (1ULL << (JavaScriptParser::NUMBER - 74))
+      | (1ULL << (JavaScriptParser::STRING - 74))
+      | (1ULL << (JavaScriptParser::TEMPLATE_STRING - 74))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 74)))) != 0)) {
       setState(758);
       argumentList();
     }
@@ -6760,7 +7114,10 @@ JavaScriptParser::AnonymousFunctionContext* JavaScriptParser::anonymousFunction(
 
     _la = _input->LA(1);
     if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+      ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+      | (1ULL << (JavaScriptParser::LBRACKET - 49))
+      | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+      | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
       setState(784);
       formalParameterList();
     }
@@ -6920,7 +7277,10 @@ JavaScriptParser::ArrowFunctionParametersContext* JavaScriptParser::arrowFunctio
 
         _la = _input->LA(1);
         if (((((_la - 49) & ~ 0x3fULL) == 0) &&
-          ((1ULL << (_la - 49)) & 288230376151712261) != 0)) {
+          ((1ULL << (_la - 49)) & ((1ULL << (JavaScriptParser::LBRACE - 49))
+          | (1ULL << (JavaScriptParser::LBRACKET - 49))
+          | (1ULL << (JavaScriptParser::ELLIPSIS - 49))
+          | (1ULL << (JavaScriptParser::IDENTIFIER - 49)))) != 0)) {
           setState(799);
           formalParameterList();
         }
@@ -7158,7 +7518,7 @@ JavaScriptParser::IdentifierNameContext* JavaScriptParser::identifierName() {
       case JavaScriptParser::FROM:
       case JavaScriptParser::AS:
       case JavaScriptParser::OF:
-      case JavaScriptParser::NULL_:
+      case JavaScriptParser::NULL_LITERAL:
       case JavaScriptParser::BOOLEAN: {
         enterOuterAlt(_localctx, 2);
         setState(813);
@@ -7190,8 +7550,8 @@ JavaScriptParser::KeywordContext* JavaScriptParser::ReservedWordContext::keyword
   return getRuleContext<JavaScriptParser::KeywordContext>(0);
 }
 
-tree::TerminalNode* JavaScriptParser::ReservedWordContext::NULL_() {
-  return getToken(JavaScriptParser::NULL_, 0);
+tree::TerminalNode* JavaScriptParser::ReservedWordContext::NULL_LITERAL() {
+  return getToken(JavaScriptParser::NULL_LITERAL, 0);
 }
 
 tree::TerminalNode* JavaScriptParser::ReservedWordContext::BOOLEAN() {
@@ -7273,10 +7633,10 @@ JavaScriptParser::ReservedWordContext* JavaScriptParser::reservedWord() {
         break;
       }
 
-      case JavaScriptParser::NULL_: {
+      case JavaScriptParser::NULL_LITERAL: {
         enterOuterAlt(_localctx, 2);
         setState(817);
-        match(JavaScriptParser::NULL_);
+        match(JavaScriptParser::NULL_LITERAL);
         break;
       }
 
@@ -7501,7 +7861,47 @@ JavaScriptParser::KeywordContext* JavaScriptParser::keyword() {
     setState(821);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 4398046511102) != 0))) {
+      ((1ULL << _la) & ((1ULL << JavaScriptParser::BREAK)
+      | (1ULL << JavaScriptParser::DO)
+      | (1ULL << JavaScriptParser::INSTANCEOF)
+      | (1ULL << JavaScriptParser::TYPEOF)
+      | (1ULL << JavaScriptParser::CASE)
+      | (1ULL << JavaScriptParser::ELSE)
+      | (1ULL << JavaScriptParser::NEW)
+      | (1ULL << JavaScriptParser::VAR)
+      | (1ULL << JavaScriptParser::CATCH)
+      | (1ULL << JavaScriptParser::FINALLY)
+      | (1ULL << JavaScriptParser::RETURN)
+      | (1ULL << JavaScriptParser::VOID)
+      | (1ULL << JavaScriptParser::CONTINUE)
+      | (1ULL << JavaScriptParser::FOR)
+      | (1ULL << JavaScriptParser::SWITCH)
+      | (1ULL << JavaScriptParser::WHILE)
+      | (1ULL << JavaScriptParser::DEBUGGER)
+      | (1ULL << JavaScriptParser::FUNCTION)
+      | (1ULL << JavaScriptParser::THIS)
+      | (1ULL << JavaScriptParser::WITH)
+      | (1ULL << JavaScriptParser::DEFAULT)
+      | (1ULL << JavaScriptParser::IF)
+      | (1ULL << JavaScriptParser::THROW)
+      | (1ULL << JavaScriptParser::DELETE)
+      | (1ULL << JavaScriptParser::IN)
+      | (1ULL << JavaScriptParser::TRY)
+      | (1ULL << JavaScriptParser::CLASS)
+      | (1ULL << JavaScriptParser::ENUM)
+      | (1ULL << JavaScriptParser::EXTENDS)
+      | (1ULL << JavaScriptParser::SUPER)
+      | (1ULL << JavaScriptParser::CONST)
+      | (1ULL << JavaScriptParser::EXPORT)
+      | (1ULL << JavaScriptParser::IMPORT)
+      | (1ULL << JavaScriptParser::ASYNC)
+      | (1ULL << JavaScriptParser::AWAIT)
+      | (1ULL << JavaScriptParser::YIELD)
+      | (1ULL << JavaScriptParser::LET)
+      | (1ULL << JavaScriptParser::STATIC)
+      | (1ULL << JavaScriptParser::FROM)
+      | (1ULL << JavaScriptParser::AS)
+      | (1ULL << JavaScriptParser::OF))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -7561,9 +7961,5 @@ bool JavaScriptParser::singleExpressionSempred(SingleExpressionContext *_localct
 }
 
 void JavaScriptParser::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  javascriptParserInitialize();
-#else
-  ::antlr4::internal::call_once(javascriptParserOnceFlag, javascriptParserInitialize);
-#endif
+  std::call_once(javascriptParserOnceFlag, javascriptParserInitialize);
 }

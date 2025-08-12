@@ -1,164 +1,262 @@
 #include "ChtlVisitor.h"
-#include "Node/TextNode.h"
-#include "Node/StyleNode.h"
-#include "Node/ScriptNode.h"
+#include <sstream>
 
 namespace CHTL {
 
 ChtlVisitor::ChtlVisitor(SymbolTable* symbolTable)
     : symbolTable_(symbolTable) {
     // 创建根节点
-    rootNode_ = std::make_shared<ElementNode>("html");
+    rootNode_ = std::make_shared<ElementNode>("document");
     currentNode_ = rootNode_;
     nodeStack_.push(rootNode_);
 }
 
-// TODO: 实现所有visitor方法
-// 这些方法将在ANTLR4生成代码后实现
-
-antlrcpp::Any ChtlVisitor::visitProgram(CHTLParser::ProgramContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitProgram(CHTLParser::ProgramContext* ctx) {
+    // 访问所有语句
+    for (auto statement : ctx->statement()) {
+        visit(statement);
+    }
+    return rootNode_;
 }
 
-antlrcpp::Any ChtlVisitor::visitElement(CHTLParser::ElementContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitElement(CHTLParser::ElementContext* ctx) {
+    // 获取元素名
+    std::string tagName = ctx->elementName()->getText();
+    
+    // 创建元素节点
+    auto elementNode = createElementNode(tagName);
+    
+    // 设置位置信息
+    elementNode->setLocation(
+        ctx->getStart()->getLine(),
+        ctx->getStart()->getCharPositionInLine(),
+        ctx->getStop()->getLine(),
+        ctx->getStop()->getCharPositionInLine()
+    );
+    
+    // 添加到当前节点
+    currentNode_->addChild(elementNode);
+    
+    // 如果有元素体，处理子内容
+    if (ctx->elementBody()) {
+        // 压栈当前节点
+        nodeStack_.push(currentNode_);
+        currentNode_ = elementNode;
+        
+        // 处理属性和内容
+        processElementAttributes(elementNode, ctx->elementBody());
+        
+        // 访问元素体中的内容
+        for (auto content : ctx->elementBody()->elementContent()) {
+            visit(content);
+        }
+        
+        // 出栈
+        currentNode_ = nodeStack_.top();
+        nodeStack_.pop();
+    }
+    
+    return elementNode;
 }
 
-antlrcpp::Any ChtlVisitor::visitAttributes(CHTLParser::AttributesContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitAttribute(CHTLParser::AttributeContext* ctx) {
+    // 属性在processElementAttributes中处理
+    return nullptr;
 }
 
-antlrcpp::Any ChtlVisitor::visitAttribute(CHTLParser::AttributeContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitTextNode(CHTLParser::TextNodeContext* ctx) {
+    if (ctx->stringLiteral()) {
+        std::string text = ctx->stringLiteral()->getText();
+        // 去除引号
+        if (text.size() >= 2 && ((text[0] == '"' && text[text.size()-1] == '"') ||
+                                  (text[0] == '\'' && text[text.size()-1] == '\''))) {
+            text = text.substr(1, text.size() - 2);
+        }
+        
+        auto textNode = createTextNode(text);
+        textNode->setLocation(
+            ctx->getStart()->getLine(),
+            ctx->getStart()->getCharPositionInLine(),
+            ctx->getStop()->getLine(),
+            ctx->getStop()->getCharPositionInLine()
+        );
+        
+        currentNode_->addChild(textNode);
+        return textNode;
+    }
+    return nullptr;
 }
 
-antlrcpp::Any ChtlVisitor::visitTextNode(CHTLParser::TextNodeContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitStringLiteral(CHTLParser::StringLiteralContext* ctx) {
+    std::string text = ctx->getText();
+    
+    // 去除引号
+    if (text.size() >= 2 && ((text[0] == '"' && text[text.size()-1] == '"') ||
+                              (text[0] == '\'' && text[text.size()-1] == '\''))) {
+        text = text.substr(1, text.size() - 2);
+    }
+    
+    auto textNode = createTextNode(text);
+    textNode->setLocation(
+        ctx->getStart()->getLine(),
+        ctx->getStart()->getCharPositionInLine(),
+        ctx->getStop()->getLine(),
+        ctx->getStop()->getCharPositionInLine()
+    );
+    
+    currentNode_->addChild(textNode);
+    return textNode;
 }
 
-antlrcpp::Any ChtlVisitor::visitLiteral(CHTLParser::LiteralContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
-}
-
-antlrcpp::Any ChtlVisitor::visitComment(CHTLParser::CommentContext* ctx) {
+std::any ChtlVisitor::visitComment(CHTLParser::CommentContext* ctx) {
     // 注释通常被忽略
-    return Any();
+    return nullptr;
 }
 
-antlrcpp::Any ChtlVisitor::visitStyleBlock(CHTLParser::StyleBlockContext* ctx) {
-    // TODO: 实现
+std::any ChtlVisitor::visitStyleBlock(CHTLParser::StyleBlockContext* ctx) {
+    auto styleNode = createStyleNode();
+    styleNode->setLocation(
+        ctx->getStart()->getLine(),
+        ctx->getStart()->getCharPositionInLine(),
+        ctx->getStop()->getLine(),
+        ctx->getStop()->getCharPositionInLine()
+    );
+    
+    // 设置作用域
+    std::stringstream scopeStream;
+    scopeStream << "style_" << ctx->getStart()->getLine() << "_" << ctx->getStart()->getCharPositionInLine();
+    auto styleNodePtr = std::dynamic_pointer_cast<StyleNode>(styleNode);
+    if (styleNodePtr) {
+        styleNodePtr->setScope(scopeStream.str());
+    }
+    
+    // 访问样式内容
+    auto styleContents = ctx->styleContent();
+    if (!styleContents.empty()) {
+        nodeStack_.push(currentNode_);
+        currentNode_ = styleNode;
+        
+        for (auto content : styleContents) {
+            visit(content);
+        }
+        
+        currentNode_ = nodeStack_.top();
+        nodeStack_.pop();
+    }
+    
+    currentNode_->addChild(styleNode);
+    return styleNode;
+}
+
+std::any ChtlVisitor::visitStyleContent(CHTLParser::StyleContentContext* ctx) {
+    // 访问子节点
     return visitChildren(ctx);
 }
 
-antlrcpp::Any ChtlVisitor::visitStyleContent(CHTLParser::StyleContentContext* ctx) {
-    // TODO: 实现
+std::any ChtlVisitor::visitCssProperty(CHTLParser::CssPropertyContext* ctx) {
+    auto styleNode = std::dynamic_pointer_cast<StyleNode>(currentNode_);
+    if (styleNode && ctx->cssPropertyName() && ctx->cssPropertyValue()) {
+        std::string property = ctx->cssPropertyName()->getText();
+        std::string value = ctx->cssPropertyValue()->getText();
+        styleNode->addInlineStyle(property, value);
+    }
+    return nullptr;
+}
+
+std::any ChtlVisitor::visitCssSelector(CHTLParser::CssSelectorContext* ctx) {
+    // 处理CSS选择器及其规则
     return visitChildren(ctx);
 }
 
-antlrcpp::Any ChtlVisitor::visitInlineStyle(CHTLParser::InlineStyleContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitClassSelector(CHTLParser::ClassSelectorContext* ctx) {
+    auto styleNode = std::dynamic_pointer_cast<StyleNode>(currentNode_);
+    if (styleNode && ctx->IDENTIFIER()) {
+        std::string className = ctx->IDENTIFIER()->getText();
+        styleNode->addClassSelector(className);
+    }
+    return nullptr;
 }
 
-antlrcpp::Any ChtlVisitor::visitClassSelector(CHTLParser::ClassSelectorContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitIdSelector(CHTLParser::IdSelectorContext* ctx) {
+    auto styleNode = std::dynamic_pointer_cast<StyleNode>(currentNode_);
+    if (styleNode && ctx->IDENTIFIER()) {
+        std::string id = ctx->IDENTIFIER()->getText();
+        styleNode->addIdSelector(id);
+    }
+    return nullptr;
 }
 
-antlrcpp::Any ChtlVisitor::visitIdSelector(CHTLParser::IdSelectorContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitScriptBlock(CHTLParser::ScriptBlockContext* ctx) {
+    std::string code;
+    if (ctx->jsCode()) {
+        code = ctx->jsCode()->getText();
+    }
+    
+    bool isCHTLJS = containsCHTLJSExtensions(code);
+    
+    auto scriptNode = createScriptNode(code, isCHTLJS);
+    scriptNode->setLocation(
+        ctx->getStart()->getLine(),
+        ctx->getStart()->getCharPositionInLine(),
+        ctx->getStop()->getLine(),
+        ctx->getStop()->getCharPositionInLine()
+    );
+    
+    currentNode_->addChild(scriptNode);
+    return scriptNode;
 }
 
-antlrcpp::Any ChtlVisitor::visitScriptBlock(CHTLParser::ScriptBlockContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+// 简化其他方法实现
+std::any ChtlVisitor::visitTemplateDeclaration(CHTLParser::TemplateDeclarationContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitTemplateDecl(CHTLParser::TemplateDeclContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitTemplateType(CHTLParser::TemplateTypeContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitStyleTemplate(CHTLParser::StyleTemplateContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitTemplateName(CHTLParser::TemplateNameContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitElementTemplate(CHTLParser::ElementTemplateContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitTemplateUsage(CHTLParser::TemplateUsageContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitVarTemplate(CHTLParser::VarTemplateContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitCustomDeclaration(CHTLParser::CustomDeclarationContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitTemplateRef(CHTLParser::TemplateRefContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitCustomType(CHTLParser::CustomTypeContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitCustomDecl(CHTLParser::CustomDeclContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitCustomName(CHTLParser::CustomNameContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitStyleCustom(CHTLParser::StyleCustomContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitCustomUsage(CHTLParser::CustomUsageContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitElementCustom(CHTLParser::ElementCustomContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitOriginBlock(CHTLParser::OriginBlockContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitVarCustom(CHTLParser::VarCustomContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitImportStatement(CHTLParser::ImportStatementContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitCustomRef(CHTLParser::CustomRefContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitImportChtl(CHTLParser::ImportChtlContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitOriginBlock(CHTLParser::OriginBlockContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitNamespaceDeclaration(CHTLParser::NamespaceDeclarationContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
-antlrcpp::Any ChtlVisitor::visitImportStmt(CHTLParser::ImportStmtContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
-}
-
-antlrcpp::Any ChtlVisitor::visitNamespaceDecl(CHTLParser::NamespaceDeclContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
-}
-
-antlrcpp::Any ChtlVisitor::visitQualifiedName(CHTLParser::QualifiedNameContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
-}
-
-antlrcpp::Any ChtlVisitor::visitConfigBlock(CHTLParser::ConfigBlockContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
-}
-
-antlrcpp::Any ChtlVisitor::visitConfigEntry(CHTLParser::ConfigEntryContext* ctx) {
-    // TODO: 实现
-    return visitChildren(ctx);
+std::any ChtlVisitor::visitConfigurationBlock(CHTLParser::ConfigurationBlockContext* ctx) {
+    return nullptr; // TODO: 实现
 }
 
 // 辅助方法实现
@@ -179,34 +277,60 @@ NodePtr ChtlVisitor::createScriptNode(const std::string& content, bool isCHTLJS)
     return std::make_shared<ScriptNode>(content, isCHTLJS);
 }
 
-NodePtr ChtlVisitor::createTemplateNode(NodeType type, const std::string& name) {
-    // TODO: 实现模板节点创建
-    return nullptr;
+NodePtr ChtlVisitor::createTemplateNode(TemplateNode::TemplateType type, const std::string& name) {
+    return std::make_shared<TemplateNode>(type, name);
 }
 
-NodePtr ChtlVisitor::createCustomNode(NodeType type, const std::string& name) {
-    // TODO: 实现自定义节点创建
-    return nullptr;
+NodePtr ChtlVisitor::createCustomNode(CustomNode::CustomType type, const std::string& name) {
+    return std::make_shared<CustomNode>(type, name);
 }
 
-void ChtlVisitor::processAttributes(NodePtr node, CHTLParser::AttributesContext* ctx) {
-    // TODO: 实现属性处理
-}
-
-void ChtlVisitor::processInlineStyles(NodePtr styleNode, CHTLParser::StyleContentContext* ctx) {
-    // TODO: 实现内联样式处理
-}
-
-void ChtlVisitor::processClassSelectors(NodePtr styleNode, CHTLParser::StyleContentContext* ctx) {
-    // TODO: 实现类选择器处理
+void ChtlVisitor::processElementAttributes(NodePtr node, CHTLParser::ElementBodyContext* ctx) {
+    auto elementNode = std::dynamic_pointer_cast<ElementNode>(node);
+    if (!elementNode || !ctx) return;
+    
+    // 遍历元素内容，查找属性
+    for (auto content : ctx->elementContent()) {
+        if (content->attribute()) {
+            auto attr = content->attribute();
+            if (attr->attributeName() && attr->attributeValue()) {
+                std::string key = attr->attributeName()->getText();
+                std::string value = attr->attributeValue()->getText();
+                
+                // 去除值的引号
+                if (value.size() >= 2 && ((value[0] == '"' && value[value.size()-1] == '"') ||
+                                          (value[0] == '\'' && value[value.size()-1] == '\''))) {
+                    value = value.substr(1, value.size() - 2);
+                }
+                
+                // 特殊处理id和class
+                if (key == "id") {
+                    elementNode->setId(value);
+                } else if (key == "class") {
+                    // 分割多个类名
+                    std::stringstream ss(value);
+                    std::string className;
+                    while (ss >> className) {
+                        elementNode->addClass(className);
+                    }
+                } else {
+                    elementNode->setAttribute(key, value);
+                }
+            }
+        }
+    }
 }
 
 void ChtlVisitor::registerTemplate(const std::string& name, NodePtr templateNode) {
-    // TODO: 在符号表中注册模板
+    auto symbol = std::make_shared<Symbol>(name, SymbolType::TEMPLATE_ELEMENT);
+    symbol->setContent(templateNode);
+    symbolTable_->defineSymbol(symbol);
 }
 
 void ChtlVisitor::registerCustom(const std::string& name, NodePtr customNode) {
-    // TODO: 在符号表中注册自定义
+    auto symbol = std::make_shared<Symbol>(name, SymbolType::CUSTOM_ELEMENT);
+    symbol->setContent(customNode);
+    symbolTable_->defineSymbol(symbol);
 }
 
 bool ChtlVisitor::containsCHTLJSExtensions(const std::string& code) const {
@@ -216,6 +340,11 @@ bool ChtlVisitor::containsCHTLJSExtensions(const std::string& code) const {
            code.find("listen") != std::string::npos ||
            code.find("delegate") != std::string::npos ||
            code.find("animate") != std::string::npos;
+}
+
+std::string ChtlVisitor::getText(antlr4::tree::ParseTree* tree) {
+    if (!tree) return "";
+    return tree->getText();
 }
 
 } // namespace CHTL

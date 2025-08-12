@@ -12,8 +12,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # 查找ANTLR4运行时
 find_package(antlr4-runtime CONFIG REQUIRED)
 
-# 设置ANTLR4工具路径
-set(ANTLR4_JAR_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/antlr-4.13.1-complete.jar)
+# ANTLR4配置
+set(ANTLR4_JAR_LOCATION ${CMAKE_SOURCE_DIR}/lib/antlr-4.10-complete.jar)
+
+# 检查JAR文件是否存在
+if(NOT EXISTS ${ANTLR4_JAR_LOCATION})
+    message(FATAL_ERROR "ANTLR4 JAR file not found at ${ANTLR4_JAR_LOCATION}")
+endif()
 
 # 全局包含目录
 include_directories(

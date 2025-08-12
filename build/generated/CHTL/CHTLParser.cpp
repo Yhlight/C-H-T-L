@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTL.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTL.g4 by ANTLR 4.10
 
 
 #include "CHTLVisitor.h"
@@ -36,20 +36,11 @@ struct CHTLParserStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag chtlParserOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag chtlParserOnceFlag;
 CHTLParserStaticData *chtlParserStaticData = nullptr;
 
 void chtlParserInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (chtlParserStaticData != nullptr) {
-    return;
-  }
-#else
   assert(chtlParserStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<CHTLParserStaticData>(
     std::vector<std::string>{
       "program", "statement", "comment", "textNode", "stringLiteral", "element", 
@@ -430,7 +421,14 @@ CHTLParser::ProgramContext* CHTLParser::program() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2748779069440014) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::TEXT)
+      | (1ULL << CHTLParser::STYLE)
+      | (1ULL << CHTLParser::SCRIPT)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::LINE_COMMENT)
+      | (1ULL << CHTLParser::BLOCK_COMMENT)
+      | (1ULL << CHTLParser::GENERATOR_COMMENT)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(156);
       statement();
       setState(161);
@@ -667,7 +665,9 @@ CHTLParser::CommentContext* CHTLParser::comment() {
     setState(177);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 492581209243648) != 0))) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::LINE_COMMENT)
+      | (1ULL << CHTLParser::BLOCK_COMMENT)
+      | (1ULL << CHTLParser::GENERATOR_COMMENT))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -800,7 +800,9 @@ CHTLParser::StringLiteralContext* CHTLParser::stringLiteral() {
     setState(184);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 10696049115004928) != 0))) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::STRING_LITERAL)
+      | (1ULL << CHTLParser::SINGLE_STRING_LITERAL)
+      | (1ULL << CHTLParser::UNQUOTED_LITERAL))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -984,7 +986,17 @@ CHTLParser::ElementBodyContext* CHTLParser::elementBody() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2256198937141262) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::TEXT)
+      | (1ULL << CHTLParser::STYLE)
+      | (1ULL << CHTLParser::SCRIPT)
+      | (1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::DELETE)
+      | (1ULL << CHTLParser::INSERT)
+      | (1ULL << CHTLParser::EXCEPT)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(193);
       elementContent();
       setState(198);
@@ -1413,7 +1425,14 @@ CHTLParser::StyleBlockContext* CHTLParser::styleBlock() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2252285145047040) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::COLON)
+      | (1ULL << CHTLParser::DOT)
+      | (1ULL << CHTLParser::HASH)
+      | (1ULL << CHTLParser::AMPERSAND)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(225);
       styleContent();
       setState(230);
@@ -1798,7 +1817,58 @@ CHTLParser::CssValueContext* CHTLParser::cssValue() {
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 36026589405773822) != 0));
+      ((1ULL << _la) & ((1ULL << CHTLParser::TEXT)
+      | (1ULL << CHTLParser::STYLE)
+      | (1ULL << CHTLParser::SCRIPT)
+      | (1ULL << CHTLParser::TEMPLATE)
+      | (1ULL << CHTLParser::CUSTOM)
+      | (1ULL << CHTLParser::ORIGIN)
+      | (1ULL << CHTLParser::IMPORT)
+      | (1ULL << CHTLParser::NAMESPACE)
+      | (1ULL << CHTLParser::CONFIGURATION)
+      | (1ULL << CHTLParser::NAME)
+      | (1ULL << CHTLParser::INFO)
+      | (1ULL << CHTLParser::EXPORT)
+      | (1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::AT_HTML)
+      | (1ULL << CHTLParser::AT_JAVASCRIPT)
+      | (1ULL << CHTLParser::AT_CHTL)
+      | (1ULL << CHTLParser::INHERIT)
+      | (1ULL << CHTLParser::DELETE)
+      | (1ULL << CHTLParser::INSERT)
+      | (1ULL << CHTLParser::AFTER)
+      | (1ULL << CHTLParser::BEFORE)
+      | (1ULL << CHTLParser::REPLACE)
+      | (1ULL << CHTLParser::AT)
+      | (1ULL << CHTLParser::TOP)
+      | (1ULL << CHTLParser::BOTTOM)
+      | (1ULL << CHTLParser::FROM)
+      | (1ULL << CHTLParser::AS)
+      | (1ULL << CHTLParser::EXCEPT)
+      | (1ULL << CHTLParser::BOOLEAN)
+      | (1ULL << CHTLParser::COLON)
+      | (1ULL << CHTLParser::EQUALS)
+      | (1ULL << CHTLParser::COMMA)
+      | (1ULL << CHTLParser::DOT)
+      | (1ULL << CHTLParser::HASH)
+      | (1ULL << CHTLParser::AMPERSAND)
+      | (1ULL << CHTLParser::MINUS)
+      | (1ULL << CHTLParser::LBRACE)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::RBRACKET)
+      | (1ULL << CHTLParser::LPAREN)
+      | (1ULL << CHTLParser::RPAREN)
+      | (1ULL << CHTLParser::LINE_COMMENT)
+      | (1ULL << CHTLParser::BLOCK_COMMENT)
+      | (1ULL << CHTLParser::GENERATOR_COMMENT)
+      | (1ULL << CHTLParser::STRING_LITERAL)
+      | (1ULL << CHTLParser::SINGLE_STRING_LITERAL)
+      | (1ULL << CHTLParser::IDENTIFIER)
+      | (1ULL << CHTLParser::NUMBER)
+      | (1ULL << CHTLParser::UNQUOTED_LITERAL)
+      | (1ULL << CHTLParser::WS))) != 0));
    
   }
   catch (RecognitionException &e) {
@@ -2352,7 +2422,59 @@ CHTLParser::JsCodeContext* CHTLParser::jsCode() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 36026597995708414) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::TEXT)
+      | (1ULL << CHTLParser::STYLE)
+      | (1ULL << CHTLParser::SCRIPT)
+      | (1ULL << CHTLParser::TEMPLATE)
+      | (1ULL << CHTLParser::CUSTOM)
+      | (1ULL << CHTLParser::ORIGIN)
+      | (1ULL << CHTLParser::IMPORT)
+      | (1ULL << CHTLParser::NAMESPACE)
+      | (1ULL << CHTLParser::CONFIGURATION)
+      | (1ULL << CHTLParser::NAME)
+      | (1ULL << CHTLParser::INFO)
+      | (1ULL << CHTLParser::EXPORT)
+      | (1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::AT_HTML)
+      | (1ULL << CHTLParser::AT_JAVASCRIPT)
+      | (1ULL << CHTLParser::AT_CHTL)
+      | (1ULL << CHTLParser::INHERIT)
+      | (1ULL << CHTLParser::DELETE)
+      | (1ULL << CHTLParser::INSERT)
+      | (1ULL << CHTLParser::AFTER)
+      | (1ULL << CHTLParser::BEFORE)
+      | (1ULL << CHTLParser::REPLACE)
+      | (1ULL << CHTLParser::AT)
+      | (1ULL << CHTLParser::TOP)
+      | (1ULL << CHTLParser::BOTTOM)
+      | (1ULL << CHTLParser::FROM)
+      | (1ULL << CHTLParser::AS)
+      | (1ULL << CHTLParser::EXCEPT)
+      | (1ULL << CHTLParser::BOOLEAN)
+      | (1ULL << CHTLParser::COLON)
+      | (1ULL << CHTLParser::SEMICOLON)
+      | (1ULL << CHTLParser::EQUALS)
+      | (1ULL << CHTLParser::COMMA)
+      | (1ULL << CHTLParser::DOT)
+      | (1ULL << CHTLParser::HASH)
+      | (1ULL << CHTLParser::AMPERSAND)
+      | (1ULL << CHTLParser::MINUS)
+      | (1ULL << CHTLParser::LBRACE)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::RBRACKET)
+      | (1ULL << CHTLParser::LPAREN)
+      | (1ULL << CHTLParser::RPAREN)
+      | (1ULL << CHTLParser::LINE_COMMENT)
+      | (1ULL << CHTLParser::BLOCK_COMMENT)
+      | (1ULL << CHTLParser::GENERATOR_COMMENT)
+      | (1ULL << CHTLParser::STRING_LITERAL)
+      | (1ULL << CHTLParser::SINGLE_STRING_LITERAL)
+      | (1ULL << CHTLParser::IDENTIFIER)
+      | (1ULL << CHTLParser::NUMBER)
+      | (1ULL << CHTLParser::UNQUOTED_LITERAL)
+      | (1ULL << CHTLParser::WS))) != 0)) {
       setState(300);
       _la = _input->LA(1);
       if (_la == 0 || _la == Token::EOF || (_la == CHTLParser::RBRACE)) {
@@ -2511,7 +2633,9 @@ CHTLParser::TemplateTypeContext* CHTLParser::templateType() {
     setState(314);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 57344) != 0))) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -2633,7 +2757,11 @@ CHTLParser::TemplateBodyContext* CHTLParser::templateBody() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2251799814266880) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::INHERIT)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(319);
       templateContent();
       setState(324);
@@ -2957,7 +3085,9 @@ CHTLParser::CustomTypeContext* CHTLParser::customType() {
     setState(347);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 57344) != 0))) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3079,7 +3209,14 @@ CHTLParser::CustomBodyContext* CHTLParser::customBody() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2256197863923712) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::INHERIT)
+      | (1ULL << CHTLParser::DELETE)
+      | (1ULL << CHTLParser::INSERT)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(352);
       customContent();
       setState(357);
@@ -4196,7 +4333,10 @@ CHTLParser::InsertStatementContext* CHTLParser::insertStatement() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2251799813742592) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::IDENTIFIER))) != 0)) {
       setState(464);
       insertContent();
       setState(469);
@@ -4836,7 +4976,9 @@ CHTLParser::OriginTypeContext* CHTLParser::originType() {
     setState(527);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 204800) != 0))) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_HTML)
+      | (1ULL << CHTLParser::AT_JAVASCRIPT))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -5009,7 +5151,59 @@ CHTLParser::RawContentContext* CHTLParser::rawContent() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 36026597995708414) != 0)) {
+      ((1ULL << _la) & ((1ULL << CHTLParser::TEXT)
+      | (1ULL << CHTLParser::STYLE)
+      | (1ULL << CHTLParser::SCRIPT)
+      | (1ULL << CHTLParser::TEMPLATE)
+      | (1ULL << CHTLParser::CUSTOM)
+      | (1ULL << CHTLParser::ORIGIN)
+      | (1ULL << CHTLParser::IMPORT)
+      | (1ULL << CHTLParser::NAMESPACE)
+      | (1ULL << CHTLParser::CONFIGURATION)
+      | (1ULL << CHTLParser::NAME)
+      | (1ULL << CHTLParser::INFO)
+      | (1ULL << CHTLParser::EXPORT)
+      | (1ULL << CHTLParser::AT_STYLE)
+      | (1ULL << CHTLParser::AT_ELEMENT)
+      | (1ULL << CHTLParser::AT_VAR)
+      | (1ULL << CHTLParser::AT_HTML)
+      | (1ULL << CHTLParser::AT_JAVASCRIPT)
+      | (1ULL << CHTLParser::AT_CHTL)
+      | (1ULL << CHTLParser::INHERIT)
+      | (1ULL << CHTLParser::DELETE)
+      | (1ULL << CHTLParser::INSERT)
+      | (1ULL << CHTLParser::AFTER)
+      | (1ULL << CHTLParser::BEFORE)
+      | (1ULL << CHTLParser::REPLACE)
+      | (1ULL << CHTLParser::AT)
+      | (1ULL << CHTLParser::TOP)
+      | (1ULL << CHTLParser::BOTTOM)
+      | (1ULL << CHTLParser::FROM)
+      | (1ULL << CHTLParser::AS)
+      | (1ULL << CHTLParser::EXCEPT)
+      | (1ULL << CHTLParser::BOOLEAN)
+      | (1ULL << CHTLParser::COLON)
+      | (1ULL << CHTLParser::SEMICOLON)
+      | (1ULL << CHTLParser::EQUALS)
+      | (1ULL << CHTLParser::COMMA)
+      | (1ULL << CHTLParser::DOT)
+      | (1ULL << CHTLParser::HASH)
+      | (1ULL << CHTLParser::AMPERSAND)
+      | (1ULL << CHTLParser::MINUS)
+      | (1ULL << CHTLParser::LBRACE)
+      | (1ULL << CHTLParser::LBRACKET)
+      | (1ULL << CHTLParser::RBRACKET)
+      | (1ULL << CHTLParser::LPAREN)
+      | (1ULL << CHTLParser::RPAREN)
+      | (1ULL << CHTLParser::LINE_COMMENT)
+      | (1ULL << CHTLParser::BLOCK_COMMENT)
+      | (1ULL << CHTLParser::GENERATOR_COMMENT)
+      | (1ULL << CHTLParser::STRING_LITERAL)
+      | (1ULL << CHTLParser::SINGLE_STRING_LITERAL)
+      | (1ULL << CHTLParser::IDENTIFIER)
+      | (1ULL << CHTLParser::NUMBER)
+      | (1ULL << CHTLParser::UNQUOTED_LITERAL)
+      | (1ULL << CHTLParser::WS))) != 0)) {
       setState(535);
       _la = _input->LA(1);
       if (_la == 0 || _la == Token::EOF || (_la == CHTLParser::RBRACE)) {
@@ -6720,9 +6914,5 @@ CHTLParser::NameAssignmentContext* CHTLParser::nameAssignment() {
 }
 
 void CHTLParser::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  chtlParserInitialize();
-#else
-  ::antlr4::internal::call_once(chtlParserOnceFlag, chtlParserInitialize);
-#endif
+  std::call_once(chtlParserOnceFlag, chtlParserInitialize);
 }

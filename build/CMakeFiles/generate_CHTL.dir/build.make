@@ -71,7 +71,7 @@ CMakeFiles/generate_CHTL: generated/CHTL/CHTLParser.cpp
 
 generated/CHTL/CHTLLexer.cpp: /workspace/grammar/CHTL.g4
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating CHTL parser with ANTLR4"
-	java -jar /workspace/lib/antlr-4.13.1-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/CHTL /workspace/grammar/CHTL.g4
+	java -jar /workspace/lib/antlr-4.10-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/CHTL /workspace/grammar/CHTL.g4
 
 generated/CHTL/CHTLParser.cpp: generated/CHTL/CHTLLexer.cpp
 	@$(CMAKE_COMMAND) -E touch_nocreate generated/CHTL/CHTLParser.cpp

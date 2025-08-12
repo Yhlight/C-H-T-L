@@ -1,62 +1,21 @@
 #ifndef CHTL_PARSER_CHTLVISITOR_H
 #define CHTL_PARSER_CHTLVISITOR_H
 
-// TODO: 当ANTLR4生成代码后，取消下面的注释
-// #include "CHTL/CHTLBaseVisitor.h"
-// #include "CHTL/CHTLParser.h"
-
+#include "CHTL/CHTLBaseVisitor.h"
+#include "CHTL/CHTLParser.h"
 #include "Node/Node.h"
 #include "Node/ElementNode.h"
+#include "Node/TextNode.h"
+#include "Node/StyleNode.h"
+#include "Node/ScriptNode.h"
+#include "Node/TemplateNode.h"
+#include "Node/CustomNode.h"
 #include "State/SymbolTable.h"
 #include <memory>
 #include <stack>
+#include <any>
 
 namespace CHTL {
-
-// 临时定义，等待ANTLR4生成
-namespace CHTLParser {
-    class ProgramContext {};
-    class ElementContext {};
-    class AttributesContext {};
-    class AttributeContext {};
-    class TextNodeContext {};
-    class LiteralContext {};
-    class CommentContext {};
-    class StyleBlockContext {};
-    class StyleContentContext {};
-    class InlineStyleContext {};
-    class ClassSelectorContext {};
-    class IdSelectorContext {};
-    class ScriptBlockContext {};
-    class TemplateDeclContext {};
-    class StyleTemplateContext {};
-    class ElementTemplateContext {};
-    class VarTemplateContext {};
-    class TemplateRefContext {};
-    class CustomDeclContext {};
-    class StyleCustomContext {};
-    class ElementCustomContext {};
-    class VarCustomContext {};
-    class CustomRefContext {};
-    class OriginBlockContext {};
-    class ImportStmtContext {};
-    class NamespaceDeclContext {};
-    class QualifiedNameContext {};
-    class ConfigBlockContext {};
-    class ConfigEntryContext {};
-}
-
-// 临时基类，等待ANTLR4生成
-class CHTLBaseVisitor {
-public:
-    virtual ~CHTLBaseVisitor() = default;
-protected:
-    // 临时实现
-    class Any {};
-    Any visitChildren(void*) { return Any(); }
-};
-
-using antlrcpp = CHTLBaseVisitor; // 临时别名
 
 /**
  * CHTL语法访问者 - 基于ANTLR4生成的代码
@@ -71,49 +30,48 @@ public:
     NodePtr getAST() { return rootNode_; }
     
     // 重写ANTLR4生成的visitor方法
-    antlrcpp::Any visitProgram(CHTLParser::ProgramContext* ctx);
-    antlrcpp::Any visitElement(CHTLParser::ElementContext* ctx);
-    antlrcpp::Any visitAttributes(CHTLParser::AttributesContext* ctx);
-    antlrcpp::Any visitAttribute(CHTLParser::AttributeContext* ctx);
-    antlrcpp::Any visitTextNode(CHTLParser::TextNodeContext* ctx);
-    antlrcpp::Any visitLiteral(CHTLParser::LiteralContext* ctx);
-    antlrcpp::Any visitComment(CHTLParser::CommentContext* ctx);
+    std::any visitProgram(CHTLParser::ProgramContext* ctx) override;
+    std::any visitElement(CHTLParser::ElementContext* ctx) override;
+    std::any visitAttribute(CHTLParser::AttributeContext* ctx) override;
+    std::any visitTextNode(CHTLParser::TextNodeContext* ctx) override;
+    std::any visitStringLiteral(CHTLParser::StringLiteralContext* ctx) override;
+    std::any visitComment(CHTLParser::CommentContext* ctx) override;
     
     // Style相关
-    antlrcpp::Any visitStyleBlock(CHTLParser::StyleBlockContext* ctx);
-    antlrcpp::Any visitStyleContent(CHTLParser::StyleContentContext* ctx);
-    antlrcpp::Any visitInlineStyle(CHTLParser::InlineStyleContext* ctx);
-    antlrcpp::Any visitClassSelector(CHTLParser::ClassSelectorContext* ctx);
-    antlrcpp::Any visitIdSelector(CHTLParser::IdSelectorContext* ctx);
+    std::any visitStyleBlock(CHTLParser::StyleBlockContext* ctx) override;
+    std::any visitStyleContent(CHTLParser::StyleContentContext* ctx) override;
+    std::any visitCssProperty(CHTLParser::CssPropertyContext* ctx) override;
+    std::any visitCssSelector(CHTLParser::CssSelectorContext* ctx) override;
+    std::any visitClassSelector(CHTLParser::ClassSelectorContext* ctx) override;
+    std::any visitIdSelector(CHTLParser::IdSelectorContext* ctx) override;
     
     // Script相关
-    antlrcpp::Any visitScriptBlock(CHTLParser::ScriptBlockContext* ctx);
+    std::any visitScriptBlock(CHTLParser::ScriptBlockContext* ctx) override;
     
     // Template相关
-    antlrcpp::Any visitTemplateDecl(CHTLParser::TemplateDeclContext* ctx);
-    antlrcpp::Any visitStyleTemplate(CHTLParser::StyleTemplateContext* ctx);
-    antlrcpp::Any visitElementTemplate(CHTLParser::ElementTemplateContext* ctx);
-    antlrcpp::Any visitVarTemplate(CHTLParser::VarTemplateContext* ctx);
-    antlrcpp::Any visitTemplateRef(CHTLParser::TemplateRefContext* ctx);
+    std::any visitTemplateDeclaration(CHTLParser::TemplateDeclarationContext* ctx) override;
+    std::any visitTemplateType(CHTLParser::TemplateTypeContext* ctx) override;
+    std::any visitTemplateName(CHTLParser::TemplateNameContext* ctx) override;
+    std::any visitTemplateUsage(CHTLParser::TemplateUsageContext* ctx) override;
     
     // Custom相关
-    antlrcpp::Any visitCustomDecl(CHTLParser::CustomDeclContext* ctx);
-    antlrcpp::Any visitStyleCustom(CHTLParser::StyleCustomContext* ctx);
-    antlrcpp::Any visitElementCustom(CHTLParser::ElementCustomContext* ctx);
-    antlrcpp::Any visitVarCustom(CHTLParser::VarCustomContext* ctx);
-    antlrcpp::Any visitCustomRef(CHTLParser::CustomRefContext* ctx);
+    std::any visitCustomDeclaration(CHTLParser::CustomDeclarationContext* ctx) override;
+    std::any visitCustomType(CHTLParser::CustomTypeContext* ctx) override;
+    std::any visitCustomName(CHTLParser::CustomNameContext* ctx) override;
+    std::any visitCustomUsage(CHTLParser::CustomUsageContext* ctx) override;
     
     // Origin块相关
-    antlrcpp::Any visitOriginBlock(CHTLParser::OriginBlockContext* ctx);
+    std::any visitOriginBlock(CHTLParser::OriginBlockContext* ctx) override;
     
-    // Import/Namespace相关
-    antlrcpp::Any visitImportStmt(CHTLParser::ImportStmtContext* ctx);
-    antlrcpp::Any visitNamespaceDecl(CHTLParser::NamespaceDeclContext* ctx);
-    antlrcpp::Any visitQualifiedName(CHTLParser::QualifiedNameContext* ctx);
+    // Import相关
+    std::any visitImportStatement(CHTLParser::ImportStatementContext* ctx) override;
+    std::any visitImportChtl(CHTLParser::ImportChtlContext* ctx) override;
+    
+    // Namespace相关
+    std::any visitNamespaceDeclaration(CHTLParser::NamespaceDeclarationContext* ctx) override;
     
     // Configuration相关
-    antlrcpp::Any visitConfigBlock(CHTLParser::ConfigBlockContext* ctx);
-    antlrcpp::Any visitConfigEntry(CHTLParser::ConfigEntryContext* ctx);
+    std::any visitConfigurationBlock(CHTLParser::ConfigurationBlockContext* ctx) override;
     
 private:
     // 辅助方法
@@ -121,15 +79,11 @@ private:
     NodePtr createTextNode(const std::string& text);
     NodePtr createStyleNode();
     NodePtr createScriptNode(const std::string& content, bool isCHTLJS);
-    NodePtr createTemplateNode(NodeType type, const std::string& name);
-    NodePtr createCustomNode(NodeType type, const std::string& name);
+    NodePtr createTemplateNode(TemplateNode::TemplateType type, const std::string& name);
+    NodePtr createCustomNode(CustomNode::CustomType type, const std::string& name);
     
     // 处理属性
-    void processAttributes(NodePtr node, CHTLParser::AttributesContext* ctx);
-    
-    // 处理样式
-    void processInlineStyles(NodePtr styleNode, CHTLParser::StyleContentContext* ctx);
-    void processClassSelectors(NodePtr styleNode, CHTLParser::StyleContentContext* ctx);
+    void processElementAttributes(NodePtr node, CHTLParser::ElementBodyContext* ctx);
     
     // 符号表注册
     void registerTemplate(const std::string& name, NodePtr templateNode);
@@ -137,6 +91,9 @@ private:
     
     // 检测CHTL JS扩展
     bool containsCHTLJSExtensions(const std::string& code) const;
+    
+    // 获取文本内容
+    std::string getText(antlr4::tree::ParseTree* tree);
     
 private:
     SymbolTable* symbolTable_;

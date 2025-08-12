@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.10
 
 
 #include "CHTLJavaScriptLexer.h"
@@ -41,20 +41,11 @@ struct CHTLJavaScriptLexerStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag chtljavascriptlexerLexerOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag chtljavascriptlexerLexerOnceFlag;
 CHTLJavaScriptLexerStaticData *chtljavascriptlexerLexerStaticData = nullptr;
 
 void chtljavascriptlexerLexerInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (chtljavascriptlexerLexerStaticData != nullptr) {
-    return;
-  }
-#else
   assert(chtljavascriptlexerLexerStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<CHTLJavaScriptLexerStaticData>(
     std::vector<std::string>{
       "CHTL_ARROW", "CHTL_SELECTOR_START", "CHTL_SELECTOR_END", "HASH", 
@@ -68,9 +59,9 @@ void chtljavascriptlexerLexerInitialize() {
       "THIS", "WITH", "DEFAULT", "IF", "THROW", "DELETE", "IN", "TRY", "CLASS", 
       "ENUM", "EXTENDS", "SUPER", "CONST", "EXPORT", "IMPORT", "ASYNC", 
       "AWAIT", "YIELD", "LET", "STATIC", "FROM", "AS", "OF", "GET", "SET", 
-      "NULL", "BOOLEAN", "UNDEFINED", "LPAREN", "RPAREN", "LBRACE", "RBRACE", 
-      "LBRACKET", "RBRACKET", "SEMICOLON", "COMMA", "DOT", "QUESTION", "COLON", 
-      "ELLIPSIS", "EQUALS", "STAR_EQUALS", "SLASH_EQUALS", "PERCENT_EQUALS", 
+      "NULL_LITERAL", "BOOLEAN", "UNDEFINED", "LPAREN", "RPAREN", "LBRACE", 
+      "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", "COMMA", "DOT", "QUESTION", 
+      "COLON", "ELLIPSIS", "EQUALS", "STAR_EQUALS", "SLASH_EQUALS", "PERCENT_EQUALS", 
       "PLUS_EQUALS", "MINUS_EQUALS", "LSHIFT_EQUALS", "RSHIFT_EQUALS", "URSHIFT_EQUALS", 
       "AMPERSAND_EQUALS", "CARET_EQUALS", "PIPE_EQUALS", "POWER_EQUALS", 
       "NULLISH_EQUALS", "ARROW", "PLUSPLUS", "MINUSMINUS", "PLUS", "MINUS", 
@@ -115,9 +106,9 @@ void chtljavascriptlexerLexerInitialize() {
       "THIS", "WITH", "DEFAULT", "IF", "THROW", "DELETE", "IN", "TRY", "CLASS", 
       "ENUM", "EXTENDS", "SUPER", "CONST", "EXPORT", "IMPORT", "ASYNC", 
       "AWAIT", "YIELD", "LET", "STATIC", "FROM", "AS", "OF", "GET", "SET", 
-      "NULL", "BOOLEAN", "UNDEFINED", "LPAREN", "RPAREN", "LBRACE", "RBRACE", 
-      "LBRACKET", "RBRACKET", "SEMICOLON", "COMMA", "DOT", "QUESTION", "COLON", 
-      "ELLIPSIS", "EQUALS", "STAR_EQUALS", "SLASH_EQUALS", "PERCENT_EQUALS", 
+      "NULL_LITERAL", "BOOLEAN", "UNDEFINED", "LPAREN", "RPAREN", "LBRACE", 
+      "RBRACE", "LBRACKET", "RBRACKET", "SEMICOLON", "COMMA", "DOT", "QUESTION", 
+      "COLON", "ELLIPSIS", "EQUALS", "STAR_EQUALS", "SLASH_EQUALS", "PERCENT_EQUALS", 
       "PLUS_EQUALS", "MINUS_EQUALS", "LSHIFT_EQUALS", "RSHIFT_EQUALS", "URSHIFT_EQUALS", 
       "AMPERSAND_EQUALS", "CARET_EQUALS", "PIPE_EQUALS", "POWER_EQUALS", 
       "NULLISH_EQUALS", "ARROW", "PLUSPLUS", "MINUSMINUS", "PLUS", "MINUS", 
@@ -501,9 +492,5 @@ const atn::ATN& CHTLJavaScriptLexer::getATN() const {
 
 
 void CHTLJavaScriptLexer::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  chtljavascriptlexerLexerInitialize();
-#else
-  ::antlr4::internal::call_once(chtljavascriptlexerLexerOnceFlag, chtljavascriptlexerLexerInitialize);
-#endif
+  std::call_once(chtljavascriptlexerLexerOnceFlag, chtljavascriptlexerLexerInitialize);
 }

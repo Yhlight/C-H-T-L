@@ -1,0 +1,40 @@
+html {
+    head {
+        title: "CHTL Test Page";
+    }
+
+    body {
+        h1 {
+            text {"Welcome to CHTL!"}
+        }
+
+        div {
+            id: "content";
+            class: "container";
+
+            p {
+                text {"This is a test paragraph."}
+            }
+
+            style {
+                background-color: #f0f0f0;
+                padding: 20px;
+
+                .highlight {
+                    color: red;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        script {
+            console.log("Hello from CHTL!");
+
+            {{"#content"}}->listen({
+                click: function(e) {
+                    console.log("Container clicked!");
+                }
+            });
+        }
+    }
+}

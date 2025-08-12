@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/workspace -I/workspace/build/generated -I/workspace/Parser -I/workspace/Common -I/workspace/Node -I/workspace/Context -I/workspace/State -I/workspace/Scanner
+CXX_INCLUDES = -I/workspace -I/workspace/build/generated -I/workspace/Parser -I/usr/include/antlr4-runtime -I/workspace/Common -I/workspace/Node -I/workspace/Context -I/workspace/State -I/workspace/Scanner
 
 CXX_FLAGS = -std=gnu++17
 

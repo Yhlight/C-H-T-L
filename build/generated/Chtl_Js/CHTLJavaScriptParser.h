@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.10
 
 #pragma once
 
@@ -24,17 +24,17 @@ public:
     THROW = 49, DELETE = 50, IN = 51, TRY = 52, CLASS = 53, ENUM = 54, EXTENDS = 55, 
     SUPER = 56, CONST = 57, EXPORT = 58, IMPORT = 59, ASYNC = 60, AWAIT = 61, 
     YIELD = 62, LET = 63, STATIC = 64, FROM = 65, AS = 66, OF = 67, GET = 68, 
-    SET = 69, NULL_ = 70, BOOLEAN = 71, UNDEFINED = 72, LPAREN = 73, RPAREN = 74, 
-    LBRACE = 75, RBRACE = 76, LBRACKET = 77, RBRACKET = 78, SEMICOLON = 79, 
-    COMMA = 80, DOT = 81, QUESTION = 82, COLON = 83, ELLIPSIS = 84, EQUALS = 85, 
-    STAR_EQUALS = 86, SLASH_EQUALS = 87, PERCENT_EQUALS = 88, PLUS_EQUALS = 89, 
-    MINUS_EQUALS = 90, LSHIFT_EQUALS = 91, RSHIFT_EQUALS = 92, URSHIFT_EQUALS = 93, 
-    AMPERSAND_EQUALS = 94, CARET_EQUALS = 95, PIPE_EQUALS = 96, POWER_EQUALS = 97, 
-    NULLISH_EQUALS = 98, ARROW = 99, PLUSPLUS = 100, MINUSMINUS = 101, PLUS = 102, 
-    MINUS = 103, TILDE = 104, EXCLAMATION = 105, STAR = 106, SLASH = 107, 
-    PERCENT = 108, POWER = 109, NULLISH_COALESCING = 110, LSHIFT = 111, 
-    RSHIFT = 112, URSHIFT = 113, LT = 114, GT = 115, LE = 116, GE = 117, 
-    EQUALS_OP = 118, NOT_EQUALS = 119, STRICT_EQUALS = 120, STRICT_NOT_EQUALS = 121, 
+    SET = 69, NULL_LITERAL = 70, BOOLEAN = 71, UNDEFINED = 72, LPAREN = 73, 
+    RPAREN = 74, LBRACE = 75, RBRACE = 76, LBRACKET = 77, RBRACKET = 78, 
+    SEMICOLON = 79, COMMA = 80, DOT = 81, QUESTION = 82, COLON = 83, ELLIPSIS = 84, 
+    EQUALS = 85, STAR_EQUALS = 86, SLASH_EQUALS = 87, PERCENT_EQUALS = 88, 
+    PLUS_EQUALS = 89, MINUS_EQUALS = 90, LSHIFT_EQUALS = 91, RSHIFT_EQUALS = 92, 
+    URSHIFT_EQUALS = 93, AMPERSAND_EQUALS = 94, CARET_EQUALS = 95, PIPE_EQUALS = 96, 
+    POWER_EQUALS = 97, NULLISH_EQUALS = 98, ARROW = 99, PLUSPLUS = 100, 
+    MINUSMINUS = 101, PLUS = 102, MINUS = 103, TILDE = 104, EXCLAMATION = 105, 
+    STAR = 106, SLASH = 107, PERCENT = 108, POWER = 109, NULLISH_COALESCING = 110, 
+    LSHIFT = 111, RSHIFT = 112, URSHIFT = 113, LT = 114, GT = 115, LE = 116, 
+    GE = 117, EQUALS_OP = 118, NOT_EQUALS = 119, STRICT_EQUALS = 120, STRICT_NOT_EQUALS = 121, 
     AMPERSAND = 122, CARET = 123, PIPE = 124, AND_OP = 125, OR_OP = 126, 
     NUMBER = 127, BIGINT = 128, STRING = 129
   };
@@ -46,28 +46,28 @@ public:
     RuleDelegateProperty = 9, RuleSelectorArray = 10, RuleAnimateCall = 11, 
     RuleAnimateObject = 12, RuleAnimateProperty = 13, RuleCssObject = 14, 
     RuleCssProperty = 15, RuleWhenArray = 16, RuleWhenObject = 17, RuleWhenProperty = 18, 
-    RuleProgram = 19, RuleStatement = 20, RuleBlock = 21, RuleVariableStatement = 22, 
-    RuleVariableDeclarationList = 23, RuleVarModifier = 24, RuleVariableDeclaration = 25, 
-    RuleEmptyStatement = 26, RuleExpressionStatement = 27, RuleIfStatement = 28, 
-    RuleIterationStatement = 29, RuleContinueStatement = 30, RuleBreakStatement = 31, 
-    RuleReturnStatement = 32, RuleWithStatement = 33, RuleLabelledStatement = 34, 
-    RuleSwitchStatement = 35, RuleCaseBlock = 36, RuleCaseClauses = 37, 
-    RuleCaseClause = 38, RuleDefaultClause = 39, RuleThrowStatement = 40, 
-    RuleTryStatement = 41, RuleCatchClause = 42, RuleFinallyClause = 43, 
-    RuleFunctionDeclaration = 44, RuleClassDeclaration = 45, RuleClassTail = 46, 
-    RuleClassElement = 47, RuleMethodDefinition = 48, RuleGetter = 49, RuleSetter = 50, 
-    RuleGeneratorMethod = 51, RuleAsyncMethod = 52, RuleImportStatement = 53, 
-    RuleImportFromBlock = 54, RuleImportNamespace = 55, RuleImportSpecifier = 56, 
-    RuleModuleExportName = 57, RuleExportStatement = 58, RuleExportFromBlock = 59, 
-    RuleExportNamespace = 60, RuleExportSpecifier = 61, RuleDeclaration = 62, 
-    RuleFormalParameterList = 63, RuleFormalParameter = 64, RuleRestParameter = 65, 
-    RuleAssignable = 66, RulePropertyName = 67, RuleExpressionSequence = 68, 
-    RuleAssignmentOperator = 69, RuleLiteral = 70, RuleArrayLiteral = 71, 
-    RuleElementList = 72, RuleArrayElement = 73, RuleObjectLiteral = 74, 
-    RulePropertyAssignment = 75, RuleArguments = 76, RuleArgumentList = 77, 
-    RuleArgument = 78, RuleAnonymousFunction = 79, RuleArrowFunction = 80, 
-    RuleArrowFunctionParameters = 81, RuleArrowFunctionBody = 82, RuleTypeofExpression = 83, 
-    RuleIdentifierName = 84, RuleReservedWord = 85, RuleKeyword = 86
+    RuleLiteral = 19, RuleProgram = 20, RuleStatement = 21, RuleBlock = 22, 
+    RuleVariableStatement = 23, RuleVariableDeclarationList = 24, RuleVarModifier = 25, 
+    RuleVariableDeclaration = 26, RuleEmptyStatement = 27, RuleExpressionStatement = 28, 
+    RuleIfStatement = 29, RuleIterationStatement = 30, RuleContinueStatement = 31, 
+    RuleBreakStatement = 32, RuleReturnStatement = 33, RuleWithStatement = 34, 
+    RuleLabelledStatement = 35, RuleSwitchStatement = 36, RuleCaseBlock = 37, 
+    RuleCaseClauses = 38, RuleCaseClause = 39, RuleDefaultClause = 40, RuleThrowStatement = 41, 
+    RuleTryStatement = 42, RuleCatchClause = 43, RuleFinallyClause = 44, 
+    RuleFunctionDeclaration = 45, RuleClassDeclaration = 46, RuleClassTail = 47, 
+    RuleClassElement = 48, RuleMethodDefinition = 49, RuleGetter = 50, RuleSetter = 51, 
+    RuleGeneratorMethod = 52, RuleAsyncMethod = 53, RuleImportStatement = 54, 
+    RuleImportFromBlock = 55, RuleImportNamespace = 56, RuleImportSpecifier = 57, 
+    RuleModuleExportName = 58, RuleExportStatement = 59, RuleExportFromBlock = 60, 
+    RuleExportNamespace = 61, RuleExportSpecifier = 62, RuleDeclaration = 63, 
+    RuleFormalParameterList = 64, RuleFormalParameter = 65, RuleRestParameter = 66, 
+    RuleAssignable = 67, RulePropertyName = 68, RuleExpressionSequence = 69, 
+    RuleAssignmentOperator = 70, RuleArrayLiteral = 71, RuleElementList = 72, 
+    RuleArrayElement = 73, RuleObjectLiteral = 74, RulePropertyAssignment = 75, 
+    RuleArguments = 76, RuleArgumentList = 77, RuleArgument = 78, RuleAnonymousFunction = 79, 
+    RuleArrowFunction = 80, RuleArrowFunctionParameters = 81, RuleArrowFunctionBody = 82, 
+    RuleTypeofExpression = 83, RuleIdentifierName = 84, RuleReservedWord = 85, 
+    RuleKeyword = 86
   };
 
   explicit CHTLJavaScriptParser(antlr4::TokenStream *input);
@@ -106,6 +106,7 @@ public:
   class WhenArrayContext;
   class WhenObjectContext;
   class WhenPropertyContext;
+  class LiteralContext;
   class ProgramContext;
   class StatementContext;
   class BlockContext;
@@ -157,7 +158,6 @@ public:
   class PropertyNameContext;
   class ExpressionSequenceContext;
   class AssignmentOperatorContext;
-  class LiteralContext;
   class ArrayLiteralContext;
   class ElementListContext;
   class ArrayElementContext;
@@ -569,6 +569,24 @@ public:
   };
 
   WhenPropertyContext* whenProperty();
+
+  class  LiteralContext : public antlr4::ParserRuleContext {
+  public:
+    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *NUMBER();
+    antlr4::tree::TerminalNode *STRING();
+    antlr4::tree::TerminalNode *BOOLEAN();
+    antlr4::tree::TerminalNode *NULL_LITERAL();
+    antlr4::tree::TerminalNode *UNDEFINED();
+    antlr4::tree::TerminalNode *TEMPLATE_STRING();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LiteralContext* literal();
 
   class  ProgramContext : public antlr4::ParserRuleContext {
   public:
@@ -1434,25 +1452,6 @@ public:
 
   AssignmentOperatorContext* assignmentOperator();
 
-  class  LiteralContext : public antlr4::ParserRuleContext {
-  public:
-    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *NUMBER();
-    antlr4::tree::TerminalNode *STRING();
-    antlr4::tree::TerminalNode *TEMPLATE_STRING();
-    antlr4::tree::TerminalNode *BOOLEAN();
-    antlr4::tree::TerminalNode *NULL_();
-    antlr4::tree::TerminalNode *UNDEFINED();
-    antlr4::tree::TerminalNode *REGEX();
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  LiteralContext* literal();
-
   class  ArrayLiteralContext : public antlr4::ParserRuleContext {
   public:
     ArrayLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -1681,7 +1680,7 @@ public:
     ReservedWordContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     KeywordContext *keyword();
-    antlr4::tree::TerminalNode *NULL_();
+    antlr4::tree::TerminalNode *NULL_LITERAL();
     antlr4::tree::TerminalNode *BOOLEAN();
 
 

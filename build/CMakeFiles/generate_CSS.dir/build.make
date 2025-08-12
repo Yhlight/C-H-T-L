@@ -71,7 +71,7 @@ CMakeFiles/generate_CSS: generated/Css/CSSParser.cpp
 
 generated/Css/CSSLexer.cpp: /workspace/grammar/CSS.g4
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating CSS parser with ANTLR4"
-	java -jar /workspace/lib/antlr-4.13.1-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Css /workspace/grammar/CSS.g4
+	java -jar /workspace/lib/antlr-4.10-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Css /workspace/grammar/CSS.g4
 
 generated/Css/CSSParser.cpp: generated/Css/CSSLexer.cpp
 	@$(CMAKE_COMMAND) -E touch_nocreate generated/Css/CSSParser.cpp

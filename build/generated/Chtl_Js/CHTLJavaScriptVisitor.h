@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.10
 
 #pragma once
 
@@ -56,6 +56,8 @@ public:
     virtual std::any visitWhenObject(CHTLJavaScriptParser::WhenObjectContext *context) = 0;
 
     virtual std::any visitWhenProperty(CHTLJavaScriptParser::WhenPropertyContext *context) = 0;
+
+    virtual std::any visitLiteral(CHTLJavaScriptParser::LiteralContext *context) = 0;
 
     virtual std::any visitProgram(CHTLJavaScriptParser::ProgramContext *context) = 0;
 
@@ -158,8 +160,6 @@ public:
     virtual std::any visitExpressionSequence(CHTLJavaScriptParser::ExpressionSequenceContext *context) = 0;
 
     virtual std::any visitAssignmentOperator(CHTLJavaScriptParser::AssignmentOperatorContext *context) = 0;
-
-    virtual std::any visitLiteral(CHTLJavaScriptParser::LiteralContext *context) = 0;
 
     virtual std::any visitArrayLiteral(CHTLJavaScriptParser::ArrayLiteralContext *context) = 0;
 

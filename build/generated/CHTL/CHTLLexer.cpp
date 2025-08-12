@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTL.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTL.g4 by ANTLR 4.10
 
 
 #include "CHTLLexer.h"
@@ -41,20 +41,11 @@ struct CHTLLexerStaticData final {
   std::unique_ptr<antlr4::atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag chtllexerLexerOnceFlag;
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-static thread_local
-#endif
+std::once_flag chtllexerLexerOnceFlag;
 CHTLLexerStaticData *chtllexerLexerStaticData = nullptr;
 
 void chtllexerLexerInitialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  if (chtllexerLexerStaticData != nullptr) {
-    return;
-  }
-#else
   assert(chtllexerLexerStaticData == nullptr);
-#endif
   auto staticData = std::make_unique<CHTLLexerStaticData>(
     std::vector<std::string>{
       "TEXT", "STYLE", "SCRIPT", "TEMPLATE", "CUSTOM", "ORIGIN", "IMPORT", 
@@ -306,9 +297,5 @@ const atn::ATN& CHTLLexer::getATN() const {
 
 
 void CHTLLexer::initialize() {
-#if ANTLR4_USE_THREAD_LOCAL_CACHE
-  chtllexerLexerInitialize();
-#else
-  ::antlr4::internal::call_once(chtllexerLexerOnceFlag, chtllexerLexerInitialize);
-#endif
+  std::call_once(chtllexerLexerOnceFlag, chtllexerLexerInitialize);
 }

@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/JavaScript.g4 by ANTLR 4.10
 
 #pragma once
 
@@ -18,7 +18,7 @@ public:
     WITH = 20, DEFAULT = 21, IF = 22, THROW = 23, DELETE = 24, IN = 25, 
     TRY = 26, CLASS = 27, ENUM = 28, EXTENDS = 29, SUPER = 30, CONST = 31, 
     EXPORT = 32, IMPORT = 33, ASYNC = 34, AWAIT = 35, YIELD = 36, LET = 37, 
-    STATIC = 38, FROM = 39, AS = 40, OF = 41, GET = 42, SET = 43, NULL_ = 44, 
+    STATIC = 38, FROM = 39, AS = 40, OF = 41, GET = 42, SET = 43, NULL_LITERAL = 44, 
     BOOLEAN = 45, UNDEFINED = 46, LPAREN = 47, RPAREN = 48, LBRACE = 49, 
     RBRACE = 50, LBRACKET = 51, RBRACKET = 52, SEMICOLON = 53, COMMA = 54, 
     DOT = 55, QUESTION = 56, COLON = 57, ELLIPSIS = 58, EQUALS = 59, STAR_EQUALS = 60, 

@@ -1,5 +1,5 @@
 
-// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.13.1
+// Generated from /workspace/grammar/CHTLJavaScript.g4 by ANTLR 4.10
 
 #pragma once
 
@@ -88,6 +88,10 @@ public:
   }
 
   virtual std::any visitWhenProperty(CHTLJavaScriptParser::WhenPropertyContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLiteral(CHTLJavaScriptParser::LiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -292,10 +296,6 @@ public:
   }
 
   virtual std::any visitAssignmentOperator(CHTLJavaScriptParser::AssignmentOperatorContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLiteral(CHTLJavaScriptParser::LiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -71,7 +71,7 @@ CMakeFiles/generate_CHTLJavaScript: generated/Chtl_Js/CHTLJavaScriptParser.cpp
 
 generated/Chtl_Js/CHTLJavaScriptLexer.cpp: /workspace/grammar/CHTLJavaScript.g4
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating CHTLJavaScript parser with ANTLR4"
-	java -jar /workspace/lib/antlr-4.13.1-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Chtl_Js /workspace/grammar/CHTLJavaScript.g4
+	java -jar /workspace/lib/antlr-4.10-complete.jar -Dlanguage=Cpp -visitor -no-listener -o /workspace/build/generated/Chtl_Js /workspace/grammar/CHTLJavaScript.g4
 
 generated/Chtl_Js/CHTLJavaScriptParser.cpp: generated/Chtl_Js/CHTLJavaScriptLexer.cpp
 	@$(CMAKE_COMMAND) -E touch_nocreate generated/Chtl_Js/CHTLJavaScriptParser.cpp

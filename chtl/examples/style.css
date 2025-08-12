@@ -1,0 +1,8 @@
+/* sample css */
+.box {
+  width: 100px;
+  height: 200px;
+}
+#id:hover::before {
+  content: 'x';
+}

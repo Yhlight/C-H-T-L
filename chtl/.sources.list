@@ -3,3 +3,5 @@
 /workspace/chtl/gen/CHTLBaseVisitor.java
 /workspace/chtl/gen/CHTLParser.java
 /workspace/chtl/src/chtl/Main.java
+/workspace/chtl/src/chtl/css/CssMain.java
+/workspace/chtl/src/chtl/js/JsMain.java

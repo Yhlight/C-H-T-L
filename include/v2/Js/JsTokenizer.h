@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <unordered_map>
 
 namespace chtl::v2::js {
 

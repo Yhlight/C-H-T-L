@@ -1,4 +1,5 @@
 #include "v2/Import/ImportSystem.h"
+// #include "v2/Cmod/CmodSystem.h"  // 暂时禁用
 #include <filesystem>
 #include <fstream>
 #include <sstream>

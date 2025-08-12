@@ -188,6 +188,57 @@ void ChtlGenerator::visitReference(Reference* node) {
     }
 }
 
+void ChtlGenerator::visitImport(Import* node) {
+    // 收集导入信息
+    ImportItem item;
+    item.type = node->getType();
+    item.path = node->getPath();
+    item.alias = node->getAlias();
+    
+    imports_.push_back(item);
+    
+    // 根据导入类型决定如何处理
+    switch (node->getType()) {
+        case ImportType::Style: {
+            // CSS 导入生成 <link> 标签
+            std::string linkTag = "<link rel=\"stylesheet\" href=\"" + 
+                                 node->getPath() + "\">";
+            htmlCollector_.appendLine(linkTag);
+            break;
+        }
+        
+        case ImportType::JavaScript: {
+            // JS 导入生成 <script> 标签
+            std::string scriptTag = "<script src=\"" + 
+                                   node->getPath() + "\"></script>";
+            htmlCollector_.appendLine(scriptTag);
+            break;
+        }
+        
+        case ImportType::Chtl:
+        case ImportType::Element: {
+            // CHTL 和元素导入需要在第二遍处理
+            // 这里只记录，实际处理在 generate 方法中
+            break;
+        }
+        
+        case ImportType::Html: {
+            // HTML 导入直接包含内容
+            // 这需要使用 ImportSystem 来加载内容
+            break;
+        }
+        
+        case ImportType::CJMOD: {
+            // CJMOD 导入需要特殊处理
+            // TODO: 集成 CJMOD 系统
+            break;
+        }
+        
+        default:
+            break;
+    }
+}
+
 void ChtlGenerator::generateElementStart(Element* node) {
     htmlCollector_.appendIndent();
     htmlCollector_.append("<" + node->getTag());

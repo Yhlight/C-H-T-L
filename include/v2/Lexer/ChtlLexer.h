@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <queue>
+#include <unordered_set>
 
 namespace chtl::v2 {
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "v2/Node/Node.h"
+#include "v2/Import/ImportSystem.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -70,6 +71,15 @@ struct GenerateResult {
     
     // 文件映射
     std::map<std::string, std::string> files;
+};
+
+/**
+ * 导入项
+ */
+struct ImportItem {
+    ImportType type;
+    std::string path;
+    std::string alias;
 };
 
 /**
@@ -178,14 +188,17 @@ private:
     CodeCollector cssCollector_;
     CodeCollector jsCollector_;
     
+    // 模板存储
+    std::map<std::string, Template*> templates_;
+    
+    // 导入信息
+    std::vector<ImportItem> imports_;
+    
     // 选项
     GeneratorOptions options_;
     
     // 结果
     GenerateResult result_;
-    
-    // 模板定义
-    std::map<std::string, Template*> templates_;
     
     // 当前模板参数
     std::map<std::string, std::string> currentParams_;

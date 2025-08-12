@@ -2,74 +2,79 @@
 
 namespace chtl::v2 {
 
-const char* getStateName(ChtlParseState state) {
+std::string getStateName(ChtlParseState state) {
     switch (state) {
-        case ChtlParseState::TOP_LEVEL: return "TOP_LEVEL";
-        case ChtlParseState::TEMPLATE_DECLARATION: return "TEMPLATE_DECLARATION";
-        case ChtlParseState::CUSTOM_DECLARATION: return "CUSTOM_DECLARATION";
-        case ChtlParseState::IMPORT_DECLARATION: return "IMPORT_DECLARATION";
-        case ChtlParseState::CONFIG_DECLARATION: return "CONFIG_DECLARATION";
-        case ChtlParseState::ORIGIN_DECLARATION: return "ORIGIN_DECLARATION";
-        case ChtlParseState::ELEMENT_TAG: return "ELEMENT_TAG";
+        case ChtlParseState::INITIAL: return "INITIAL";
+        case ChtlParseState::ELEMENT: return "ELEMENT";
+        case ChtlParseState::STYLE: return "STYLE";
+        case ChtlParseState::SCRIPT: return "SCRIPT";
+        case ChtlParseState::TEXT: return "TEXT";
         case ChtlParseState::ELEMENT_CONTENT: return "ELEMENT_CONTENT";
-        case ChtlParseState::ELEMENT_ATTRIBUTES: return "ELEMENT_ATTRIBUTES";
-        case ChtlParseState::STYLE_BLOCK: return "STYLE_BLOCK";
-        case ChtlParseState::STYLE_SELECTOR: return "STYLE_SELECTOR";
-        case ChtlParseState::STYLE_PROPERTY_NAME: return "STYLE_PROPERTY_NAME";
-        case ChtlParseState::STYLE_PROPERTY_VALUE: return "STYLE_PROPERTY_VALUE";
-        case ChtlParseState::STYLE_TEXT_CONTENT: return "STYLE_TEXT_CONTENT";
-        case ChtlParseState::SCRIPT_BLOCK: return "SCRIPT_BLOCK";
+        case ChtlParseState::STYLE_CONTENT: return "STYLE_CONTENT";
         case ChtlParseState::SCRIPT_CONTENT: return "SCRIPT_CONTENT";
-        case ChtlParseState::TEXT_BLOCK: return "TEXT_BLOCK";
         case ChtlParseState::TEXT_CONTENT: return "TEXT_CONTENT";
-        case ChtlParseState::ELEMENT_REFERENCE: return "ELEMENT_REFERENCE";
-        case ChtlParseState::STYLE_REFERENCE: return "STYLE_REFERENCE";
-        case ChtlParseState::VAR_REFERENCE: return "VAR_REFERENCE";
-        case ChtlParseState::EXPRESSION: return "EXPRESSION";
+        case ChtlParseState::DECLARATION: return "DECLARATION";
+        case ChtlParseState::REFERENCE: return "REFERENCE";
         case ChtlParseState::STRING_LITERAL: return "STRING_LITERAL";
-        case ChtlParseState::TEMPLATE_PARAMETER: return "TEMPLATE_PARAMETER";
-        case ChtlParseState::CHTL_JS_EXPRESSION: return "CHTL_JS_EXPRESSION";
-        case ChtlParseState::CHTL_JS_SELECTOR: return "CHTL_JS_SELECTOR";
-        case ChtlParseState::INHERIT_OPERATION: return "INHERIT_OPERATION";
-        case ChtlParseState::DELETE_OPERATION: return "DELETE_OPERATION";
-        case ChtlParseState::INSERT_OPERATION: return "INSERT_OPERATION";
+        case ChtlParseState::EXPRESSION: return "EXPRESSION";
+        case ChtlParseState::CHTL_JS: return "CHTL_JS";
         default: return "UNKNOWN";
     }
 }
 
-bool isDeclarationState(ChtlParseState state) {
-    switch (state) {
-        case ChtlParseState::TEMPLATE_DECLARATION:
-        case ChtlParseState::CUSTOM_DECLARATION:
-        case ChtlParseState::IMPORT_DECLARATION:
-        case ChtlParseState::CONFIG_DECLARATION:
-        case ChtlParseState::ORIGIN_DECLARATION:
-            return true;
-        default:
-            return false;
+std::string getSubStateName(ChtlSubState subState) {
+    switch (subState) {
+        case ChtlSubState::NONE: return "NONE";
+        
+        // Element sub-states
+        case ChtlSubState::ELEMENT_TAG: return "ELEMENT_TAG";
+        case ChtlSubState::ELEMENT_ID: return "ELEMENT_ID";
+        case ChtlSubState::ELEMENT_CLASS: return "ELEMENT_CLASS";
+        case ChtlSubState::ELEMENT_ATTR_NAME: return "ELEMENT_ATTR_NAME";
+        case ChtlSubState::ELEMENT_ATTR_VALUE: return "ELEMENT_ATTR_VALUE";
+        
+        // CSS sub-states
+        case ChtlSubState::CSS_SELECTOR: return "CSS_SELECTOR";
+        case ChtlSubState::CSS_PSEUDO: return "CSS_PSEUDO";
+        case ChtlSubState::CSS_COMBINATOR: return "CSS_COMBINATOR";
+        
+        // Declaration sub-states
+        case ChtlSubState::DECLARATION_TYPE: return "DECLARATION_TYPE";
+        case ChtlSubState::DECLARATION_NAME: return "DECLARATION_NAME";
+        case ChtlSubState::DECLARATION_PARAMS: return "DECLARATION_PARAMS";
+        
+        // Reference sub-states
+        case ChtlSubState::REFERENCE_TYPE: return "REFERENCE_TYPE";
+        case ChtlSubState::REFERENCE_NAME: return "REFERENCE_NAME";
+        case ChtlSubState::REFERENCE_ARGS: return "REFERENCE_ARGS";
+        
+        // Expression sub-states
+        case ChtlSubState::EXPR_LITERAL: return "EXPR_LITERAL";
+        case ChtlSubState::EXPR_VARIABLE: return "EXPR_VARIABLE";
+        case ChtlSubState::EXPR_FUNCTION: return "EXPR_FUNCTION";
+        
+        default: return "UNKNOWN";
     }
 }
 
-bool isReferenceState(ChtlParseState state) {
-    switch (state) {
-        case ChtlParseState::ELEMENT_REFERENCE:
-        case ChtlParseState::STYLE_REFERENCE:
-        case ChtlParseState::VAR_REFERENCE:
-            return true;
-        default:
-            return false;
-    }
+bool isBlockState(ChtlParseState state) {
+    return state == ChtlParseState::ELEMENT ||
+           state == ChtlParseState::STYLE ||
+           state == ChtlParseState::SCRIPT ||
+           state == ChtlParseState::TEXT ||
+           state == ChtlParseState::DECLARATION;
 }
 
-bool allowsNestedElements(ChtlParseState state) {
-    switch (state) {
-        case ChtlParseState::ELEMENT_CONTENT:
-        case ChtlParseState::TEMPLATE_DECLARATION:
-        case ChtlParseState::CUSTOM_DECLARATION:
-            return true;
-        default:
-            return false;
-    }
+bool isContentState(ChtlParseState state) {
+    return state == ChtlParseState::ELEMENT_CONTENT ||
+           state == ChtlParseState::STYLE_CONTENT ||
+           state == ChtlParseState::SCRIPT_CONTENT ||
+           state == ChtlParseState::TEXT_CONTENT;
+}
+
+bool needsAnalyzer(ChtlParseState state) {
+    return state == ChtlParseState::STYLE_CONTENT ||
+           state == ChtlParseState::SCRIPT_CONTENT;
 }
 
 } // namespace chtl::v2

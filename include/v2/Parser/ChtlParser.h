@@ -102,6 +102,16 @@ private:
      */
     std::shared_ptr<Node> parseCustomDeclaration();
     
+    /**
+     * 解析导入声明
+     */
+    std::shared_ptr<Node> parseImportDeclaration();
+    
+    /**
+     * 跳过到声明结束
+     */
+    void skipToDeclarationEnd();
+    
     // ===== 辅助方法 =====
     
     /**

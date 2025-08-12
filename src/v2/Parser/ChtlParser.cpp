@@ -97,43 +97,30 @@ std::shared_ptr<Node> ChtlParser::parseTopLevel() {
 }
 
 std::shared_ptr<Node> ChtlParser::parseDeclaration() {
+    stateMachine_->enterState(ChtlParseState::DECLARATION);
+    
     consume(TokenType::LEFT_BRACKET, "Expected '['");
     
-    // 声明类型
-    Token declType = advance();
+    Token keyword = consume(TokenType::IDENTIFIER, "Expected declaration keyword");
     
-    if (declType.is(TokenType::TEMPLATE)) {
-        // [Template] 声明
-        stateMachine_->enterState(ChtlParseState::DECLARATION, 
-                                 ChtlSubState::DECLARATION_TYPE);
-        
-        // 期待 @Element, @Style, @Var
-        Token refType = consume(TokenType::AT_ELEMENT, "Expected @Element, @Style, or @Var");
-        
-        auto templ = parseTemplateDeclaration();
-        
-        consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-        
-        stateMachine_->exitState();
-        
-        return templ;
+    std::shared_ptr<Node> result;
+    
+    if (keyword.value == "Template") {
+        result = parseTemplateDeclaration();
+    } else if (keyword.value == "Import") {
+        result = parseImportDeclaration();
+    } else if (keyword.value == "Custom") {
+        // TODO: 实现自定义组件声明
+        addError("Custom declarations not yet implemented");
+        skipToDeclarationEnd();
+    } else {
+        addError("Unknown declaration type: " + keyword.value);
+        skipToDeclarationEnd();
     }
     
-    if (declType.is(TokenType::CUSTOM)) {
-        // [Custom] 声明
-        return parseCustomDeclaration();
-    }
+    stateMachine_->exitState();
     
-    // 其他声明类型...
-    addError("Unknown declaration type: " + declType.value);
-    
-    // 跳过到 ]
-    while (!isAtEnd() && !check(TokenType::RIGHT_BRACKET)) {
-        advance();
-    }
-    consume(TokenType::RIGHT_BRACKET, "Expected ']'");
-    
-    return nullptr;
+    return result;
 }
 
 std::shared_ptr<Node> ChtlParser::parseElement() {
@@ -481,6 +468,93 @@ std::shared_ptr<Node> ChtlParser::parseTemplateDeclaration() {
     }
     
     return templ;
+}
+
+std::shared_ptr<Node> ChtlParser::parseImportDeclaration() {
+    consume(TokenType::RIGHT_BRACKET, "Expected ']' after Import");
+    
+    // 期待 @Type
+    Token atToken = currentToken_;
+    if (!atToken.is(TokenType::AT) && !atToken.is(TokenType::AT_ELEMENT)) {
+        addError("Expected @ after [Import]");
+        return nullptr;
+    }
+    advance();
+    
+    // 导入类型
+    Token typeToken = consume(TokenType::IDENTIFIER, "Expected import type");
+    std::string importType = typeToken.value;
+    
+    // 创建导入节点
+    auto import = std::make_shared<Import>();
+    
+    // 设置导入类型
+    if (importType == "Style") {
+        import->setType(ImportType::Style);
+    } else if (importType == "JavaScript") {
+        import->setType(ImportType::JavaScript);
+    } else if (importType == "Html") {
+        import->setType(ImportType::Html);
+    } else if (importType == "Chtl") {
+        import->setType(ImportType::Chtl);
+    } else if (importType == "Element") {
+        import->setType(ImportType::Element);
+    } else if (importType == "CJMOD") {
+        import->setType(ImportType::CJMOD);
+    } else {
+        addError("Unknown import type: " + importType);
+        import->setType(ImportType::Element); // 默认
+    }
+    
+    // 路径或标识符
+    Token pathToken = advance();
+    if (pathToken.is(TokenType::STRING)) {
+        // 字符串路径: "path/to/file"
+        import->setPath(pathToken.value);
+    } else if (pathToken.is(TokenType::IDENTIFIER)) {
+        // 标识符路径: CHTL::Forms/Input
+        std::string path = pathToken.value;
+        
+        // 检查是否有 ::
+        if (match(TokenType::COLON)) {
+            if (match(TokenType::COLON)) {
+                // CHTL:: 官方模块
+                path += "::";
+                
+                // 继续读取路径
+                while (!isAtEnd()) {
+                    if (check(TokenType::IDENTIFIER)) {
+                        path += advance().value;
+                    } else if (match(TokenType::SLASH)) {
+                        path += "/";
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        import->setPath(path);
+    } else {
+        addError("Expected import path");
+    }
+    
+    // 可选的别名
+    if (match(TokenType::AS)) {
+        Token alias = consume(TokenType::IDENTIFIER, "Expected alias");
+        import->setAlias(alias.value);
+    }
+    
+    return import;
+}
+
+void ChtlParser::skipToDeclarationEnd() {
+    while (!isAtEnd() && !check(TokenType::RIGHT_BRACKET)) {
+        advance();
+    }
+    if (check(TokenType::RIGHT_BRACKET)) {
+        advance();
+    }
 }
 
 std::shared_ptr<Node> ChtlParser::parseCustomDeclaration() {

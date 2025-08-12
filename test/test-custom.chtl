@@ -1,0 +1,351 @@
+// CHTL 自定义组件测试
+// 测试 [Custom] 声明和各种自定义组件功能
+
+// ========== 1. 基础自定义组件 ==========
+
+[Custom] @Element Button(text, type = "primary", size = "medium")
+{
+    button .btn .btn-{{type}} .btn-{{size}} type="button"
+    {
+        span .btn-text { {{text}} }
+        
+        style {
+            .btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary {
+                background: #007bff;
+                color: white;
+            }
+            
+            .btn-secondary {
+                background: #6c757d;
+                color: white;
+            }
+            
+            .btn-small {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            
+            .btn-large {
+                padding: 12px 24px;
+                font-size: 18px;
+            }
+            
+            &:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
+            }
+        }
+    }
+}
+
+// ========== 2. 复杂自定义组件（带插槽） ==========
+
+[Custom] @Element Modal(title, showClose = true)
+{
+    div .modal-backdrop
+    {
+        div .modal-container
+        {
+            div .modal-header
+            {
+                h3 .modal-title { {{title}} }
+                {{#if showClose}}
+                    button .modal-close { "×" }
+                {{/if}}
+            }
+            
+            div .modal-body
+            {
+                // 默认插槽
+                {{slot}}
+            }
+            
+            div .modal-footer
+            {
+                // 命名插槽
+                {{slot:footer}}
+            }
+        }
+        
+        style {
+            .modal-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            
+            .modal-container {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow: hidden;
+            }
+            
+            .modal-header {
+                padding: 20px;
+                border-bottom: 1px solid #e9ecef;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .modal-title {
+                margin: 0;
+                font-size: 20px;
+            }
+            
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #6c757d;
+                line-height: 1;
+            }
+            
+            .modal-body {
+                padding: 20px;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid #e9ecef;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+        }
+        
+        script {
+            // 关闭模态框
+            {{&}}.querySelector('.modal-close')?.addEventListener('click', () => {
+                {{&}}.style.display = 'none';
+            });
+            
+            // 点击背景关闭
+            {{&}}.addEventListener('click', (e) => {
+                if (e.target === {{&}}) {
+                    {{&}}.style.display = 'none';
+                }
+            });
+        }
+    }
+}
+
+// ========== 3. 自定义组件继承 ==========
+
+[Custom] @Element IconButton extends Button
+{
+    // 继承 Button 的所有属性，添加 icon
+    prepend span .icon { {{icon}} }
+    
+    style {
+        .icon {
+            margin-right: 8px;
+        }
+    }
+}
+
+// ========== 4. 自定义样式组件 ==========
+
+[Custom] @Style Theme(primary, secondary, radius = "4px")
+{
+    :root {
+        --theme-primary: {{primary}};
+        --theme-secondary: {{secondary}};
+        --theme-radius: {{radius}};
+    }
+    
+    .themed {
+        color: var(--theme-primary);
+        border-radius: var(--theme-radius);
+    }
+    
+    .themed-bg {
+        background: var(--theme-primary);
+        color: white;
+    }
+}
+
+// ========== 5. 自定义脚本组件 ==========
+
+[Custom] @Script Analytics(trackingId)
+{
+    // Google Analytics 集成
+    (function(i,s,o,g,r,a,m){
+        i['GoogleAnalyticsObject']=r;
+        i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)
+        },i[r].l=1*new Date();
+        a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];
+        a.async=1;
+        a.src=g;
+        m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+    ga('create', '{{trackingId}}', 'auto');
+    ga('send', 'pageview');
+}
+
+// ========== 6. 自定义变量组件 ==========
+
+[Custom] @Var Config(env = "development")
+{
+    apiUrl: env === "production" ? "https://api.example.com" : "http://localhost:3000",
+    debug: env !== "production",
+    version: "1.0.0"
+}
+
+// ========== HTML 使用示例 ==========
+
+<!DOCTYPE html>
+html
+{
+    head
+    {
+        title { "CHTL 自定义组件测试" }
+        
+        // 使用自定义样式
+        @Theme("#007bff", "#6c757d", "8px")
+        
+        // 使用自定义脚本
+        @Analytics("UA-123456789-1")
+    }
+    
+    body
+    {
+        div .container
+        {
+            h1 { "自定义组件示例" }
+            
+            // 使用基础按钮
+            @Button("点击我")
+            @Button("次要按钮", "secondary")
+            @Button("大按钮", "primary", "large")
+            
+            // 使用图标按钮
+            @IconButton("保存", "primary") icon="💾"
+            
+            // 使用模态框
+            @Modal("用户注册") #register-modal
+            {
+                // 默认插槽内容
+                form
+                {
+                    div .form-group
+                    {
+                        label { "用户名" }
+                        input type="text" required
+                    }
+                    
+                    div .form-group
+                    {
+                        label { "密码" }
+                        input type="password" required
+                    }
+                }
+                
+                // 命名插槽
+                slot:footer
+                {
+                    @Button("取消", "secondary")
+                    @Button("注册")
+                }
+            }
+            
+            // 触发模态框的按钮
+            button #show-modal { "显示模态框" }
+            
+            // 使用配置变量
+            div .config-info
+            {
+                p { "API URL: " + @Config.apiUrl }
+                p { "Debug Mode: " + @Config.debug }
+                p { "Version: " + @Config.version }
+            }
+        }
+        
+        script {
+            // 显示模态框
+            {{#show-modal}}.addEventListener('click', () => {
+                {{#register-modal}}.style.display = 'flex';
+            });
+        }
+        
+        // 全局样式
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: #f8f9fa;
+            }
+            
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                padding: 40px;
+                border-radius: var(--theme-radius);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            
+            .form-group input {
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+            }
+            
+            .config-info {
+                margin-top: 30px;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 4px;
+                font-family: monospace;
+            }
+            
+            #show-modal {
+                margin-top: 20px;
+                padding: 10px 20px;
+                background: var(--theme-primary);
+                color: white;
+                border: none;
+                border-radius: var(--theme-radius);
+                cursor: pointer;
+            }
+        </style>
+    }
+}

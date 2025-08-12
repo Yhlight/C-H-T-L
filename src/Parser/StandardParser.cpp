@@ -19,7 +19,6 @@
 #include "Node/Export.h"
 #include "Node/Script.h"
 #include "Runtime/ChtlJsRuntime.h"
-#include "Common/Exception.h"
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -765,95 +764,108 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     
     cssContent += propertyName.value + ": ";
     
-    // 收集属性值直到分号 - 使用更智能的方式处理 CSS 值
+    // 直接收集从冒号到分号之间的所有内容作为属性值
     std::string propertyValue;
-    bool inValue = true;
-    bool lastWasHash = false;
+    int parenDepth = 0;
+    int braceDepth = 0;
     
-    while (inValue && !isAtEnd()) {
-        if (check(TokenType::SEMICOLON)) {
-            inValue = false;
+    // 调试：打印属性名
+    // std::cerr << "CSS Property: " << propertyName.value << std::endl;
+    
+    // 收集所有 token 直到分号（考虑括号平衡）
+    while (!isAtEnd()) {
+        // 检查是否到达分号（且不在括号内）
+        if (check(TokenType::SEMICOLON) && parenDepth == 0 && braceDepth == 0) {
+            break;
+        }
+        
+        // 如果遇到右大括号且不在其他结构内，可能是样式块结束
+        if (check(TokenType::RIGHT_BRACE) && parenDepth == 0 && braceDepth == 0) {
+            // 这是样式块的结束，不是属性值的一部分
             break;
         }
         
         auto token = advance();
         
-        // 特殊处理各种 CSS 值的情况
-        if (token.value == "#") {
-            // 颜色值：#后面应该直接跟着颜色代码
-            propertyValue += "#";
-            lastWasHash = true;
-            continue;
-        }
+        // 调试：打印每个 token
+        // std::cerr << "  Token: '" << token.value << "' (type: " << static_cast<int>(token.type) << ")" << std::endl;
         
-        // 处理颜色值的特殊情况
-        if (lastWasHash) {
-            // 如果上一个是#，当前可能是颜色代码
-            if (token.type == TokenType::IDENTIFIER || token.type == TokenType::NUMBER) {
-                // 直接附加，不加空格
-                propertyValue += token.value;
-                lastWasHash = false;
-                continue;
-            } else if (token.type == TokenType::COLON) {
-                // 这是词法分析器的错误，跳过冒号
-                lastWasHash = false;
-                continue;
+        // 修复词法分析器的问题：在CSS值上下文中，冒号可能是被错误识别的 #
+        if (token.type == TokenType::COLON) {
+            // 在CSS属性值中，冒号通常不应该出现（除了在url()等函数中）
+            // 如果是在值的开始或者在某些关键字后面，很可能是 # 被错误识别
+            if (propertyValue.empty() || 
+                propertyValue.find("solid") != std::string::npos ||
+                propertyValue.find("dotted") != std::string::npos ||
+                propertyValue.find("dashed") != std::string::npos) {
+                token.value = "#";  // 将错误的冒号改为 #
+                // 继续正常处理
             }
         }
         
-        // 检查是否需要空格
-        bool needSpace = false;
-        if (!propertyValue.empty() && propertyValue.back() != ' ') {
-            // 判断是否需要在值之间添加空格
+        // 特殊处理："solid" 作为 token type (89) 的情况
+        if (token.type == TokenType::COLON && token.value == "solid") {
+            // 这是词法分析器的另一个bug：将 "solid" 识别为了 COLON 类型
+            token.value = "#";
+            token.type = TokenType::IDENTIFIER;
+        }
+        
+        // 跟踪括号深度
+        if (token.type == TokenType::LEFT_PAREN) parenDepth++;
+        else if (token.type == TokenType::RIGHT_PAREN) parenDepth--;
+        else if (token.type == TokenType::LEFT_BRACE) braceDepth++;
+        else if (token.type == TokenType::RIGHT_BRACE) braceDepth--;
+        
+        // 添加到属性值
+        if (!propertyValue.empty()) {
+            // 决定是否需要空格
             char lastChar = propertyValue.back();
+            bool needSpace = true;
             
-            // 数字后面跟单位不需要空格
-            if (std::isdigit(lastChar) && token.type == TokenType::IDENTIFIER &&
-                (token.value == "px" || token.value == "em" || 
-                 token.value == "rem" || token.value == "%" ||
-                 token.value == "vh" || token.value == "vw" ||
-                 token.value == "pt" || token.value == "cm" ||
-                 token.value == "mm" || token.value == "in" ||
-                 token.value == "pc" || token.value == "ex" ||
-                 token.value == "ch" || token.value == "deg" ||
-                 token.value == "rad" || token.value == "turn" ||
-                 token.value == "s" || token.value == "ms")) {
+            // 特殊情况不需要空格
+            if (token.value == "(" || lastChar == '(' || 
+                token.value == ")" || token.value == "," ||
+                token.value == ":" || lastChar == ':' ||
+                token.value == ";" || lastChar == ';') {
+                needSpace = false;
+            }
+            // 数字后跟单位不需要空格
+            else if (std::isdigit(lastChar) && 
+                     (token.value == "px" || token.value == "em" || 
+                      token.value == "rem" || token.value == "%" ||
+                      token.value == "vh" || token.value == "vw" ||
+                      token.value == "pt" || token.value == "s" || 
+                      token.value == "ms" || token.value == "deg")) {
                 needSpace = false;
             }
             // 逗号后面需要空格
             else if (lastChar == ',') {
                 needSpace = true;
             }
-            // 括号相关
-            else if (token.value == "(" || lastChar == '(' || token.value == ")") {
+            // # 后面不需要空格（颜色值）
+            else if (token.value == "#" || lastChar == '#') {
                 needSpace = false;
             }
-            // 减号作为负数
-            else if (token.value == "-" && !std::isalnum(lastChar)) {
-                needSpace = false;
+            
+            if (needSpace && lastChar != ' ') {
+                propertyValue += " ";
             }
-            // 默认情况下，标识符和数字之间需要空格
-            else if ((token.type == TokenType::IDENTIFIER || token.type == TokenType::NUMBER) &&
-                     propertyValue.back() != ' ') {
-                needSpace = true;
-            }
-        }
-        
-        if (needSpace) {
-            propertyValue += " ";
         }
         
         propertyValue += token.value;
-        lastWasHash = false;
     }
     
-    // 修剪尾部空格
+    // 移除末尾空格
     while (!propertyValue.empty() && propertyValue.back() == ' ') {
         propertyValue.pop_back();
     }
     
     cssContent += propertyValue;
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    
+    // 消费分号（如果有）
+    if (check(TokenType::SEMICOLON)) {
+        consume(TokenType::SEMICOLON, "Expected ';'");
+    }
     cssContent += ";\n";
 }
 

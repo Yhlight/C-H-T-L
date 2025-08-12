@@ -1,8 +1,9 @@
 #include "v2/State/ChtlParseState.h"
+#include <string>
 
 namespace chtl::v2 {
 
-std::string getStateName(ChtlParseState state) {
+const char* getStateName(ChtlParseState state) {
     switch (state) {
         case ChtlParseState::INITIAL: return "INITIAL";
         case ChtlParseState::ELEMENT: return "ELEMENT";
@@ -22,7 +23,7 @@ std::string getStateName(ChtlParseState state) {
     }
 }
 
-std::string getSubStateName(ChtlSubState subState) {
+const char* getSubStateName(ChtlSubState subState) {
     switch (subState) {
         case ChtlSubState::NONE: return "NONE";
         

@@ -116,6 +116,9 @@ private:
     void registerElementTransitions();
     void registerElementSubStateTransitions();
     void registerStyleTransitions();
+    void registerStyleSubStateTransitions();
+    void registerScriptTransitions();
+    void registerScriptSubStateTransitions();
     void registerDeclarationTransitions();
     void registerReferenceTransitions();
     
@@ -125,7 +128,15 @@ private:
     void performTransition(ChtlParseState newState, ChtlSubState newSubState);
     
     /**
-     * 查找适用的转换规则
+     * 添加状态转换规则的辅助方法
+     */
+    void addTransition(ChtlParseState fromState, ChtlSubState fromSubState,
+                      StateTransition::ConditionFunc condition,
+                      ChtlParseState toState, ChtlSubState toSubState,
+                      StateTransition::ActionFunc action = nullptr);
+    
+    /**
+     * 查找适用的状态转换
      */
     const StateTransition* findTransition(const Token& token) const;
     

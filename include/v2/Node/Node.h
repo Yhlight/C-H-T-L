@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "v2/Import/ImportSystem.h"  // For ImportType
 
 namespace chtl::v2 {
 
@@ -240,8 +241,8 @@ class Import : public Node {
 public:
     Import() : Node(NodeType::IMPORT) {}
     
-    void setImportType(const std::string& type) { importType_ = type; }
-    const std::string& getImportType() const { return importType_; }
+    void setType(ImportType type) { importType_ = type; }
+    ImportType getImportType() const { return importType_; }
     
     void setPath(const std::string& path) { path_ = path; }
     const std::string& getPath() const { return path_; }
@@ -252,7 +253,7 @@ public:
     void accept(NodeVisitor& visitor) override;
     
 private:
-    std::string importType_;  // @Html, @Style, @JavaScript, etc.
+    ImportType importType_ = ImportType::ELEMENT;  // 默认
     std::string path_;
     std::string alias_;
 };

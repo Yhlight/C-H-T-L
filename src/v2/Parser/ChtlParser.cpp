@@ -1,4 +1,5 @@
 #include "v2/Parser/ChtlParser.h"
+#include "v2/Import/ImportSystem.h"  // For ImportType
 #include <iostream>
 #include <sstream>
 
@@ -490,20 +491,20 @@ std::shared_ptr<Node> ChtlParser::parseImportDeclaration() {
     
     // 设置导入类型
     if (importType == "Style") {
-        import->setType(ImportType::Style);
+        import->setType(ImportType::STYLE);
     } else if (importType == "JavaScript") {
-        import->setType(ImportType::JavaScript);
+        import->setType(ImportType::JAVASCRIPT);
     } else if (importType == "Html") {
-        import->setType(ImportType::Html);
+        import->setType(ImportType::HTML);
     } else if (importType == "Chtl") {
-        import->setType(ImportType::Chtl);
+        import->setType(ImportType::CHTL);
     } else if (importType == "Element") {
-        import->setType(ImportType::Element);
+        import->setType(ImportType::ELEMENT);
     } else if (importType == "CJMOD") {
         import->setType(ImportType::CJMOD);
     } else {
         addError("Unknown import type: " + importType);
-        import->setType(ImportType::Element); // 默认
+        import->setType(ImportType::ELEMENT); // 默认
     }
     
     // 路径或标识符

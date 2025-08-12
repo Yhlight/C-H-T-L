@@ -56,11 +56,16 @@ enum class TokenType {
     AT,                 // @
     EQUALS,             // =
     ARROW,              // ->
+    SLASH,              // /
+    AS,                 // as (关键字)
     
     // ===== CSS 特定 =====
     CSS_PROPERTY,       // CSS 属性名（仅在 CSS 上下文）
     CSS_VALUE,          // CSS 值（仅在 CSS 属性值上下文）
     CSS_UNIT,           // CSS 单位（px, em, % 等）
+    
+    // ===== JS 特定 =====
+    SCRIPT_CONTENT,     // 整块脚本内容
     
     // ===== CHTL-JS 特定 =====
     DOUBLE_LEFT_BRACE,  // {{

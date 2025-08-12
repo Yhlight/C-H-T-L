@@ -8,11 +8,12 @@ namespace chtl::v2 {
 
 ChtlStateMachine::ChtlStateMachine() 
     : currentState_(ChtlParseState::INITIAL)
+    , currentSubState_(ChtlSubState::NONE)
     , parseContext_()
     , lexer_(nullptr) {
     // 初始上下文为全局
     contextStack_.push_back(ChtlContext::GLOBAL);
-    stateStack_.push_back(ChtlParseState::INITIAL);
+    stateStack_.push_back({ChtlParseState::INITIAL, ChtlSubState::NONE});
 }
 
 ChtlStateMachine::~ChtlStateMachine() = default;
@@ -23,10 +24,6 @@ void ChtlStateMachine::initialize() {
     
     // 重置到初始状态
     reset();
-}
-
-ChtlParseState ChtlStateMachine::getCurrentState() const {
-    return currentState_;
 }
 
 ChtlContext ChtlStateMachine::getCurrentContext() const {
@@ -47,8 +44,9 @@ bool ChtlStateMachine::processToken(const Token& token) {
         }
         
         // 执行状态转换
-        if (transition->nextState != currentState_) {
-            performTransition(transition->nextState);
+        if (transition->nextState != currentState_ || 
+            transition->nextSubState != currentSubState_) {
+            performTransition(transition->nextState, transition->nextSubState);
         }
         
         return true;
@@ -62,28 +60,25 @@ bool ChtlStateMachine::processToken(const Token& token) {
     return false;
 }
 
-void ChtlStateMachine::enterState(ChtlParseState newState) {
-    stateStack_.push_back(newState);
-    performTransition(newState);
+void ChtlStateMachine::enterState(ChtlParseState newState, ChtlSubState newSubState) {
+    // 保存当前状态到栈
+    stateStack_.push_back({currentState_, currentSubState_});
     
-    // 某些状态自动进入局部上下文
-    if (requiresLocalContext(newState)) {
-        enterLocalContext();
-    }
+    // 执行状态转换
+    performTransition(newState, newSubState);
 }
 
 void ChtlStateMachine::exitState() {
     if (stateStack_.size() <= 1) {
-        throw std::runtime_error("Cannot exit initial state");
+        // 不能退出初始状态
+        std::cerr << "Warning: Cannot exit initial state\n";
+        return;
     }
     
-    // 如果当前状态需要局部上下文，退出时也要退出上下文
-    if (requiresLocalContext(currentState_)) {
-        exitLocalContext();
-    }
-    
+    // 恢复之前的状态
     stateStack_.pop_back();
-    performTransition(stateStack_.back());
+    const StateInfo& prevState = stateStack_.back();
+    performTransition(prevState.state, prevState.subState);
 }
 
 void ChtlStateMachine::enterLocalContext() {
@@ -112,7 +107,7 @@ void ChtlStateMachine::reset() {
     contextStack_.clear();
     contextStack_.push_back(ChtlContext::GLOBAL);
     stateStack_.clear();
-    stateStack_.push_back(ChtlParseState::INITIAL);
+    stateStack_.push_back({ChtlParseState::INITIAL, ChtlSubState::NONE});
     parseContext_.reset();
     
     if (lexer_) {
@@ -130,38 +125,62 @@ void ChtlStateMachine::printState() const {
     std::cout << "========================\n";
 }
 
-void ChtlStateMachine::performTransition(ChtlParseState newState) {
+void ChtlStateMachine::performTransition(ChtlParseState newState, ChtlSubState newSubState) {
     ChtlParseState oldState = currentState_;
-    currentState_ = newState;
-    parseContext_.setState(newState);
+    ChtlSubState oldSubState = currentSubState_;
     
-    // 通知词法分析器
+    currentState_ = newState;
+    currentSubState_ = newSubState;
+    
+    // 通知词法分析器状态变化
     if (lexer_) {
         lexer_->setCurrentState(newState);
     }
     
-    std::cerr << "[StateMachine] Transition: " 
-              << getStateName(oldState) 
-              << " -> " << getStateName(newState) << "\n";
+    std::cout << "[State Transition] " 
+              << getStateName(oldState) << "/" << getSubStateName(oldSubState)
+              << " -> " 
+              << getStateName(newState) << "/" << getSubStateName(newSubState) 
+              << "\n";
 }
 
 const StateTransition* ChtlStateMachine::findTransition(const Token& token) const {
-    auto it = transitions_.find(currentState_);
+    // 构建状态键
+    StateKey key{currentState_, currentSubState_};
+    
+    // 查找当前状态的转换规则
+    auto it = transitions_.find(key);
     if (it == transitions_.end()) {
-        return nullptr;
+        // 如果没有找到特定子状态的规则，尝试查找 NONE 子状态的规则
+        key.second = ChtlSubState::NONE;
+        it = transitions_.find(key);
+        if (it == transitions_.end()) {
+            return nullptr;
+        }
     }
     
-    // 获取当前上下文
-    ChtlContext context = getCurrentContext();
-    
-    // 遍历当前状态的所有转换规则
-    for (const auto& transition : it->second) {
-        if (transition.condition(token, context)) {
-            return &transition;
+    // 在规则列表中查找匹配的转换
+    const auto& rules = it->second;
+    for (const auto& rule : rules) {
+        if (rule.condition(token, getCurrentContext(), currentSubState_)) {
+            return &rule;
         }
     }
     
     return nullptr;
+}
+
+void ChtlStateMachine::addTransition(ChtlParseState fromState, ChtlSubState fromSubState,
+                                    StateTransition::ConditionFunc condition,
+                                    ChtlParseState toState, ChtlSubState toSubState,
+                                    StateTransition::ActionFunc action) {
+    StateKey key{fromState, fromSubState};
+    StateTransition transition;
+    transition.condition = condition;
+    transition.nextState = toState;
+    transition.nextSubState = toSubState;
+    transition.action = action;
+    transitions_[key].push_back(transition);
 }
 
 } // namespace chtl::v2

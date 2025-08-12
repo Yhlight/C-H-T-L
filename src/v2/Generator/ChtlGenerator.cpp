@@ -189,17 +189,16 @@ void ChtlGenerator::visitReference(Reference* node) {
 }
 
 void ChtlGenerator::visitImport(Import* node) {
-    // 收集导入信息
+    // 记录导入信息
     ImportItem item;
-    item.type = node->getType();
+    item.type = node->getImportType();
     item.path = node->getPath();
     item.alias = node->getAlias();
-    
     imports_.push_back(item);
     
     // 根据导入类型决定如何处理
-    switch (node->getType()) {
-        case ImportType::Style: {
+    switch (node->getImportType()) {
+        case ImportType::STYLE: {
             // CSS 导入生成 <link> 标签
             std::string linkTag = "<link rel=\"stylesheet\" href=\"" + 
                                  node->getPath() + "\">";
@@ -207,7 +206,7 @@ void ChtlGenerator::visitImport(Import* node) {
             break;
         }
         
-        case ImportType::JavaScript: {
+        case ImportType::JAVASCRIPT: {
             // JS 导入生成 <script> 标签
             std::string scriptTag = "<script src=\"" + 
                                    node->getPath() + "\"></script>";
@@ -215,14 +214,14 @@ void ChtlGenerator::visitImport(Import* node) {
             break;
         }
         
-        case ImportType::Chtl:
-        case ImportType::Element: {
+        case ImportType::CHTL:
+        case ImportType::ELEMENT: {
             // CHTL 和元素导入需要在第二遍处理
             // 这里只记录，实际处理在 generate 方法中
             break;
         }
         
-        case ImportType::Html: {
+        case ImportType::HTML: {
             // HTML 导入直接包含内容
             // 这需要使用 ImportSystem 来加载内容
             break;

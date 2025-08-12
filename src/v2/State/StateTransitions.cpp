@@ -17,260 +17,111 @@ void ChtlStateMachine::registerTransitions() {
 }
 
 void ChtlStateMachine::registerInitialTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::INITIAL];
-    
     // [ -> DECLARATION (仅在全局上下文)
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
+    addTransition(ChtlParseState::INITIAL, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext context, ChtlSubState) {
             return token.is(TokenType::LEFT_BRACKET) && 
                    context == ChtlContext::GLOBAL;
         },
-        ChtlParseState::DECLARATION,
+        ChtlParseState::DECLARATION, ChtlSubState::NONE,
         [](ParseContext& ctx) {
             ctx.getDeclarationData().isDefinition = true;
-            std::cerr << "[Transition] INITIAL -> DECLARATION (definition)\n";
         }
-    });
+    );
     
-    // @ -> REFERENCE (不应在全局出现，但处理错误情况)
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::AT) && 
-                   context == ChtlContext::GLOBAL;
+    // @ -> REFERENCE (总是引用)
+    addTransition(ChtlParseState::INITIAL, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::AT) || token.is(TokenType::AT_ELEMENT);
         },
-        ChtlParseState::INITIAL,  // 保持状态，报错
+        ChtlParseState::REFERENCE, ChtlSubState::NONE
+    );
+    
+    // <style> -> STYLE (全局样式)
+    addTransition(ChtlParseState::INITIAL, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::IDENTIFIER) && token.value == "style";
+            // TODO: 更精确的检测需要查看前一个 token 是否是 <
+        },
+        ChtlParseState::STYLE, ChtlSubState::NONE,
         [](ParseContext& ctx) {
-            std::cerr << "[ERROR] @ references not allowed at top level\n";
+            // 开始收集样式内容
         }
-    });
+    );
     
-    // style -> STYLE
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::STYLE);
+    // <script> -> SCRIPT (全局脚本)
+    addTransition(ChtlParseState::INITIAL, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::IDENTIFIER) && token.value == "script";
+            // TODO: 更精确的检测需要查看前一个 token 是否是 <
         },
-        ChtlParseState::STYLE,
+        ChtlParseState::SCRIPT, ChtlSubState::NONE,
         [](ParseContext& ctx) {
-            std::cerr << "[Transition] INITIAL -> STYLE\n";
+            // 开始收集脚本内容
         }
-    });
+    );
     
-    // script -> SCRIPT
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::SCRIPT);
+    // HTML标签 -> ELEMENT
+    addTransition(ChtlParseState::INITIAL, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::IDENTIFIER) && token.metadata.isHtmlTag;
         },
-        ChtlParseState::SCRIPT,
-        nullptr
-    });
-    
-    // HTML 元素
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::IDENTIFIER) && 
-                   token.metadata.isHtmlTag;
-        },
-        ChtlParseState::ELEMENT,
-        [](ParseContext& ctx) {
-            ctx.resetElementData();
-        }
-    });
+        ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_TAG
+    );
 }
 
 void ChtlStateMachine::registerElementTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::ELEMENT];
-    
-    // # -> 收集 ID
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::HASH);
-        },
-        ChtlParseState::ELEMENT,  // 保持在元素状态
-        [](ParseContext& ctx) {
-            // 准备收集 ID
-            ctx.getElementData().id = "";  // 将在下一个标识符中填充
-        }
-    });
-    
-    // . -> 收集类名
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::DOT);
-        },
-        ChtlParseState::ELEMENT,  // 保持在元素状态
-        nullptr
-    });
-    
     // { -> ELEMENT_CONTENT
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
+    addTransition(ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_TAG,
+        [](const Token& token, ChtlContext, ChtlSubState) {
             return token.is(TokenType::LEFT_BRACE);
         },
-        ChtlParseState::ELEMENT_CONTENT,
-        nullptr
-    });
+        ChtlParseState::ELEMENT_CONTENT, ChtlSubState::NONE,
+        [](ParseContext& ctx) {
+            // 进入元素内容，切换到局部上下文
+        }
+    );
+    
+    // # -> ELEMENT_ID
+    addTransition(ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_TAG,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::HASH);
+        },
+        ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_ID
+    );
+    
+    // . -> ELEMENT_CLASS
+    addTransition(ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_TAG,
+        [](const Token& token, ChtlContext, ChtlSubState) {
+            return token.is(TokenType::DOT);
+        },
+        ChtlParseState::ELEMENT, ChtlSubState::ELEMENT_CLASS
+    );
 }
 
 void ChtlStateMachine::registerStyleTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::STYLE];
-    
-    // { -> STYLE_CONTENT
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
+    // { -> STYLE_CONTENT (收集整块内容)
+    addTransition(ChtlParseState::STYLE, ChtlSubState::NONE,
+        [](const Token& token, ChtlContext, ChtlSubState) {
             return token.is(TokenType::LEFT_BRACE);
         },
-        ChtlParseState::STYLE_CONTENT,
+        ChtlParseState::STYLE_CONTENT, ChtlSubState::NONE,
         [](ParseContext& ctx) {
-            ctx.resetContent();
-            ctx.getCssContent() = "";
+            // 开始收集 CSS 内容
         }
-    });
+    );
 }
 
-// ELEMENT_CONTENT 状态的转换
-void ChtlStateMachine::registerElementContentTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::ELEMENT_CONTENT];
-    
-    // [ -> REFERENCE (局部上下文中是引用)
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::LEFT_BRACKET) && 
-                   context == ChtlContext::LOCAL;
-        },
-        ChtlParseState::REFERENCE,
-        [](ParseContext& ctx) {
-            ctx.getDeclarationData().isDefinition = false;
-            std::cerr << "[Transition] ELEMENT_CONTENT -> REFERENCE\n";
-        }
-    });
-    
-    // @ -> REFERENCE
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::AT);
-        },
-        ChtlParseState::REFERENCE,
-        [](ParseContext& ctx) {
-            ctx.getDeclarationData().isDefinition = false;
-        }
-    });
-    
-    // style -> STYLE (局部样式)
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::STYLE);
-        },
-        ChtlParseState::STYLE,
-        [](ParseContext& ctx) {
-            std::cerr << "[Transition] ELEMENT_CONTENT -> STYLE (local)\n";
-        }
-    });
-    
-    // script -> SCRIPT (局部脚本)
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::SCRIPT);
-        },
-        ChtlParseState::SCRIPT,
-        nullptr
-    });
-    
-    // text -> TEXT
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::TEXT);
-        },
-        ChtlParseState::TEXT,
-        nullptr
-    });
-    
-    // 嵌套元素
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::IDENTIFIER) && 
-                   token.metadata.isHtmlTag;
-        },
-        ChtlParseState::ELEMENT,
-        nullptr
-    });
-    
-    // } -> 退出
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::RIGHT_BRACE);
-        },
-        ChtlParseState::ELEMENT_CONTENT,  // 保持状态，由解析器处理
-        [this](ParseContext& ctx) {
-            std::cerr << "[Transition] ELEMENT_CONTENT: '}' - should exit\n";
-        }
-    });
-}
-
-// STYLE_CONTENT 状态的转换
-void ChtlStateMachine::registerStyleContentTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::STYLE_CONTENT];
-    
-    // 在 STYLE_CONTENT 中，整块收集内容
-    // 只需要处理 text { } 的情况
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::TEXT);
-        },
-        ChtlParseState::TEXT,
-        [](ParseContext& ctx) {
-            // 标记这是 CSS 文本
-            std::cerr << "[Transition] STYLE_CONTENT -> TEXT (for CSS)\n";
-        }
-    });
-    
-    // 其他所有内容都收集到 cssContent
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return !token.is(TokenType::RIGHT_BRACE) || 
-                   token.metadata.contextHint == "nested";
-        },
-        ChtlParseState::STYLE_CONTENT,  // 保持状态
-        [](ParseContext& ctx) {
-            // 收集 CSS 内容
-        }
-    });
-    
-    // } -> 退出样式块
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::RIGHT_BRACE) && 
-                   token.metadata.contextHint != "nested";
-        },
-        ChtlParseState::STYLE_CONTENT,  // 保持状态，由解析器处理
-        nullptr
-    });
+void ChtlStateMachine::registerScriptTransitions() {
+    // TODO: 实现脚本状态转换
 }
 
 void ChtlStateMachine::registerDeclarationTransitions() {
-    std::vector<StateTransition>& rules = transitions_[ChtlParseState::DECLARATION];
-    
-    // 在 DECLARATION 状态，收集声明内容
-    // Template, Custom, Import 等
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::TEMPLATE) ||
-                   token.is(TokenType::CUSTOM) ||
-                   token.is(TokenType::IMPORT);
-        },
-        ChtlParseState::DECLARATION,  // 保持状态
-        [](ParseContext& ctx) {
-            // 记录声明类型
-        }
-    });
-    
-    // ] -> 声明结束
-    rules.push_back({
-        [](const Token& token, ChtlContext context) {
-            return token.is(TokenType::RIGHT_BRACKET);
-        },
-        ChtlParseState::DECLARATION,  // 保持状态，由解析器处理后续
-        nullptr
-    });
+    // TODO: 实现声明状态转换
+}
+
+void ChtlStateMachine::registerReferenceTransitions() {
+    // TODO: 实现引用状态转换
 }
 
 } // namespace chtl::v2

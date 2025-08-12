@@ -74,15 +74,6 @@ struct GenerateResult {
 };
 
 /**
- * 导入项
- */
-struct ImportItem {
-    ImportType type;
-    std::string path;
-    std::string alias;
-};
-
-/**
  * CHTL 代码生成器
  * 将 AST 转换为 HTML/CSS/JavaScript
  */
@@ -109,6 +100,7 @@ public:
     void visitScript(Script* node) override;
     void visitTemplate(Template* node) override;
     void visitReference(Reference* node) override;
+    void visitImport(Import* node) override;
     
 private:
     /**

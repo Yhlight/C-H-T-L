@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <queue>
+#include <unordered_map>
 #include <unordered_set>
 
 namespace chtl::v2 {
@@ -77,6 +78,10 @@ private:
      */
     Token scanInTopLevel();
     Token scanInElementContent();
+    Token scanInStyleContent();
+    Token scanInScriptContent();
+    Token scanInTextContent();
+    Token scanAtReference();
     Token scanInStyleBlock();
     Token scanInStylePropertyValue();
     Token scanInScriptBlock();
@@ -129,6 +134,18 @@ private:
     Token makeToken(TokenType type);
     Token makeError(const std::string& message);
     
+    /**
+     * 字符判断辅助函数
+     */
+    bool isAlpha(char c) const { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'; }
+    bool isDigit(char c) const { return c >= '0' && c <= '9'; }
+    bool isAlphaNumeric(char c) const { return isAlpha(c) || isDigit(c); }
+    
+    /**
+     * 跳过空白字符
+     */
+    void skipWhitespace();
+    
 private:
     // 输入和位置跟踪
     std::string input_;
@@ -141,7 +158,7 @@ private:
     
     // 状态相关
     ChtlStateMachine* stateMachine_ = nullptr;
-    ChtlParseState currentState_ = ChtlParseState::TOP_LEVEL;
+    ChtlParseState currentState_ = ChtlParseState::INITIAL;
     
     // Token 缓冲（用于 peek）
     std::queue<Token> tokenBuffer_;

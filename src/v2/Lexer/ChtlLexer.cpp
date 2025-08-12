@@ -282,7 +282,8 @@ Token ChtlLexer::scanIdentifier() {
     }
     
     std::string text = input_.substr(start_, current_ - start_);
-    return determineIdentifierType(text);
+    TokenType type = determineIdentifierType(text);
+    return makeToken(type, text);
 }
 
 Token ChtlLexer::scanString() {
@@ -417,22 +418,16 @@ bool ChtlLexer::matchSequence(const std::string& seq) {
 void ChtlLexer::skipWhitespace() {
     while (!isAtEnd()) {
         char c = peek();
-        if (c == ' ' || c == '\r' || c == '\t' || c == '\n') {
+        if (c == ' ' || c == '\r' || c == '\t') {
+            advance();
+        } else if (c == '\n') {
+            line_++;
+            column_ = 1;
             advance();
         } else {
             break;
         }
     }
-}
-
-bool ChtlLexer::isAlpha(char c) const {
-    return (c >= 'a' && c <= 'z') || 
-           (c >= 'A' && c <= 'Z') || 
-           c == '_';
-}
-
-bool ChtlLexer::isDigit(char c) const {
-    return c >= '0' && c <= '9';
 }
 
 bool ChtlLexer::isHtmlTag(const std::string& text) const {

@@ -1,4 +1,7 @@
 #include "Css/CssAnalyzer.h"
+#include <sstream>
+#include <regex>
+#include <cctype>
 
 namespace chtl {
 
@@ -9,6 +12,203 @@ public:
     
     void reset() {
         result = CssAnalysisResult();
+    }
+    
+    // 使用改进的解析方法（暂时不使用状态机）
+    void analyzeCss(const std::string& css) {
+        // 当前的 CSS 结构状态
+        enum class ParseState {
+            SELECTOR,
+            PROPERTY_NAME,
+            PROPERTY_VALUE,
+            AT_RULE,
+            COMMENT,
+            STRING
+        };
+        
+        ParseState state = ParseState::SELECTOR;
+        std::string currentSelector;
+        std::string currentProperty;
+        std::string currentValue;
+        std::string currentAtRule;
+        char stringDelimiter = '\0';
+        bool escaped = false;
+        
+        for (size_t i = 0; i < css.length(); ++i) {
+            char ch = css[i];
+            // char prevCh = (i > 0) ? css[i-1] : '\0';
+            char nextCh = (i + 1 < css.length()) ? css[i+1] : '\0';
+            
+            // 处理转义
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (ch == '\\') {
+                escaped = true;
+                continue;
+            }
+            
+            // 处理注释
+            if (state != ParseState::COMMENT && state != ParseState::STRING) {
+                if (ch == '/' && nextCh == '*') {
+                    state = ParseState::COMMENT;
+                    i++; // 跳过 *
+                    continue;
+                }
+            }
+            
+            if (state == ParseState::COMMENT) {
+                if (ch == '*' && nextCh == '/') {
+                    state = ParseState::SELECTOR; // 回到选择器状态
+                    i++; // 跳过 /
+                }
+                continue;
+            }
+            
+            // 处理字符串
+            if (state == ParseState::STRING) {
+                if (ch == stringDelimiter) {
+                    stringDelimiter = '\0';
+                    state = ParseState::PROPERTY_VALUE; // 假设字符串在属性值中
+                }
+                currentValue += ch;
+                continue;
+            }
+            
+            // 根据状态处理
+            switch (state) {
+                case ParseState::SELECTOR:
+                    if (ch == '"' || ch == '\'') {
+                        stringDelimiter = ch;
+                        state = ParseState::STRING;
+                        currentSelector += ch;
+                    } else if (ch == '{') {
+                        // 选择器结束
+                        std::string trimmedSelector = trim(currentSelector);
+                        if (!trimmedSelector.empty()) {
+                            result.selectors.insert(trimmedSelector);
+                            extractClassAndId(trimmedSelector);
+                        }
+                        currentSelector.clear();
+                        state = ParseState::PROPERTY_NAME;
+                    } else if (ch == '@') {
+                        // @ 规则
+                        currentAtRule = "@";
+                        state = ParseState::AT_RULE;
+                    } else {
+                        currentSelector += ch;
+                    }
+                    break;
+                    
+                case ParseState::AT_RULE:
+                    if (std::isalpha(ch) || ch == '-') {
+                        currentAtRule += ch;
+                    } else {
+                        // @ 规则名称结束
+                        if (ch == '{' || ch == ';' || std::isspace(ch)) {
+                            // 收集 @ 规则内容
+                            std::string ruleContent;
+                            size_t j = i;
+                            
+                            // 跳过空白
+                            while (j < css.length() && std::isspace(css[j])) j++;
+                            
+                            // 收集到 ; 或 {
+                            while (j < css.length() && css[j] != ';' && css[j] != '{') {
+                                ruleContent += css[j];
+                                j++;
+                            }
+                            
+                            if (currentAtRule == "@import") {
+                                result.imports.insert(trim(ruleContent));
+                            } else if (currentAtRule == "@media") {
+                                result.mediaQueries.insert(trim(ruleContent));
+                            }
+                            
+                            i = j;
+                            if (css[j] == '{') {
+                                state = ParseState::SELECTOR;
+                            } else {
+                                state = ParseState::SELECTOR;
+                            }
+                            currentAtRule.clear();
+                        }
+                    }
+                    break;
+                    
+                case ParseState::PROPERTY_NAME:
+                    if (ch == ':') {
+                        currentProperty = trim(currentProperty);
+                        state = ParseState::PROPERTY_VALUE;
+                    } else if (ch == '}') {
+                        // 规则块结束
+                        currentProperty.clear();
+                        state = ParseState::SELECTOR;
+                    } else if (!std::isspace(ch)) {
+                        currentProperty += ch;
+                    }
+                    break;
+                    
+                case ParseState::PROPERTY_VALUE:
+                    if (ch == '"' || ch == '\'') {
+                        stringDelimiter = ch;
+                        state = ParseState::STRING;
+                        currentValue += ch;
+                    } else if (ch == ';' || ch == '}') {
+                        // 属性结束
+                        std::string trimmedValue = trim(currentValue);
+                        if (!currentProperty.empty() && !trimmedValue.empty()) {
+                            // 检查自定义属性
+                            if (currentProperty.substr(0, 2) == "--") {
+                                result.customProperties.insert(currentProperty);
+                            }
+                        }
+                        currentProperty.clear();
+                        currentValue.clear();
+                        
+                        if (ch == '}') {
+                            state = ParseState::SELECTOR;
+                        } else {
+                            state = ParseState::PROPERTY_NAME;
+                        }
+                    } else {
+                        currentValue += ch;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+    }
+    
+    void extractClassAndId(const std::string& selector) {
+        // 提取类名 (.className)
+        std::regex classRegex(R"(\.([a-zA-Z_][\w-]*))");
+        std::smatch match;
+        std::string::const_iterator searchStart(selector.cbegin());
+        
+        while (std::regex_search(searchStart, selector.cend(), match, classRegex)) {
+            result.classNames.insert(match[1].str());
+            searchStart = match.suffix().first;
+        }
+        
+        // 提取 ID (#id)
+        std::regex idRegex(R"(#([a-zA-Z_][\w-]*))");
+        searchStart = selector.cbegin();
+        
+        while (std::regex_search(searchStart, selector.cend(), match, idRegex)) {
+            result.ids.insert(match[1].str());
+            searchStart = match.suffix().first;
+        }
+    }
+    
+    std::string trim(const std::string& str) {
+        size_t first = str.find_first_not_of(" \t\n\r");
+        if (first == std::string::npos) return "";
+        size_t last = str.find_last_not_of(" \t\n\r");
+        return str.substr(first, (last - first + 1));
     }
 };
 
@@ -21,176 +221,65 @@ CssAnalyzer::~CssAnalyzer() = default;
 CssAnalysisResult CssAnalyzer::analyze(const std::string& css) {
     impl_->reset();
     
-    // 简单实现：提取基本信息
-    extractSelectors(css);
-    extractClassNames(css);
-    extractIds(css);
-    extractCustomProperties(css);
-    extractMediaQueries(css);
-    extractImports(css);
+    // 使用改进的解析方法
+    impl_->analyzeCss(css);
     
     return impl_->result;
 }
 
+// 保留原有的提取方法接口
 std::unordered_set<std::string> CssAnalyzer::extractSelectors(const std::string& css) {
-    std::unordered_set<std::string> selectors;
-    
-    // 简单实现：查找选择器模式
-    size_t pos = 0;
-    while (pos < css.length()) {
-        // 跳过注释和字符串
-        if (css[pos] == '/' && pos + 1 < css.length() && css[pos + 1] == '*') {
-            pos = css.find("*/", pos + 2);
-            if (pos != std::string::npos) pos += 2;
-            else break;
-            continue;
-        }
-        
-        // 查找 { 之前的选择器
-        size_t bracePos = css.find('{', pos);
-        if (bracePos == std::string::npos) break;
-        
-        // 提取选择器
-        std::string selector = css.substr(pos, bracePos - pos);
-        // 清理空白
-        selector.erase(0, selector.find_first_not_of(" \t\n\r"));
-        selector.erase(selector.find_last_not_of(" \t\n\r") + 1);
-        
-        if (!selector.empty()) {
-            selectors.insert(selector);
-            impl_->result.selectors.insert(selector);
-        }
-        
-        // 跳到下一个 }
-        pos = css.find('}', bracePos);
-        if (pos != std::string::npos) pos++;
-        else break;
-    }
-    
-    return selectors;
+    analyze(css);
+    return impl_->result.selectors;
 }
 
 std::unordered_set<std::string> CssAnalyzer::extractClassNames(const std::string& css) {
-    std::unordered_set<std::string> classNames;
-    
-    // 查找 .className 模式
-    size_t pos = 0;
-    while ((pos = css.find('.', pos)) != std::string::npos) {
-        pos++;
-        if (pos < css.length() && (std::isalpha(css[pos]) || css[pos] == '_' || css[pos] == '-')) {
-            size_t end = pos;
-            while (end < css.length() && 
-                   (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
-                end++;
-            }
-            std::string className = css.substr(pos, end - pos);
-            classNames.insert(className);
-            impl_->result.classNames.insert(className);
-            pos = end;
-        }
-    }
-    
-    return classNames;
+    analyze(css);
+    return impl_->result.classNames;
 }
 
 std::unordered_set<std::string> CssAnalyzer::extractIds(const std::string& css) {
-    std::unordered_set<std::string> ids;
-    
-    // 查找 #id 模式
-    size_t pos = 0;
-    while ((pos = css.find('#', pos)) != std::string::npos) {
-        pos++;
-        if (pos < css.length() && (std::isalpha(css[pos]) || css[pos] == '_' || css[pos] == '-')) {
-            size_t end = pos;
-            while (end < css.length() && 
-                   (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
-                end++;
-            }
-            std::string id = css.substr(pos, end - pos);
-            ids.insert(id);
-            impl_->result.ids.insert(id);
-            pos = end;
-        }
-    }
-    
-    return ids;
+    analyze(css);
+    return impl_->result.ids;
 }
 
 std::unordered_set<std::string> CssAnalyzer::extractCustomProperties(const std::string& css) {
-    std::unordered_set<std::string> customProps;
-    
-    // 查找 --property 模式
-    size_t pos = 0;
-    while ((pos = css.find("--", pos)) != std::string::npos) {
-        size_t end = pos + 2;
-        while (end < css.length() && 
-               (std::isalnum(css[end]) || css[end] == '_' || css[end] == '-')) {
-            end++;
-        }
-        if (end > pos + 2) {
-            std::string prop = css.substr(pos, end - pos);
-            customProps.insert(prop);
-            impl_->result.customProperties.insert(prop);
-        }
-        pos = end;
-    }
-    
-    return customProps;
+    analyze(css);
+    return impl_->result.customProperties;
 }
 
 std::unordered_set<std::string> CssAnalyzer::extractMediaQueries(const std::string& css) {
-    std::unordered_set<std::string> mediaQueries;
-    
-    // 查找 @media 模式
-    size_t pos = 0;
-    while ((pos = css.find("@media", pos)) != std::string::npos) {
-        size_t start = pos;
-        size_t bracePos = css.find('{', pos);
-        if (bracePos != std::string::npos) {
-            std::string query = css.substr(start, bracePos - start);
-            mediaQueries.insert(query);
-            impl_->result.mediaQueries.insert(query);
-            pos = bracePos;
-        } else {
-            pos += 6;
-        }
-    }
-    
-    return mediaQueries;
+    analyze(css);
+    return impl_->result.mediaQueries;
 }
 
 std::unordered_set<std::string> CssAnalyzer::extractImports(const std::string& css) {
-    std::unordered_set<std::string> imports;
-    
-    // 查找 @import 模式
-    size_t pos = 0;
-    while ((pos = css.find("@import", pos)) != std::string::npos) {
-        size_t end = css.find(';', pos);
-        if (end != std::string::npos) {
-            std::string import = css.substr(pos, end - pos + 1);
-            imports.insert(import);
-            impl_->result.imports.insert(import);
-            pos = end;
-        } else {
-            pos += 7;
-        }
-    }
-    
-    return imports;
+    analyze(css);
+    return impl_->result.imports;
 }
 
 bool CssAnalyzer::validateSelector(const std::string& selector) {
-    // 简单验证
+    // 基本验证
     return !selector.empty() && selector.find_first_not_of(" \t\n\r") != std::string::npos;
 }
 
 bool CssAnalyzer::validateProperty(const std::string& property) {
-    // 简单验证
-    return !property.empty();
+    // 基本验证
+    static const std::unordered_set<std::string> validProperties = {
+        "color", "background", "background-color", "border", "border-radius",
+        "margin", "padding", "width", "height", "display", "position",
+        "font-size", "font-family", "text-align", "line-height",
+        // ... 添加更多标准属性
+    };
+    
+    // 自定义属性总是有效的
+    if (property.substr(0, 2) == "--") return true;
+    
+    return validProperties.find(property) != validProperties.end();
 }
 
 bool CssAnalyzer::validateValue(const std::string& property, const std::string& value) {
-    // 简单验证
+    // 基本验证
     return !property.empty() && !value.empty();
 }
 

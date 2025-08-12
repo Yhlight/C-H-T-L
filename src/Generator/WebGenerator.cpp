@@ -49,95 +49,12 @@ GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
 }
 
 std::string WebGenerator::generateHTMLDocument() {
-    // 获取当前的 HTML 内容
-    std::string bodyContent = htmlCollector_.getCode();
+    // 直接使用收集到的 HTML 内容
+    result_.html = htmlCollector_.getCode();
     
-    // 检查是否已经有完整的 HTML 文档结构（包含 DOCTYPE）
-    if (bodyContent.find("<!DOCTYPE") != std::string::npos) {
-        result_.html = bodyContent;
-        return result_.html;
-    }
+    // CSS 内容
+    result_.css = cssCollector_.getCode();
     
-    // 提取 head 和 body 内容
-    std::string headContent;
-    std::string mainContent;
-    
-    // 查找 head 标签内容
-    size_t headStart = bodyContent.find("<head>");
-    size_t headEnd = bodyContent.find("</head>");
-    if (headStart != std::string::npos && headEnd != std::string::npos) {
-        headStart += 6; // 跳过 "<head>"
-        headContent = bodyContent.substr(headStart, headEnd - headStart);
-        
-        // 移除 head 部分（包括标签）
-        bodyContent.erase(headStart - 6, headEnd - headStart + 13); // 包括 "</head>"
-    }
-    
-    // 如果有 <html> 标签，提取其内容
-    size_t htmlStart = bodyContent.find("<html>");
-    size_t htmlEnd = bodyContent.find("</html>");
-    if (htmlStart != std::string::npos && htmlEnd != std::string::npos) {
-        htmlStart += 6; // 跳过 "<html>"
-        mainContent = bodyContent.substr(htmlStart, htmlEnd - htmlStart);
-    } else {
-        mainContent = bodyContent;
-    }
-    
-    std::stringstream doc;
-    
-    // DOCTYPE
-    doc << "<!DOCTYPE html>\n";
-    doc << "<html lang=\"zh-CN\">\n";
-    doc << "<head>\n";
-    doc << "  <meta charset=\"UTF-8\">\n";
-    doc << "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-    
-    // 如果有提取的 head 内容，使用它；否则使用默认标题
-    if (!headContent.empty()) {
-        doc << headContent;
-    } else {
-        doc << "  <title>CHTL Generated Page</title>\n";
-    }
-    
-    // 内联或外部样式
-    if (!result_.css.empty()) {
-        if (options_.inlineStyles) {
-            doc << "  <style>\n";
-            doc << result_.css;
-            doc << "  </style>\n";
-        } else {
-            // 生成外部CSS文件引用
-            // TODO: Handle external styles
-            // result_.externalStyles.push_back("styles.css");
-            doc << "  <link rel=\"stylesheet\" href=\"styles.css\">\n";
-        }
-    }
-    
-    doc << "</head>\n";
-    doc << "<body>\n";
-    
-    // 主体内容 - 使用 htmlCollector 的内容
-    doc << mainContent;
-    
-    // 脚本
-    if (!result_.js.empty()) {
-        if (options_.inlineScripts) {
-            doc << "  <script>\n";
-            doc << result_.js;
-            doc << "  </script>\n";
-        } else {
-            // 生成外部JS文件引用
-            // TODO: Handle external scripts
-            // result_.externalScripts.push_back("app.js");
-            doc << "  <script src=\"app.js\"></script>\n";
-        }
-    }
-    
-    doc << "</body>\n";
-    doc << "</html>\n";
-    
-    // 更新 result_.html
-    result_.html = doc.str();
     return result_.html;
 }
 
@@ -279,35 +196,8 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         return;
     }
     
-    // 特殊处理 html、head 和 body 标签
-    // 这些标签的结构由 generateHTMLDocument 处理
-    if (tag == "html") {
-        // 只处理子节点
-        for (const auto& child : element->getChildren()) {
-            visit(child);
-        }
-        return;
-    }
-    
-    if (tag == "head") {
-        // head 的内容已经在 generateHTMLDocument 中处理
-        // 但我们需要处理其中的 style 节点
-        for (const auto& child : element->getChildren()) {
-            if (child->getType() == NodeType::STYLE) {
-                visit(child);
-            }
-            // title 等其他内容已经被提取
-        }
-        return;
-    }
-    
-    if (tag == "body") {
-        // 只处理子节点，不生成 body 标签本身
-        for (const auto& child : element->getChildren()) {
-            visit(child);
-        }
-        return;
-    }
+    // 移除对 html、head、body 的特殊处理
+    // 所有元素都正常生成
     
     // 特殊处理 delete 节点（不生成 HTML）
     if (tag == "delete") {
@@ -758,26 +648,28 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
-    // 检查是否是局部样式（在元素内的样式，但不包括 head 元素）
-    auto parent = style->getParent();
-    if (parent && parent->getType() == NodeType::ELEMENT) {
-        auto element = std::static_pointer_cast<Element>(parent);
-        // 如果父元素是 head，这是全局样式
-        if (element->getTagName() != "head") {
-            // 局部样式应该作为父元素的 style 属性，而不是全局 CSS
-            // 不需要处理，因为我们将在 visitElement 中处理
-            return;
-        }
-    }
-    
-
-    // 全局样式处理
+    // 获取 CSS 内容
     std::string css = style->getCssContent();
     
+    // 如果没有内容，跳过
+    if (css.empty()) {
+        return;
+    }
+    
+    // 检查是否是局部样式（在元素内的样式）
+    auto parent = style->getParent();
+    bool isLocal = (parent && parent->getType() == NodeType::ELEMENT);
+    
+    if (isLocal) {
+        // 局部样式 - 已经在 visitElement 中作为 style 属性处理
+        return;
+    }
+    
+    // 全局样式 - 添加到 CSS 收集器
     // 处理变量组引用
     css = processVarReferences(css);
     
-    // 全局样式不需要作用域处理
+    // 添加到全局 CSS
     cssCollector_.appendLine(css);
 }
 

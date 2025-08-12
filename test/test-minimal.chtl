@@ -1,0 +1,5 @@
+// Minimal test
+
+div {
+    p { "Hello" }
+}

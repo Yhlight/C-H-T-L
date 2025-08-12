@@ -31,6 +31,13 @@ ParseResult ChtlParser::parse(const std::string& input) {
     // 获取第一个 token
     currentToken_ = lexer_->nextToken();
     
+    // Skip initial comments and whitespace
+    while (currentToken_.is(TokenType::COMMENT) || 
+           currentToken_.is(TokenType::WHITESPACE) || 
+           currentToken_.is(TokenType::NEWLINE)) {
+        currentToken_ = lexer_->nextToken();
+    }
+    
     // 解析顶层内容
     while (!isAtEnd()) {
         try {
@@ -102,21 +109,36 @@ std::shared_ptr<Node> ChtlParser::parseDeclaration() {
     
     consume(TokenType::LEFT_BRACKET, "Expected '['");
     
-    Token keyword = consume(TokenType::IDENTIFIER, "Expected declaration keyword");
+    // Accept specific declaration tokens
+    Token keyword = currentToken_;
+    if (!keyword.isDeclaration()) {
+        addError("Expected declaration keyword (Template, Import, Custom, etc.)");
+        advance();
+        skipToDeclarationEnd();
+        stateMachine_->exitState();
+        return nullptr;
+    }
+    advance();
     
     std::shared_ptr<Node> result;
     
-    if (keyword.value == "Template") {
-        result = parseTemplateDeclaration();
-    } else if (keyword.value == "Import") {
-        result = parseImportDeclaration();
-    } else if (keyword.value == "Custom") {
-        // TODO: 实现自定义组件声明
-        addError("Custom declarations not yet implemented");
-        skipToDeclarationEnd();
-    } else {
-        addError("Unknown declaration type: " + keyword.value);
-        skipToDeclarationEnd();
+    // Use token type instead of string comparison
+    switch (keyword.type) {
+        case TokenType::TEMPLATE:
+            result = parseTemplateDeclaration();
+            break;
+        case TokenType::IMPORT:
+            result = parseImportDeclaration();
+            break;
+        case TokenType::CUSTOM:
+            // TODO: 实现自定义组件声明
+            addError("Custom declarations not yet implemented");
+            skipToDeclarationEnd();
+            break;
+        default:
+            addError("Unknown declaration type: " + keyword.value);
+            skipToDeclarationEnd();
+            break;
     }
     
     stateMachine_->exitState();
@@ -227,6 +249,13 @@ void ChtlParser::parseElementContent(std::shared_ptr<Element>& element) {
         else if (currentToken_.metadata.isHtmlTag) {
             element->addChild(parseElement());
         }
+        // 字符串内容 -> 文本节点
+        else if (check(TokenType::STRING)) {
+            Token stringToken = advance();
+            auto text = std::make_shared<Text>(stringToken.value);
+            text->setLocation(stringToken.line, stringToken.column);
+            element->addChild(text);
+        }
         else {
             addError("Unexpected token in element content: " + currentToken_.toString());
             advance();
@@ -235,10 +264,11 @@ void ChtlParser::parseElementContent(std::shared_ptr<Element>& element) {
 }
 
 std::shared_ptr<Node> ChtlParser::parseStyleBlock() {
-    stateMachine_->enterState(ChtlParseState::STYLE);
-    
     consume(TokenType::STYLE, "Expected 'style'");
     consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // Now enter STYLE state after consuming the opening tokens
+    stateMachine_->enterState(ChtlParseState::STYLE);
     
     auto style = std::make_shared<Style>();
     style->setLocation(currentToken_.line, currentToken_.column);
@@ -282,10 +312,11 @@ std::shared_ptr<Node> ChtlParser::parseStyleBlock() {
 }
 
 std::shared_ptr<Node> ChtlParser::parseScriptBlock() {
-    stateMachine_->enterState(ChtlParseState::SCRIPT);
-    
     consume(TokenType::SCRIPT, "Expected 'script'");
     consume(TokenType::LEFT_BRACE, "Expected '{'");
+    
+    // Now enter SCRIPT state after consuming the opening tokens
+    stateMachine_->enterState(ChtlParseState::SCRIPT);
     
     auto script = std::make_shared<Script>();
     script->setLocation(currentToken_.line, currentToken_.column);
@@ -474,37 +505,56 @@ std::shared_ptr<Node> ChtlParser::parseTemplateDeclaration() {
 std::shared_ptr<Node> ChtlParser::parseImportDeclaration() {
     consume(TokenType::RIGHT_BRACKET, "Expected ']' after Import");
     
-    // 期待 @Type
-    Token atToken = currentToken_;
-    if (!atToken.is(TokenType::AT) && !atToken.is(TokenType::AT_ELEMENT)) {
-        addError("Expected @ after [Import]");
-        return nullptr;
-    }
-    advance();
-    
-    // 导入类型
-    Token typeToken = consume(TokenType::IDENTIFIER, "Expected import type");
-    std::string importType = typeToken.value;
-    
     // 创建导入节点
     auto import = std::make_shared<Import>();
     
-    // 设置导入类型
-    if (importType == "Style") {
+    // 期待 @Type 或组合的 AT_* token
+    Token typeToken = currentToken_;
+    
+    // 处理组合的 AT_* tokens
+    if (typeToken.is(TokenType::AT_STYLE)) {
         import->setType(ImportType::STYLE);
-    } else if (importType == "JavaScript") {
+        advance();
+    } else if (typeToken.is(TokenType::AT_JAVASCRIPT)) {
         import->setType(ImportType::JAVASCRIPT);
-    } else if (importType == "Html") {
+        advance();
+    } else if (typeToken.is(TokenType::AT_HTML)) {
         import->setType(ImportType::HTML);
-    } else if (importType == "Chtl") {
+        advance();
+    } else if (typeToken.is(TokenType::AT_CHTL)) {
         import->setType(ImportType::CHTL);
-    } else if (importType == "Element") {
+        advance();
+    } else if (typeToken.is(TokenType::AT_ELEMENT)) {
         import->setType(ImportType::ELEMENT);
-    } else if (importType == "CJMOD") {
+        advance();
+    } else if (typeToken.is(TokenType::AT_CJMOD)) {
         import->setType(ImportType::CJMOD);
+        advance();
+    } else if (typeToken.is(TokenType::AT)) {
+        // 分离的 @ token
+        advance();
+        Token identToken = consume(TokenType::IDENTIFIER, "Expected import type");
+        std::string importType = identToken.value;
+        
+        if (importType == "Style") {
+            import->setType(ImportType::STYLE);
+        } else if (importType == "JavaScript") {
+            import->setType(ImportType::JAVASCRIPT);
+        } else if (importType == "Html") {
+            import->setType(ImportType::HTML);
+        } else if (importType == "Chtl") {
+            import->setType(ImportType::CHTL);
+        } else if (importType == "Element") {
+            import->setType(ImportType::ELEMENT);
+        } else if (importType == "CJMOD") {
+            import->setType(ImportType::CJMOD);
+        } else {
+            addError("Unknown import type: " + importType);
+            import->setType(ImportType::ELEMENT); // 默认
+        }
     } else {
-        addError("Unknown import type: " + importType);
-        import->setType(ImportType::ELEMENT); // 默认
+        addError("Expected @ after [Import]");
+        return nullptr;
     }
     
     // 路径或标识符
@@ -567,20 +617,39 @@ std::string ChtlParser::collectCssContent() {
     std::string content;
     int braceDepth = 0;
     
-    // 收集到匹配的 }
+    // In STYLE_CONTENT state, we get CSS_VALUE tokens that may contain braces
     while (!isAtEnd()) {
-        if (check(TokenType::LEFT_BRACE)) {
+        Token token = currentToken_;
+        
+        if (token.is(TokenType::LEFT_BRACE)) {
             braceDepth++;
-        } else if (check(TokenType::RIGHT_BRACE)) {
+            content += token.value + " ";
+        } else if (token.is(TokenType::RIGHT_BRACE)) {
             if (braceDepth == 0) {
-                break;  // 找到匹配的 }
+                break;  // Found matching }
             }
             braceDepth--;
-        }
-        
-        content += currentToken_.value;
-        if (currentToken_.type != TokenType::WHITESPACE) {
-            content += " ";
+            content += token.value + " ";
+        } else if (token.is(TokenType::CSS_VALUE)) {
+            // CSS_VALUE tokens might contain braces, count them
+            for (char c : token.value) {
+                if (c == '{') braceDepth++;
+                else if (c == '}') {
+                    if (braceDepth == 0) {
+                        // This is the closing brace we're looking for
+                        // Return content without this brace
+                        return content;
+                    }
+                    braceDepth--;
+                }
+            }
+            content += token.value;
+        } else {
+            content += token.value;
+            if (token.type != TokenType::WHITESPACE && 
+                token.type != TokenType::NEWLINE) {
+                content += " ";
+            }
         }
         
         advance();
@@ -642,10 +711,17 @@ bool ChtlParser::match(TokenType type) {
 }
 
 Token ChtlParser::advance() {
-    if (!isAtEnd()) {
+    Token prev = currentToken_;
+    currentToken_ = lexer_->nextToken();
+    
+    // Skip comments and whitespace
+    while (currentToken_.is(TokenType::COMMENT) || 
+           currentToken_.is(TokenType::WHITESPACE) || 
+           currentToken_.is(TokenType::NEWLINE)) {
         currentToken_ = lexer_->nextToken();
     }
-    return currentToken_;
+    
+    return prev;
 }
 
 Token ChtlParser::peek() const {

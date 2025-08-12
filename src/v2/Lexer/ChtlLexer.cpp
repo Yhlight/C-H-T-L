@@ -32,7 +32,8 @@ const std::unordered_map<std::string, TokenType> ChtlLexer::KEYWORDS = {
     {"Configuration", TokenType::CONFIGURATION},
     {"Origin", TokenType::ORIGIN},
     {"Export", TokenType::EXPORT},
-    {"Info", TokenType::INFO}
+    {"Info", TokenType::INFO},
+    {"as", TokenType::AS}
 };
 
 ChtlLexer::ChtlLexer(const std::string& input) 
@@ -179,7 +180,7 @@ Token ChtlLexer::scanInTopLevel() {
             if (peek() == '/') {
                 return scanComment();
             }
-            break;
+            return makeToken(TokenType::SLASH);
     }
     
     // 标识符或关键字

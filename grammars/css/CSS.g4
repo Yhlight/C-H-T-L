@@ -144,6 +144,7 @@ supports: SUPPORTS supportsCondition LBRACE ruleset* RBRACE;
 SUPPORTS: '@supports';
 supportsCondition: supportsConditionInParens (AND supportsConditionInParens)* | supportsConditionInParens (OR supportsConditionInParens)*;
 supportsConditionInParens: LPAREN supportsCondition RPAREN | LPAREN supportsDeclarationCondition RPAREN | LPAREN supportsFeatureType RPAREN | LPAREN supportsFeature RPAREN;
+supportsConditionInParens: supportsDeclarationCondition | supportsFeatureType | supportsFeature;
 supportsDeclarationCondition: declaration;
 supportsFeatureType: IDENTIFIER;
 supportsFeature: supportsFeatureName COLON supportsFeatureValue;

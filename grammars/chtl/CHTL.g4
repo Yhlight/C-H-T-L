@@ -66,37 +66,37 @@ LITERAL: ~[ \t\r\n{}[]();:="'\n\r]+;
 // 语法规则
 program: (importStatement | namespaceStatement | configurationStatement | templateStatement | customStatement | originStatement | elementStatement)*;
 
-importStatement: IMPORT importType FROM filePath (AS identifier)? SEMICOLON;
-importType: (CUSTOM | TEMPLATE)? (STYLE | ELEMENT | VAR) identifier | HTML | CSS | JAVASCRIPT | CHTL;
-filePath: STRING | identifier (DOT identifier)*;
+importStatement: IMPORT importType FROM filePath (AS IDENTIFIER)? SEMICOLON;
+importType: (CUSTOM | TEMPLATE)? (STYLE | ELEMENT | VAR) IDENTIFIER | HTML | CSS | JAVASCRIPT | CHTL;
+filePath: STRING | IDENTIFIER (DOT IDENTIFIER)*;
 
-namespaceStatement: NAMESPACE identifier (LBRACE namespaceContent RBRACE)?;
+namespaceStatement: NAMESPACE IDENTIFIER (LBRACE namespaceContent RBRACE)?;
 namespaceContent: (namespaceStatement | templateStatement | customStatement)*;
 
 configurationStatement: CONFIGURATION LBRACE configContent RBRACE;
 configContent: (configItem | nameGroup)*;
-configItem: identifier EQUALS value SEMICOLON;
+configItem: IDENTIFIER EQUALS value SEMICOLON;
 nameGroup: NAME LBRACE nameItems RBRACE;
 nameItems: nameItem*;
-nameItem: identifier EQUALS (value | arrayValue) SEMICOLON;
+nameItem: IDENTIFIER EQUALS (value | arrayValue) SEMICOLON;
 arrayValue: LBRACKET value (COMMA value)* RBRACKET;
-value: STRING | NUMBER | identifier;
+value: STRING | NUMBER | IDENTIFIER;
 
-templateStatement: TEMPLATE templateType identifier LBRACE templateContent RBRACE;
+templateStatement: TEMPLATE templateType IDENTIFIER LBRACE templateContent RBRACE;
 templateType: STYLE | ELEMENT | VAR;
 templateContent: (elementStatement | styleBlock | varDeclaration | templateInheritance)*;
 
-customStatement: CUSTOM customType identifier LBRACE customContent RBRACE;
+customStatement: CUSTOM customType IDENTIFIER LBRACE customContent RBRACE;
 customType: STYLE | ELEMENT | VAR;
 customContent: (elementStatement | styleBlock | varDeclaration | customInheritance | customModification)*;
 
-originStatement: ORIGIN originType (identifier)? LBRACE originContent RBRACE;
+originStatement: ORIGIN originType (IDENTIFIER)? LBRACE originContent RBRACE;
 originType: HTML | CSS | JAVASCRIPT;
-originContent: .*?;
+originContent: (elementStatement | styleBlock | scriptBlock)*;
 
 // 元素语句 - 支持HTML元素、text文本块、style样式块、script脚本块
 elementStatement: elementName (attributes)? (LBRACE elementContent RBRACE)?;
-elementName: identifier | textElement | styleElement | scriptElement;
+elementName: IDENTIFIER | textElement | styleElement | scriptElement;
 
 // text文本块
 textElement: TEXT LBRACE textContent RBRACE;
@@ -108,22 +108,22 @@ styleContent: (cssRule | templateUsage | customUsage)*;
 
 // script脚本块
 scriptElement: SCRIPT LBRACE scriptContent RBRACE;
-scriptContent: .*?;
+scriptContent: (elementStatement | STRING | LITERAL | IDENTIFIER)*;
 
 // CSS规则 - 支持选择器和上下文推导
 cssRule: selector LBRACE cssProperties RBRACE;
-selector: (DOT | HASH | AMPERSAND)? identifier (pseudoSelector)?;
-pseudoSelector: (COLON | AMPERSAND COLON) identifier;
+selector: (DOT | HASH | AMPERSAND)? IDENTIFIER (pseudoSelector)?;
+pseudoSelector: (COLON | AMPERSAND COLON) IDENTIFIER;
 cssProperties: cssProperty*;
 cssProperty: propertyName (COLON | EQUALS) propertyValue SEMICOLON;
-propertyName: identifier;
-propertyValue: (STRING | LITERAL | identifier | functionCall)*;
+propertyName: IDENTIFIER;
+propertyValue: (STRING | LITERAL | IDENTIFIER | functionCall)*;
 
 // 属性
 attributes: attribute*;
 attribute: attributeName (COLON | EQUALS) attributeValue SEMICOLON;
-attributeName: identifier;
-attributeValue: STRING | LITERAL | identifier;
+attributeName: IDENTIFIER;
+attributeValue: STRING | LITERAL | IDENTIFIER;
 
 // 元素内容
 elementContent: (elementStatement | styleBlock | scriptBlock | templateUsage | customUsage | originStatement | constraintStatement)*;
@@ -135,41 +135,40 @@ styleBlock: STYLE_BLOCK LBRACE styleContent RBRACE;
 scriptBlock: SCRIPT LBRACE scriptContent RBRACE;
 
 // 模板使用
-templateUsage: (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) identifier (templateModification)? (FROM identifier)? SEMICOLON;
+templateUsage: (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) IDENTIFIER (templateModification)? (FROM IDENTIFIER)? SEMICOLON;
 templateModification: LBRACE modificationContent RBRACE;
 modificationContent: (modificationItem | templateInheritance | customInheritance)*;
 modificationItem: (DELETE | INSERT) modificationTarget SEMICOLON;
-modificationTarget: identifier | arrayAccess | templateReference;
-arrayAccess: identifier LBRACKET NUMBER RBRACKET;
-templateReference: (TEMPLATE | CUSTOM) (STYLE | ELEMENT | VAR) identifier;
+modificationTarget: IDENTIFIER | arrayAccess | templateReference;
+arrayAccess: IDENTIFIER LBRACKET NUMBER RBRACKET;
+templateReference: (TEMPLATE | CUSTOM) (STYLE | ELEMENT | VAR) IDENTIFIER;
 
 // 自定义使用
-customUsage: (CUSTOM)? (STYLE | ELEMENT | VAR) identifier (customModification)? (FROM identifier)? SEMICOLON;
+customUsage: (CUSTOM)? (STYLE | ELEMENT | VAR) IDENTIFIER (customModification)? (FROM IDENTIFIER)? SEMICOLON;
 customModification: LBRACE customModContent RBRACE;
 customModContent: (customModItem | customInheritance)*;
 customModItem: (DELETE | INSERT) customModTarget SEMICOLON;
-customModTarget: identifier | arrayAccess | templateReference;
+customModTarget: IDENTIFIER | arrayAccess | templateReference;
 
 // 模板继承
-templateInheritance: INHERIT (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) identifier SEMICOLON;
-customInheritance: (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) identifier (customInheritanceMod)?;
+templateInheritance: INHERIT (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) IDENTIFIER SEMICOLON;
+customInheritance: (TEMPLATE | CUSTOM)? (STYLE | ELEMENT | VAR) IDENTIFIER (customInheritanceMod)?;
 customInheritanceMod: LBRACE customInheritanceContent RBRACE;
 customInheritanceContent: (customInheritanceItem | templateInheritance)*;
 customInheritanceItem: (DELETE | INSERT) customInheritanceTarget SEMICOLON;
-customInheritanceTarget: identifier | arrayAccess | templateReference;
+customInheritanceTarget: IDENTIFIER | arrayAccess | templateReference;
 
 // 约束语句
 constraintStatement: EXCEPT constraintTarget (COMMA constraintTarget)* SEMICOLON;
-constraintTarget: identifier | templateReference | customReference;
-customReference: CUSTOM (STYLE | ELEMENT | VAR) identifier;
+constraintTarget: IDENTIFIER | templateReference | customReference;
+customReference: CUSTOM (STYLE | ELEMENT | VAR) IDENTIFIER;
 
 // 函数调用
-functionCall: identifier LPAREN (functionArg (COMMA functionArg)*)? RPAREN;
-functionArg: (identifier (EQUALS value)?) | value;
+functionCall: IDENTIFIER LPAREN (functionArg (COMMA functionArg)*)? RPAREN;
+functionArg: (IDENTIFIER (EQUALS value)?) | value;
 
 // 变量声明
-varDeclaration: identifier (COLON | EQUALS) value SEMICOLON;
+varDeclaration: IDENTIFIER (COLON | EQUALS) value SEMICOLON;
 
 // 辅助规则
 NAME: 'Name';
-identifier: IDENTIFIER;

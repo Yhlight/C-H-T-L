@@ -1,7 +1,9 @@
 grammar CHTLJS;
 
-// 继承JavaScript语法
-import JavaScript;
+// 词法规则
+WS: [ \t\r\n]+ -> skip;
+COMMENT: '//' ~[\r\n]* -> skip;
+MULTILINE_COMMENT: '/*' .*? '*/' -> skip;
 
 // CHTL JS特有的词法规则
 CHTL_SCRIPT: 'script';
@@ -25,16 +27,37 @@ CHTL_DOUBLE_BRACE: '{{';
 CHTL_DOUBLE_BRACE_CLOSE: '}}';
 CHTL_ARROW: '->';
 
-// CHTL JS特有的语法规则
+// 基本词法规则
+IDENTIFIER: [a-zA-Z_$] [a-zA-Z0-9_$]*;
+NUMBER: [0-9]+ ('.' [0-9]+)?;
+STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+LITERAL: ~[ \t\r\n{}[]();:="'\n\r]+;
+
+// 标点符号
+LBRACE: '{';
+RBRACE: '}';
+LPAREN: '(';
+RPAREN: ')';
+LBRACKET: '[';
+RBRACKET: ']';
+SEMICOLON: ';';
+COLON: ':';
+COMMA: ',';
+DOT: '.';
+HASH: '#';
+EQUALS: '=';
+MINUS: '-';
+
+// 语法规则
 chtlScriptBlock: CHTL_SCRIPT LBRACE chtlScriptContent RBRACE;
-chtlScriptContent: (chtlStatement | statement)*;
+chtlScriptContent: (chtlStatement | basicStatement)*;
 
 chtlStatement: chtlSelectorStatement | chtlListenStatement | chtlDelegateStatement | chtlAnimateStatement;
 
 // CHTL选择器语句
 chtlSelectorStatement: chtlSelector (DOT | CHTL_ARROW) methodCall;
 chtlSelector: CHTL_DOUBLE_BRACE selectorContent CHTL_DOUBLE_BRACE_CLOSE;
-selectorContent: (selectorType)? identifier (selectorModifier)*;
+selectorContent: (selectorType)? IDENTIFIER (selectorModifier)*;
 selectorType: DOT | HASH;
 selectorModifier: LBRACKET NUMBER RBRACKET | (WS selectorContent)*;
 
@@ -43,8 +66,8 @@ chtlListenStatement: chtlSelector DOT CHTL_LISTEN LPAREN chtlListenObject RPAREN
 chtlListenObject: LBRACE chtlListenEvents RBRACE;
 chtlListenEvents: chtlListenEvent (COMMA chtlListenEvent)*;
 chtlListenEvent: eventType COLON eventHandler;
-eventType: identifier;
-eventHandler: identifier | functionExpression | arrowFunction;
+eventType: IDENTIFIER;
+eventHandler: IDENTIFIER | functionExpression | arrowFunction;
 
 // CHTL事件委托语句
 chtlDelegateStatement: chtlSelector DOT CHTL_DELEGATE LPAREN chtlDelegateObject RPAREN;
@@ -62,7 +85,7 @@ chtlAnimateProperty: chtlDuration | chtlEasing | chtlBegin | chtlWhen | chtlEnd 
 
 chtlDuration: CHTL_DURATION COLON NUMBER;
 chtlEasing: CHTL_EASING COLON easingValue;
-easingValue: identifier | STRING;
+easingValue: IDENTIFIER | STRING;
 chtlBegin: CHTL_BEGIN COLON LBRACE chtlCssProperties RBRACE;
 chtlWhen: CHTL_WHEN COLON LBRACKET chtlWhenClause (COMMA chtlWhenClause)* RBRACKET;
 chtlWhenClause: LBRACE chtlAt COMMA chtlCssProperties RBRACE;
@@ -70,19 +93,27 @@ chtlAt: CHTL_AT COLON NUMBER;
 chtlEnd: CHTL_END COLON LBRACE chtlCssProperties RBRACE;
 chtlLoop: CHTL_LOOP COLON (NUMBER | MINUS);
 chtlDirection: CHTL_DIRECTION COLON directionValue;
-directionValue: identifier | STRING;
+directionValue: IDENTIFIER | STRING;
 chtlDelay: CHTL_DELAY COLON NUMBER;
-chtlCallback: CHTL_CALLBACK COLON identifier;
+chtlCallback: CHTL_CALLBACK COLON IDENTIFIER;
 
 chtlCssProperties: chtlCssProperty*;
 chtlCssProperty: propertyName COLON propertyValue SEMICOLON;
-propertyName: identifier;
-propertyValue: (STRING | LITERAL | identifier | functionCall)*;
+propertyName: IDENTIFIER;
+propertyValue: (STRING | LITERAL | IDENTIFIER | functionCall)*;
 
 // 方法调用
-methodCall: identifier LPAREN arguments? RPAREN | methodCall DOT identifier LPAREN arguments? RPAREN | methodCall LBRACKET expression RBRACKET | methodCall DOT identifier;
+methodCall: IDENTIFIER LPAREN arguments? RPAREN | methodCall DOT IDENTIFIER LPAREN arguments? RPAREN | methodCall LBRACKET expression RBRACKET | methodCall DOT IDENTIFIER;
 
 // 函数调用
-functionCall: identifier LPAREN (functionArg (COMMA functionArg)*)? RPAREN;
-functionArg: (identifier (ASSIGN value)?) | value;
-value: STRING | NUMBER | identifier;
+functionCall: IDENTIFIER LPAREN (functionArg (COMMA functionArg)*)? RPAREN;
+functionArg: (IDENTIFIER (EQUALS value)?) | value;
+value: STRING | NUMBER | IDENTIFIER;
+
+// 基本语句（简化版）
+basicStatement: IDENTIFIER | STRING | NUMBER | LITERAL;
+expression: IDENTIFIER | STRING | NUMBER | LITERAL;
+arguments: argumentList;
+argumentList: expression (COMMA expression)*;
+functionExpression: IDENTIFIER | STRING;
+arrowFunction: IDENTIFIER | STRING;

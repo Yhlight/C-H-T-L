@@ -278,3 +278,8 @@ shiftExpressionNoIn: additiveExpressionNoIn ((LSHIFT | RSHIFT | URSHIFT) additiv
 additiveExpressionNoIn: multiplicativeExpressionNoIn ((ADD | SUB) multiplicativeExpressionNoIn)*;
 multiplicativeExpressionNoIn: unaryExpressionNoIn ((MUL | DIV | MOD) unaryExpressionNoIn)*;
 unaryExpressionNoIn: unaryOperator unaryExpressionNoIn | postfixExpression;
+
+// 辅助规则
+ASTERISK: '*';
+AS: 'as';
+sourceElements: sourceElement+;

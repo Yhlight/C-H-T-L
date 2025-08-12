@@ -93,7 +93,16 @@ blockStyle
 styleItem
     : attribute
     | templateUsage
+    | styleSelector
     | SEMI
+    ;
+
+styleSelector
+    : selectorHead block
+    ;
+
+selectorHead
+    : (DOT | HASH | AMP | COLON | IDENT)+
     ;
 
 // script { ... } kept permissive; capture as nested free-form tokens
@@ -181,12 +190,15 @@ importTarget
 
 importPath
     : STRING
+    | IDENT (DOT IDENT)*
     ;
 
 // [Namespace] name (block)?
 namespaceDecl
     : KEYWORD_NAMESPACE IDENT (block)?
     ;
+
+AMP: '&';
 
 // inherit @Style Name;
 inheritStmt
@@ -224,6 +236,7 @@ exceptTarget
     | KEYWORD_CUSTOM
     | KEYWORD_TEMPLATE atType
     | atType
+    | AT_CHTL
     ;
 
 atType

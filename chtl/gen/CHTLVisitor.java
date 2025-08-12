@@ -89,6 +89,18 @@ public interface CHTLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStyleItem(CHTLParser.StyleItemContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CHTLParser#styleSelector}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStyleSelector(CHTLParser.StyleSelectorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CHTLParser#selectorHead}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSelectorHead(CHTLParser.SelectorHeadContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CHTLParser#scriptBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

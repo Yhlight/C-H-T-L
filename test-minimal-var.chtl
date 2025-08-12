@@ -1,0 +1,13 @@
+[Template] @Var Test {
+    color: red;
+}
+
+html {
+    body {
+        div {
+            style {
+                background: Test(color);
+            }
+        }
+    }
+}

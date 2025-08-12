@@ -3,58 +3,42 @@
 namespace chtl::v2 {
 
 /**
- * CHTL 解析状态
- * 定义了编译器在不同上下文中的状态
+ * 解析上下文
+ * 区分全局（定义）和局部（引用）
+ */
+enum class ChtlContext {
+    GLOBAL,    // 全局上下文（顶层）- 声明是定义
+    LOCAL      // 局部上下文（块内）- 声明是引用
+};
+
+/**
+ * CHTL 解析状态（简化版）
+ * 基于"全局定义，局部引用"的原则
  */
 enum class ChtlParseState {
-    // ===== 顶层状态 =====
-    TOP_LEVEL,              // 文件顶层，可以有声明或 HTML 片段
+    // ===== 基础状态 =====
+    INITIAL,            // 初始状态（等同于全局）
     
-    // ===== 声明状态 =====
-    TEMPLATE_DECLARATION,   // [Template] 声明内部
-    CUSTOM_DECLARATION,     // [Custom] 声明内部  
-    IMPORT_DECLARATION,     // [Import] 声明
-    CONFIG_DECLARATION,     // [Configuration] 声明
-    ORIGIN_DECLARATION,     // [Origin] 声明
+    // ===== 内容状态 =====
+    ELEMENT,            // 元素（包括标签、属性、内容）
+    STYLE,              // 样式块 style { }
+    SCRIPT,             // 脚本块 script { }
+    TEXT,               // 文本块 text { }
     
-    // ===== 元素状态 =====
-    ELEMENT_TAG,            // 解析元素标签和属性
-    ELEMENT_CONTENT,        // 元素内容
-    ELEMENT_ATTRIBUTES,     // 元素属性
+    // ===== 块内容状态 =====
+    ELEMENT_CONTENT,    // 元素内容 { ... }
+    STYLE_CONTENT,      // 样式内容（整块传递）
+    SCRIPT_CONTENT,     // 脚本内容（交给扫描器）
+    TEXT_CONTENT,       // 文本内容
     
-    // ===== 样式状态 =====
-    STYLE_BLOCK,            // style { } 块
-    STYLE_SELECTOR,         // CSS 选择器  
-    STYLE_PROPERTY_NAME,    // CSS 属性名
-    STYLE_PROPERTY_VALUE,   // CSS 属性值
-    STYLE_TEXT_CONTENT,     // style { text { } } 中的文本
+    // ===== 声明/引用状态 =====
+    DECLARATION,        // [] 块（全局是定义，局部是引用）
+    REFERENCE,          // @ 引用（总是引用）
     
-    // ===== 脚本状态 =====
-    SCRIPT_BLOCK,           // script { } 块
-    SCRIPT_CONTENT,         // JavaScript 内容
-    
-    // ===== 文本状态 =====
-    TEXT_BLOCK,             // text { } 块
-    TEXT_CONTENT,           // 文本内容
-    
-    // ===== 引用状态 =====
-    ELEMENT_REFERENCE,      // @Element 引用
-    STYLE_REFERENCE,        // @Style 引用
-    VAR_REFERENCE,          // @Var 引用
-    
-    // ===== 表达式状态 =====
-    EXPRESSION,             // 参数表达式
-    STRING_LITERAL,         // 字符串字面量
-    TEMPLATE_PARAMETER,     // 模板参数
-    
-    // ===== CHTL-JS 状态 =====
-    CHTL_JS_EXPRESSION,     // {{ }} 内的表达式
-    CHTL_JS_SELECTOR,       // {{#id}} 或 {{&}}
-    
-    // ===== 操作状态 =====
-    INHERIT_OPERATION,      // inherit 操作
-    DELETE_OPERATION,       // delete 操作  
-    INSERT_OPERATION,       // insert 操作
+    // ===== 特殊状态 =====
+    STRING_LITERAL,     // 字符串字面量 "..."
+    EXPRESSION,         // 表达式 (...)
+    CHTL_JS,           // {{ }} 内的 CHTL-JS 表达式
 };
 
 /**
@@ -63,17 +47,22 @@ enum class ChtlParseState {
 const char* getStateName(ChtlParseState state);
 
 /**
- * 判断是否是声明状态
+ * 获取上下文名称（用于调试）
  */
-bool isDeclarationState(ChtlParseState state);
+const char* getContextName(ChtlContext context);
 
 /**
- * 判断是否是引用状态
+ * 判断状态是否需要局部上下文
  */
-bool isReferenceState(ChtlParseState state);
+bool requiresLocalContext(ChtlParseState state);
 
 /**
- * 判断是否允许嵌套元素
+ * 判断状态是否是内容状态
+ */
+bool isContentState(ChtlParseState state);
+
+/**
+ * 判断状态是否允许嵌套元素
  */
 bool allowsNestedElements(ChtlParseState state);
 

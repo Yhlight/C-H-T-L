@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
 namespace chtl::v2 {
 
@@ -16,17 +17,17 @@ class ChtlLexer;
  * 状态转换规则
  */
 struct StateTransition {
-    using ConditionFunc = std::function<bool(const Token&, const ParseContext&)>;
+    using ConditionFunc = std::function<bool(const Token&, ChtlContext)>;
     using ActionFunc = std::function<void(ParseContext&)>;
     
-    ConditionFunc condition;    // 转换条件
+    ConditionFunc condition;    // 转换条件（包含上下文）
     ChtlParseState nextState;   // 目标状态
     ActionFunc action;          // 转换时的动作（可选）
 };
 
 /**
- * CHTL 状态机
- * 负责管理解析状态和状态转换
+ * CHTL 状态机（简化版）
+ * 基于全局/局部上下文的状态管理
  */
 class ChtlStateMachine {
 public:
@@ -44,43 +45,46 @@ public:
     ChtlParseState getCurrentState() const;
     
     /**
+     * 获取当前上下文（全局/局部）
+     */
+    ChtlContext getCurrentContext() const;
+    
+    /**
      * 处理 Token 并可能触发状态转换
      * @return 是否成功处理
      */
     bool processToken(const Token& token);
     
     /**
-     * 强制转换到指定状态
+     * 进入新状态
      */
-    void transitionTo(ChtlParseState newState);
+    void enterState(ChtlParseState newState);
     
     /**
-     * 推入新的状态（保存当前状态）
+     * 退出当前状态
      */
-    void pushState(ChtlParseState newState);
+    void exitState();
     
     /**
-     * 弹出状态（恢复之前的状态）
+     * 进入局部上下文（如进入元素内部）
      */
-    void popState();
+    void enterLocalContext();
     
     /**
-     * 获取当前上下文
+     * 退出局部上下文（返回全局或上层）
      */
-    ParseContext& getCurrentContext();
-    const ParseContext& getCurrentContext() const;
+    void exitLocalContext();
+    
+    /**
+     * 获取当前解析上下文
+     */
+    ParseContext& getParseContext() { return parseContext_; }
+    const ParseContext& getParseContext() const { return parseContext_; }
     
     /**
      * 设置词法分析器（用于状态相关的 token 识别）
      */
-    void setLexer(ChtlLexer* lexer);
-    
-    /**
-     * 注册状态进入/退出回调
-     */
-    using StateCallback = std::function<void(ChtlParseState, ParseContext&)>;
-    void onStateEnter(ChtlParseState state, StateCallback callback);
-    void onStateExit(ChtlParseState state, StateCallback callback);
+    void setLexer(ChtlLexer* lexer) { lexer_ = lexer; }
     
     /**
      * 重置状态机
@@ -88,32 +92,19 @@ public:
     void reset();
     
     /**
-     * 获取状态栈深度（用于调试）
+     * 调试信息
      */
-    size_t getStateStackDepth() const { return stateStack_.size(); }
-    
-    /**
-     * 检查是否在特定状态或其子状态中
-     */
-    bool isInState(ChtlParseState state) const;
-    bool isInStyleContext() const;
-    bool isInScriptContext() const;
-    bool isInTemplateContext() const;
+    void printState() const;
     
 private:
     /**
-     * 注册所有状态转换规则
+     * 注册状态转换规则
      */
     void registerTransitions();
-    
-    /**
-     * 注册特定状态的转换规则
-     */
-    void registerTopLevelTransitions();
-    void registerElementContentTransitions();
-    void registerStyleBlockTransitions();
-    void registerTemplateDeclarationTransitions();
-    // ... 其他状态的转换规则
+    void registerInitialTransitions();
+    void registerElementTransitions();
+    void registerStyleTransitions();
+    void registerDeclarationTransitions();
     
     /**
      * 执行状态转换
@@ -126,21 +117,23 @@ private:
     const StateTransition* findTransition(const Token& token) const;
     
 private:
-    // 状态栈
-    std::vector<ChtlParseState> stateStack_;
+    // 当前状态
+    ChtlParseState currentState_;
     
-    // 上下文栈
-    std::vector<ParseContext> contextStack_;
+    // 上下文栈（支持嵌套）
+    std::vector<ChtlContext> contextStack_;
+    
+    // 解析上下文
+    ParseContext parseContext_;
     
     // 状态转换规则表
     std::unordered_map<ChtlParseState, std::vector<StateTransition>> transitions_;
     
-    // 状态回调
-    std::unordered_map<ChtlParseState, StateCallback> enterCallbacks_;
-    std::unordered_map<ChtlParseState, StateCallback> exitCallbacks_;
-    
     // 关联的词法分析器
     ChtlLexer* lexer_;
+    
+    // 状态栈（用于返回）
+    std::vector<ChtlParseState> stateStack_;
 };
 
 } // namespace chtl::v2

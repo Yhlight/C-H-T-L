@@ -1,0 +1,464 @@
+// CHTL Todo 应用示例
+// 展示组件化、样式系统、CHTL-JS 和 CJmod 的综合应用
+
+[Template] @Var Theme {
+    primary: "#4a90e2";
+    secondary: "#7b68ee";
+    success: "#5cb85c";
+    danger: "#d9534f";
+    background: "#f5f7fa";
+    cardBg: "#ffffff";
+    textPrimary: "#2c3e50";
+    textSecondary: "#7f8c8d";
+    borderColor: "#e1e8ed";
+    shadowLight: "0 2px 4px rgba(0,0,0,0.1)";
+    shadowHover: "0 4px 8px rgba(0,0,0,0.15)";
+}
+
+[Template] @Element TodoItem {
+    li {
+        class: "todo-item";
+        style {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: Theme(cardBg);
+            border: 1px solid Theme(borderColor);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                box-shadow: Theme(shadowHover);
+                transform: translateY(-1px);
+            }
+            
+            &.completed {
+                opacity: 0.6;
+                
+                .todo-text {
+                    text-decoration: line-through;
+                    color: Theme(textSecondary);
+                }
+            }
+            
+            input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                margin-right: 12px;
+                cursor: pointer;
+            }
+            
+            .todo-text {
+                flex: 1;
+                font-size: 16px;
+                color: Theme(textPrimary);
+            }
+            
+            .delete-btn {
+                padding: 4px 12px;
+                background: Theme(danger);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            
+            &:hover .delete-btn {
+                opacity: 1;
+            }
+        }
+        
+        slot;
+    }
+}
+
+[Template] @Element TodoInput {
+    div {
+        class: "todo-input-wrapper";
+        style {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            
+            input {
+                flex: 1;
+                padding: 12px 16px;
+                font-size: 16px;
+                border: 2px solid Theme(borderColor);
+                border-radius: 6px;
+                outline: none;
+                transition: border-color 0.2s;
+                
+                &:focus {
+                    border-color: Theme(primary);
+                }
+            }
+            
+            button {
+                padding: 12px 24px;
+                background: Theme(primary);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+                
+                &:hover {
+                    background: Theme(secondary);
+                    transform: translateY(-1px);
+                    box-shadow: Theme(shadowLight);
+                }
+                
+                &:active {
+                    transform: translateY(0);
+                }
+            }
+        }
+        
+        input {
+            id: "todoInput";
+            type: "text";
+            placeholder: "添加新的待办事项...";
+        }
+        
+        button {
+            text { "添加" }
+            
+            script {
+                {{&}}.addEventListener('click', function() {
+                    const input = {{#todoInput}};
+                    const value = input.value.trim();
+                    
+                    if (value) {
+                        window.todoApp.addTodo(value);
+                        input.value = '';
+                        input.focus();
+                    }
+                });
+            }
+        }
+        
+        script {
+            // 支持回车键添加
+            {{#todoInput}}.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const addBtn = this.nextElementSibling;
+                    addBtn.click();
+                }
+            });
+        }
+    }
+}
+
+[Template] @Element TodoStats {
+    div {
+        class: "todo-stats";
+        style {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: Theme(background);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            
+            .stat {
+                text-align: center;
+                
+                .number {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: Theme(primary);
+                }
+                
+                .label {
+                    font-size: 14px;
+                    color: Theme(textSecondary);
+                    margin-top: 4px;
+                }
+            }
+        }
+        
+        div {
+            class: "stat";
+            div {
+                class: "number";
+                id: "totalCount";
+                text { "0" }
+            }
+            div {
+                class: "label";
+                text { "总计" }
+            }
+        }
+        
+        div {
+            class: "stat";
+            div {
+                class: "number";
+                id: "activeCount";
+                text { "0" }
+            }
+            div {
+                class: "label";
+                text { "待完成" }
+            }
+        }
+        
+        div {
+            class: "stat";
+            div {
+                class: "number";
+                id: "completedCount";
+                text { "0" }
+            }
+            div {
+                class: "label";
+                text { "已完成" }
+            }
+        }
+    }
+}
+
+// 主应用
+html {
+    head {
+        title { text { "CHTL Todo App" } }
+        meta { charset: "UTF-8"; }
+        meta { 
+            name: "viewport"; 
+            content: "width=device-width, initial-scale=1.0"; 
+        }
+        
+        style {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: Theme(background);
+                color: Theme(textPrimary);
+                line-height: 1.5;
+                min-height: 100vh;
+            }
+            
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                text-align: center;
+                color: Theme(primary);
+                margin-bottom: 40px;
+                font-size: 36px;
+                font-weight: 300;
+                letter-spacing: -1px;
+            }
+            
+            .todo-list {
+                list-style: none;
+                margin-bottom: 24px;
+            }
+            
+            .filter-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-bottom: 24px;
+                
+                button {
+                    padding: 8px 16px;
+                    background: Theme(cardBg);
+                    border: 1px solid Theme(borderColor);
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    
+                    &.active {
+                        background: Theme(primary);
+                        color: white;
+                        border-color: Theme(primary);
+                    }
+                    
+                    &:hover:not(.active) {
+                        background: Theme(background);
+                    }
+                }
+            }
+        }
+    }
+    
+    body {
+        div {
+            class: "container";
+            
+            h1 { text { "✓ CHTL Todo" } }
+            
+            @Element TodoInput;
+            
+            @Element TodoStats;
+            
+            div {
+                class: "filter-buttons";
+                
+                button {
+                    class: "filter-btn active";
+                    data-filter: "all";
+                    text { "全部" }
+                }
+                
+                button {
+                    class: "filter-btn";
+                    data-filter: "active";
+                    text { "待完成" }
+                }
+                
+                button {
+                    class: "filter-btn";
+                    data-filter: "completed";
+                    text { "已完成" }
+                }
+                
+                script {
+                    {{&}}.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('filter-btn')) {
+                            // 更新按钮状态
+                            {{&}}.querySelectorAll('.filter-btn').forEach(btn => {
+                                btn.classList.remove('active');
+                            });
+                            e.target.classList.add('active');
+                            
+                            // 应用过滤器
+                            const filter = e.target.dataset.filter;
+                            window.todoApp.setFilter(filter);
+                        }
+                    });
+                }
+            }
+            
+            ul {
+                id: "todoList";
+                class: "todo-list";
+            }
+        }
+        
+        // Todo 应用主逻辑
+        script {
+            class TodoApp {
+                constructor() {
+                    this.todos = this.loadTodos();
+                    this.filter = 'all';
+                    this.render();
+                }
+                
+                loadTodos() {
+                    const saved = localStorage.getItem('chtl-todos');
+                    return saved ? JSON.parse(saved) : [];
+                }
+                
+                saveTodos() {
+                    localStorage.setItem('chtl-todos', JSON.stringify(this.todos));
+                }
+                
+                addTodo(text) {
+                    const todo = {
+                        id: Date.now(),
+                        text: text,
+                        completed: false
+                    };
+                    this.todos.push(todo);
+                    this.saveTodos();
+                    this.render();
+                }
+                
+                toggleTodo(id) {
+                    const todo = this.todos.find(t => t.id === id);
+                    if (todo) {
+                        todo.completed = !todo.completed;
+                        this.saveTodos();
+                        this.render();
+                    }
+                }
+                
+                deleteTodo(id) {
+                    this.todos = this.todos.filter(t => t.id !== id);
+                    this.saveTodos();
+                    this.render();
+                }
+                
+                setFilter(filter) {
+                    this.filter = filter;
+                    this.render();
+                }
+                
+                getFilteredTodos() {
+                    switch (this.filter) {
+                        case 'active':
+                            return this.todos.filter(t => !t.completed);
+                        case 'completed':
+                            return this.todos.filter(t => t.completed);
+                        default:
+                            return this.todos;
+                    }
+                }
+                
+                updateStats() {
+                    const total = this.todos.length;
+                    const completed = this.todos.filter(t => t.completed).length;
+                    const active = total - completed;
+                    
+                    {{#totalCount}}.textContent = total;
+                    {{#activeCount}}.textContent = active;
+                    {{#completedCount}}.textContent = completed;
+                }
+                
+                render() {
+                    const list = {{#todoList}};
+                    const filteredTodos = this.getFilteredTodos();
+                    
+                    list.innerHTML = '';
+                    
+                    filteredTodos.forEach(todo => {
+                        const li = document.createElement('li');
+                        li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+                        
+                        li.innerHTML = `
+                            <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+                            <span class="todo-text">${this.escapeHtml(todo.text)}</span>
+                            <button class="delete-btn">删除</button>
+                        `;
+                        
+                        // 绑定事件
+                        const checkbox = li.querySelector('input');
+                        checkbox.addEventListener('change', () => this.toggleTodo(todo.id));
+                        
+                        const deleteBtn = li.querySelector('.delete-btn');
+                        deleteBtn.addEventListener('click', () => this.deleteTodo(todo.id));
+                        
+                        list.appendChild(li);
+                    });
+                    
+                    this.updateStats();
+                }
+                
+                escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+            }
+            
+            // 初始化应用
+            window.todoApp = new TodoApp();
+        }
+    }
+}

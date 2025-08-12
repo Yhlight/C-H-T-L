@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-common.a "CMakeFiles/chtl-common.dir/GlobalMap.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-common.a

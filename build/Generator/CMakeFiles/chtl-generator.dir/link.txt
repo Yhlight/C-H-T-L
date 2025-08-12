@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-generator.a "CMakeFiles/chtl-generator.dir/StandardGenerator.cpp.o" "CMakeFiles/chtl-generator.dir/HtmlGenerator.cpp.o" "CMakeFiles/chtl-generator.dir/CssGenerator.cpp.o" "CMakeFiles/chtl-generator.dir/JsGenerator.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-generator.a

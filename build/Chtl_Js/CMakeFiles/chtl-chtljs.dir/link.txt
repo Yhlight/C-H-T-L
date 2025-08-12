@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-chtljs.a "CMakeFiles/chtl-chtljs.dir/ChtlJsParser.cpp.o" "CMakeFiles/chtl-chtljs.dir/ChtlJsTransformer.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-chtljs.a

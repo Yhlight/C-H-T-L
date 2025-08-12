@@ -1,0 +1,142 @@
+// CHTL示例文件 - Hello World
+
+[Template] @Style DefaultText
+{
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+[Custom] @Element Card
+{
+    div
+    {
+        style
+        {
+            .card  // 自动添加类名
+            {
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                background: white;
+            }
+            
+            &:hover  // 伪类选择器
+            {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+        }
+    }
+}
+
+html
+{
+    head
+    {
+        title: "CHTL示例页面";
+    }
+    
+    body
+    {
+        style
+        {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        
+        div
+        {
+            id: container;
+            class: main-container;
+            
+            style
+            {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            h1
+            {
+                style
+                {
+                    @Style DefaultText;
+                    font-size: 32px;
+                    text-align: center;
+                    color: #2c3e50;
+                }
+                
+                text
+                {
+                    "欢迎使用CHTL"
+                }
+            }
+            
+            @Element Card
+            {
+                text
+                {
+                    "这是一个使用CHTL编写的示例页面"
+                }
+                
+                div
+                {
+                    style
+                    {
+                        margin-top: 15px;
+                    }
+                    
+                    button
+                    {
+                        style
+                        {
+                            .btn
+                            {
+                                padding: 10px 20px;
+                                background-color: #3498db;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-size: 16px;
+                            }
+                            
+                            &:hover
+                            {
+                                background-color: #2980b9;
+                            }
+                        }
+                        
+                        text
+                        {
+                            "点击我"
+                        }
+                        
+                        script
+                        {
+                            {{btn}}->listen({
+                                click: () => {
+                                    alert('你点击了按钮！');
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        
+        script
+        {
+            // 使用CHTL JS扩展语法
+            {{#container}}->listen({
+                mouseenter: () => {
+                    console.log('鼠标进入容器');
+                },
+                mouseleave: () => {
+                    console.log('鼠标离开容器');
+                }
+            });
+        }
+    }
+}

@@ -1,0 +1,10 @@
+#ifndef CHTL_CHTLJS_CHTLJSTRANSFORMER_H
+#define CHTL_CHTLJS_CHTLJSTRANSFORMER_H
+
+namespace CHTL {
+
+// TODO: 定义CHTL JavaScript转换器类
+
+} // namespace CHTL
+
+#endif // CHTL_CHTLJS_CHTLJSTRANSFORMER_H

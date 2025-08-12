@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libchtl-node.a "CMakeFiles/chtl-node.dir/Node.cpp.o" "CMakeFiles/chtl-node.dir/ElementNode.cpp.o" "CMakeFiles/chtl-node.dir/TextNode.cpp.o" "CMakeFiles/chtl-node.dir/StyleNode.cpp.o" "CMakeFiles/chtl-node.dir/ScriptNode.cpp.o" "CMakeFiles/chtl-node.dir/TemplateNode.cpp.o" "CMakeFiles/chtl-node.dir/CustomNode.cpp.o"
+/usr/bin/ranlib ../lib/libchtl-node.a

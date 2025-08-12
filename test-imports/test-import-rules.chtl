@@ -1,0 +1,61 @@
+// 测试导入路径解析规则
+
+// ========== 测试 @Html/@Style/@JavaScript ==========
+
+// 1. 不带后缀名 - 应该在当前目录查找
+[Import] @Html from "test";           // 应该找到 test.html
+[Import] @Style from "styles";        // 应该找到 styles.css
+[Import] @JavaScript from "script";   // 应该找到 script.js
+
+// 2. 带后缀名 - 直接查找
+[Import] @Html from "test.html";
+[Import] @Style from "styles.css";
+[Import] @JavaScript from "script.js";
+
+// 3. 具体路径 - 文件
+[Import] @Style from "./styles.css";
+
+// 4. 文件夹路径 - 应该报错
+// [Import] @Html from "./module/";  // 取消注释会报错
+
+// ========== 测试 @Chtl ==========
+
+// 5. 只有名称 - 搜索顺序：官方模块 → module文件夹 → 当前目录
+[Import] @Element Button from "ui";   // 应该找到 module/ui.cmod (cmod优先)
+
+// 6. 带后缀名 - 指定文件
+[Import] @Element ButtonChtl from "ui.chtl";  // 应该找到 module/ui.chtl
+
+// 7. 具体路径
+[Import] @Element ButtonDirect from "./module/ui.cmod";
+
+// ========== 测试 @CJmod ==========
+
+// 8. 只有名称 - 只搜索 .cjmod
+[Import] @CJmod from "reactive";      // 应该找到 module/reactive.cjmod
+
+// 9. 带后缀名
+[Import] @CJmod from "reactive.cjmod";
+
+// 10. 具体路径
+[Import] @CJmod from "./module/reactive.cjmod";
+
+// ========== 主文档 ==========
+html {
+    head {
+        title { text { "导入规则测试" } }
+        @Style;
+        @JavaScript;
+    }
+    
+    body {
+        h1 { text { "导入测试" } }
+        
+        // 测试导入的组件
+        @Element Button {
+            text: "测试按钮";
+        }
+        
+        @Html;  // 插入导入的 HTML
+    }
+}

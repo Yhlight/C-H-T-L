@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cctype>
+#include <iostream>
 
 namespace chtl {
 

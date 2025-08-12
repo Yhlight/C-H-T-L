@@ -1,0 +1,12 @@
+[Template] @Var SimpleVars {
+    textcolor: red;
+}
+html {
+    body {
+        div {
+            style {
+                color: SimpleVars(textcolor);
+            }
+        }
+    }
+}

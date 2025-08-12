@@ -1,0 +1,56 @@
+// 测试全局样式在 head 中
+
+html {
+    head {
+        title { text { "CSS 在 Head 中" } }
+        
+        // 全局样式块 - 在 head 元素内
+        style {
+            text {
+                "
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                }
+                
+                .color-box {
+                    background: #ff6b6b;
+                    padding: 20px;
+                    border: 2px solid #ff4757;
+                    border-radius: 8px;
+                    color: #ffffff;
+                    margin: 20px;
+                }
+                
+                h1 {
+                    color: #2d3436;
+                    font-size: 24px;
+                    text-align: center;
+                }
+                
+                .test-colors {
+                    color: #0984e3;
+                    background: #00b894;
+                    border-color: #fdcb6e;
+                }
+                "
+            }
+        }
+    }
+    
+    body {
+        h1 { text { "测试 CSS 静态分析" } }
+        
+        div {
+            class = "color-box"
+            text { "使用全局样式类" }
+        }
+        
+        div {
+            class = "test-colors"
+            text { "测试颜色值解析" }
+        }
+    }
+}

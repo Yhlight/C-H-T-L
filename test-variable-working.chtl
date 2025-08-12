@@ -1,0 +1,14 @@
+[Template] @Var Colors {
+    primary: #007bff;
+}
+
+html {
+    body {
+        div {
+            style {
+                background: Colors(primary);
+            }
+            text { "变量测试" }
+        }
+    }
+}

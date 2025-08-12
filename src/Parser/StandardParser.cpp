@@ -21,7 +21,9 @@
 #include "Runtime/ChtlJsRuntime.h"
 #include <algorithm>
 #include <cctype>
-
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 
 namespace chtl {
 
@@ -121,6 +123,12 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
     if (currentToken_.type == TokenType::SCRIPT) {
         advance();
         return parseScript();
+    }
+    
+    // 处理顶层 style 块
+    if (currentToken_.type == TokenType::STYLE) {
+        advance();
+        return parseStyleBlock();
     }
     
     // 检查特殊标记（以[开头）- 备用方案
@@ -310,10 +318,16 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         else {
             auto child = parseNode();
             if (child) {
-                // 如果是style节点，设置为局部样式
+                // 如果是style节点，根据父元素决定作用域
                 if (child->getType() == NodeType::STYLE) {
                     auto styleChild = std::static_pointer_cast<Style>(child);
-                    styleChild->setType(Style::StyleScope::LOCAL);
+                    // 如果父元素是 head，则为全局样式
+                    // 否则为局部样式（在 body 内的元素中）
+                    if (element->getTagName() == "head") {
+                        styleChild->setType(Style::StyleScope::GLOBAL);
+                    } else {
+                        styleChild->setType(Style::StyleScope::LOCAL);
+                    }
                 }
                 element->addChild(child);
             }
@@ -540,6 +554,13 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
             if (needSpace) {
                 scriptContent += " ";
             }
+            
+            // 如果原始token后有换行，保留换行
+            if (token.type == TokenType::SEMICOLON || 
+                token.type == TokenType::RIGHT_BRACE ||
+                token.type == TokenType::LEFT_BRACE) {
+                scriptContent += "\n";
+            }
         }
     }
     
@@ -557,10 +578,43 @@ std::shared_ptr<Node> StandardParser::parseScriptBlock() {
 void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
     std::string inlineStyles;  // 收集内联样式
     
+    // 保存当前状态
+    auto previousState = lexer_->getState();
+    
+    // 切换到 CSS 状态（如果词法分析器支持）
+    // 注意：这需要词法分析器实现相应的 CSS 状态
+    // 暂时我们使用一个标志来指示我们在 CSS 上下文中
+    // bool inCssContext = true;  // 删除未使用的变量
+    
     while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
         skipWhitespaceAndComments();
         
         if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查 text 块（用于全局样式）
+        if (currentToken_.value == "text") {
+            advance();  // 消费 'text'
+            consume(TokenType::LEFT_BRACE, "Expected '{'");
+            
+            // 收集 text 块中的所有内容作为 CSS
+            std::string cssContent;
+            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+                auto token = advance();
+                
+                if (token.type == TokenType::STRING_LITERAL) {
+                    cssContent += token.value;
+                } else if (token.type == TokenType::UNQUOTED_LITERAL) {
+                    cssContent += token.value;
+                }
+                // 可以添加其他需要的 token 类型
+            }
+            
+            consume(TokenType::RIGHT_BRACE, "Expected '}'");
+            
+            // 设置 CSS 内容
+            styleNode->setCssContent(cssContent);
+            continue;
+        }
         
         // 检查@Style, @Var引用
         if (check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {
@@ -597,6 +651,11 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
         } else {
             advance();
         }
+    }
+    
+    // 恢复之前的状态
+    if (previousState) {
+        lexer_->setState(previousState);
     }
     
     // 将收集的内联样式设置到Style节点的CSS内容
@@ -755,54 +814,97 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     
     cssContent += propertyName.value + ": ";
     
-    // 收集属性值直到分号
-    bool lastWasNumber = false;
-    while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
+    // 直接收集从冒号到分号之间的所有内容作为属性值
+    std::string propertyValue;
+    int parenDepth = 0;
+    int braceDepth = 0;
+    
+    // 收集所有 token 直到分号（考虑括号平衡）
+    while (!isAtEnd()) {
+        // 检查是否到达分号（且不在括号内）
+        if (check(TokenType::SEMICOLON) && parenDepth == 0 && braceDepth == 0) {
+            break;
+        }
+        
+        // 如果遇到右大括号且不在其他结构内，可能是样式块结束
+        if (check(TokenType::RIGHT_BRACE) && parenDepth == 0 && braceDepth == 0) {
+            // 这是样式块的结束，不是属性值的一部分
+            break;
+        }
+        
         auto token = advance();
         
-        // 检查是否需要在token之前添加空格
-        bool needSpace = false;
-        if (!cssContent.empty() && cssContent.back() != ' ' && cssContent.back() != ':') {
-            // 数字后面跟单位不需要空格
-            if (lastWasNumber && token.type == TokenType::IDENTIFIER &&
-                (token.value == "px" || token.value == "em" || 
-                 token.value == "rem" || token.value == "%" ||
-                 token.value == "vh" || token.value == "vw" ||
-                 token.value == "pt" || token.value == "cm" ||
-                 token.value == "mm" || token.value == "in" ||
-                 token.value == "pc" || token.value == "ex" ||
-                 token.value == "ch" || token.value == "deg" ||
-                 token.value == "rad" || token.value == "turn" ||
-                 token.value == "s" || token.value == "ms")) {
+        // 跟踪括号深度
+        if (token.type == TokenType::LEFT_PAREN) parenDepth++;
+        else if (token.type == TokenType::RIGHT_PAREN) parenDepth--;
+        else if (token.type == TokenType::LEFT_BRACE) braceDepth++;
+        else if (token.type == TokenType::RIGHT_BRACE) braceDepth--;
+        
+        // 添加到属性值
+        if (!propertyValue.empty()) {
+            // 决定是否需要空格
+            char lastChar = propertyValue.back();
+            bool needSpace = true;
+            
+            // 特殊情况不需要空格
+            if (token.value == "(" || lastChar == '(' || 
+                token.value == ")" || token.value == "," ||
+                token.value == ":" || lastChar == ':' ||
+                token.value == ";" || lastChar == ';') {
+                needSpace = false;
+            }
+            // 数字后跟单位不需要空格
+            else if (std::isdigit(lastChar) && 
+                     (token.value == "px" || token.value == "em" || 
+                      token.value == "rem" || token.value == "%" ||
+                      token.value == "vh" || token.value == "vw" ||
+                      token.value == "pt" || token.value == "s" || 
+                      token.value == "ms" || token.value == "deg")) {
                 needSpace = false;
             }
             // 逗号后面需要空格
-            else if (cssContent.back() == ',') {
+            else if (lastChar == ',') {
                 needSpace = true;
             }
-            // 括号内不需要空格
-            else if (token.value == "(" || cssContent.back() == '(') {
+            // # 后面不需要空格（颜色值）
+            else if (token.value == "#" || lastChar == '#') {
                 needSpace = false;
             }
-            // 右括号前不需要空格
-            else if (token.value == ")") {
-                needSpace = false;
+            // 如果前一个 token 值以 # 开头（颜色值），后面不需要空格
+            else if (!propertyValue.empty()) {
+                // 查找最后一个非空格字符序列的开始
+                size_t lastTokenStart = propertyValue.find_last_of(" ");
+                if (lastTokenStart == std::string::npos) {
+                    lastTokenStart = 0;
+                } else {
+                    lastTokenStart++;
+                }
+                
+                // 检查最后一个 token 是否以 # 开头
+                if (lastTokenStart < propertyValue.length() && propertyValue[lastTokenStart] == '#') {
+                    needSpace = false;
+                }
             }
-            // 其他情况根据token类型决定
-            else if (token.type != TokenType::COMMA && token.type != TokenType::SEMICOLON) {
-                needSpace = true;
+            
+            if (needSpace && lastChar != ' ') {
+                propertyValue += " ";
             }
         }
         
-        if (needSpace) {
-            cssContent += " ";
-        }
-        
-        cssContent += token.value;
-        lastWasNumber = (token.type == TokenType::NUMBER);
+        propertyValue += token.value;
     }
     
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    // 移除末尾空格
+    while (!propertyValue.empty() && propertyValue.back() == ' ') {
+        propertyValue.pop_back();
+    }
+    
+    cssContent += propertyValue;
+    
+    // 消费分号（如果有）
+    if (check(TokenType::SEMICOLON)) {
+        consume(TokenType::SEMICOLON, "Expected ';'");
+    }
     cssContent += ";\n";
 }
 
@@ -951,7 +1053,12 @@ void StandardParser::parseVarTemplateContent(std::shared_ptr<Template> templateN
         
         // 变量定义
         if (checkAttribute()) {
-            parseTemplateProperty(templateNode);
+            try {
+                parseTemplateProperty(templateNode);
+            } catch (const std::exception& e) {
+                // 如果解析属性失败，跳到下一个语句
+                skipToNextStatement();
+            }
         } else {
             advance();
         }
@@ -980,7 +1087,18 @@ void StandardParser::parseTemplateProperty(std::shared_ptr<Template> templateNod
     
     templateNode->addProperty(nameToken.value, value);
     
-    consume(TokenType::SEMICOLON, "Expected ';'");
+    // 尝试消费分号，但如果下一个是右大括号或另一个属性，则不强制要求
+    if (check(TokenType::SEMICOLON)) {
+        advance();
+    } else {
+        // 跳过任何空白和注释
+        skipWhitespaceAndComments();
+        
+        if (!check(TokenType::RIGHT_BRACE) && !checkAttribute() && !isAtEnd()) {
+            // 只有在不是结束、下一个属性或文件结束时才报错
+            addError("Expected ';' after property");
+        }
+    }
 }
 
 std::shared_ptr<Node> StandardParser::parseCustom() {

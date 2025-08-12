@@ -1,0 +1,30 @@
+// 测试 CHTL:: 官方模块前缀
+
+// 创建用户自己的 reactive 模块
+[Template] @CJmod reactive {
+    // 用户版本的 reactive
+}
+
+// 使用官方版本
+[Import] @CJmod OfficialReactive from "CHTL::reactive";
+
+// 使用用户版本（优先 module/ 目录）
+[Import] @CJmod UserReactive from "reactive";
+
+// 测试无效用法
+// [Import] @Html from "CHTL::test";  // 应该报错：CHTL:: 不支持资源导入
+// [Import] @Element from "CHTL::./local/path";  // 应该报错：CHTL:: 不能用于具体路径
+
+html {
+    body {
+        h1 { text { "CHTL:: 前缀测试" } }
+        
+        div {
+            text { "测试结果：" }
+            ul {
+                li { text { "官方 reactive 模块已导入" } }
+                li { text { "用户 reactive 模块已导入" } }
+            }
+        }
+    }
+}

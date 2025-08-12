@@ -1,7 +1,5 @@
-[Custom] @Element Box {
-    div { text { "Box" } }
-}
-
-body {
-    @Element Box;
+html {
+    body {
+        h1 { text { "Hello CHTL" } }
+    }
 }

@@ -74,6 +74,10 @@ public:
     void setContext(std::shared_ptr<ChtlContext> context) { currentContext_ = context; }
     
 protected:
+    // 错误处理辅助方法
+    void addError(const std::string& message) { result_.errors.push_back(message); }
+    void addWarning(const std::string& message) { result_.warnings.push_back(message); }
+    
     // 访问者方法
     virtual void visit(const std::shared_ptr<Node>& node);
     virtual void visitElement(const std::shared_ptr<Element>& element);
@@ -162,6 +166,7 @@ public:
 protected:
     void visitElement(const std::shared_ptr<Element>& element) override;
     void visitCustom(const std::shared_ptr<Custom>& custom) override;
+    void visitTemplate(const std::shared_ptr<Template>& tmpl) override;
     void visitStyle(const std::shared_ptr<Style>& style) override;
     void visitScript(const std::shared_ptr<Script>& script) override;
     virtual void visitComment(const std::shared_ptr<Comment>& comment);
@@ -176,6 +181,12 @@ private:
     std::string generateHTMLDocument();
     void injectRuntimeCode();
     void processReference(const std::shared_ptr<Element>& refNode);
+    
+    // 处理 slot 元素替换
+    void processSlots(std::shared_ptr<Node> templateNode, 
+                     const std::shared_ptr<Element>& refNode);
+    
+    // 应用引用修改
     void applyReferenceModifications(std::shared_ptr<Node> target,
                                     const std::shared_ptr<Element>& refNode);
     void mergeElement(std::shared_ptr<Node> target, 
@@ -215,8 +226,12 @@ private:
     std::string trim(const std::string& str);
     
     // CJmod 集成
+    void visitScriptWithCJmod(const std::shared_ptr<Script>& script, bool isLocal);
     std::string processJavaScriptWithCJmod(const std::string& jsCode);
     void injectCJmodRuntime();
+    
+    // 活跃的 CJmod 模块
+    std::set<std::string> activeCJmodModules_;
 };
 
 // React平台生成器

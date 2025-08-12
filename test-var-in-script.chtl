@@ -1,0 +1,66 @@
+// 测试变量在脚本中的替换
+
+[Template] @Var Config {
+    apiUrl: "https://api.example.com";
+    timeout: 5000;
+    retryCount: 3;
+    primaryColor: "#007bff";
+}
+
+html {
+    body {
+        h1 { text { "变量替换测试" } }
+        
+        div {
+            id: "test-container";
+            style {
+                background: Config(primaryColor);
+                padding: 20px;
+            }
+            
+            script {
+                // 测试在脚本中使用变量
+                const API_URL = "Config(apiUrl)";
+                const TIMEOUT = Config(timeout);
+                const RETRY_COUNT = Config(retryCount);
+                
+                console.log("API URL:", API_URL);
+                console.log("Timeout:", TIMEOUT);
+                console.log("Retry Count:", RETRY_COUNT);
+                
+                // 测试在字符串模板中使用
+                const message = `配置已加载：
+                  - API: Config(apiUrl)
+                  - 超时: Config(timeout)ms
+                  - 重试: Config(retryCount)次`;
+                
+                console.log(message);
+                
+                // 测试在对象中使用
+                const config = {
+                    endpoint: "Config(apiUrl)",
+                    timeout: Config(timeout),
+                    retries: Config(retryCount),
+                    theme: {
+                        primary: "Config(primaryColor)"
+                    }
+                };
+                
+                console.log("Config object:", config);
+            }
+        }
+        
+        // 全局脚本测试
+        script {
+            // 全局脚本中的变量替换
+            window.APP_CONFIG = {
+                apiUrl: "Config(apiUrl)",
+                timeout: Config(timeout),
+                retryCount: Config(retryCount),
+                primaryColor: "Config(primaryColor)"
+            };
+            
+            console.log("Global config:", window.APP_CONFIG);
+        }
+    }
+}

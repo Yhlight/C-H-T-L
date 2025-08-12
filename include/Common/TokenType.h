@@ -117,7 +117,16 @@ enum class TokenType {
     // 其他
     WILDCARD,             // *
     EOF_TOKEN,            // 文件结束
-    UNKNOWN               // 未知token
+    UNKNOWN,              // 未知token
+
+    // CSS 相关
+    AT_IMPORT,          // @import
+    AT_MEDIA,           // @media
+    AT_KEYFRAMES,       // @keyframes
+    AT_SUPPORTS,        // @supports
+    AT_PAGE,            // @page
+    AT_FONT_FACE,       // @font-face
+    AT_NAMESPACE        // @namespace
 };
 
 } // namespace chtl

@@ -1,0 +1,34 @@
+// 测试局部脚本收集
+
+html {
+    body {
+        h1 { text { "局部脚本测试" } }
+        
+        // 带有局部脚本的元素
+        div {
+            id: "test-div";
+            p { text { "点击按钮查看效果" } }
+            
+            button {
+                id: "test-button";
+                text { "点击我" }
+            }
+            
+            // 局部脚本
+            script {
+                console.log("局部脚本开始执行");
+                
+                // 使用 CHTL-JS 语法
+                {{#test-button}}?.addEventListener('click', function() {
+                    console.log("按钮被点击了！");
+                    {{#test-div}}.style.background = '#f0f0f0';
+                });
+            }
+        }
+        
+        // 全局脚本
+        script {
+            console.log("全局脚本执行");
+        }
+    }
+}

@@ -1,0 +1,21 @@
+// 调试测试
+
+[Template] @Element Box {
+    div {
+        class: "box";
+        text { "Original content" }
+    }
+}
+
+html {
+    body {
+        // 测试1：直接使用
+        @Element Box;
+        
+        // 测试2：带特例化
+        @Element Box {
+            class: "custom-box";
+            text { "Custom content" }
+        }
+    }
+}

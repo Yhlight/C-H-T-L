@@ -1,0 +1,251 @@
+// CJmod 完整示例 - 展示 CHTL JS 的无限可能
+
+// 导入响应式编程模块
+[Import] @CJmod reactive from "builtin:reactive";
+
+// 导入事件委托模块
+[Import] @CJmod delegate from "builtin:delegate";
+
+// 导入时间旅行调试器（开发环境）
+[Import] @CJmod timetravel from "builtin:timetravel" if { env: "development" };
+
+// 主应用
+[Custom] @Element TodoApp {
+    div {
+        class: "todo-app";
+        
+        // 局部样式
+        style {
+            .todo-app {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            .todo-list {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .todo-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border: 1px solid #ddd;
+                margin: 5px 0;
+            }
+            
+            &:hover {
+                background: #f5f5f5;
+            }
+        }
+        
+        h1 { text { "待办事项 - CJmod 演示" } }
+        
+        div {
+            class: "input-group";
+            
+            input {
+                id: "todo-input";
+                type: "text";
+                placeholder: "添加新任务...";
+                
+                script {
+                    // 使用响应式语法
+                    todoText := "";
+                    
+                    // 双向绑定
+                    {{&}}->bind("todoText");
+                    
+                    // Enter 键添加任务
+                    {{&}}->listen("keypress", (e) => {
+                        if (e.key === "Enter" && todoText.value.trim()) {
+                            addTodo(todoText.value);
+                            todoText.value = "";
+                        }
+                    });
+                }
+            }
+            
+            button {
+                text { "添加" }
+                
+                script {
+                    {{&}}->listen("click", () => {
+                        if (todoText.value.trim()) {
+                            addTodo(todoText.value);
+                            todoText.value = "";
+                        }
+                    });
+                }
+            }
+        }
+        
+        // 统计信息
+        div {
+            class: "stats";
+            
+            script {
+                // 计算属性
+                totalCount => todos.value.length;
+                completedCount => todos.value.filter(t => t.completed).length;
+                activeCount => totalCount.value - completedCount.value;
+                
+                // 监听变化更新 UI
+                watch todos -> {
+                    {{&}}.innerHTML = `
+                        总计: ${totalCount.value} | 
+                        完成: ${completedCount.value} | 
+                        待办: ${activeCount.value}
+                    `;
+                };
+            }
+        }
+        
+        // 任务列表
+        ul {
+            class: "todo-list";
+            
+            script {
+                // 响应式任务数组
+                todos := [
+                    { id: 1, text: "学习 CHTL", completed: false },
+                    { id: 2, text: "使用 CJmod", completed: false }
+                ];
+                
+                // 添加任务函数
+                function addTodo(text) {
+                    record {  // 时间旅行记录点
+                        todos.value = [...todos.value, {
+                            id: Date.now(),
+                            text: text,
+                            completed: false
+                        }];
+                    }
+                }
+                
+                // 事件委托 - 处理所有子元素的事件
+                on .todo-checkbox change -> {
+                    const todoId = parseInt(e.target.dataset.todoId);
+                    record {
+                        todos.value = todos.value.map(todo => 
+                            todo.id === todoId 
+                                ? { ...todo, completed: e.target.checked }
+                                : todo
+                        );
+                    }
+                };
+                
+                on .delete-btn click -> {
+                    const todoId = parseInt(e.target.dataset.todoId);
+                    assert todos.value.length > 0 : "任务列表不应为空";
+                    
+                    record {
+                        todos.value = todos.value.filter(todo => todo.id !== todoId);
+                    }
+                };
+                
+                // 渲染任务列表
+                function renderTodos() {
+                    {{&}}.innerHTML = todos.value.map(todo => `
+                        <li class="todo-item">
+                            <input 
+                                type="checkbox" 
+                                class="todo-checkbox"
+                                data-todo-id="${todo.id}"
+                                ${todo.completed ? 'checked' : ''}
+                            />
+                            <span style="${todo.completed ? 'text-decoration: line-through' : ''}">
+                                ${todo.text}
+                            </span>
+                            <button class="delete-btn" data-todo-id="${todo.id}">删除</button>
+                        </li>
+                    `).join('');
+                }
+                
+                // 监听 todos 变化
+                watch todos -> {
+                    measure "render todos" {
+                        renderTodos();
+                    }
+                };
+                
+                // 初始渲染
+                renderTodos();
+            }
+        }
+        
+        // 调试工具栏（仅开发环境）
+        div {
+            class: "debug-toolbar";
+            if { env: "development" }
+            
+            button {
+                text { "⏪ 撤销" }
+                script {
+                    {{&}}->listen("click", () => {
+                        jump -1;
+                    });
+                }
+            }
+            
+            button {
+                text { "⏩ 重做" }
+                script {
+                    {{&}}->listen("click", () => {
+                        jump +1;
+                    });
+                }
+            }
+            
+            button {
+                text { "📸 快照" }
+                script {
+                    {{&}}->listen("click", () => {
+                        snapshot "manual-checkpoint";
+                    });
+                }
+            }
+            
+            button {
+                text { "📊 性能" }
+                script {
+                    {{&}}->listen("click", () => {
+                        monitor events;
+                    });
+                }
+            }
+        }
+    }
+}
+
+// 页面结构
+html {
+    head {
+        title { text { "CJmod 演示 - CHTL JS 的无限可能" } }
+        meta { charset: "UTF-8"; }
+    }
+    
+    body {
+        style {
+            font-family: "Arial, sans-serif";
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+        }
+        
+        // 使用 TodoApp 组件
+        @Element TodoApp;
+        
+        // 全局脚本
+        script {
+            // 初始化消息
+            console.log("CHTL JS with CJmod - The Future of Web Development!");
+            
+            // 性能监控
+            measure "app startup" {
+                console.log("应用启动完成");
+            }
+        }
+    }
+}

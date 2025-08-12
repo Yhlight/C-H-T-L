@@ -1,0 +1,152 @@
+// 测试4: 样式系统和局部样式
+
+body {
+    h1 { text { "内联样式测试" } }
+    
+    // 基本内联样式
+    div {
+        style {
+            width: 300px;
+            height: 200px;
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        text { "带内联样式的 div" }
+    }
+    
+    h1 { text { "局部类样式测试" } }
+    
+    // 自动类名
+    div {
+        style {
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                background: white;
+            }
+            
+            .box {
+                border: 2px solid blue;
+                padding: 10px;
+                margin: 10px 0;
+            }
+            
+            // 嵌套选择器
+            .container .box {
+                background: #e0e0e0;
+            }
+            
+            // 伪类
+            &:hover {
+                transform: scale(1.02);
+                transition: transform 0.2s;
+            }
+            
+            .box:hover {
+                background: #d0d0d0;
+                cursor: pointer;
+            }
+            
+            // 伪元素
+            &::before {
+                content: "→ ";
+                color: red;
+            }
+            
+            // 媒体查询
+            @media (max-width: 768px) {
+                .container {
+                    padding: 10px;
+                }
+                
+                .box {
+                    margin: 5px 0;
+                }
+            }
+        }
+        
+        div { class: "box"; text { "Box 1" } }
+        div { class: "box"; text { "Box 2" } }
+        div { class: "box"; text { "Box 3" } }
+    }
+    
+    h1 { text { "复杂样式测试" } }
+    
+    // 动画和过渡
+    div {
+        style {
+            .animated {
+                width: 100px;
+                height: 100px;
+                background: linear-gradient(45deg, #ff0000, #00ff00);
+                animation: rotate 2s linear infinite;
+                transition: all 0.3s ease;
+            }
+            
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            .animated:hover {
+                transform: scale(1.2) rotate(180deg);
+                filter: brightness(1.2);
+            }
+        }
+        
+        div { class: "animated"; }
+    }
+    
+    // CSS 变量
+    div {
+        style {
+            :root {
+                --primary-color: #007bff;
+                --secondary-color: #6c757d;
+                --spacing: 16px;
+            }
+            
+            .themed {
+                background: var(--primary-color);
+                color: white;
+                padding: var(--spacing);
+                margin: calc(var(--spacing) / 2);
+            }
+        }
+        
+        div { class: "themed"; text { "使用 CSS 变量" } }
+    }
+    
+    // 网格布局
+    div {
+        style {
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .grid-item {
+                background: #f8f9fa;
+                padding: 20px;
+                text-align: center;
+                border: 1px solid #dee2e6;
+            }
+        }
+        
+        div { 
+            class: "grid";
+            div { class: "grid-item"; text { "1" } }
+            div { class: "grid-item"; text { "2" } }
+            div { class: "grid-item"; text { "3" } }
+            div { class: "grid-item"; text { "4" } }
+            div { class: "grid-item"; text { "5" } }
+            div { class: "grid-item"; text { "6" } }
+        }
+    }
+}

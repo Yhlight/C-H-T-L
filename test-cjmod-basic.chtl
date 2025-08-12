@@ -1,0 +1,22 @@
+// 测试 CJmod 功能
+
+[Import] @CJmod from "reactive";
+
+html {
+    body {
+        h1 { text { "CJmod 测试" } }
+        
+        script {
+            // 测试 CJmod 运行时是否被注入
+            if (window.CHTL && window.CHTL.modules) {
+                console.log("CJmod runtime loaded successfully");
+            }
+            
+            // 测试 reactive 模块
+            if (window.CHTL && window.CHTL.modules.reactive) {
+                const data = window.CHTL.modules.reactive.reactive(42);
+                console.log("Reactive value:", data.value);
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+// 测试 HTML 导入
+
+[Import] @Html TestContent from "test";
+
+html {
+    body {
+        h1 { text { "HTML 导入测试" } }
+        
+        div {
+            text { "以下是导入的内容：" }
+            @Html TestContent;
+        }
+    }
+}

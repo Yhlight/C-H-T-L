@@ -1,0 +1,90 @@
+// 完整的 CHTL-JS 功能测试
+
+html {
+    head {
+        title { text { "CHTL-JS 完整测试" } }
+    }
+    
+    body {
+        h1 { text { "CHTL-JS 功能演示" } }
+        
+        // 测试 1：局部脚本和 {{#id}} 语法
+        div {
+            id: "test1";
+            h2 { text { "测试 1：选择器增强" } }
+            
+            button {
+                id: "btn1";
+                text { "点击我" }
+            }
+            
+            p {
+                id: "output1";
+                text { "等待点击..." }
+            }
+            
+            script {
+                // 使用 {{#id}} 语法
+                {{#btn1}}?.addEventListener('click', function() {
+                    {{#output1}}.textContent = '按钮被点击了！';
+                    console.log('测试 1 成功');
+                });
+            }
+        }
+        
+        // 测试 2：{{&}} 上下文语法
+        div {
+            id: "test2";
+            h2 { text { "测试 2：上下文引用" } }
+            
+            button {
+                text { "使用 & 语法" }
+            }
+            
+            script {
+                // {{&}} 应该引用当前元素的父元素
+                {{&}}.querySelector('button')?.addEventListener('click', function() {
+                    {{&}}.style.background = '#f0f0f0';
+                    console.log('测试 2 成功');
+                });
+            }
+        }
+        
+        // 测试 3：listen 方法
+        div {
+            id: "test3";
+            h2 { text { "测试 3：listen 方法" } }
+            
+            button {
+                id: "btn3";
+                text { "Listen 测试" }
+            }
+            
+            script {
+                {{#btn3}}?.listen({
+                    click: function() {
+                        this.textContent = 'Listen 工作正常！';
+                        console.log('测试 3 成功');
+                    },
+                    mouseenter: function() {
+                        this.style.background = '#ddd';
+                    },
+                    mouseleave: function() {
+                        this.style.background = '';
+                    }
+                });
+            }
+        }
+        
+        // 全局脚本
+        script {
+            console.log('页面加载完成');
+            
+            // 测试 CHTL 命名空间
+            if (window.CHTL) {
+                console.log('CHTL 运行时已加载');
+                console.log('可用功能:', Object.keys(window.CHTL));
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+// 简单的 {{&}} 测试
+
+div {
+    id: "my-test-div";
+    class: "test-class";
+    
+    p { text { "测试 {{&}} 符号" } }
+    
+    script {
+        console.log("开始测试");
+        {{&}}.style.color = 'red';
+        console.log("测试完成");
+    }
+}

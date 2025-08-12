@@ -1,121 +1,254 @@
 // CHTL 综合功能测试
+// 测试所有已修复的功能
 
-// 1. 样式定义和删除
-[Template] @Style BaseStyle {
-    color: black;
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 10px;
-    padding: 5px;
+// 1. 导入测试
+[Import] @CJmod from "CHTL::animate";  // 官方模块
+
+// 2. 配置测试
+[Configuration] {
+    debug: true;
+    minify: false;
 }
 
-[Custom] @Style CustomStyle {
-    @Style BaseStyle {
-        delete margin, padding;
-    }
-    color: blue;
-    font-weight: bold;
+// 3. 变量模板测试
+[Template] @Var Theme {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+    danger: #dc3545;
+    spacing: 16px;
 }
 
-// 2. 元素定义
-[Custom] @Element TodoItem {
-    li {
-        class: "todo-item";
-        text { "待办事项" }
-    }
-}
-
-[Custom] @Element TodoList {
-    ul {
-        class: "todo-list";
-        @Element TodoItem;
-        @Element TodoItem;
-        @Element TodoItem;
-        @Element TodoItem;
-        @Element TodoItem;
-    }
-}
-
-[Custom] @Element Container {
+// 4. 元素模板测试
+[Template] @Element Card {
     div {
-        class: "container";
-        h3 { text { "容器标题" } }
-        p { text { "段落1" } }
-        p { text { "段落2" } }
-        p { text { "段落3" } }
+        class: "card";
+        style {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: Theme(spacing);
+            margin-bottom: Theme(spacing);
+            
+            &:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+        }
+        
+        h3 {
+            class: "card-title";
+            style {
+                color: Theme(primary);
+                margin-bottom: 8px;
+            }
+            text { "卡片标题" }
+        }
+        
+        div {
+            class: "card-body";
+            text { "卡片内容" }
+        }
     }
 }
 
-body {
-    h1 { text { "CHTL 综合测试" } }
-    
-    // 测试1: 样式应用和删除
-    section {
-        h2 { text { "1. 样式测试" } }
-        div {
-            style { @Style CustomStyle; }
-            text { "这段文字应该是蓝色、粗体，没有margin和padding" }
+// 5. 自定义组件测试
+[Custom] @Element Button {
+    button {
+        class: "btn";
+        style {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: Theme(primary);
+            color: white;
+            cursor: pointer;
+            
+            &:hover {
+                opacity: 0.9;
+            }
+            
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+        text { "点击按钮" }
+    }
+}
+
+// 主文档
+html {
+    head {
+        title { text { "CHTL 综合测试" } }
+        style {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                line-height: 1.6;
+                padding: 20px;
+                background: #f5f5f5;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
         }
     }
     
-    // 测试2: 删除操作
-    section {
-        h2 { text { "2. 删除测试" } }
-        
+    body {
         div {
-            h3 { text { "删除特定项" } }
-            @Element TodoList {
-                delete @Element TodoItem[1], @Element TodoItem[3];
-            }
-            p { text { "应该显示3个待办事项（删除了第2和第4个）" } }
-        }
-        
-        div {
-            h3 { text { "删除所有项" } }
-            @Element TodoList {
-                delete @Element TodoItem;
-            }
-            p { text { "应该显示空列表" } }
-        }
-    }
-    
-    // 测试3: 插入操作
-    section {
-        h2 { text { "3. 插入测试" } }
-        
-        div {
-            h3 { text { "在顶部和底部插入" } }
-            @Element Container {
-                insert at top {
-                    h2 { text { "顶部标题" } }
+            class: "container";
+            
+            h1 { 
+                style {
+                    color: Theme(primary);
+                    margin-bottom: Theme(spacing);
                 }
-                insert at bottom {
-                    p { text { "底部段落" } }
+                text { "CHTL 功能演示" } 
+            }
+            
+            // 测试模板展开
+            section {
+                h2 { text { "1. 模板系统" } }
+                
+                @Element Card;
+                
+                @Element Card {
+                    h3 { text { "自定义卡片标题" } }
+                    div {
+                        class: "card-body";
+                        text { "这是自定义的卡片内容" }
+                    }
                 }
             }
-        }
-    }
-    
-    // 测试4: 组合操作
-    section {
-        h2 { text { "4. 组合测试" } }
-        @Element TodoList {
-            // 先删除一些项
-            delete @Element TodoItem[0], @Element TodoItem[2], @Element TodoItem[4];
-            // 再插入新项
-            insert at top {
-                li {
-                    class: "important";
-                    text { "重要事项" }
+            
+            // 测试自定义组件
+            section {
+                h2 { text { "2. 自定义组件" } }
+                
+                @Element Button;
+                
+                @Element Button {
+                    text { "自定义按钮文本" }
+                    style {
+                        background: Theme(success);
+                    }
                 }
             }
-            insert at bottom {
-                li {
-                    class: "note";
-                    text { "备注事项" }
+            
+            // 测试 CHTL-JS
+            section {
+                h2 { text { "3. CHTL-JS 功能" } }
+                
+                div {
+                    id: "interactive-demo";
+                    class: "demo-container";
+                    
+                    style {
+                        padding: 20px;
+                        background: white;
+                        border-radius: 8px;
+                        
+                        .output {
+                            margin-top: 10px;
+                            padding: 10px;
+                            background: #f0f0f0;
+                            border-radius: 4px;
+                        }
+                    }
+                    
+                    button {
+                        id: "test-btn";
+                        class: "btn";
+                        text { "点击测试 CHTL-JS" }
+                    }
+                    
+                    p {
+                        id: "output";
+                        class: "output";
+                        text { "等待操作..." }
+                    }
+                    
+                    script {
+                        // 测试 {{#id}} 语法
+                        {{#test-btn}}?.addEventListener('click', function() {
+                            {{#output}}.textContent = '按钮被点击了 - ' + new Date().toLocaleTimeString();
+                            
+                            // 测试 {{&}} 语法
+                            {{&}}.style.background = '#e8f5e9';
+                            
+                            console.log('CHTL-JS 功能正常工作');
+                        });
+                        
+                        // 测试 listen 方法
+                        {{#test-btn}}?.listen({
+                            mouseenter: function() {
+                                this.style.transform = 'scale(1.05)';
+                            },
+                            mouseleave: function() {
+                                this.style.transform = 'scale(1)';
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // 测试事件委托
+            section {
+                h2 { text { "4. 事件委托" } }
+                
+                div {
+                    id: "list-container";
+                    
+                    style {
+                        .list-item {
+                            padding: 10px;
+                            margin: 5px 0;
+                            background: white;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            
+                            &:hover {
+                                background: #f0f0f0;
+                            }
+                        }
+                    }
+                    
+                    div { class: "list-item"; text { "项目 1" } }
+                    div { class: "list-item"; text { "项目 2" } }
+                    div { class: "list-item"; text { "项目 3" } }
+                    
+                    script {
+                        // 使用 {{&}} 进行事件委托
+                        {{&}}.addEventListener('click', function(e) {
+                            if (e.target.classList.contains('list-item')) {
+                                e.target.style.background = Theme(primary);
+                                e.target.style.color = 'white';
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // 全局脚本
+            script {
+                console.log('CHTL 综合测试页面加载完成');
+                
+                // 测试运行时 API
+                if (window.CHTL) {
+                    console.log('CHTL 运行时已加载');
+                    console.log('可用功能:', Object.keys(window.CHTL));
+                    
+                    // 测试动画 API
+                    if (window.CHTL.animate) {
+                        console.log('动画 API 可用');
+                    }
                 }
             }
         }
-        p { text { "应该显示：重要事项、原第2项、原第4项、备注事项" } }
     }
 }

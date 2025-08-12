@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/workspace/include
 
-CXX_FLAGS = -O3 -DNDEBUG -std=c++17 -Wall -Wextra -Werror
+CXX_FLAGS = -g -std=gnu++17
 

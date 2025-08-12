@@ -1,0 +1,24 @@
+// 调试脚本收集
+
+html {
+    body {
+        // 全局脚本 1
+        script {
+            console.log("全局脚本 1");
+        }
+        
+        div {
+            id: "test-div";
+            
+            // 局部脚本
+            script {
+                console.log("局部脚本 - 应该在 test-div 的作用域内");
+            }
+        }
+        
+        // 全局脚本 2
+        script {
+            console.log("全局脚本 2");
+        }
+    }
+}

@@ -1,0 +1,162 @@
+// 测试5: 脚本功能和 CHTL-JS 语法
+
+body {
+    h1 { text { "CHTL-JS 增强语法测试" } }
+    
+    // 基本事件监听
+    button {
+        id: "btn1";
+        text { "点击我" }
+        
+        script {
+            {{#btn1}}->listen({
+                click: function(e) {
+                    console.log("Button clicked!");
+                    alert("Hello from CHTL-JS!");
+                }
+            });
+        }
+    }
+    
+    // 使用各种选择器
+    div {
+        class: "interactive-box";
+        style {
+            width: 200px;
+            height: 100px;
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        text { "悬停查看效果" }
+        
+        script {
+            // 类选择器
+            {{.interactive-box}}->listen({
+                mouseenter: function(e) {
+                    {{&}}.style.background = "#e0e0e0";
+                },
+                mouseleave: function(e) {
+                    {{&}}.style.background = "#f0f0f0";
+                }
+            });
+        }
+    }
+    
+    // 动画功能
+    div {
+        id: "animated-div";
+        style {
+            width: 100px;
+            height: 100px;
+            background: red;
+            position: relative;
+        }
+        
+        script {
+            {{#animated-div}}->animate({
+                target: "left",
+                from: 0,
+                to: 200,
+                duration: 2000,
+                easing: "ease-in-out",
+                loop: true
+            });
+        }
+    }
+    
+    // 事件委托
+    ul {
+        id: "dynamic-list";
+        li { text { "Item 1" } }
+        li { text { "Item 2" } }
+        li { text { "Item 3" } }
+        
+        script {
+            {{#dynamic-list}}->delegate("li", {
+                click: function(e) {
+                    console.log("Clicked on:", e.target.textContent);
+                    e.target.style.color = "red";
+                }
+            });
+            
+            // 动态添加元素
+            setTimeout(function() {
+                const ul = document.getElementById("dynamic-list");
+                const li = document.createElement("li");
+                li.textContent = "Dynamic Item";
+                ul.appendChild(li);
+            }, 2000);
+        }
+    }
+    
+    // 复杂交互
+    div {
+        class: "counter";
+        h2 { text { "计数器" } }
+        p { 
+            id: "count-display";
+            text { "0" }
+        }
+        button {
+            id: "increment";
+            text { "+" }
+        }
+        button {
+            id: "decrement";
+            text { "-" }
+        }
+        
+        script {
+            let count = 0;
+            
+            {{#increment}}->listen({
+                click: function() {
+                    count++;
+                    {{#count-display}}.textContent = count;
+                }
+            });
+            
+            {{#decrement}}->listen({
+                click: function() {
+                    count--;
+                    {{#count-display}}.textContent = count;
+                }
+            });
+        }
+    }
+    
+    // 使用标签选择器
+    p {
+        text { "点击任意段落改变颜色" }
+    }
+    p {
+        text { "这也是一个段落" }
+    }
+    
+    script {
+        {{p}}->listen({
+            click: function(e) {
+                const colors = ["red", "blue", "green", "purple", "orange"];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                e.target.style.color = randomColor;
+            }
+        });
+    }
+    
+    // 当前元素引用
+    div {
+        class: "self-ref";
+        text { "使用 & 引用当前元素" }
+        
+        script {
+            {{&}}->listen({
+                click: function() {
+                    {{&}}.style.fontSize = "20px";
+                    {{&}}.textContent = "已点击！";
+                }
+            });
+        }
+    }
+}

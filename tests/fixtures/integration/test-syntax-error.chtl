@@ -1,0 +1,35 @@
+// 测试各种语法错误
+div {
+    // 错误1: 未闭合的字符串
+    text { "这是一个未闭合的字符串
+    
+    // 错误2: 未闭合的大括号
+    style {
+        color: red;
+    // 缺少 }
+    
+    // 错误3: 无效的属性语法
+    class: ;  // 空值
+    id: 123;  // 数字作为ID
+    
+    // 错误4: 未定义的引用
+    @Element NonExistentElement;
+    
+    // 错误5: 错误的删除语法
+    delete;  // 没有目标
+    
+    // 错误6: 无效的插入语法
+    insert nowhere { }
+}
+
+// 错误7: 顶层的无效语句
+random statement;
+
+// 错误8: 循环引用
+[Custom] @Element A {
+    @Element B;
+}
+
+[Custom] @Element B {
+    @Element A;
+}

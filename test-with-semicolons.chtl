@@ -1,0 +1,16 @@
+[Template] @Var FixedVars {
+    textcolor: red;
+    bgsize: 200px;
+}
+
+html {
+    body {
+        div {
+            style {
+                color: FixedVars(textcolor);
+                width: FixedVars(bgsize);
+            }
+            text { "修复的变量测试" }
+        }
+    }
+}

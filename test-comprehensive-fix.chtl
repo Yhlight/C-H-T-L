@@ -1,0 +1,58 @@
+// 综合测试 - 验证变量系统修复
+
+[Template] @Var Theme {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+    danger: #dc3545
+}
+
+[Template] @Var Sizes {
+    small: 12px;
+    medium: 16px;
+    large: 24px
+}
+
+[Template] @Element Card {
+    div {
+        class: "card";
+        style {
+            border: 1px solid Theme(secondary);
+            padding: Sizes(medium);
+        }
+        slot { name: "content"; }
+    }
+}
+
+html {
+    head {
+        title { text { "变量系统测试" } }
+    }
+    body {
+        h1 {
+            style {
+                color: Theme(primary);
+                font-size: Sizes(large);
+            }
+            text { "CHTL 变量系统已修复！" }
+        }
+        
+        @Element Card {
+            content: {
+                p {
+                    style {
+                        color: Theme(success);
+                    }
+                    text { "现在多个属性的变量定义可以正常工作了" }
+                }
+                p {
+                    style {
+                        color: Theme(danger);
+                        font-size: Sizes(small);
+                    }
+                    text { "即使最后一个属性没有分号也没问题" }
+                }
+            }
+        }
+    }
+}

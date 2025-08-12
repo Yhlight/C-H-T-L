@@ -1,0 +1,194 @@
+#include "CJmod/CJmodProcessor.h"
+#include "CJmod/CJmodCore.h"
+#include <map>
+#include <memory>
+#include <algorithm>
+#include <sstream>
+
+namespace chtl {
+namespace cjmod {
+
+// SyntaxRuleInternal 实现
+std::unique_ptr<SyntaxRuleInternal> SyntaxRuleInternal::fromBuilder(const SyntaxBuilder* builder) {
+    auto rule = std::make_unique<SyntaxRuleInternal>();
+    
+    // 这里需要访问 SyntaxBuilder 的私有成员
+    // 暂时返回空实现
+    rule->name = "unknown";
+    rule->priority = 100;
+    
+    return rule;
+}
+
+// CJmodProcessor 的私有实现类
+class CJmodProcessorImpl {
+public:
+    struct ModuleData {
+        std::unique_ptr<CJmodModule> module;
+        std::vector<std::unique_ptr<SyntaxRuleInternal>> rules;
+        RuntimeBuilder runtime;
+        void* dlHandle = nullptr;
+    };
+    
+    std::map<std::string, std::unique_ptr<ModuleData>> modules_;
+    StateManager globalState_;
+    std::vector<std::string> lastErrors_;
+    std::vector<std::string> lastWarnings_;
+};
+
+// 静态成员
+static CJmodProcessorImpl* g_impl = nullptr;
+
+CJmodProcessor::~CJmodProcessor() {
+    if (g_impl) {
+        delete g_impl;
+        g_impl = nullptr;
+    }
+}
+
+CJmodProcessor& CJmodProcessor::getInstance() {
+    static CJmodProcessor instance;
+    if (!g_impl) {
+        g_impl = new CJmodProcessorImpl();
+    }
+    return instance;
+}
+
+bool CJmodProcessor::loadModule(const std::string& modulePath) {
+    // 简化实现 - 暂时返回false
+    return false;
+}
+
+bool CJmodProcessor::loadModuleFromMemory(std::unique_ptr<CJmodModule> module) {
+    if (!module || !g_impl) return false;
+    
+    std::string name = "memory:" + std::to_string(reinterpret_cast<uintptr_t>(module.get()));
+    
+    auto moduleData = std::make_unique<CJmodProcessorImpl::ModuleData>();
+    moduleData->module = std::move(module);
+    
+    // 获取语法规则
+    auto builders = moduleData->module->syntax();
+    for (auto& builder : builders) {
+        auto rule = builder.build();
+        // 需要转换为 SyntaxRuleInternal
+        auto internalRule = std::make_unique<SyntaxRuleInternal>();
+        internalRule->name = "rule";
+        internalRule->priority = 100;
+        moduleData->rules.push_back(std::move(internalRule));
+    }
+    
+    // 获取运行时
+    moduleData->module->runtime(moduleData->runtime);
+    
+    g_impl->modules_[name] = std::move(moduleData);
+    return true;
+}
+
+std::string CJmodProcessor::processScript(const std::string& script, 
+                                         const std::vector<std::string>& activeModules) {
+    if (!g_impl) return script;
+    
+    // 简化实现 - 暂时返回原始脚本
+    return script;
+}
+
+std::string CJmodProcessor::getRuntimeCode(const std::vector<std::string>& modules) {
+    if (!g_impl) return "";
+    
+    std::stringstream runtime;
+    runtime << "// CJmod Runtime\n";
+    runtime << "(function(window) {\n";
+    runtime << "  'use strict';\n";
+    runtime << "  window.CHTL = window.CHTL || {};\n";
+    runtime << "  window.CHTL.modules = window.CHTL.modules || {};\n";
+    
+    // 添加所有模块的运行时
+    for (const auto& [name, moduleData] : g_impl->modules_) {
+        std::string moduleRuntime = moduleData->runtime.generate();
+        if (!moduleRuntime.empty()) {
+            runtime << "  // Module: " << name << "\n";
+            runtime << moduleRuntime << "\n";
+        }
+    }
+    
+    runtime << "})(window);\n";
+    return runtime.str();
+}
+
+std::vector<std::string> CJmodProcessor::getLoadedModules() const {
+    std::vector<std::string> result;
+    if (g_impl) {
+        for (const auto& [name, _] : g_impl->modules_) {
+            result.push_back(name);
+        }
+    }
+    return result;
+}
+
+bool CJmodProcessor::isModuleLoaded(const std::string& name) const {
+    return g_impl && g_impl->modules_.find(name) != g_impl->modules_.end();
+}
+
+void CJmodProcessor::unloadModule(const std::string& name) {
+    if (!g_impl) return;
+    g_impl->modules_.erase(name);
+}
+
+void CJmodProcessor::unloadAllModules() {
+    if (!g_impl) return;
+    g_impl->modules_.clear();
+}
+
+// 内部处理方法
+std::string CJmodProcessor::applySyntaxRules(const std::string& code, 
+                                            const std::vector<SyntaxRuleInternal*>& rules) {
+    // 简化实现
+    return code;
+}
+
+void CJmodProcessor::collectActiveRules(const std::vector<std::string>& moduleNames,
+                                      std::vector<SyntaxRuleInternal*>& outRules) {
+    // 简化实现
+}
+
+void* CJmodProcessor::loadDynamicLibrary(const std::string& path) {
+    return nullptr;
+}
+
+void CJmodProcessor::unloadDynamicLibrary(void* handle) {
+    // 简化实现
+}
+
+// 集成函数实现
+namespace integration {
+
+void initialize() {
+    // 确保 CJmodProcessor 实例被创建
+    CJmodProcessor::getInstance();
+    
+    // 初始化内置模块
+    extern void initializeBuiltinModules();
+    initializeBuiltinModules();
+}
+
+bool processImport(const std::string& moduleName, const std::string& source) {
+    // 简化实现
+    return true;
+}
+
+void loadStandardModules() {
+    // 暂时为空
+}
+
+ModuleMetadata getModuleMetadata(const std::string& moduleName) {
+    ModuleMetadata metadata;
+    metadata.name = moduleName;
+    metadata.version = "1.0.0";
+    return metadata;
+}
+
+} // namespace integration
+
+} // namespace cjmod
+} // namespace chtl

@@ -1,0 +1,93 @@
+// Hello World 示例 - 展示 CHTL 的基本功能
+
+// 定义颜色变量
+[Template] @Var Theme {
+    primary: #007bff;
+    secondary: #6c757d;
+    background: #f8f9fa;
+    text: #212529;
+}
+
+// 定义可重用的卡片组件
+[Custom] @Element Card {
+    div {
+        style {
+            .card {
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            &:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+        }
+        
+        slot { name: "content"; }
+    }
+}
+
+// 定义按钮组件
+[Template] @Element Button {
+    button {
+        style {
+            .btn {
+                padding: 10px 20px;
+                background: Theme(primary);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+        
+        slot { name: "text"; }
+        
+        script {
+            {{&}}->listen({
+                click: function(e) {
+                    console.log("Button clicked!");
+                }
+            });
+        }
+    }
+}
+
+// 主页面
+html {
+    head {
+        title { text { "Hello CHTL!" } }
+        meta { charset: "UTF-8"; }
+    }
+    
+    body {
+        style {
+            background: Theme(background);
+            color: Theme(text);
+            font-family: "Arial, sans-serif";
+            padding: 20px;
+        }
+        
+        h1 { 
+            style {
+                color: Theme(primary);
+                text-align: center;
+            }
+            text { "Welcome to CHTL" } 
+        }
+        
+        @Element Card {
+            p { text { "CHTL 是一个优雅的组件化 HTML 模板语言。" } }
+            p { text { "它让 Web 开发变得更简单、更有趣！" } }
+            
+            @Element Button {
+                text { "开始使用" }
+            }
+        }
+    }
+}

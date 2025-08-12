@@ -1,0 +1,172 @@
+// CHTL 完整功能测试
+// 展示所有已修复的功能
+
+// 1. 导入系统测试
+[Import] @CJmod from "reactive";
+[Import] @CJmod from "CHTL::animate";  // 使用 CHTL:: 前缀
+
+// 2. 模板定义测试
+[Template] @Element Card {
+    div {
+        class: "card";
+        style {
+            .card {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 16px;
+                margin: 8px;
+            }
+        }
+        h3 { 
+            class: "card-title";
+            text { "默认标题" }
+        }
+        div {
+            class: "card-body";
+            text { "默认内容" }
+        }
+    }
+}
+
+[Template] @Style GlobalTheme {
+    :root {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+    }
+}
+
+[Template] @Var Colors {
+    primary: #007bff;
+    success: #28a745;
+    danger: #dc3545;
+}
+
+// 3. 自定义组件测试
+[Custom] @Element Button {
+    button {
+        class: "btn";
+        style {
+            .btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                background: Colors(primary);
+                color: white;
+            }
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+        text { "点击我" }
+    }
+}
+
+// 主文档
+html {
+    head {
+        title { text { "CHTL 功能测试" } }
+        @Style GlobalTheme;
+    }
+    
+    body {
+        h1 { 
+            text { "CHTL 功能演示" }
+            style {
+                color: Colors(primary);
+                text-align: center;
+            }
+        }
+        
+        // 4. 模板使用测试
+        section {
+            h2 { text { "模板展开测试" } }
+            
+            // 基本使用
+            @Element Card;
+            
+            // 带修改的使用
+            @Element Card {
+                h3 { text { "自定义标题" } }
+                div {
+                    class: "card-body";
+                    text { "这是自定义的卡片内容" }
+                }
+            }
+        }
+        
+        // 5. 自定义组件测试
+        section {
+            h2 { text { "自定义组件测试" } }
+            @Element Button;
+            @Element Button {
+                text { "自定义按钮文本" }
+            }
+        }
+        
+        // 6. 局部样式测试
+        section {
+            h2 { text { "局部样式测试" } }
+            div {
+                id: "style-test";
+                style {
+                    width: 300px;
+                    padding: 20px;
+                    background: white;
+                    
+                    .highlight {
+                        background: Colors(success);
+                        color: white;
+                        padding: 10px;
+                    }
+                }
+                
+                p {
+                    class: "highlight";
+                    text { "这段文字使用了局部样式" }
+                }
+            }
+        }
+        
+        // 7. CHTL-JS 测试
+        section {
+            h2 { text { "CHTL-JS 功能测试" } }
+            div {
+                id: "interactive-demo";
+                button {
+                    id: "test-button";
+                    text { "点击测试" }
+                }
+                div {
+                    id: "output";
+                    text { "等待交互..." }
+                }
+                
+                script {
+                    // 测试 CHTL-JS 选择器
+                    {{#test-button}}?.addEventListener('click', function() {
+                        {{#output}}.textContent = '按钮被点击了！';
+                        console.log('Button clicked via CHTL-JS');
+                    });
+                    
+                    // 测试 CJmod 运行时
+                    if (window.CHTL && window.CHTL.modules) {
+                        console.log('CJmod modules available:', Object.keys(window.CHTL.modules));
+                    }
+                }
+            }
+        }
+        
+        // 8. 全局脚本
+        script {
+            console.log('CHTL 页面加载完成');
+            console.log('所有功能测试就绪');
+        }
+    }
+}

@@ -1,0 +1,121 @@
+// CHTL 综合功能测试
+
+// 1. 样式定义和删除
+[Template] @Style BaseStyle {
+    color: black;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 10px;
+    padding: 5px;
+}
+
+[Custom] @Style CustomStyle {
+    @Style BaseStyle {
+        delete margin, padding;
+    }
+    color: blue;
+    font-weight: bold;
+}
+
+// 2. 元素定义
+[Custom] @Element TodoItem {
+    li {
+        class: "todo-item";
+        text { "待办事项" }
+    }
+}
+
+[Custom] @Element TodoList {
+    ul {
+        class: "todo-list";
+        @Element TodoItem;
+        @Element TodoItem;
+        @Element TodoItem;
+        @Element TodoItem;
+        @Element TodoItem;
+    }
+}
+
+[Custom] @Element Container {
+    div {
+        class: "container";
+        h3 { text { "容器标题" } }
+        p { text { "段落1" } }
+        p { text { "段落2" } }
+        p { text { "段落3" } }
+    }
+}
+
+body {
+    h1 { text { "CHTL 综合测试" } }
+    
+    // 测试1: 样式应用和删除
+    section {
+        h2 { text { "1. 样式测试" } }
+        div {
+            style { @Style CustomStyle; }
+            text { "这段文字应该是蓝色、粗体，没有margin和padding" }
+        }
+    }
+    
+    // 测试2: 删除操作
+    section {
+        h2 { text { "2. 删除测试" } }
+        
+        div {
+            h3 { text { "删除特定项" } }
+            @Element TodoList {
+                delete @Element TodoItem[1], @Element TodoItem[3];
+            }
+            p { text { "应该显示3个待办事项（删除了第2和第4个）" } }
+        }
+        
+        div {
+            h3 { text { "删除所有项" } }
+            @Element TodoList {
+                delete @Element TodoItem;
+            }
+            p { text { "应该显示空列表" } }
+        }
+    }
+    
+    // 测试3: 插入操作
+    section {
+        h2 { text { "3. 插入测试" } }
+        
+        div {
+            h3 { text { "在顶部和底部插入" } }
+            @Element Container {
+                insert at top {
+                    h2 { text { "顶部标题" } }
+                }
+                insert at bottom {
+                    p { text { "底部段落" } }
+                }
+            }
+        }
+    }
+    
+    // 测试4: 组合操作
+    section {
+        h2 { text { "4. 组合测试" } }
+        @Element TodoList {
+            // 先删除一些项
+            delete @Element TodoItem[0], @Element TodoItem[2], @Element TodoItem[4];
+            // 再插入新项
+            insert at top {
+                li {
+                    class: "important";
+                    text { "重要事项" }
+                }
+            }
+            insert at bottom {
+                li {
+                    class: "note";
+                    text { "备注事项" }
+                }
+            }
+        }
+        p { text { "应该显示：重要事项、原第2项、原第4项、备注事项" } }
+    }
+}

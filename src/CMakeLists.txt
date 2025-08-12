@@ -1,3 +1,16 @@
+# 查找所有源文件
+file(GLOB_RECURSE SOURCES 
+    "*.cpp"
+)
+
+# 过滤掉 .disabled 文件
+list(FILTER SOURCES EXCLUDE REGEX ".*\\.disabled$")
+
+# 添加新的 CJmod 文件
+list(APPEND SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/CJmodSimpleImpl.cpp
+)
+
 # 收集所有源文件
 set(CHTL_SOURCES
     # Common

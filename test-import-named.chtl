@@ -1,0 +1,22 @@
+// 测试具名 CJmod 导入
+
+// 具名导入
+[Import] @CJmod reactive from "builtin:reactive";
+
+html {
+    body {
+        div {
+            text { "具名导入测试" }
+            
+            script {
+                // 使用响应式语法
+                count := 0;
+                doubled => count.value * 2;
+                
+                watch count -> {
+                    console.log("Count changed:", count.value);
+                };
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+// 测试全局样式和局部样式
+
+// 全局样式
+style {
+    text {
+        "body { margin: 0; padding: 0; }"
+    }
+}
+
+// HTML 元素与局部样式
+div #main {
+    style {
+        width: 100%;
+        color: #2d3436;
+    }
+    
+    h1 { text { "Hello CHTL" } }
+    p { text { "This is a test" } }
+}
+
+// 另一个全局样式块
+style {
+    text {
+        "h1 { font-size: 2em; }"
+    }
+}

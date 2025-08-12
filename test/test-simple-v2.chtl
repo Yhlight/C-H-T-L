@@ -1,0 +1,33 @@
+// Simple CHTL v2 test
+
+// Import
+[Import] @Style "theme.css"
+
+// Template
+[Template] @Element Card(title) {
+    div .card {
+        h3 { {{title}} }
+    }
+}
+
+// HTML structure
+div #app {
+    h1 { "Hello CHTL v2" }
+    
+    @Card(title: "Welcome")
+    
+    div .box {
+        // Local style
+        style {
+            width: 200px;
+            height: 100px;
+            background: lightblue;
+            
+            &:hover {
+                background: lightgreen;
+            }
+        }
+        
+        p { "Hover me!" }
+    }
+}

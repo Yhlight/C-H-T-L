@@ -1,0 +1,11 @@
+// 简单局部脚本测试
+
+div {
+    id: "my-div";
+    
+    p { text { "这是一个段落" } }
+    
+    script {
+        console.log("这是局部脚本");
+    }
+}

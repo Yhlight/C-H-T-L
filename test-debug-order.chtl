@@ -1,0 +1,10 @@
+[Template] @Var DebugVar {
+    color: green;
+}
+
+div {
+    style {
+        background: DebugVar(color);
+    }
+    text { "调试" }
+}

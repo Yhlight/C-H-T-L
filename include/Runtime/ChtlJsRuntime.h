@@ -50,8 +50,22 @@ public:
     ChtlJsRuntime(const ChtlJsRuntime&) = delete;
     ChtlJsRuntime& operator=(const ChtlJsRuntime&) = delete;
     
-    // 收集局部script块
-    void collectLocalScript(const std::string& scriptCode, const std::string& elementId = "");
+    // 脚本收集
+    struct ElementInfo {
+        std::string id;
+        std::string className;
+        bool hasLocalStyle = false;
+        std::string localStyleSelector; // 局部样式中定义的选择器
+    };
+    
+    void collectLocalScript(const std::string& scriptCode, const ElementInfo& elementInfo);
+    
+    // 保留旧的接口以兼容
+    void collectLocalScript(const std::string& scriptCode, const std::string& elementId) {
+        ElementInfo info;
+        info.id = elementId;
+        collectLocalScript(scriptCode, info);
+    }
     
     // 注册事件委托
     void registerEventDelegation(const EventDelegation& delegation);
@@ -69,7 +83,7 @@ public:
     std::string generateEnhancedMethods();
     
     // 处理{{&}}语法（在特定上下文中）
-    std::string processAmpersandSyntax(const std::string& code, const std::string& elementContext);
+    std::string processAmpersandSyntax(const std::string& code, const ElementInfo& elementInfo);
     
     // 解析delegate调用
     std::vector<EventDelegation> parseDelegateCall(const std::string& code);

@@ -26,7 +26,10 @@ private:
         AT_PREFIX,          // @前缀
         SPECIAL_MARKER,     // 特殊标记 [xxx]
         WHITESPACE,         // 空白符
-        IN_TEXT_BLOCK       // 在text块内
+        IN_TEXT_BLOCK,      // 在text块内
+        CSS_PROPERTY_NAME,  // CSS属性名
+        CSS_PROPERTY_VALUE, // CSS属性值
+        CSS_COLOR_VALUE     // CSS颜色值 (#开头)
     };
     
     SubState subState_;
@@ -37,6 +40,7 @@ private:
     bool inScriptBlock_;    // 是否在script块内
     int braceDepth_;        // 大括号深度
     bool inTextBlock_;      // 是否在text块内
+    bool inCssProperty_;    // 是否在CSS属性中
     
 public:
     ChtlState(BasicLexer* lexer);
@@ -58,12 +62,10 @@ public:
     
 private:
     // 辅助方法
-    bool isIdentifierStart(char ch) const;
-    bool isIdentifierContinue(char ch) const;
-    bool isOperatorChar(char ch) const;
-    bool isWhitespace(char ch) const;
+    void emitToken(TokenType type);
+    void emitToken(TokenType type, const std::string& value);
     
-    // 处理不同子状态
+    // 各种子状态的处理方法
     std::shared_ptr<BasicState> handleInitial(char ch);
     std::shared_ptr<BasicState> handleIdentifier(char ch);
     std::shared_ptr<BasicState> handleStringSingle(char ch);
@@ -76,16 +78,30 @@ private:
     std::shared_ptr<BasicState> handleHtmlComment(char ch);
     std::shared_ptr<BasicState> handleAtPrefix(char ch);
     std::shared_ptr<BasicState> handleSpecialMarker(char ch);
+    std::shared_ptr<BasicState> handleWhitespace(char ch);
+    std::shared_ptr<BasicState> handleTextBlock(char ch);
+    std::shared_ptr<BasicState> handleCssPropertyName(char ch);
+    std::shared_ptr<BasicState> handleCssPropertyValue(char ch);
+    std::shared_ptr<BasicState> handleCssColorValue(char ch);
+    
+    // 辅助判断方法
+    bool isIdentifierStart(char ch);
+    bool isIdentifierPart(char ch);
+    bool isIdentifierContinue(char ch);
+    bool isDigit(char ch);
+    bool isWhitespace(char ch);
+    bool isOperatorChar(char ch);
+    bool isHexDigit(char ch);
+    
+    // Token类型判断
+    TokenType determineIdentifierType();
+    TokenType determineOperatorType();
+    TokenType determineNumberType();
+    TokenType determineAtPrefixType();
     
     // 完成当前token
     void completeToken();
-    void emitToken(TokenType type);
     void emitTokenAndReset(TokenType type);
-    
-    // 判断token类型
-    TokenType determineIdentifierType();
-    TokenType determineOperatorType();
-    TokenType determineAtPrefixType();
     
     // 状态转换
     std::shared_ptr<BasicState> transitionToState(StateType newStateType);

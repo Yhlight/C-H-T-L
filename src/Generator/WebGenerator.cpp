@@ -3,25 +3,34 @@
 #include "Node/Text.h"
 #include "Node/Style.h"
 #include "Node/Script.h"
-#include "Node/Custom.h"
-#include "Node/Operate.h"
 #include "Node/Template.h"
-// #include "Node/Reference.h" // Not implemented yet
-#include "Node/Origin.h" // Added for Origin node
+#include "Node/Custom.h"
+#include "Node/Origin.h"
+#include "Node/Import.h"
+#include "Node/Export.h"
+#include "Node/Config.h"
+#include "Node/Namespace.h"
+#include "Node/Operate.h"
+#include "Node/Delete.h"
+#include "Node/Info.h"
+#include "Scanner/ChtlScanner.h"
+#include "Loader/ImportResolver.h"
+#include "CJmod/CJmodProcessor.h"
 #include "Runtime/ChtlJsRuntime.h"
-#include "CJmod/CJmodCorrect.h"
-#include "CJmod/CJmodLoader.h"
-
-#include <regex>
+#include <sstream>
+#include <iostream>
 #include <algorithm>
+#include <regex>
 #include <set>
 #include <variant>
-#include <tuple>
 
 
 namespace chtl {
 
 GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
+    // 在调用基类方法之前重置运行时
+    jsRuntime_->reset();
+    
     // 调用基类生成方法
     Generator::generate(ast);
     
@@ -40,59 +49,12 @@ GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
 }
 
 std::string WebGenerator::generateHTMLDocument() {
-    // 如果已经有html标签，不需要包装
-    if (result_.html.find("<html") != std::string::npos) {
-        return result_.html;
-    }
+    // 直接使用收集到的 HTML 内容
+    result_.html = htmlCollector_.getCode();
     
-    std::stringstream doc;
+    // CSS 内容
+    result_.css = cssCollector_.getCode();
     
-    // DOCTYPE
-    doc << "<!DOCTYPE html>\n";
-    doc << "<html lang=\"zh-CN\">\n";
-    doc << "<head>\n";
-    doc << "  <meta charset=\"UTF-8\">\n";
-    doc << "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-    doc << "  <title>CHTL Generated Page</title>\n";
-    
-    // 内联或外部样式
-    if (!result_.css.empty()) {
-        if (options_.inlineStyles) {
-            doc << "  <style>\n";
-            doc << result_.css;
-            doc << "  </style>\n";
-        } else {
-            // 生成外部CSS文件引用
-            // TODO: Handle external styles
-            // result_.externalStyles.push_back("styles.css");
-            doc << "  <link rel=\"stylesheet\" href=\"styles.css\">\n";
-        }
-    }
-    
-    doc << "</head>\n";
-    doc << "<body>\n";
-    
-    // 主体内容
-    doc << result_.html;
-    
-    // 脚本
-    if (!result_.js.empty()) {
-        if (options_.inlineScripts) {
-            doc << "  <script>\n";
-            doc << result_.js;
-            doc << "  </script>\n";
-        } else {
-            // 生成外部JS文件引用
-            // TODO: Handle external scripts
-            // result_.externalScripts.push_back("app.js");
-            doc << "  <script src=\"app.js\"></script>\n";
-        }
-    }
-    
-    doc << "</body>\n";
-    doc << "</html>\n";
-    
-    result_.html = doc.str();
     return result_.html;
 }
 
@@ -104,6 +66,8 @@ void WebGenerator::injectRuntimeCode() {
         // 在用户代码之前注入运行时
         result_.js = runtimeCode + "\n" + result_.js;
     }
+    
+
 }
 
 void WebGenerator::visit(const std::shared_ptr<Node>& node) {
@@ -209,16 +173,17 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
 }
 
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
-    const std::string& tag = element->getTagName();
+    if (!element) return;
     
-    // 调试输出
-    // std::cout << "visitElement: " << tag << std::endl;
+    std::string tag = element->getTagName();
     
-
     // 特殊处理引用节点
     if (tag == "reference") {
-
-        processReference(element);
+        try {
+            processReference(element);
+        } catch (const std::exception& e) {
+            addError("Error processing reference: " + std::string(e.what()));
+        }
         return;
     }
     
@@ -231,21 +196,14 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         return;
     }
     
+    // 移除对 html、head、body 的特殊处理
+    // 所有元素都正常生成
+    
     // 特殊处理 delete 节点（不生成 HTML）
     if (tag == "delete") {
         return;  // delete 节点不应该生成任何输出
     }
 
-    
-    // 特殊处理 body 节点
-    if (tag == "body") {
-        // body 元素不生成标签，只处理其子节点
-        // 因为 HTML 文档模板已经包含了 body 标签
-        for (const auto& child : element->getChildren()) {
-            visit(child);
-        }
-        return;
-    }
     
     // 生成开始标签
     htmlCollector_.append("<" + tag);
@@ -258,10 +216,10 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     for (const auto& child : element->getChildren()) {
         if (child->getType() == NodeType::SCRIPT) {
             auto script = std::static_pointer_cast<Script>(child);
-            if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-                hasLocalScript = true;
-                break;
-            }
+            // 修正判断逻辑：元素内的脚本就是局部脚本
+            // 不需要检查 ScriptType 和 isScoped，因为我们已经在 visitScript 中处理了
+            hasLocalScript = true;
+            break;
         }
     }
     
@@ -272,12 +230,12 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
             auto styleNode = std::static_pointer_cast<Style>(child);
             std::string css = styleNode->getCssContent();
             if (!css.empty()) {
-                // 处理变量组引用
-                css = processVarReferences(css);
-                if (!inlineStyles.empty() && inlineStyles.back() != ';') {
-                    inlineStyles += "; ";
-                }
-                inlineStyles += css;
+                            // 处理变量组引用
+            css = processVarReferences(css);
+            if (!inlineStyles.empty() && inlineStyles.back() != ';') {
+                inlineStyles += "; ";
+            }
+            inlineStyles += css;
             }
             
             // 处理样式节点的子节点（全局样式如.class, #id, &:hover）
@@ -305,32 +263,32 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     }
     
     // 处理属性
-    auto attributes = element->getAttributes();
-    
     // 如果有内联样式，添加或合并到 style 属性
     if (!inlineStyles.empty()) {
-        if (attributes.find("style") != attributes.end()) {
-            std::string existingStyle = std::get<std::string>(attributes.at("style"));
-            if (!existingStyle.empty() && existingStyle.back() != ';') {
-                existingStyle += "; ";
+        auto existingStyle = element->getAttribute("style");
+        if (std::holds_alternative<std::string>(existingStyle)) {
+            std::string styleStr = std::get<std::string>(existingStyle);
+            if (!styleStr.empty() && styleStr.back() != ';') {
+                styleStr += "; ";
             }
-            attributes["style"] = existingStyle + inlineStyles;
+            element->setAttribute("style", styleStr + inlineStyles);
         } else {
-            attributes["style"] = inlineStyles;
+            element->setAttribute("style", inlineStyles);
         }
     }
     
-    if (hasLocalScript && attributes.find("id") == attributes.end()) {
-        // 需要ID但没有，生成一个
+    // 首先检查元素是否已经有ID
+    auto idAttr = element->getAttribute("id");
+    if (std::holds_alternative<std::string>(idAttr)) {
+        elementId = std::get<std::string>(idAttr);
+    } else if (hasLocalScript) {
+        // 只有在没有ID且有局部脚本时才生成ID
         elementId = generateUniqueId("element");
-        htmlCollector_.append(" id=\"" + elementId + "\"");
-    } else if (attributes.find("id") != attributes.end()) {
-        if (std::holds_alternative<std::string>(attributes.at("id"))) {
-            elementId = std::get<std::string>(attributes.at("id"));
-        }
+        element->setAttribute("id", elementId);
     }
     
     // 输出所有属性
+    const auto& attributes = element->getAttributes();
     for (const auto& [key, value] : attributes) {
         // 处理特殊属性
         if (key == "class") {
@@ -347,6 +305,11 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
             // 处理内联样式对象
             if (std::holds_alternative<std::string>(value)) {
                 htmlCollector_.append(" style=\"" + escape(std::get<std::string>(value)) + "\"");
+            }
+        } else if (key == "id") {
+            // 确保 ID 被输出
+            if (std::holds_alternative<std::string>(value)) {
+                htmlCollector_.append(" id=\"" + escape(std::get<std::string>(value)) + "\"");
             }
         } else {
             // 普通属性
@@ -377,15 +340,6 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     
     // 处理子节点
     for (const auto& child : element->getChildren()) {
-        if (child->getType() == NodeType::SCRIPT) {
-            auto script = std::static_pointer_cast<Script>(child);
-            if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-                // 设置作用域ID
-                script->setScope(elementId);
-            }
-            // Scripts 在后面单独处理，这里跳过
-            continue;
-        }
         if (child->getType() == NodeType::STYLE) {
             // Style 已经在前面处理过了，跳过
             continue;
@@ -398,12 +352,11 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 }
 
 void WebGenerator::visitCustom(const std::shared_ptr<Custom>& custom) {
-    // Custom 节点通常是定义，不应该直接生成内容
-    // 但如果是从引用克隆的实例，需要生成其子节点
+    // Custom 定义在基类的 collectDefinitions 中已处理
+    // 只需要处理没有名称的实例（从引用克隆的）
     
-    // 检查是否有名称 - 有名称的是定义
     if (!custom->getCustomName().empty()) {
-        // 这是一个定义，不生成内容
+        // 有名称的是定义，不生成内容
         return;
     }
     
@@ -695,27 +648,58 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
-    // 检查是否是局部样式（在元素内的样式）
-    auto parent = style->getParent();
-    if (parent && parent->getType() == NodeType::ELEMENT) {
-        // 局部样式应该作为父元素的 style 属性，而不是全局 CSS
-        // 不需要处理，因为我们将在 visitElement 中处理
+    // 获取 CSS 内容
+    std::string css = style->getCssContent();
+    
+    // 如果没有内容，跳过
+    if (css.empty()) {
         return;
     }
     
-
-    // 全局样式处理
-    std::string css = style->getCssContent();
+    // 检查是否是局部样式（在元素内的样式）
+    auto parent = style->getParent();
+    bool isLocal = false;
     
+    if (parent && parent->getType() == NodeType::ELEMENT) {
+        auto element = std::static_pointer_cast<Element>(parent);
+        // document 节点的子 style 是全局样式，不是局部样式
+        if (element->getTagName() != "document") {
+            isLocal = true;
+        }
+    }
+    
+    if (isLocal) {
+        // 局部样式 - 已经在 visitElement 中作为 style 属性处理
+        return;
+    }
+    
+    // 全局样式 - 添加到 CSS 收集器
     // 处理变量组引用
     css = processVarReferences(css);
     
-    // 全局样式不需要作用域处理
+    // 添加到全局 CSS
     cssCollector_.appendLine(css);
 }
 
 std::string WebGenerator::processVarReferences(const std::string& css) {
     std::string result = css;
+    
+    // 首先收集所有已知的变量组名称
+    std::set<std::string> knownVarGroups;
+    
+    // 从 Custom 定义中收集
+    for (const auto& [key, node] : customDefinitions_) {
+        if (key.find("@Var ") == 0) {
+            knownVarGroups.insert(key.substr(5)); // 移除 "@Var " 前缀
+        }
+    }
+    
+    // 从 Template 定义中收集
+    for (const auto& [key, node] : templateDefinitions_) {
+        if (key.find("@Var ") == 0) {
+            knownVarGroups.insert(key.substr(5)); // 移除 "@Var " 前缀
+        }
+    }
     
     // 查找所有的变量组引用，格式如：VarName(propertyName) 或 VarName ( propertyName )
     std::regex varRegex(R"((\w+)\s*\(\s*(\w+)(?:\s*=\s*([^)]+))?\s*\))");
@@ -729,21 +713,24 @@ std::string WebGenerator::processVarReferences(const std::string& css) {
         std::string propertyName = match[2];
         std::string overrideValue = match[3]; // 可能为空
         
-        size_t startPos = match.position() + (searchStart - css.cbegin());
-        size_t length = match.length();
-        
-        std::string replacementValue;
-        
-        if (!overrideValue.empty()) {
-            // 使用特例化的值
-            replacementValue = overrideValue;
-        } else {
-            // 查找变量组定义
-            replacementValue = findVarValue(varGroupName, propertyName);
-        }
-        
-        if (!replacementValue.empty()) {
-            replacements.push_back({startPos, length, replacementValue});
+        // 只处理已知的变量组
+        if (knownVarGroups.find(varGroupName) != knownVarGroups.end()) {
+            size_t startPos = match.position() + (searchStart - css.cbegin());
+            size_t length = match.length();
+            
+            std::string replacementValue;
+            
+            if (!overrideValue.empty()) {
+                // 使用特例化的值
+                replacementValue = overrideValue;
+            } else {
+                // 查找变量组定义
+                replacementValue = findVarValue(varGroupName, propertyName);
+            }
+            
+            if (!replacementValue.empty()) {
+                replacements.push_back({startPos, length, replacementValue});
+            }
         }
         
         searchStart = match.suffix().first;
@@ -760,6 +747,8 @@ std::string WebGenerator::processVarReferences(const std::string& css) {
 std::string WebGenerator::findVarValue(const std::string& varGroupName, const std::string& propertyName) {
     // 先在Custom定义中查找
     std::string key = "@Var " + varGroupName;
+    
+    
     auto customIt = customDefinitions_.find(key);
     if (customIt != customDefinitions_.end()) {
         auto custom = std::static_pointer_cast<Custom>(customIt->second);
@@ -774,13 +763,15 @@ std::string WebGenerator::findVarValue(const std::string& varGroupName, const st
     if (templateIt != templateDefinitions_.end()) {
         auto tmpl = std::static_pointer_cast<Template>(templateIt->second);
         auto params = tmpl->getParameters();
+        
+        
         if (params.find(propertyName) != params.end()) {
             return params.at(propertyName);
         }
     }
     
     // 未找到，返回原始引用
-    result_.warnings.push_back("Variable not found: " + varGroupName + "(" + propertyName + ")");
+    addWarning("Variable not found: " + varGroupName + "(" + propertyName + ")");
     return varGroupName + "(" + propertyName + ")";
 }
 
@@ -861,31 +852,88 @@ void WebGenerator::visitComment(const std::shared_ptr<Comment>& comment) {
     }
 }
 
+void WebGenerator::visitTemplate(const std::shared_ptr<Template>& /*tmpl*/) {
+    // 模板定义已经在基类的 collectDefinitions 中处理
+    // 不需要生成任何输出
+}
+
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
-    if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-        // 局部脚本
-        std::string elementId = script->getScope();
-        if (elementId.empty()) {
-            // 如果没有作用域，尝试从父节点获取
-            auto parent = script->getParent();
-            if (parent && parent->getType() == NodeType::ELEMENT) {
-                auto element = std::static_pointer_cast<Element>(parent);
-                auto attrs = element->getAttributes();
-                if (attrs.find("id") != attrs.end()) {
-                    if (std::holds_alternative<std::string>(attrs.at("id"))) {
-                        elementId = std::get<std::string>(attrs.at("id"));
-                    }
-                } else {
-                    elementId = generateUniqueId("element");
+    // 判断是否为局部脚本：脚本的父节点是元素节点（且不是 body 或 html）
+    auto parent = script->getParent();
+    bool isLocalScript = false;
+    
+    if (parent && parent->getType() == NodeType::ELEMENT) {
+        auto element = std::static_pointer_cast<Element>(parent);
+        std::string tagName = element->getTagName();
+        // body 和 html 内的脚本被认为是全局脚本
+        if (tagName != "body" && tagName != "html" && tagName != "head") {
+            isLocalScript = true;
+        }
+    }
+    
+    if (isLocalScript) {
+        // 局部脚本 - 收集元素信息
+        auto element = std::static_pointer_cast<Element>(parent);
+        ChtlJsRuntime::ElementInfo elementInfo;
+        
+        // 获取元素的属性
+        auto attrs = element->getAttributes();
+        
+        // 获取 ID
+        if (attrs.find("id") != attrs.end()) {
+            if (std::holds_alternative<std::string>(attrs.at("id"))) {
+                elementInfo.id = std::get<std::string>(attrs.at("id"));
+            }
+        }
+        
+        // 获取 class
+        if (attrs.find("class") != attrs.end()) {
+            if (std::holds_alternative<std::string>(attrs.at("class"))) {
+                elementInfo.className = std::get<std::string>(attrs.at("class"));
+            }
+        }
+        
+        // 检查是否有局部样式块
+        for (const auto& child : element->getChildren()) {
+            if (child->getType() == NodeType::STYLE) {
+                auto styleNode = std::static_pointer_cast<Style>(child);
+                if (!styleNode->isGlobal()) {
+                    elementInfo.hasLocalStyle = true;
+                    // TODO: 解析局部样式块中的选择器
+                    // 这里需要更复杂的CSS解析逻辑
+                    break;
                 }
             }
         }
         
+        // 如果没有任何标识符，生成一个ID
+        if (elementInfo.id.empty() && elementInfo.className.empty()) {
+            elementInfo.id = generateUniqueId("element");
+            // 将ID添加到元素上，确保HTML输出时也有这个ID
+            element->setAttribute("id", elementInfo.id);
+        }
+        
         // 收集局部脚本
-        jsRuntime_->collectLocalScript(script->getContent(), elementId);
+        try {
+            // 先处理变量替换
+            std::string processedScript = processVarReferences(script->getContent());
+            jsRuntime_->collectLocalScript(processedScript, elementInfo);
+        } catch (const std::exception& e) {
+            addError("Error collecting local script: " + std::string(e.what()));
+        }
     } else {
         // 全局脚本
-        std::string wrappedCode = script->generateWrappedCode();
+        std::string scriptContent = script->getContent();
+        // 先处理变量替换
+        scriptContent = processVarReferences(scriptContent);
+        
+        // 创建一个临时的脚本节点来生成包装代码
+        auto tempScript = std::make_shared<Script>();
+        tempScript->setContent(scriptContent);
+        tempScript->setScriptType(script->getScriptType());
+        tempScript->setScope(script->getScope());
+        
+        std::string wrappedCode = tempScript->generateWrappedCode();
         if (!wrappedCode.empty()) {
             // 应用 CJmod 处理
             if (currentContext_ && currentContext_->hasCJmodImports()) {
@@ -893,6 +941,38 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
             }
             jsCollector_.appendLine(wrappedCode);
         }
+    }
+}
+
+void WebGenerator::visitScriptWithCJmod(const std::shared_ptr<Script>& script, bool isLocal) {
+    if (!script) return;
+    
+    std::string scriptContent = script->getContent();
+    
+    // 使用 ChtlScanner 进行精确切割
+    ChtlScanner scanner;
+    auto segments = scanner.scan(scriptContent, SegmentType::JS);
+    
+    // 处理每个片段
+    std::string processedContent;
+    for (const auto& segment : segments) {
+        if (segment.type == SegmentType::CHTL_JS) {
+            // 使用新的 CJmod 系统处理 CHTL-JS
+            auto& processor = cjmod::CJmodProcessor::getInstance();
+            std::string processed = processor.processScript(segment.content);
+            processedContent += processed;
+        } else {
+            // 纯 JavaScript 代码保持不变
+            processedContent += segment.content;
+        }
+    }
+    
+    // 处理后的脚本内容
+    if (isLocal) {
+        // 局部脚本已经在 visitScript 中处理
+    } else {
+        // 全局脚本
+        jsCollector_.appendLine(processedContent);
     }
 }
 
@@ -999,22 +1079,27 @@ std::shared_ptr<Origin> WebGenerator::findOriginDefinition(const std::string& ty
 }
 
 void WebGenerator::visitImport(const std::shared_ptr<Import>& import) {
+    // 使用 ImportResolver 解析路径
+    ImportResolver resolver;
+    
+    auto result = resolver.resolve(import->getFilePath(), import->getType(), ".");
+    
+    if (!result.success) {
+        addError("Failed to resolve import: " + import->getFilePath());
+        return;
+    }
+    
     // 处理导入
     if (import->getType() == Import::ImportType::CJMOD) {
-        // CJmod 导入
-        std::string modulePath = import->getFilePath();
+        // CJmod 模块
+        // 初始化 CJmod 系统
+        cjmod::integration::initialize();
         
-        // 加载 CJmod 模块
-        auto& loader = cjmod::CJmodLoader::getInstance();
-        auto module = loader.loadModule(modulePath);
+        // 处理导入
+        cjmod::integration::processImport(import->getName(), result.resolvedPath);
         
-        if (!module) {
-            result_.errors.push_back("Failed to load CJmod: " + modulePath);
-        } else if (configManager_->isDebugMode()) {
-            result_.warnings.push_back("Loaded CJmod: " + module->getName() + " v" + module->getVersion());
-        }
-        
-        // 模块已经在 CJmodLoader 中注册到处理器
+        // 记录活跃模块
+        activeCJmodModules_.insert(import->getName());
         return;
     }
     
@@ -1100,8 +1185,8 @@ void WebGenerator::applyReferenceModifications(std::shared_ptr<Node> target,
                     deleteFromNode(target, deleteTarget);
                 }
             } else {
-                // 查找目标中对应的元素并合并属性和子节点
-                mergeElement(target, element);
+                // 对于普通元素，直接添加到目标
+                target->addChild(element->clone(true));
             }
         } else if (child->getType() == NodeType::OPERATE) {
             auto op = std::static_pointer_cast<Operate>(child);
@@ -1303,8 +1388,9 @@ void WebGenerator::mergeElement(std::shared_ptr<Node> target,
     if (target->getType() == NodeType::ELEMENT) {
         auto targetElement = std::static_pointer_cast<Element>(target);
         if (targetElement->getTagName() == source->getTagName()) {
-            // 合并属性
-            for (const auto& [key, value] : source->getAttributes()) {
+            // 合并属性 - 直接设置到目标元素
+            const auto& sourceAttrs = source->getAttributes();
+            for (const auto& [key, value] : sourceAttrs) {
                 targetElement->setAttribute(key, value);
             }
             // 合并子节点
@@ -1337,15 +1423,8 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         std::holds_alternative<std::string>(attributes.at("kind"))
         ? std::get<std::string>(attributes.at("kind")) : "";
     
-
-    
-
-    
-
-    
     // 构建查找键
     std::string key = type + " " + name;
-
     
     // 根据 kind 属性决定查找 Template 还是 Custom
     std::shared_ptr<Node> definition = nullptr;
@@ -1385,16 +1464,16 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         return;
     }
     
-
-    
-        // 处理组件实例（对于元素引用）
+    // 处理组件实例（对于元素引用）
     if (type == "@Element") {
         // 克隆定义
         auto cloned = definition->clone(true);
         
+        // 处理 slot 替换
+        processSlots(cloned, refNode);
+        
         // 应用实例修改（如果有特例化内容）
         if (!refNode->getChildren().empty()) {
-
             applyReferenceModifications(cloned, refNode);
         }
         
@@ -1409,32 +1488,59 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     }
 }
 
+// 处理 slot 元素替换
+void WebGenerator::processSlots(std::shared_ptr<Node> templateNode, 
+                               const std::shared_ptr<Element>& refNode) {
+    // 递归查找并替换所有 slot 元素
+    auto& children = const_cast<std::vector<std::shared_ptr<Node>>&>(templateNode->getChildren());
+    
+    for (size_t i = 0; i < children.size(); ++i) {
+        auto& child = children[i];
+        
+        if (child->getType() == NodeType::ELEMENT) {
+            auto element = std::static_pointer_cast<Element>(child);
+            
+            if (element->getTagName() == "slot") {
+                // 替换 slot 为引用节点的内容
+                children.erase(children.begin() + i);
+                
+                // 插入引用节点的所有子节点
+                for (const auto& refChild : refNode->getChildren()) {
+                    // 跳过引用节点中的操作节点
+                    if (refChild->getType() != NodeType::OPERATE) {
+                        children.insert(children.begin() + i, refChild->clone(true));
+                        ++i;
+                    }
+                }
+                --i; // 调整索引
+            } else {
+                // 递归处理子节点
+                processSlots(element, refNode);
+            }
+        }
+    }
+}
+
 std::string WebGenerator::processJavaScriptWithCJmod(const std::string& jsCode) {
-    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+    if (activeCJmodModules_.empty()) {
         return jsCode;
     }
     
-    // 获取激活的 CJmod 模块列表
-    std::set<std::string> activeModules = currentContext_->getCJmodImports();
-    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
-    
     // 使用 CJmod 处理器处理 JavaScript 代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    return processor.processJavaScript(jsCode, moduleVector);
+    auto& processor = cjmod::CJmodProcessor::getInstance();
+    std::vector<std::string> modules(activeCJmodModules_.begin(), activeCJmodModules_.end());
+    return processor.processScript(jsCode, modules);
 }
 
 void WebGenerator::injectCJmodRuntime() {
-    if (!currentContext_ || !currentContext_->hasCJmodImports()) {
+    if (activeCJmodModules_.empty()) {
         return;
     }
     
-    // 获取激活的 CJmod 模块列表
-    std::set<std::string> activeModules = currentContext_->getCJmodImports();
-    std::vector<std::string> moduleVector(activeModules.begin(), activeModules.end());
-    
     // 生成 CJmod 运行时代码
-    auto& processor = cjmod::CHTLJSProcessor::getInstance();
-    std::string runtime = processor.getCombinedRuntime(moduleVector);
+    auto& processor = cjmod::CJmodProcessor::getInstance();
+    std::vector<std::string> modules(activeCJmodModules_.begin(), activeCJmodModules_.end());
+    std::string runtime = processor.getRuntimeCode(modules);
     
     if (!runtime.empty()) {
         // 在用户代码之前注入 CJmod 运行时

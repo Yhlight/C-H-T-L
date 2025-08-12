@@ -1,0 +1,552 @@
+// CHTL 高级自定义功能示例
+// 展示自定义组件的高级用法和最佳实践
+
+// ========== 1. 复合组件系统 ==========
+
+// 基础卡片组件
+[Custom] @Element Card(elevated = false)
+{
+    div .card .{{elevated ? "card-elevated" : ""}}
+    {
+        {{slot}}
+        
+        style {
+            .card {
+                background: white;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 16px;
+                border: 1px solid #e0e0e0;
+            }
+            
+            .card-elevated {
+                border: none;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+        }
+    }
+}
+
+// 卡片头部
+[Custom] @Element CardHeader(title, subtitle = "")
+{
+    div .card-header
+    {
+        h3 .card-title { {{title}} }
+        {{#if subtitle}}
+            p .card-subtitle { {{subtitle}} }
+        {{/if}}
+        
+        style {
+            .card-header {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .card-title {
+                margin: 0 0 4px 0;
+                font-size: 20px;
+            }
+            
+            .card-subtitle {
+                margin: 0;
+                color: #666;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+// ========== 2. 数据表格组件 ==========
+
+[Custom] @Element DataTable(data, columns)
+{
+    div .data-table-wrapper
+    {
+        table .data-table
+        {
+            thead
+            {
+                tr
+                {
+                    {{#each columns as column}}
+                        th { {{column.label}} }
+                    {{/each}}
+                }
+            }
+            tbody
+            {
+                {{#each data as row}}
+                    tr
+                    {
+                        {{#each columns as column}}
+                            td { {{row[column.key]}} }
+                        {{/each}}
+                    }
+                {{/each}}
+            }
+        }
+        
+        style {
+            .data-table-wrapper {
+                overflow-x: auto;
+            }
+            
+            .data-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .data-table th {
+                background: #f5f5f5;
+                font-weight: bold;
+            }
+            
+            .data-table tr:hover {
+                background: #f9f9f9;
+            }
+        }
+    }
+}
+
+// ========== 3. 表单系统 ==========
+
+// 表单组
+[Custom] @Element FormGroup(label, error = "", required = false)
+{
+    div .form-group .{{error ? "has-error" : ""}}
+    {
+        label .form-label
+        {
+            text { {{label}} }
+            {{#if required}}
+                span .required { " *" }
+            {{/if}}
+        }
+        
+        {{slot}}
+        
+        {{#if error}}
+            span .form-error { {{error}} }
+        {{/if}}
+        
+        style {
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 500;
+            }
+            
+            .required {
+                color: #ff4444;
+            }
+            
+            .form-error {
+                display: block;
+                color: #ff4444;
+                font-size: 14px;
+                margin-top: 4px;
+            }
+            
+            .has-error input,
+            .has-error textarea,
+            .has-error select {
+                border-color: #ff4444;
+            }
+        }
+    }
+}
+
+// 输入框组件
+[Custom] @Element Input(type = "text", placeholder = "", value = "", name = "")
+{
+    input .form-input type="{{type}}" placeholder="{{placeholder}}" 
+          value="{{value}}" name="{{name}}"
+    
+    style {
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+    }
+}
+
+// ========== 4. 布局组件 ==========
+
+[Custom] @Element Grid(columns = 3, gap = "20px")
+{
+    div .grid
+    {
+        {{slot}}
+        
+        style {
+            .grid {
+                display: grid;
+                grid-template-columns: repeat({{columns}}, 1fr);
+                gap: {{gap}};
+            }
+            
+            @media (max-width: 768px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        }
+    }
+}
+
+[Custom] @Element Container(size = "medium")
+{
+    div .container .container-{{size}}
+    {
+        {{slot}}
+        
+        style {
+            .container {
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            .container-small {
+                max-width: 800px;
+            }
+            
+            .container-medium {
+                max-width: 1200px;
+            }
+            
+            .container-large {
+                max-width: 1400px;
+            }
+        }
+    }
+}
+
+// ========== 5. 交互组件 ==========
+
+[Custom] @Element Tabs(items, defaultActive = 0)
+{
+    div .tabs #tabs-{{id}}
+    {
+        div .tab-nav
+        {
+            {{#each items as item, index}}
+                button .tab-btn .{{index === defaultActive ? "active" : ""}}
+                       data-index="{{index}}"
+                {
+                    {{item.label}}
+                }
+            {{/each}}
+        }
+        
+        div .tab-content
+        {
+            {{#each items as item, index}}
+                div .tab-pane .{{index === defaultActive ? "active" : ""}}
+                    data-index="{{index}}"
+                {
+                    {{item.content}}
+                }
+            {{/each}}
+        }
+        
+        style {
+            .tab-nav {
+                display: flex;
+                border-bottom: 2px solid #e0e0e0;
+                margin-bottom: 20px;
+            }
+            
+            .tab-btn {
+                background: none;
+                border: none;
+                padding: 12px 24px;
+                cursor: pointer;
+                font-size: 16px;
+                color: #666;
+                position: relative;
+                transition: color 0.3s;
+            }
+            
+            .tab-btn:hover {
+                color: #333;
+            }
+            
+            .tab-btn.active {
+                color: #007bff;
+            }
+            
+            .tab-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #007bff;
+            }
+            
+            .tab-pane {
+                display: none;
+            }
+            
+            .tab-pane.active {
+                display: block;
+            }
+        }
+        
+        script {
+            const tabBtns = {{&}}.querySelectorAll('.tab-btn');
+            const tabPanes = {{&}}.querySelectorAll('.tab-pane');
+            
+            tabBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const index = btn.dataset.index;
+                    
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    
+                    btn.classList.add('active');
+                    {{&}}.querySelector(`.tab-pane[data-index="${index}"]`).classList.add('active');
+                });
+            });
+        }
+    }
+}
+
+// ========== 6. 通知系统 ==========
+
+[Custom] @Element Toast(message, type = "info", duration = 3000)
+{
+    div .toast .toast-{{type}} #toast-{{id}}
+    {
+        span .toast-message { {{message}} }
+        button .toast-close { "×" }
+        
+        style {
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 16px 20px;
+                border-radius: 4px;
+                color: white;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+                z-index: 1000;
+            }
+            
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            .toast-info {
+                background: #17a2b8;
+            }
+            
+            .toast-success {
+                background: #28a745;
+            }
+            
+            .toast-warning {
+                background: #ffc107;
+                color: #333;
+            }
+            
+            .toast-error {
+                background: #dc3545;
+            }
+            
+            .toast-close {
+                background: none;
+                border: none;
+                color: inherit;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+            }
+        }
+        
+        script {
+            const toast = {{&}};
+            const closeBtn = toast.querySelector('.toast-close');
+            
+            // 自动关闭
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, {{duration}});
+            
+            // 手动关闭
+            closeBtn.addEventListener('click', () => {
+                toast.remove();
+            });
+        }
+    }
+}
+
+// ========== HTML 使用示例 ==========
+
+<!DOCTYPE html>
+html
+{
+    head
+    {
+        title { "CHTL 高级自定义功能示例" }
+    }
+    
+    body
+    {
+        @Container("medium")
+        {
+            h1 { "高级自定义组件演示" }
+            
+            // 使用复合卡片系统
+            @Card(true)
+            {
+                @CardHeader("用户信息", "管理用户基本资料")
+                
+                form #user-form
+                {
+                    @Grid(2)
+                    {
+                        @FormGroup("姓名", "", true)
+                        {
+                            @Input("text", "请输入姓名", "", "name")
+                        }
+                        
+                        @FormGroup("邮箱", "", true)
+                        {
+                            @Input("email", "name@example.com", "", "email")
+                        }
+                        
+                        @FormGroup("电话")
+                        {
+                            @Input("tel", "请输入电话", "", "phone")
+                        }
+                        
+                        @FormGroup("部门")
+                        {
+                            select .form-input name="department"
+                            {
+                                option value="" { "请选择部门" }
+                                option value="dev" { "开发部" }
+                                option value="design" { "设计部" }
+                                option value="market" { "市场部" }
+                            }
+                        }
+                    }
+                    
+                    button type="submit" .btn-primary { "保存" }
+                }
+            }
+            
+            // 使用标签页
+            @Tabs([
+                { label: "概览", content: "这是概览标签的内容" },
+                { label: "详情", content: "这是详情标签的内容" },
+                { label: "设置", content: "这是设置标签的内容" }
+            ]) id="main-tabs"
+            
+            // 数据表格示例
+            @Card()
+            {
+                @CardHeader("用户列表")
+                
+                @DataTable(
+                    [
+                        { id: 1, name: "张三", email: "zhang@example.com", role: "管理员" },
+                        { id: 2, name: "李四", email: "li@example.com", role: "用户" },
+                        { id: 3, name: "王五", email: "wang@example.com", role: "用户" }
+                    ],
+                    [
+                        { key: "id", label: "ID" },
+                        { key: "name", label: "姓名" },
+                        { key: "email", label: "邮箱" },
+                        { key: "role", label: "角色" }
+                    ]
+                )
+            }
+            
+            // 触发通知
+            button #show-toast .btn-primary { "显示通知" }
+        }
+        
+        script {
+            // 表单提交
+            {{#user-form}}.addEventListener('submit', (e) => {
+                e.preventDefault();
+                document.body.appendChild(
+                    @Toast("保存成功！", "success")
+                );
+            });
+            
+            // 显示通知
+            {{#show-toast}}.addEventListener('click', () => {
+                document.body.appendChild(
+                    @Toast("这是一条提示信息", "info")
+                );
+            });
+        }
+        
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                margin: 0;
+                padding: 40px 0;
+                background: #f5f5f5;
+            }
+            
+            h1 {
+                margin-bottom: 40px;
+            }
+            
+            .btn-primary {
+                background: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            
+            .btn-primary:hover {
+                background: #0056b3;
+            }
+        </style>
+    }
+}

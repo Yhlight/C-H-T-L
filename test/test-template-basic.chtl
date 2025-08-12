@@ -1,0 +1,23 @@
+// Test templates
+
+[Import] @Style "theme.css"
+
+// Define template
+[Template] @Element Card(title, content) {
+    div .card {
+        h3 .card-title { {{title}} }
+        div .card-content { {{content}} }
+    }
+}
+
+// Use template
+div #main {
+    h1 { "Template Test" }
+    
+    @Card(title: "Hello", content: "This is a card")
+    
+    @Card(
+        title: "Another Card",
+        content: "With more content"
+    )
+}

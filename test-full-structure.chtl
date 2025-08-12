@@ -1,0 +1,19 @@
+// 测试完整的 html/head/body 结构
+
+html {
+    head {
+        title { text { "完整结构测试" } }
+        
+        style {
+            text { ".red { color: red; }" }
+        }
+    }
+    
+    body {
+        h1 {
+            class = "red"
+            text { "红色标题" }
+        }
+        p { text { "普通段落" } }
+    }
+}

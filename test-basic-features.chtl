@@ -1,0 +1,85 @@
+// 测试 CHTL 基本功能
+
+// 定义模板
+[Template] @Element Card {
+    div {
+        class: "card";
+        h3 { 
+            class: "card-title";
+            slot { name: "title"; }
+        }
+        div {
+            class: "card-content";
+            slot { name: "content"; }
+        }
+    }
+}
+
+[Template] @Style CardStyle {
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 8px;
+    }
+    .card-title {
+        margin: 0 0 8px 0;
+        color: #333;
+    }
+}
+
+[Template] @Var Colors {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+}
+
+// 主文档
+html {
+    head {
+        title { text { "CHTL 基本功能测试" } }
+        style {
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+        }
+        @Style CardStyle;
+    }
+    
+    body {
+        h1 { text { "CHTL 功能演示" } }
+        
+        // 使用模板
+        @Element Card {
+            title: "欢迎使用 CHTL";
+            content: "这是一个模板组件的示例";
+        }
+        
+        // 局部样式测试
+        div {
+            style {
+                .highlight {
+                    background: Colors(primary);
+                    color: white;
+                    padding: 10px;
+                }
+            }
+            
+            p {
+                class: "highlight";
+                text { "这段文字使用了局部样式和变量系统" }
+            }
+        }
+        
+        // CHTL-JS 基本语法
+        script {
+            console.log("CHTL 页面已加载");
+            
+            // 测试 CHTL-JS 选择器
+            {{#element-1}}?.addEventListener('click', () => {
+                console.log("点击了元素");
+            });
+        }
+    }
+}

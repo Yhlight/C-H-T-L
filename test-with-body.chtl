@@ -1,0 +1,12 @@
+[Template] @Var BodyTest {
+    bg: yellow;
+}
+
+body {
+    div {
+        style {
+            background: BodyTest(bg);
+        }
+        text { "Body 测试" }
+    }
+}

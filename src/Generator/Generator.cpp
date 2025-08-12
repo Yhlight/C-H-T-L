@@ -1,6 +1,4 @@
 #include "Generator/Generator.h"
-#include "Runtime/ChtlJsRuntime.h"
-#include "Generator/ConfigManager.h"
 #include "Node/Element.h"
 #include "Node/Text.h"
 #include "Node/Custom.h"
@@ -9,11 +7,16 @@
 #include "Node/Script.h"
 #include "Node/Import.h"
 #include "Node/Export.h"
+#include "Node/Comment.h"
+#include "Node/Operate.h"
 #include "Node/Config.h"
+#include "Node/Origin.h"
 #include "Node/Namespace.h"
-#include <algorithm>
-#include <regex>
+#include "Runtime/ChtlJsRuntime.h"
+#include <iostream>
 #include <sstream>
+#include <iomanip>
+#include <regex>
 
 #include <set>
 
@@ -60,13 +63,15 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     scopeStack_.clear();
     templateDefinitions_.clear();
     customDefinitions_.clear();
-    jsRuntime_->reset();
+    // 注意：jsRuntime_->reset() 移到了子类处理，以避免清空收集的脚本
     
     ast_ = ast;
     
     // 第一遍扫描：收集配置和定义
     scanConfiguration(ast);
     collectDefinitions(ast);
+    
+
     
     // 第二遍处理：生成代码
     visit(ast);
@@ -102,6 +107,7 @@ void Generator::scanConfiguration(const std::shared_ptr<Node>& node) {
 
 void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
     if (!node) return;
+    
     
     // 收集Template定义
     if (auto tmpl = std::dynamic_pointer_cast<Template>(node)) {
@@ -149,8 +155,7 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
 void Generator::visit(const std::shared_ptr<Node>& node) {
     if (!node) return;
     
-
-    
+    // 根据节点类型调用相应的处理方法
     switch (node->getType()) {
         case NodeType::ELEMENT:
             visitElement(std::static_pointer_cast<Element>(node));
@@ -254,18 +259,9 @@ void Generator::visitStyle(const std::shared_ptr<Style>& style) {
     cssCollector_.appendLine(css);
 }
 
-void Generator::visitScript(const std::shared_ptr<Script>& script) {
-    if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-        // 局部脚本由运行时处理
-        std::string elementId = script->getScope();
-        if (elementId.empty()) {
-            elementId = generateUniqueId("element");
-        }
-        jsRuntime_->collectLocalScript(script->getContent(), elementId);
-    } else {
-        // 全局脚本
-        jsCollector_.appendLine(script->generateWrappedCode());
-    }
+void Generator::visitScript(const std::shared_ptr<Script>& /*script*/) {
+    // 基类默认不处理任何脚本
+    // 让派生类决定如何处理脚本
 }
 
 void Generator::visitImport(const std::shared_ptr<Import>& import) {

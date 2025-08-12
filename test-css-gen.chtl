@@ -1,0 +1,23 @@
+// 测试 CSS 生成
+
+style {
+    text {
+        "body { background: #f0f0f0; }
+        h1 { color: #333; }"
+    }
+}
+
+html {
+    body {
+        h1 { text { "带样式的标题" } }
+        
+        div {
+            style {
+                background: #fff;
+                padding: 20px;
+                border: 1px solid #ddd;
+            }
+            text { "局部样式的盒子" }
+        }
+    }
+}

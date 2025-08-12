@@ -1,0 +1,7 @@
+// UI Module (cmod format)
+[Template] @Element Button {
+    button {
+        class: "ui-button";
+        slot { name: "text"; }
+    }
+}

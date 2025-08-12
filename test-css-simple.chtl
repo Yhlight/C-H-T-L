@@ -1,0 +1,26 @@
+// 简单的 CSS 测试
+
+html {
+    head {
+        title { text { "简单 CSS 测试" } }
+        
+        style {
+            text {
+                ".red { color: #ff0000; }
+                .blue { color: #0000ff; }"
+            }
+        }
+    }
+    
+    body {
+        h1 {
+            class = "red"
+            text { "红色标题" }
+        }
+        
+        p {
+            class = "blue"
+            text { "蓝色段落" }
+        }
+    }
+}

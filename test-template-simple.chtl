@@ -1,0 +1,17 @@
+// 简单模板测试
+
+[Template] @Element Button {
+    button {
+        class: "btn";
+        text { "Click Me" }
+    }
+}
+
+html {
+    body {
+        h1 { text { "模板测试" } }
+        
+        // 使用模板
+        @Element Button;
+    }
+}

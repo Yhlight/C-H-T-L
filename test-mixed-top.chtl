@@ -1,0 +1,29 @@
+// CHTL 片段示例 - 混合顶级声明
+
+// 全局样式
+style {
+    text {
+        "body { margin: 0; padding: 0; }
+         .container { max-width: 1200px; margin: 0 auto; }"
+    }
+}
+
+// 定义模板
+[Template] @Element Card(title, content) {
+    div .card {
+        h3 { text { title } }
+        p { text { content } }
+    }
+}
+
+// 直接的 HTML 片段
+div .container {
+    h1 { text { "Welcome" } }
+    @Element Card("Hello", "This is a card")
+    @Element Card("World", "Another card")
+}
+
+// 另一个独立的片段
+footer {
+    text { "© 2024" }
+}

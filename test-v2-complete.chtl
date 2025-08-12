@@ -1,0 +1,232 @@
+// 全局样式
+style {
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 10px;
+        }
+    }
+}
+
+// 模板定义：卡片组件
+[Template] @Element Card(title, content, type = "default") {
+    div .card {
+        style {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        style {
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+        }
+        
+        h3 .card-title {
+            style {
+                margin: 0 0 10px 0;
+                color: #333;
+            }
+            text { title }
+        }
+        
+        p .card-content {
+            style {
+                margin: 0;
+                color: #666;
+                line-height: 1.6;
+            }
+            text { content }
+        }
+        
+        // 局部脚本
+        script {
+            const card = {{&}};
+            card.listen('click', function() {
+                console.log('Card clicked:', '{{title}}');
+                this.classList.toggle('active');
+            });
+        }
+    }
+}
+
+// 模板定义：按钮组件
+[Template] @Element Button(text, onClick = "") {
+    button .btn {
+        style {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        style {
+            &:hover {
+                background: #0056b3;
+            }
+            
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+        
+        text { text }
+        
+        script {
+            const btn = {{&}};
+            btn.listen('click', function(e) {
+                {{onClick}};
+            });
+        }
+    }
+}
+
+// HTML 结构
+html {
+    head {
+        title { text { "CHTL v2 Complete Test" } }
+    }
+    
+    body {
+        div #app {
+            div .container {
+                header {
+                    style {
+                        text-align: center;
+                        margin-bottom: 40px;
+                    }
+                    
+                    h1 {
+                        style {
+                            color: #333;
+                            font-size: 2.5em;
+                        }
+                        text { "CHTL v2 Demo" }
+                    }
+                    
+                    p {
+                        style {
+                            color: #666;
+                            font-size: 1.2em;
+                        }
+                        text { "Testing all features of the new architecture" }
+                    }
+                }
+                
+                main {
+                    // 使用模板
+                    @Element Card(
+                        "Welcome to CHTL", 
+                        "This is a test of the template system with all features."
+                    )
+                    
+                    @Element Card(
+                        "State Machine Architecture", 
+                        "The new compiler uses a state-driven approach for better parsing."
+                    )
+                    
+                    div .button-group {
+                        style {
+                            display: flex;
+                            gap: 10px;
+                            margin: 20px 0;
+                        }
+                        
+                        @Element Button("Click Me", "alert('Hello from CHTL!')")
+                        @Element Button("Toggle Cards", "
+                            const cards = document.querySelectorAll('.card');
+                            cards.forEach(card => card.classList.toggle('hidden'));
+                        ")
+                    }
+                    
+                    // 测试 CHTL-JS
+                    div #counter {
+                        style {
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 8px;
+                            text-align: center;
+                        }
+                        
+                        h2 { text { "Counter Example" } }
+                        
+                        p #count {
+                            style {
+                                font-size: 2em;
+                                font-weight: bold;
+                                color: #007bff;
+                            }
+                            text { "0" }
+                        }
+                        
+                        script {
+                            let count = 0;
+                            const countEl = {{#count}};
+                            const updateCount = () => {
+                                countEl.textContent = count;
+                            };
+                        }
+                        
+                        @Element Button("Increment", "count++; updateCount()")
+                        @Element Button("Decrement", "count--; updateCount()")
+                    }
+                }
+                
+                footer {
+                    style {
+                        margin-top: 60px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e0e0e0;
+                        text-align: center;
+                        color: #666;
+                    }
+                    
+                    p {
+                        text { "Built with CHTL v2 - " }
+                        span {
+                            script {
+                                const year = new Date().getFullYear();
+                                {{&}}.textContent = year;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 全局脚本
+        script {
+            console.log('CHTL v2 page loaded');
+            
+            // 添加全局样式切换
+            document.addEventListener('DOMContentLoaded', () => {
+                const app = {{#app}};
+                console.log('App element:', app);
+            });
+        }
+    }
+}

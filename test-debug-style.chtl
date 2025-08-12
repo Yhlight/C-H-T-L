@@ -1,10 +1,18 @@
-body {
-    // 测试1：没有样式
-    p { text { "Test 1" } }
+// 简单的全局样式测试
+
+html {
+    head {
+        title { text { "调试测试" } }
+        
+        // 全局样式块
+        style {
+            text {
+                "body { background: #ff0000; }"
+            }
+        }
+    }
     
-    // 测试2：有样式但为空
-    div {
-        style { }
-        text { "Test 2" }
+    body {
+        div { text { "测试内容" } }
     }
 }

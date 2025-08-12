@@ -1,0 +1,58 @@
+// 全面的错误测试
+
+// 问题1: 未闭合的字符串不会报错
+div {
+    text { "这是一个未闭合的字符串，编译器应该报错但没有
+    text { '单引号字符串也一样
+}
+
+// 问题2: 未闭合的大括号
+div {
+    style {
+        color: red;
+    // 缺少闭合大括号，但编译器可能不会正确报错
+
+// 问题3: 空值处理
+div {
+    class: ;     // 空值
+    id: ;        // 空值
+    style: ;     // 空值
+}
+
+// 问题4: 循环引用检测
+[Custom] @Element Recursive1 {
+    @Element Recursive2;
+}
+
+[Custom] @Element Recursive2 {
+    @Element Recursive1;  // 应该检测到循环引用
+}
+
+// 问题5: 重复定义
+[Custom] @Element Duplicate {
+    div { text { "First" } }
+}
+
+[Custom] @Element Duplicate {  // 重复定义
+    div { text { "Second" } }
+}
+
+// 问题6: 无效的索引访问
+div {
+    @Element NonExistent;
+    delete div[999];      // 超出范围的索引
+    delete div[-1];       // 负索引
+}
+
+// 问题7: 语法混乱
+div {
+    delete insert replace;  // 混乱的操作符
+    style script text;      // 混乱的块声明
+}
+
+// 问题8: 未定义的模板引用
+body {
+    @Style UndefinedStyle;
+    @Element UndefinedElement;
+    color: UndefinedVar(primary);
+}

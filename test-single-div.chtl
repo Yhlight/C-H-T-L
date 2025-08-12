@@ -1,0 +1,5 @@
+div {
+    id: "myid";
+    class: "myclass"; 
+    text { "Hello" }
+}

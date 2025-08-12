@@ -1,0 +1,4 @@
+div {
+    id: "my-div";
+    text { "测试" }
+}

@@ -217,10 +217,9 @@ bool WebGenerator::matchesConstraint(const std::shared_ptr<Node>& node, const st
 }
 
 void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
-    const std::string& tag = element->getTagName();
+    if (!element) return;
     
-    // 调试输出
-    // std::cout << "visitElement: " << tag << std::endl;
+    std::string tag = element->getTagName();
     
 
     // 特殊处理引用节点
@@ -331,14 +330,15 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         }
     }
     
-    if (hasLocalScript && attributes.find("id") == attributes.end()) {
-        // 需要ID但没有，生成一个
-        elementId = generateUniqueId("element");
-        attributes["id"] = elementId;  // 添加到本地副本中
-    } else if (attributes.find("id") != attributes.end()) {
+    // 首先检查元素是否已经有ID
+    if (attributes.find("id") != attributes.end()) {
         if (std::holds_alternative<std::string>(attributes.at("id"))) {
             elementId = std::get<std::string>(attributes.at("id"));
         }
+    } else if (hasLocalScript) {
+        // 只有在没有ID且有局部脚本时才生成ID
+        elementId = generateUniqueId("element");
+        attributes["id"] = elementId;  // 添加到本地副本中
     }
     
     // 输出所有属性
@@ -935,13 +935,25 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
         
         // 收集局部脚本
         try {
-            jsRuntime_->collectLocalScript(script->getContent(), elementInfo);
+            // 先处理变量替换
+            std::string processedScript = processVarReferences(script->getContent());
+            jsRuntime_->collectLocalScript(processedScript, elementInfo);
         } catch (const std::exception& e) {
             addError("Error collecting local script: " + std::string(e.what()));
         }
     } else {
         // 全局脚本
-        std::string wrappedCode = script->generateWrappedCode();
+        std::string scriptContent = script->getContent();
+        // 先处理变量替换
+        scriptContent = processVarReferences(scriptContent);
+        
+        // 创建一个临时的脚本节点来生成包装代码
+        auto tempScript = std::make_shared<Script>();
+        tempScript->setContent(scriptContent);
+        tempScript->setScriptType(script->getScriptType());
+        tempScript->setScope(script->getScope());
+        
+        std::string wrappedCode = tempScript->generateWrappedCode();
         if (!wrappedCode.empty()) {
             // 应用 CJmod 处理
             if (currentContext_ && currentContext_->hasCJmodImports()) {

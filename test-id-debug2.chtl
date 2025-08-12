@@ -1,0 +1,11 @@
+// 测试ID输出
+
+html {
+    body {
+        div {
+            id: "test-id-1";
+            class: "test-class";
+            text { "测试DIV" }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+// 测试属性输出
+
+html {
+    body {
+        // 多个元素测试不同属性
+        div {
+            id: "test1";
+            text { "DIV with ID" }
+        }
+        
+        p {
+            class: "paragraph";
+            text { "P with class" }
+        }
+        
+        span {
+            id: "span-id";
+            class: "span-class";
+            text { "SPAN with both" }
+        }
+        
+        a {
+            href: "https://example.com";
+            target: "_blank";
+            text { "Link with attributes" }
+        }
+    }
+}

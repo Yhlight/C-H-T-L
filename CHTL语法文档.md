@@ -1162,3 +1162,22 @@ Chtholly
 如何导入模块？使用`Import @Chtl from 模块名`即可  
 会导入所有的子模块，也可以精确到具体的子模块，例如Import @Chtl from Chtholly.Space  
 如何使用其他人开发的Cmod呢？你需要在需要执行的文件处，新建module文件夹，并将Cmod放置文件夹之中  
+
+### CJMOD
+CJMOD是CHTL提供扩展CHTL JS语法的一种方式，允许通过CHTL JS编译器的一些接口使用C++自由实现CHTL JS语法  
+让创建无限的JS语法成为一种可能，CJMOD的文件结构与CMOD类似  
+CJMOD让扩展CHTL JS语法变得更简单，无需阅读源码即可实现CHTL JS语法的扩展，并通过CJMOD的方式发布  
+
+CJmod结构  
+
+CJmod文件夹  
+    src/xxx.cpp xxx.h  
+        Box  
+            src/xxx.cpp xxx.h  
+            info/Box.chtl  
+        Box2  
+            src/xxx.cpp xxx.h  
+            info/Box2.chtl  
+    info/CJmod文件夹名称.chtl  
+
+你无需害怕CJMOD存在局限，你可以自由包含头文件，编写全局变量管理状态  

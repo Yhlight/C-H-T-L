@@ -431,4 +431,16 @@ public class HtmlGenerator implements ChtlVisitor<String> {
                   .replace("\"", "&quot;")
                   .replace("'", "&#39;");
     }
+    
+    @Override
+    public String visitInfo(InfoNode node) {
+        // Info节点不生成HTML，仅用于模块元信息
+        return "";
+    }
+    
+    @Override
+    public String visitExport(ExportNode node) {
+        // Export节点不生成HTML，仅用于模块导出声明
+        return "";
+    }
 }

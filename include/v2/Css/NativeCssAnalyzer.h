@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include <map>
 
 namespace chtl::v2::css {
 
@@ -12,16 +14,23 @@ struct CssAnalysisResult {
     bool valid = true;
     std::vector<std::string> errors;
     std::vector<std::string> warnings;
-    
-    // CSS 结构信息
-    struct Rule {
-        std::string selector;
-        std::vector<std::pair<std::string, std::string>> properties;
-    };
-    std::vector<Rule> rules;
-    
-    // @规则
-    std::vector<std::string> atRules;
+
+    // 属性出现次数统计
+    std::map<std::string, int> properties;
+
+    // 规则数量统计
+    int ruleCount = 0;
+
+    // 特性检测
+    struct Features {
+        bool hasMediaQueries = false;
+        bool hasAnimations  = false;
+        bool hasSupports    = false;
+        bool hasImports     = false;
+    } features;
+
+    // 唯一选择器集合
+    std::vector<std::string> selectors;
 };
 
 /**

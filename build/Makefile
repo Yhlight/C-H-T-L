@@ -399,78 +399,6 @@ src/v2/Import/ImportSystem.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Import/ImportSystem.cpp.s
 .PHONY : src/v2/Import/ImportSystem.cpp.s
 
-src/v2/Js/JsParser.o: src/v2/Js/JsParser.cpp.o
-.PHONY : src/v2/Js/JsParser.o
-
-# target to build an object file
-src/v2/Js/JsParser.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsParser.cpp.o
-.PHONY : src/v2/Js/JsParser.cpp.o
-
-src/v2/Js/JsParser.i: src/v2/Js/JsParser.cpp.i
-.PHONY : src/v2/Js/JsParser.i
-
-# target to preprocess a source file
-src/v2/Js/JsParser.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsParser.cpp.i
-.PHONY : src/v2/Js/JsParser.cpp.i
-
-src/v2/Js/JsParser.s: src/v2/Js/JsParser.cpp.s
-.PHONY : src/v2/Js/JsParser.s
-
-# target to generate assembly for a file
-src/v2/Js/JsParser.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsParser.cpp.s
-.PHONY : src/v2/Js/JsParser.cpp.s
-
-src/v2/Js/JsTokenizer.o: src/v2/Js/JsTokenizer.cpp.o
-.PHONY : src/v2/Js/JsTokenizer.o
-
-# target to build an object file
-src/v2/Js/JsTokenizer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsTokenizer.cpp.o
-.PHONY : src/v2/Js/JsTokenizer.cpp.o
-
-src/v2/Js/JsTokenizer.i: src/v2/Js/JsTokenizer.cpp.i
-.PHONY : src/v2/Js/JsTokenizer.i
-
-# target to preprocess a source file
-src/v2/Js/JsTokenizer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsTokenizer.cpp.i
-.PHONY : src/v2/Js/JsTokenizer.cpp.i
-
-src/v2/Js/JsTokenizer.s: src/v2/Js/JsTokenizer.cpp.s
-.PHONY : src/v2/Js/JsTokenizer.s
-
-# target to generate assembly for a file
-src/v2/Js/JsTokenizer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/JsTokenizer.cpp.s
-.PHONY : src/v2/Js/JsTokenizer.cpp.s
-
-src/v2/Js/NativeJsAnalyzer.o: src/v2/Js/NativeJsAnalyzer.cpp.o
-.PHONY : src/v2/Js/NativeJsAnalyzer.o
-
-# target to build an object file
-src/v2/Js/NativeJsAnalyzer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/NativeJsAnalyzer.cpp.o
-.PHONY : src/v2/Js/NativeJsAnalyzer.cpp.o
-
-src/v2/Js/NativeJsAnalyzer.i: src/v2/Js/NativeJsAnalyzer.cpp.i
-.PHONY : src/v2/Js/NativeJsAnalyzer.i
-
-# target to preprocess a source file
-src/v2/Js/NativeJsAnalyzer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/NativeJsAnalyzer.cpp.i
-.PHONY : src/v2/Js/NativeJsAnalyzer.cpp.i
-
-src/v2/Js/NativeJsAnalyzer.s: src/v2/Js/NativeJsAnalyzer.cpp.s
-.PHONY : src/v2/Js/NativeJsAnalyzer.s
-
-# target to generate assembly for a file
-src/v2/Js/NativeJsAnalyzer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/chtl_v2.dir/build.make CMakeFiles/chtl_v2.dir/src/v2/Js/NativeJsAnalyzer.cpp.s
-.PHONY : src/v2/Js/NativeJsAnalyzer.cpp.s
-
 src/v2/Lexer/ChtlLexer.o: src/v2/Lexer/ChtlLexer.cpp.o
 .PHONY : src/v2/Lexer/ChtlLexer.o
 
@@ -751,15 +679,6 @@ help:
 	@echo "... src/v2/Import/ImportSystem.o"
 	@echo "... src/v2/Import/ImportSystem.i"
 	@echo "... src/v2/Import/ImportSystem.s"
-	@echo "... src/v2/Js/JsParser.o"
-	@echo "... src/v2/Js/JsParser.i"
-	@echo "... src/v2/Js/JsParser.s"
-	@echo "... src/v2/Js/JsTokenizer.o"
-	@echo "... src/v2/Js/JsTokenizer.i"
-	@echo "... src/v2/Js/JsTokenizer.s"
-	@echo "... src/v2/Js/NativeJsAnalyzer.o"
-	@echo "... src/v2/Js/NativeJsAnalyzer.i"
-	@echo "... src/v2/Js/NativeJsAnalyzer.s"
 	@echo "... src/v2/Lexer/ChtlLexer.o"
 	@echo "... src/v2/Lexer/ChtlLexer.i"
 	@echo "... src/v2/Lexer/ChtlLexer.s"

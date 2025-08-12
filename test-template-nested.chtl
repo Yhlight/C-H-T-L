@@ -1,0 +1,103 @@
+// 测试模板展开和HTML结构
+
+[Template] @Var Theme {
+    primary: "#007bff";
+    secondary: "#6c757d";
+    borderRadius: "4px";
+}
+
+[Template] @Element Card {
+    div {
+        class: "card";
+        style {
+            border: 1px solid #ddd;
+            border-radius: Theme(borderRadius);
+            padding: 20px;
+            margin: 10px;
+        }
+        slot;
+    }
+}
+
+[Template] @Element Button {
+    button {
+        class: "btn";
+        style {
+            background: Theme(primary);
+            color: white;
+            border: none;
+            border-radius: Theme(borderRadius);
+            padding: 8px 16px;
+        }
+        slot;
+    }
+}
+
+// 测试自定义组件
+[Custom] @Element PageHeader {
+    header {
+        class: "page-header";
+        style {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1 { 
+            style { color: Theme(primary); }
+            slot; 
+        }
+    }
+}
+
+html {
+    head {
+        title { text { "模板嵌套测试" } }
+    }
+    
+    body {
+        @Element PageHeader {
+            text { "欢迎页面" }
+        }
+        
+        @Element Card {
+            h2 { text { "卡片标题" } }
+            p { text { "这是一个嵌套在Card组件中的段落。" } }
+            
+            @Element Button {
+                text { "点击我" }
+            }
+        }
+        
+        // 测试多个同级模板
+        @Element Card {
+            h3 { text { "另一个卡片" } }
+            
+            div {
+                @Element Button {
+                    text { "按钮1" }
+                }
+                @Element Button {
+                    text { "按钮2" }
+                }
+            }
+        }
+        
+        // 测试变量在JavaScript中的使用
+        script {
+            const config = {
+                theme: {
+                    primary: "Theme(primary)",
+                    secondary: "Theme(secondary)"
+                },
+                api: {
+                    endpoint: "NotAVariable(test)",  // 这不应该触发警告
+                    method: "GET"
+                }
+            };
+            
+            console.log("Theme colors:", config.theme);
+            console.log("API config:", config.api);
+        }
+    }
+}

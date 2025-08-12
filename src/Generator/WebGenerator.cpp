@@ -49,8 +49,12 @@ GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
 }
 
 std::string WebGenerator::generateHTMLDocument() {
-    // 如果已经有html标签，不需要包装
-    if (result_.html.find("<html") != std::string::npos) {
+    // 获取当前的 HTML 内容
+    std::string bodyContent = htmlCollector_.getCode();
+    
+    // 如果已经有完整的html结构，直接使用
+    if (bodyContent.find("<html") != std::string::npos) {
+        result_.html = bodyContent;
         return result_.html;
     }
     
@@ -81,10 +85,8 @@ std::string WebGenerator::generateHTMLDocument() {
     doc << "</head>\n";
     doc << "<body>\n";
     
-    // 主体内容
-    doc << result_.html;
-    
-
+    // 主体内容 - 使用 htmlCollector 的内容
+    doc << bodyContent;
     
     // 脚本
     if (!result_.js.empty()) {
@@ -103,6 +105,7 @@ std::string WebGenerator::generateHTMLDocument() {
     doc << "</body>\n";
     doc << "</html>\n";
     
+    // 更新 result_.html
     result_.html = doc.str();
     return result_.html;
 }
@@ -726,6 +729,22 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
 std::string WebGenerator::processVarReferences(const std::string& css) {
     std::string result = css;
     
+    // 首先收集所有已知的变量组名称
+    std::set<std::string> knownVarGroups;
+    
+    // 从 Custom 定义中收集
+    for (const auto& [key, node] : customDefinitions_) {
+        if (key.find("@Var ") == 0) {
+            knownVarGroups.insert(key.substr(5)); // 移除 "@Var " 前缀
+        }
+    }
+    
+    // 从 Template 定义中收集
+    for (const auto& [key, node] : templateDefinitions_) {
+        if (key.find("@Var ") == 0) {
+            knownVarGroups.insert(key.substr(5)); // 移除 "@Var " 前缀
+        }
+    }
     
     // 查找所有的变量组引用，格式如：VarName(propertyName) 或 VarName ( propertyName )
     std::regex varRegex(R"((\w+)\s*\(\s*(\w+)(?:\s*=\s*([^)]+))?\s*\))");
@@ -739,21 +758,24 @@ std::string WebGenerator::processVarReferences(const std::string& css) {
         std::string propertyName = match[2];
         std::string overrideValue = match[3]; // 可能为空
         
-        size_t startPos = match.position() + (searchStart - css.cbegin());
-        size_t length = match.length();
-        
-        std::string replacementValue;
-        
-        if (!overrideValue.empty()) {
-            // 使用特例化的值
-            replacementValue = overrideValue;
-        } else {
-            // 查找变量组定义
-            replacementValue = findVarValue(varGroupName, propertyName);
-        }
-        
-        if (!replacementValue.empty()) {
-            replacements.push_back({startPos, length, replacementValue});
+        // 只处理已知的变量组
+        if (knownVarGroups.find(varGroupName) != knownVarGroups.end()) {
+            size_t startPos = match.position() + (searchStart - css.cbegin());
+            size_t length = match.length();
+            
+            std::string replacementValue;
+            
+            if (!overrideValue.empty()) {
+                // 使用特例化的值
+                replacementValue = overrideValue;
+            } else {
+                // 查找变量组定义
+                replacementValue = findVarValue(varGroupName, propertyName);
+            }
+            
+            if (!replacementValue.empty()) {
+                replacements.push_back({startPos, length, replacementValue});
+            }
         }
         
         searchStart = match.suffix().first;
@@ -1446,12 +1468,6 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         std::holds_alternative<std::string>(attributes.at("kind"))
         ? std::get<std::string>(attributes.at("kind")) : "";
     
-
-    
-
-    
-
-    
     // 构建查找键
     std::string key = type + " " + name;
     
@@ -1493,12 +1509,13 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
         return;
     }
     
-
-    
-        // 处理组件实例（对于元素引用）
+    // 处理组件实例（对于元素引用）
     if (type == "@Element") {
         // 克隆定义
         auto cloned = definition->clone(true);
+        
+        // 处理 slot 替换
+        processSlots(cloned, refNode);
         
         // 应用实例修改（如果有特例化内容）
         if (!refNode->getChildren().empty()) {
@@ -1513,6 +1530,39 @@ void WebGenerator::processReference(const std::shared_ptr<Element>& refNode) {
     } else if (type == "@Style") {
         // 样式引用直接访问
         visit(definition);
+    }
+}
+
+// 处理 slot 元素替换
+void WebGenerator::processSlots(std::shared_ptr<Node> templateNode, 
+                               const std::shared_ptr<Element>& refNode) {
+    // 递归查找并替换所有 slot 元素
+    auto& children = const_cast<std::vector<std::shared_ptr<Node>>&>(templateNode->getChildren());
+    
+    for (size_t i = 0; i < children.size(); ++i) {
+        auto& child = children[i];
+        
+        if (child->getType() == NodeType::ELEMENT) {
+            auto element = std::static_pointer_cast<Element>(child);
+            
+            if (element->getTagName() == "slot") {
+                // 替换 slot 为引用节点的内容
+                children.erase(children.begin() + i);
+                
+                // 插入引用节点的所有子节点
+                for (const auto& refChild : refNode->getChildren()) {
+                    // 跳过引用节点中的操作节点
+                    if (refChild->getType() != NodeType::OPERATE) {
+                        children.insert(children.begin() + i, refChild->clone(true));
+                        ++i;
+                    }
+                }
+                --i; // 调整索引
+            } else {
+                // 递归处理子节点
+                processSlots(element, refNode);
+            }
+        }
     }
 }
 

@@ -1,0 +1,14 @@
+// 测试 CSS 值解析
+
+div {
+    style {
+        // 测试各种 CSS 值
+        color: #ff0000;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 10px 20px;
+        margin: 0;
+    }
+    
+    text { "测试 CSS 解析" }
+}

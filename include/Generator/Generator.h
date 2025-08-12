@@ -181,6 +181,12 @@ private:
     std::string generateHTMLDocument();
     void injectRuntimeCode();
     void processReference(const std::shared_ptr<Element>& refNode);
+    
+    // 处理 slot 元素替换
+    void processSlots(std::shared_ptr<Node> templateNode, 
+                     const std::shared_ptr<Element>& refNode);
+    
+    // 应用引用修改
     void applyReferenceModifications(std::shared_ptr<Node> target,
                                     const std::shared_ptr<Element>& refNode);
     void mergeElement(std::shared_ptr<Node> target, 

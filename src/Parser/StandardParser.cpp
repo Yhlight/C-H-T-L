@@ -766,14 +766,36 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
     
     // 收集属性值直到分号
     bool lastWasNumber = false;
+    bool lastWasHash = false;  // 新增：跟踪上一个是否是 #
+    
     while (!check(TokenType::SEMICOLON) && !isAtEnd()) {
         auto token = advance();
+        
+        // 特殊处理 # 符号（颜色值）
+        if (token.value == "#") {
+            cssContent += "#";
+            lastWasHash = true;
+            lastWasNumber = false;
+            continue;
+        }
+        
+        // 如果上一个是 #，检查当前 token
+        if (lastWasHash && token.type == TokenType::COLON) {
+            // 这是错误的情况：# 后面跟着 :
+            // 跳过这个冒号
+            lastWasHash = false;
+            continue;
+        }
         
         // 检查是否需要在token之前添加空格
         bool needSpace = false;
         if (!cssContent.empty() && cssContent.back() != ' ' && cssContent.back() != ':') {
+            // # 后面不需要空格（颜色值）
+            if (lastWasHash) {
+                needSpace = false;
+            }
             // 数字后面跟单位不需要空格
-            if (lastWasNumber && token.type == TokenType::IDENTIFIER &&
+            else if (lastWasNumber && token.type == TokenType::IDENTIFIER &&
                 (token.value == "px" || token.value == "em" || 
                  token.value == "rem" || token.value == "%" ||
                  token.value == "vh" || token.value == "vw" ||
@@ -809,6 +831,7 @@ void StandardParser::parseCssProperty(std::string& cssContent) {
         
         cssContent += token.value;
         lastWasNumber = (token.type == TokenType::NUMBER);
+        lastWasHash = false;
     }
     
     consume(TokenType::SEMICOLON, "Expected ';'");

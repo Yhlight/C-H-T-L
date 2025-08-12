@@ -1,0 +1,7 @@
+// 极简CSS测试
+
+div {
+    style {
+        color: #abc;
+    }
+}

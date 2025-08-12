@@ -312,10 +312,16 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         else {
             auto child = parseNode();
             if (child) {
-                // 如果是style节点，设置为局部样式
+                // 如果是style节点，根据父元素决定作用域
                 if (child->getType() == NodeType::STYLE) {
                     auto styleChild = std::static_pointer_cast<Style>(child);
-                    styleChild->setType(Style::StyleScope::LOCAL);
+                    // 如果父元素是 head，则为全局样式
+                    // 否则为局部样式（在 body 内的元素中）
+                    if (element->getTag() == "head") {
+                        styleChild->setType(Style::StyleScope::GLOBAL);
+                    } else {
+                        styleChild->setType(Style::StyleScope::LOCAL);
+                    }
                 }
                 element->addChild(child);
             }

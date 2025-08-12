@@ -14,6 +14,13 @@ public class OriginNode extends ChtlNode {
         this.content = content;
     }
     
+    public OriginNode(String type, String name, String content, int line, int column) {
+        super(line, column);
+        this.type = type;
+        this.name = name;
+        this.content = content;
+    }
+    
     public String getType() {
         return type;
     }
@@ -24,6 +31,10 @@ public class OriginNode extends ChtlNode {
     
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public boolean hasName() {
+        return name != null && !name.isEmpty();
     }
     
     public String getContent() {

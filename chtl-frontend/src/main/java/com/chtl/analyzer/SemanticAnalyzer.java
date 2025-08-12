@@ -371,4 +371,46 @@ public class SemanticAnalyzer implements ChtlVisitor<Void> {
             node.getColumn()
         ));
     }
+    
+    private void addError(String message, ChtlNode node) {
+        addError(node, message);
+    }
+    
+    private void addWarning(String message, ChtlNode node) {
+        addWarning(node, message);
+    }
+    
+    @Override
+    public Void visitInfo(InfoNode node) {
+        // 验证Info节点的必需属性
+        if (node.getName() == null || node.getName().isEmpty()) {
+            addError("Info块缺少必需的'name'属性", node);
+        }
+        if (node.getVersion() == null || node.getVersion().isEmpty()) {
+            addError("Info块缺少必需的'version'属性", node);
+        }
+        
+        // 验证版本格式
+        String version = node.getVersion();
+        if (version != null && !version.matches("\\d+\\.\\d+\\.\\d+")) {
+            addWarning("版本格式应为 x.y.z 格式: " + version, node);
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public Void visitExport(ExportNode node) {
+        // 验证导出的项是否存在
+        for (ExportNode.ExportItem item : node.getExports()) {
+            for (String name : item.getNames()) {
+                String key = item.getType() + ":" + name;
+                if (!symbolTable.hasSymbol(key)) {
+                    addWarning("导出的符号不存在: " + item.getType() + " " + name, node);
+                }
+            }
+        }
+        
+        return null;
+    }
 }

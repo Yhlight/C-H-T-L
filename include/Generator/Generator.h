@@ -74,6 +74,10 @@ public:
     void setContext(std::shared_ptr<ChtlContext> context) { currentContext_ = context; }
     
 protected:
+    // 错误处理辅助方法
+    void addError(const std::string& message) { result_.errors.push_back(message); }
+    void addWarning(const std::string& message) { result_.warnings.push_back(message); }
+    
     // 访问者方法
     virtual void visit(const std::shared_ptr<Node>& node);
     virtual void visitElement(const std::shared_ptr<Element>& element);

@@ -1,0 +1,14 @@
+[Template] @Var TestVar {
+    mycolor: blue;
+}
+
+html {
+    body {
+        div {
+            style {
+                color: TestVar(mycolor);
+            }
+            text { "测试变量" }
+        }
+    }
+}

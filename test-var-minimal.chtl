@@ -1,0 +1,13 @@
+[Template] @Var MyVars {
+    color: red;
+}
+
+html {
+    body {
+        div {
+            style {
+                color: MyVars(color);
+            }
+        }
+    }
+}

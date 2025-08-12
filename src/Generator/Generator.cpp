@@ -60,13 +60,15 @@ GeneratorResult Generator::generate(const std::shared_ptr<Node>& ast) {
     scopeStack_.clear();
     templateDefinitions_.clear();
     customDefinitions_.clear();
-    jsRuntime_->reset();
+    // 注意：jsRuntime_->reset() 移到了子类处理，以避免清空收集的脚本
     
     ast_ = ast;
     
     // 第一遍扫描：收集配置和定义
     scanConfiguration(ast);
     collectDefinitions(ast);
+    
+
     
     // 第二遍处理：生成代码
     visit(ast);

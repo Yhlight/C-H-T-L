@@ -23,6 +23,9 @@
 namespace chtl {
 
 GeneratorResult WebGenerator::generate(const std::shared_ptr<Node>& ast) {
+    // 在调用基类方法之前重置运行时
+    jsRuntime_->reset();
+    
     // 调用基类生成方法
     Generator::generate(ast);
     
@@ -220,8 +223,11 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
 
     // 特殊处理引用节点
     if (tag == "reference") {
-
-        processReference(element);
+        try {
+            processReference(element);
+        } catch (const std::exception& e) {
+            addError("Error processing reference: " + std::string(e.what()));
+        }
         return;
     }
     
@@ -275,12 +281,12 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
             auto styleNode = std::static_pointer_cast<Style>(child);
             std::string css = styleNode->getCssContent();
             if (!css.empty()) {
-                // 处理变量组引用
-                css = processVarReferences(css);
-                if (!inlineStyles.empty() && inlineStyles.back() != ';') {
-                    inlineStyles += "; ";
-                }
-                inlineStyles += css;
+                            // 处理变量组引用
+            css = processVarReferences(css);
+            if (!inlineStyles.empty() && inlineStyles.back() != ';') {
+                inlineStyles += "; ";
+            }
+            inlineStyles += css;
             }
             
             // 处理样式节点的子节点（全局样式如.class, #id, &:hover）
@@ -786,7 +792,7 @@ std::string WebGenerator::findVarValue(const std::string& varGroupName, const st
     }
     
     // 未找到，返回原始引用
-    result_.warnings.push_back("Variable not found: " + varGroupName + "(" + propertyName + ")");
+    addWarning("Variable not found: " + varGroupName + "(" + propertyName + ")");
     return varGroupName + "(" + propertyName + ")";
 }
 
@@ -873,6 +879,7 @@ void WebGenerator::visitTemplate(const std::shared_ptr<Template>& /*tmpl*/) {
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
+    
     if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
         // 局部脚本
         std::string elementId = script->getScope();
@@ -893,7 +900,11 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
         }
         
         // 收集局部脚本
-        jsRuntime_->collectLocalScript(script->getContent(), elementId);
+        try {
+            jsRuntime_->collectLocalScript(script->getContent(), elementId);
+        } catch (const std::exception& e) {
+            addError("Error collecting local script: " + std::string(e.what()));
+        }
     } else {
         // 全局脚本
         std::string wrappedCode = script->generateWrappedCode();

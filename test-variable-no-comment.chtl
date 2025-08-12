@@ -1,0 +1,16 @@
+[Template] @Var SimpleVars {
+    textcolor: red;
+    bgsize: 200px;
+}
+
+html {
+    body {
+        div {
+            style {
+                color: SimpleVars(textcolor);
+                width: SimpleVars(bgsize);
+            }
+            text { "简单变量测试" }
+        }
+    }
+}

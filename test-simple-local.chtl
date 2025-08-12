@@ -1,0 +1,11 @@
+html {
+    body {
+        div {
+            id: "mydiv";
+            script {
+                console.log("Local script in div");
+            }
+            text { "测试" }
+        }
+    }
+}

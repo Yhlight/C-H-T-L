@@ -1,0 +1,107 @@
+[Template] @Style DefaultText
+{
+    color: black;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+[Template] @Element Box
+{
+    div
+    {
+        style
+        {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            margin: 10px;
+            padding: 20px;
+        }
+        
+        text
+        {
+            这是一个红色的盒子
+        }
+    }
+}
+
+html
+{
+    head
+    {
+        title
+        {
+            text
+            {
+                CHTL示例页面
+            }
+        }
+    }
+    
+    body
+    {
+        style
+        {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        h1
+        {
+            text
+            {
+                CHTL编译器测试
+            }
+        }
+        
+        @Element Box;
+        
+        div
+        {
+            style
+            {
+                .container
+                {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                
+                .button
+                {
+                    background-color: blue;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+                
+                .button:hover
+                {
+                    background-color: darkblue;
+                }
+            }
+            
+            class: container;
+            
+            button
+            {
+                class: button;
+                text
+                {
+                    点击我
+                }
+            }
+        }
+        
+        script
+        {
+            function handleClick() {
+                alert('按钮被点击了!');
+            }
+            
+            document.querySelector('.button').addEventListener('click', handleClick);
+        }
+    }
+}

@@ -8,10 +8,7 @@ list(FILTER SOURCES EXCLUDE REGEX ".*\\.disabled$")
 
 # 添加新的 CJmod 文件
 list(APPEND SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/CJmodCore.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/CJmodContextImpl.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/CJmodProcessor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/BuiltinModules.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CJmod/CJmodSimpleImpl.cpp
 )
 
 # 收集所有源文件

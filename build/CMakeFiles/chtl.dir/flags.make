@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/workspace/include
 
-CXX_FLAGS = -g -std=c++17 -Wall -Wextra -Werror
+CXX_FLAGS = -std=c++17 -Wall -Wextra -Werror
 

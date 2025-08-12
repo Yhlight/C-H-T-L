@@ -92,7 +92,8 @@ customContent: (elementStatement | styleBlock | varDeclaration | customInheritan
 
 originStatement: ORIGIN originType (IDENTIFIER)? LBRACE originContent RBRACE;
 originType: HTML | CSS | JAVASCRIPT;
-originContent: (elementStatement | styleBlock | scriptBlock)*;
+originContent: (elementStatement | styleBlock | scriptBlock | rawContent)*;
+rawContent: (STRING | LITERAL | IDENTIFIER | NUMBER)*;
 
 // 元素语句 - 支持HTML元素、text文本块、style样式块、script脚本块
 elementStatement: elementName (attributes)? (LBRACE elementContent RBRACE)?;
@@ -108,7 +109,7 @@ styleContent: (cssRule | templateUsage | customUsage)*;
 
 // script脚本块
 scriptElement: SCRIPT LBRACE scriptContent RBRACE;
-scriptContent: (elementStatement | STRING | LITERAL | IDENTIFIER)*;
+scriptContent: (elementStatement | STRING | LITERAL | IDENTIFIER | functionCall | rawContent)*;
 
 // CSS规则 - 支持选择器和上下文推导
 cssRule: selector LBRACE cssProperties RBRACE;

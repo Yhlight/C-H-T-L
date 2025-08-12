@@ -31,7 +31,7 @@ VALUE_KEYWORD: 'auto' | 'none' | 'normal' | 'inherit' | 'initial' | 'unset' | 'r
 // 标识符
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_-]*;
 NUMBER: [0-9]+ ('.' [0-9]+)?;
-STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+STRING: '"' (~["\\] | '\\' .)* '"';
 
 // 标点符号
 LBRACE: '{';
@@ -144,7 +144,6 @@ supports: SUPPORTS supportsCondition LBRACE ruleset* RBRACE;
 SUPPORTS: '@supports';
 supportsCondition: supportsConditionInParens (AND supportsConditionInParens)* | supportsConditionInParens (OR supportsConditionInParens)*;
 supportsConditionInParens: LPAREN supportsCondition RPAREN | LPAREN supportsDeclarationCondition RPAREN | LPAREN supportsFeatureType RPAREN | LPAREN supportsFeature RPAREN;
-supportsConditionInParens: supportsDeclarationCondition | supportsFeatureType | supportsFeature;
 supportsDeclarationCondition: declaration;
 supportsFeatureType: IDENTIFIER;
 supportsFeature: supportsFeatureName COLON supportsFeatureValue;

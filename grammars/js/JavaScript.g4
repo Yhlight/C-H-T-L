@@ -75,7 +75,7 @@ SET: 'set';
 
 // 字面量
 LITERAL: NULL | TRUE | FALSE | STRING | NUMBER | REGEX;
-STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' | '`' (~[`\\] | '\\' .)* '`';
+STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
 NUMBER: DECIMAL_LITERAL | HEX_INTEGER_LITERAL | OCTAL_INTEGER_LITERAL | BINARY_INTEGER_LITERAL;
 DECIMAL_LITERAL: [0-9]+ '.' [0-9]* EXPONENT_PART? | '.' [0-9]+ EXPONENT_PART? | [0-9]+ EXPONENT_PART?;
 HEX_INTEGER_LITERAL: '0' [xX] [0-9a-fA-F]+;
@@ -87,7 +87,7 @@ REGEX_BODY: (~[/\\] | '\\' .)*;
 REGEX_FLAGS: [a-zA-Z]*;
 
 // 标识符
-IDENTIFIER: [a-zA-Z_$] [a-zA-Z0-9_$]*;
+IDENTIFIER: [a-zA-Z_$][a-zA-Z0-9_$]*;
 
 // 标点符号
 LPAREN: '(';
@@ -255,7 +255,7 @@ elementList: (ELLIPSIS)? assignmentExpression (COMMA (ELLIPSIS)? assignmentExpre
 objectLiteral: LBRACE (propertyDefinition (COMMA propertyDefinition)*)? RBRACE;
 propertyDefinition: identifierName COLON assignmentExpression | (GET | SET)? propertyName LPAREN formalParameterList? RPAREN LBRACE functionBody RBRACE | (ELLIPSIS)? assignmentExpression;
 parenthesizedExpression: LPAREN expression RPAREN;
-templateLiteral: '`' templateElement* '`';
+templateLiteral: BACKTICK templateElement* BACKTICK;
 templateElement: templateCharacters | templateSubstitution;
 templateCharacters: (~[`$\\] | '\\' .)*;
 templateSubstitution: '$' LBRACE expression RBRACE;
@@ -282,4 +282,5 @@ unaryExpressionNoIn: unaryOperator unaryExpressionNoIn | postfixExpression;
 // 辅助规则
 ASTERISK: '*';
 AS: 'as';
+BACKTICK: '`';
 sourceElements: sourceElement+;

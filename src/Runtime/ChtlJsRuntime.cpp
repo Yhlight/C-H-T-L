@@ -7,21 +7,17 @@
 
 namespace chtl {
 
-void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std::string& elementId) {
-    // 调试输出
-    std::cerr << "[DEBUG] collectLocalScript called with elementId: " << elementId 
-              << ", code length: " << scriptCode.length() << std::endl;
-    
+void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const ElementInfo& elementInfo) {
     // 创建增强器处理代码
     ChtlJsEnhancer enhancer;
-    enhancer.setElementContext(elementId);
+    enhancer.setElementContext(elementInfo.id);
     enhancer.enterLocalScriptBlock();
     
     // 应用增强语法转换
     std::string enhancedCode = enhancer.processScript(scriptCode);
     
-    // 处理{{&}}语法
-    std::string processedCode = processAmpersandSyntax(enhancedCode, elementId);
+    // 处理{{&}}语法 - 传递完整的元素信息
+    std::string processedCode = processAmpersandSyntax(enhancedCode, elementInfo);
     
     // 解析并提取delegate调用
     auto delegations = parseDelegateCall(processedCode);
@@ -33,11 +29,21 @@ void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std:
     std::stringstream wrapped;
     wrapped << "(function() {\n";
     wrapped << "  'use strict';\n";
-    if (!elementId.empty()) {
-        wrapped << "  const element = document.getElementById('" << elementId << "');\n";
+    
+    // 根据元素信息决定如何定义 element
+    if (!elementInfo.id.empty()) {
+        wrapped << "  const element = document.getElementById('" << elementInfo.id << "');\n";
         wrapped << "  if (!element) return;\n";
-        wrapped << "  const {{&}} = element;\n";
+    } else if (!elementInfo.className.empty()) {
+        // 如果没有ID但有class，使用class选择器
+        wrapped << "  const element = document.querySelector('." << elementInfo.className << "');\n";
+        wrapped << "  if (!element) return;\n";
+    } else {
+        // 没有ID也没有class，无法定位元素
+        wrapped << "  // Warning: Element has no ID or class for identification\n";
+        wrapped << "  const element = null;\n";
     }
+    
     // 添加处理后的代码，保持缩进
     std::istringstream iss(processedCode);
     std::string line;
@@ -47,10 +53,6 @@ void ChtlJsRuntime::collectLocalScript(const std::string& scriptCode, const std:
     wrapped << "})();\n";
     
     collectedScripts_.push_back(wrapped.str());
-    
-    // 调试输出
-    std::cerr << "[DEBUG] collectLocalScript: collectedScripts_ size is now " 
-              << collectedScripts_.size() << std::endl;
 }
 
 void ChtlJsRuntime::registerEventDelegation(const EventDelegation& delegation) {
@@ -65,10 +67,6 @@ void ChtlJsRuntime::registerEventDelegation(const EventDelegation& delegation) {
 }
 
 std::string ChtlJsRuntime::generateRuntimeCode() {
-    // 调试输出
-    std::cerr << "[DEBUG] generateRuntimeCode called, collectedScripts_ size: " 
-              << collectedScripts_.size() << std::endl;
-    
     std::stringstream code;
     
     // CHTL JS运行时环境
@@ -116,13 +114,10 @@ std::string ChtlJsRuntime::generateRuntimeCode() {
     
     // 添加收集的局部脚本
     if (!collectedScripts_.empty()) {
-        std::cerr << "[DEBUG] Adding " << collectedScripts_.size() << " collected scripts" << std::endl;
         code << "// Collected local scripts\n";
         for (const auto& script : collectedScripts_) {
             code << script << "\n";
         }
-    } else {
-        std::cerr << "[DEBUG] No collected scripts to add" << std::endl;
     }
     
     return code.str();
@@ -439,15 +434,39 @@ std::string ChtlJsRuntime::generateDelegationCode() {
     return code.str();
 }
 
-std::string ChtlJsRuntime::processAmpersandSyntax(const std::string& code, const std::string& elementContext) {
-    if (elementContext.empty()) {
-        return code;
+std::string ChtlJsRuntime::processAmpersandSyntax(const std::string& code, const ElementInfo& elementInfo) {
+    // 根据元素上下文决定 {{&}} 的替换方式
+    std::string ampersandReplacement;
+    
+    // 优先级：
+    // 1. 如果有局部样式选择器，使用它
+    // 2. 如果有 id，使用 #id
+    // 3. 如果有 class，使用 .class
+    // 4. 否则使用元素引用
+    
+    if (!elementInfo.localStyleSelector.empty()) {
+        // 局部样式中定义了选择器
+        ampersandReplacement = "document.querySelector('" + elementInfo.localStyleSelector + "')";
+    } else if (!elementInfo.id.empty()) {
+        // 有 ID，使用 ID 选择器
+        ampersandReplacement = "document.getElementById('" + elementInfo.id + "')";
+    } else if (!elementInfo.className.empty()) {
+        // 有 class，使用 class 选择器
+        // 注意：如果有多个 class，只使用第一个
+        std::string firstClass = elementInfo.className;
+        size_t spacePos = firstClass.find(' ');
+        if (spacePos != std::string::npos) {
+            firstClass = firstClass.substr(0, spacePos);
+        }
+        ampersandReplacement = "document.querySelector('." + firstClass + "')";
+    } else {
+        // 没有任何标识符，使用 element 变量（在包装函数中定义）
+        ampersandReplacement = "element";
     }
     
-    // 替换 {{&}} 为元素引用
+    // 替换 {{&}} 为推导出的选择器
     std::regex ampersandRegex(R"(\{\{&\}\})");
-    std::string result = std::regex_replace(code, ampersandRegex, 
-        "document.getElementById('" + elementContext + "')");
+    std::string result = std::regex_replace(code, ampersandRegex, ampersandReplacement);
     
     return result;
 }
@@ -565,35 +584,40 @@ std::string ChtlJsEnhancer::transformSingleSelector(const std::string& selector,
         return "null";
     }
     
+    // 去除前后空格
+    std::string trimmedSelector = selector;
+    trimmedSelector.erase(0, trimmedSelector.find_first_not_of(" \t"));
+    trimmedSelector.erase(trimmedSelector.find_last_not_of(" \t") + 1);
+    
     // 检查是否是复合选择器（包含空格）
-    bool isCompound = selector.find(' ') != std::string::npos;
+    bool isCompound = trimmedSelector.find(' ') != std::string::npos;
     
     if (isCompound) {
         // 复合选择器，使用querySelectorAll
-        result = "document.querySelectorAll('" + selector + "')";
+        result = "document.querySelectorAll('" + trimmedSelector + "')";
         if (!index.empty()) {
             result += "[" + index + "]";
         }
-    } else if (selector[0] == '.') {
+    } else if (trimmedSelector[0] == '.') {
         // 类选择器
         if (index.empty()) {
-            result = "document.querySelectorAll('" + selector + "')";
+            result = "document.querySelectorAll('" + trimmedSelector + "')";
         } else {
-            result = "document.getElementsByClassName('" + selector.substr(1) + "')[" + index + "]";
+            result = "document.getElementsByClassName('" + trimmedSelector.substr(1) + "')[" + index + "]";
         }
-    } else if (selector[0] == '#') {
+    } else if (trimmedSelector[0] == '#') {
         // ID选择器
-        result = "document.getElementById('" + selector.substr(1) + "')";
+        result = "document.getElementById('" + trimmedSelector.substr(1) + "')";
     } else {
         // 无修饰符选择器：先尝试标签，再尝试ID，最后尝试类
         if (index.empty()) {
             // 先尝试标签，再尝试ID，最后尝试类
-            result = "(document.getElementsByTagName('" + selector + "')[0] || " +
-                     "document.getElementById('" + selector + "') || " +
-                     "document.getElementsByClassName('" + selector + "')[0])";
+            result = "(document.getElementsByTagName('" + trimmedSelector + "')[0] || " +
+                     "document.getElementById('" + trimmedSelector + "') || " +
+                     "document.getElementsByClassName('" + trimmedSelector + "')[0])";
         } else {
             // 有索引，肯定是标签选择器
-            result = "document.getElementsByTagName('" + selector + "')[" + index + "]";
+            result = "document.getElementsByTagName('" + trimmedSelector + "')[" + index + "]";
         }
     }
     

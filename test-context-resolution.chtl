@@ -1,0 +1,140 @@
+// 测试 {{&}} 符号的上下文推导
+
+html {
+    head {
+        title { text { "{{&}} 上下文推导测试" } }
+    }
+    
+    body {
+        h1 { text { "CHTL-JS {{&}} 符号测试" } }
+        
+        // 测试 1：有 ID 的元素
+        div {
+            id: "test-with-id";
+            p { text { "测试 1：元素有 ID" } }
+            
+            script {
+                // {{&}} 应该解析为 document.getElementById('test-with-id')
+                {{&}}.style.border = '2px solid blue';
+                console.log('Test 1: ID selector used for &');
+            }
+        }
+        
+        // 测试 2：有 class 的元素
+        div {
+            class: "test-with-class another-class";
+            p { text { "测试 2：元素有 class" } }
+            
+            script {
+                // {{&}} 应该解析为 document.querySelector('.test-with-class')
+                {{&}}.style.border = '2px solid green';
+                console.log('Test 2: Class selector used for &');
+            }
+        }
+        
+        // 测试 3：同时有 ID 和 class（ID 优先）
+        div {
+            id: "test-with-both";
+            class: "test-class";
+            p { text { "测试 3：元素同时有 ID 和 class" } }
+            
+            script {
+                // {{&}} 应该优先使用 ID
+                {{&}}.style.border = '2px solid red';
+                console.log('Test 3: ID preferred over class');
+            }
+        }
+        
+        // 测试 4：有局部样式块
+        div {
+            class: "styled-element";
+            
+            style {
+                padding: 20px;
+                background: #f0f0f0;
+                
+                .custom-style {
+                    color: blue;
+                    font-weight: bold;
+                }
+                
+                &:hover {
+                    background: #e0e0e0;
+                }
+            }
+            
+            p { 
+                class: "custom-style";
+                text { "测试 4：有局部样式块" } 
+            }
+            
+            script {
+                // {{&}} 应该使用 class 选择器
+                {{&}}.addEventListener('click', function() {
+                    console.log('Test 4: Element with local styles clicked');
+                });
+            }
+        }
+        
+        // 测试 5：{{#id}} 语法
+        div {
+            button {
+                id: "test-button";
+                text { "点击测试 {{#id}}" }
+            }
+            
+            p {
+                id: "test-output";
+                text { "等待点击..." }
+            }
+            
+            script {
+                // 测试 {{#id}} 语法
+                {{#test-button}}?.addEventListener('click', function() {
+                    {{#test-output}}.textContent = '按钮被点击了！';
+                    console.log('Test 5: {{#id}} syntax works');
+                });
+            }
+        }
+        
+        // 测试 6：listen 方法
+        div {
+            button {
+                id: "listen-test";
+                text { "测试 listen 方法" }
+            }
+            
+            script {
+                {{#listen-test}}?.listen({
+                    click: function() {
+                        this.style.background = 'yellow';
+                        console.log('Test 6: listen method works');
+                    },
+                    mouseenter: function() {
+                        this.style.opacity = '0.8';
+                    },
+                    mouseleave: function() {
+                        this.style.opacity = '1';
+                    }
+                });
+            }
+        }
+        
+        // 全局脚本
+        script {
+            console.log('页面加载完成');
+            console.log('开始测试 {{&}} 上下文推导');
+            
+            // 延迟执行，确保DOM已加载
+            setTimeout(function() {
+                console.log('--- 测试结果汇总 ---');
+                console.log('测试 1 (ID):', document.getElementById('test-with-id') ? '✓' : '✗');
+                console.log('测试 2 (Class):', document.querySelector('.test-with-class') ? '✓' : '✗');
+                console.log('测试 3 (Both):', document.getElementById('test-with-both') ? '✓' : '✗');
+                console.log('测试 4 (Styled):', document.querySelector('.styled-element') ? '✓' : '✗');
+                console.log('测试 5 ({{#id}}):', document.getElementById('test-button') ? '✓' : '✗');
+                console.log('测试 6 (listen):', document.getElementById('listen-test') ? '✓' : '✗');
+            }, 100);
+        }
+    }
+}

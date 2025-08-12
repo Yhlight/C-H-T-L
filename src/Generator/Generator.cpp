@@ -155,11 +155,6 @@ void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
 void Generator::visit(const std::shared_ptr<Node>& node) {
     if (!node) return;
     
-    // 调试输出
-    if (node->getType() == NodeType::SCRIPT) {
-        std::cerr << "[DEBUG] Generator::visit found SCRIPT node" << std::endl;
-    }
-    
     // 根据节点类型调用相应的处理方法
     switch (node->getType()) {
         case NodeType::ELEMENT:

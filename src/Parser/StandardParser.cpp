@@ -312,12 +312,6 @@ std::shared_ptr<Node> StandardParser::parseElement() {
         else {
             auto child = parseNode();
             if (child) {
-                // 调试输出
-                if (child->getType() == NodeType::SCRIPT) {
-                    std::cerr << "[DEBUG] parseElement: Adding SCRIPT child to element " 
-                              << element->getTagName() << std::endl;
-                }
-                
                 // 如果是style节点，设置为局部样式
                 if (child->getType() == NodeType::STYLE) {
                     auto styleChild = std::static_pointer_cast<Style>(child);
@@ -467,8 +461,6 @@ std::shared_ptr<Node> StandardParser::parseStyleBlock() {
 }
 
 std::shared_ptr<Node> StandardParser::parseScriptBlock() {
-    std::cerr << "[DEBUG] parseScriptBlock called" << std::endl;
-    
     consume(TokenType::SCRIPT_KW, "script");
     consume(TokenType::LEFT_BRACE, "Expected '{'");
     

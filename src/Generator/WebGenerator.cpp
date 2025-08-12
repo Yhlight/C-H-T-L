@@ -269,10 +269,10 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     for (const auto& child : element->getChildren()) {
         if (child->getType() == NodeType::SCRIPT) {
             auto script = std::static_pointer_cast<Script>(child);
-            if (script->getScriptType() == Script::ScriptType::INLINE && script->isScoped()) {
-                hasLocalScript = true;
-                break;
-            }
+            // 修正判断逻辑：元素内的脚本就是局部脚本
+            // 不需要检查 ScriptType 和 isScoped，因为我们已经在 visitScript 中处理了
+            hasLocalScript = true;
+            break;
         }
     }
     
@@ -334,7 +334,7 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
     if (hasLocalScript && attributes.find("id") == attributes.end()) {
         // 需要ID但没有，生成一个
         elementId = generateUniqueId("element");
-        htmlCollector_.append(" id=\"" + elementId + "\"");
+        attributes["id"] = elementId;  // 添加到本地副本中
     } else if (attributes.find("id") != attributes.end()) {
         if (std::holds_alternative<std::string>(attributes.at("id"))) {
             elementId = std::get<std::string>(attributes.at("id"));
@@ -358,6 +358,11 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
             // 处理内联样式对象
             if (std::holds_alternative<std::string>(value)) {
                 htmlCollector_.append(" style=\"" + escape(std::get<std::string>(value)) + "\"");
+            }
+        } else if (key == "id") {
+            // 确保 ID 被输出
+            if (std::holds_alternative<std::string>(value)) {
+                htmlCollector_.append(" id=\"" + escape(std::get<std::string>(value)) + "\"");
             }
         } else {
             // 普通属性
@@ -873,8 +878,6 @@ void WebGenerator::visitTemplate(const std::shared_ptr<Template>& /*tmpl*/) {
 }
 
 void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
-    std::cerr << "[DEBUG] WebGenerator::visitScript called" << std::endl;
-    
     // 判断是否为局部脚本：脚本的父节点是元素节点（且不是 body 或 html）
     auto parent = script->getParent();
     bool isLocalScript = false;
@@ -882,36 +885,57 @@ void WebGenerator::visitScript(const std::shared_ptr<Script>& script) {
     if (parent && parent->getType() == NodeType::ELEMENT) {
         auto element = std::static_pointer_cast<Element>(parent);
         std::string tagName = element->getTagName();
-        std::cerr << "[DEBUG] Script parent tag: " << tagName << std::endl;
         // body 和 html 内的脚本被认为是全局脚本
         if (tagName != "body" && tagName != "html" && tagName != "head") {
             isLocalScript = true;
         }
     }
     
-    std::cerr << "[DEBUG] isLocalScript: " << (isLocalScript ? "true" : "false") << std::endl;
-    
     if (isLocalScript) {
-        // 局部脚本
-        std::string elementId = script->getScope();
-        if (elementId.empty() && parent) {
-            // 如果没有作用域，尝试从父节点获取
-            auto element = std::static_pointer_cast<Element>(parent);
-            auto attrs = element->getAttributes();
-            if (attrs.find("id") != attrs.end()) {
-                if (std::holds_alternative<std::string>(attrs.at("id"))) {
-                    elementId = std::get<std::string>(attrs.at("id"));
-                }
-            } else {
-                elementId = generateUniqueId("element");
+        // 局部脚本 - 收集元素信息
+        auto element = std::static_pointer_cast<Element>(parent);
+        ChtlJsRuntime::ElementInfo elementInfo;
+        
+        // 获取元素的属性
+        auto attrs = element->getAttributes();
+        
+        // 获取 ID
+        if (attrs.find("id") != attrs.end()) {
+            if (std::holds_alternative<std::string>(attrs.at("id"))) {
+                elementInfo.id = std::get<std::string>(attrs.at("id"));
             }
         }
         
-        std::cerr << "[DEBUG] Collecting local script with elementId: " << elementId << std::endl;
+        // 获取 class
+        if (attrs.find("class") != attrs.end()) {
+            if (std::holds_alternative<std::string>(attrs.at("class"))) {
+                elementInfo.className = std::get<std::string>(attrs.at("class"));
+            }
+        }
+        
+        // 检查是否有局部样式块
+        for (const auto& child : element->getChildren()) {
+            if (child->getType() == NodeType::STYLE) {
+                auto styleNode = std::static_pointer_cast<Style>(child);
+                if (!styleNode->isGlobal()) {
+                    elementInfo.hasLocalStyle = true;
+                    // TODO: 解析局部样式块中的选择器
+                    // 这里需要更复杂的CSS解析逻辑
+                    break;
+                }
+            }
+        }
+        
+        // 如果没有任何标识符，生成一个ID
+        if (elementInfo.id.empty() && elementInfo.className.empty()) {
+            elementInfo.id = generateUniqueId("element");
+            // 将ID添加到元素上，确保HTML输出时也有这个ID
+            element->setAttribute("id", elementInfo.id);
+        }
         
         // 收集局部脚本
         try {
-            jsRuntime_->collectLocalScript(script->getContent(), elementId);
+            jsRuntime_->collectLocalScript(script->getContent(), elementInfo);
         } catch (const std::exception& e) {
             addError("Error collecting local script: " + std::string(e.what()));
         }

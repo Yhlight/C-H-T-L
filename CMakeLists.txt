@@ -10,7 +10,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # 查找ANTLR4运行时
-find_package(antlr4-runtime REQUIRED)
+find_package(antlr4-runtime CONFIG REQUIRED)
 
 # 设置ANTLR4工具路径
 set(ANTLR4_JAR_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/antlr-4.13.1-complete.jar)
@@ -19,7 +19,6 @@ set(ANTLR4_JAR_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/antlr-4.13.1-complete.ja
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/generated
-    ${ANTLR4_INCLUDE_DIRS}
 )
 
 # ANTLR4 生成器函数
@@ -90,5 +89,5 @@ target_link_libraries(chtl-core INTERFACE
     chtl-generator
     chtl-scanner
     chtl-predefine
-    antlr4-runtime
+    antlr4_shared
 )

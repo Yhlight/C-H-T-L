@@ -6,7 +6,7 @@ target_link_libraries(chtl
     chtl-core
     chtl-parser
     chtl-generator
-    antlr4-runtime
+    antlr4_shared
 )
 
 # 设置安装

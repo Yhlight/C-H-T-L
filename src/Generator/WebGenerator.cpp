@@ -79,6 +79,8 @@ std::string WebGenerator::generateHTMLDocument() {
     // 主体内容
     doc << result_.html;
     
+
+    
     // 脚本
     if (!result_.js.empty()) {
         if (options_.inlineScripts) {
@@ -724,6 +726,7 @@ void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
 
 std::string WebGenerator::processVarReferences(const std::string& css) {
     std::string result = css;
+    
     
     // 查找所有的变量组引用，格式如：VarName(propertyName) 或 VarName ( propertyName )
     std::regex varRegex(R"((\w+)\s*\(\s*(\w+)(?:\s*=\s*([^)]+))?\s*\))");

@@ -1,0 +1,12 @@
+[Template] @Var TestColor {
+    primary: blue;
+}
+
+html {
+    div {
+        style {
+            color: TestColor(primary);
+        }
+        text { "测试" }
+    }
+}

@@ -105,6 +105,7 @@ void Generator::scanConfiguration(const std::shared_ptr<Node>& node) {
 void Generator::collectDefinitions(const std::shared_ptr<Node>& node) {
     if (!node) return;
     
+    
     // 收集Template定义
     if (auto tmpl = std::dynamic_pointer_cast<Template>(node)) {
         std::string key;

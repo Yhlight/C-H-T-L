@@ -1,0 +1,14 @@
+[Template] @Var Y {
+    a: red;
+    b: 100px;
+}
+html {
+    body {
+        div {
+            style {
+                color: Y(a);
+                width: Y(b);
+            }
+        }
+    }
+}

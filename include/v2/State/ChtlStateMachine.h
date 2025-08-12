@@ -17,17 +17,18 @@ class ChtlLexer;
  * 状态转换规则
  */
 struct StateTransition {
-    using ConditionFunc = std::function<bool(const Token&, ChtlContext)>;
+    using ConditionFunc = std::function<bool(const Token&, ChtlContext, ChtlSubState)>;
     using ActionFunc = std::function<void(ParseContext&)>;
     
-    ConditionFunc condition;    // 转换条件（包含上下文）
+    ConditionFunc condition;    // 转换条件（包含上下文和子状态）
     ChtlParseState nextState;   // 目标状态
+    ChtlSubState nextSubState;  // 目标子状态
     ActionFunc action;          // 转换时的动作（可选）
 };
 
 /**
  * CHTL 状态机（简化版）
- * 基于全局/局部上下文的状态管理
+ * 基于全局/局部上下文的状态管理，支持子状态
  */
 class ChtlStateMachine {
 public:
@@ -42,7 +43,12 @@ public:
     /**
      * 获取当前状态
      */
-    ChtlParseState getCurrentState() const;
+    ChtlParseState getCurrentState() const { return currentState_; }
+    
+    /**
+     * 获取当前子状态
+     */
+    ChtlSubState getCurrentSubState() const { return currentSubState_; }
     
     /**
      * 获取当前上下文（全局/局部）
@@ -58,7 +64,12 @@ public:
     /**
      * 进入新状态
      */
-    void enterState(ChtlParseState newState);
+    void enterState(ChtlParseState newState, ChtlSubState subState = ChtlSubState::NONE);
+    
+    /**
+     * 切换子状态
+     */
+    void switchSubState(ChtlSubState newSubState);
     
     /**
      * 退出当前状态
@@ -103,13 +114,15 @@ private:
     void registerTransitions();
     void registerInitialTransitions();
     void registerElementTransitions();
+    void registerElementSubStateTransitions();
     void registerStyleTransitions();
     void registerDeclarationTransitions();
+    void registerReferenceTransitions();
     
     /**
      * 执行状态转换
      */
-    void performTransition(ChtlParseState newState);
+    void performTransition(ChtlParseState newState, ChtlSubState newSubState);
     
     /**
      * 查找适用的转换规则
@@ -119,6 +132,7 @@ private:
 private:
     // 当前状态
     ChtlParseState currentState_;
+    ChtlSubState currentSubState_;
     
     // 上下文栈（支持嵌套）
     std::vector<ChtlContext> contextStack_;
@@ -126,14 +140,19 @@ private:
     // 解析上下文
     ParseContext parseContext_;
     
-    // 状态转换规则表
-    std::unordered_map<ChtlParseState, std::vector<StateTransition>> transitions_;
+    // 状态转换规则表（按状态和子状态组织）
+    using StateKey = std::pair<ChtlParseState, ChtlSubState>;
+    std::map<StateKey, std::vector<StateTransition>> transitions_;
     
     // 关联的词法分析器
     ChtlLexer* lexer_;
     
     // 状态栈（用于返回）
-    std::vector<ChtlParseState> stateStack_;
+    struct StateInfo {
+        ChtlParseState state;
+        ChtlSubState subState;
+    };
+    std::vector<StateInfo> stateStack_;
 };
 
 } // namespace chtl::v2

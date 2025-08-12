@@ -27,8 +27,8 @@ enum class ChtlParseState {
     
     // ===== 块内容状态 =====
     ELEMENT_CONTENT,    // 元素内容 { ... }
-    STYLE_CONTENT,      // 样式内容（整块传递）
-    SCRIPT_CONTENT,     // 脚本内容（交给扫描器）
+    STYLE_CONTENT,      // 样式内容（整块传递给 CSS 分析器）
+    SCRIPT_CONTENT,     // 脚本内容（整块传递给 JS 分析器）
     TEXT_CONTENT,       // 文本内容
     
     // ===== 声明/引用状态 =====
@@ -42,9 +42,49 @@ enum class ChtlParseState {
 };
 
 /**
+ * CHTL 子状态
+ * 用于处理特定语法结构的细节
+ */
+enum class ChtlSubState {
+    NONE,               // 无子状态
+    
+    // ===== 元素子状态 =====
+    ELEMENT_TAG,        // 解析标签名
+    ELEMENT_ID,         // 解析 #id
+    ELEMENT_CLASS,      // 解析 .class
+    ELEMENT_ATTR_NAME,  // 解析属性名
+    ELEMENT_ATTR_VALUE, // 解析属性值
+    
+    // ===== CSS 选择器子状态（局部样式块） =====
+    CSS_SELECTOR,       // 选择器（.class, #id, tag）
+    CSS_PSEUDO,         // 伪类/伪元素 (:hover, ::before)
+    CSS_COMBINATOR,     // 组合器 (>, +, ~)
+    
+    // ===== 声明子状态 =====
+    DECLARATION_TYPE,   // [Template], [Custom] 等
+    DECLARATION_NAME,   // 名称部分
+    DECLARATION_PARAMS, // 参数列表
+    
+    // ===== 引用子状态 =====
+    REFERENCE_TYPE,     // @Element, @Style 等
+    REFERENCE_NAME,     // 引用名称
+    REFERENCE_ARGS,     // 引用参数
+    
+    // ===== 表达式子状态 =====
+    EXPR_LITERAL,       // 字面量
+    EXPR_VARIABLE,      // 变量引用
+    EXPR_FUNCTION,      // 函数调用
+};
+
+/**
  * 获取状态名称（用于调试）
  */
 const char* getStateName(ChtlParseState state);
+
+/**
+ * 获取子状态名称（用于调试）
+ */
+const char* getSubStateName(ChtlSubState subState);
 
 /**
  * 获取上下文名称（用于调试）

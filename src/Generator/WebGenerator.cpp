@@ -190,7 +190,9 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         // 特殊处理文档根节点
     if (tag == "document") {
         // 只处理子节点，不生成 document 标签
+        std::cerr << "[DEBUG] Processing document node with " << element->getChildren().size() << " children\n";
         for (const auto& child : element->getChildren()) {
+            std::cerr << "[DEBUG] Visiting child type: " << static_cast<int>(child->getType()) << "\n";
             visit(child);
         }
         return;

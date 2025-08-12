@@ -1,0 +1,9 @@
+// 测试顶层 style 节点
+
+style {
+    text {
+        "body { margin: 0; padding: 0; }"
+    }
+}
+
+div { text { "Hello" } }

@@ -1,0 +1,7 @@
+// 测试多个顶层节点
+
+style {
+    text { "body { color: red; }" }
+}
+
+div { text { "Hello" } }

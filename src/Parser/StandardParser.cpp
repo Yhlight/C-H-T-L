@@ -125,6 +125,12 @@ std::shared_ptr<Node> StandardParser::parseTopLevel() {
         return parseScript();
     }
     
+    // 处理顶层 style 块
+    if (currentToken_.type == TokenType::STYLE) {
+        advance();
+        return parseStyleBlock();
+    }
+    
     // 检查特殊标记（以[开头）- 备用方案
     if (currentToken_.type == TokenType::LEFT_BRACKET) {
         return parseSpecialBlock();

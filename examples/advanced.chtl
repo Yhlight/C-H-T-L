@@ -1,0 +1,370 @@
+// CHTL高级特性示例
+
+// 配置组
+[Configuration]
+{
+    INDEX_INITIAL_COUNT = 0;
+    DEBUG_MODE = false;
+    
+    [Name]
+    {
+        CUSTOM_STYLE = [@Style, @style, @CSS];
+        OPTION_COUNT = 3;
+    }
+}
+
+// 导入外部资源
+[Import] @Style from "./styles/theme.css" as ThemeStyles;
+[Import] [Custom] @Element Button from "./components/button.chtl" as CustomButton;
+
+// 命名空间
+[Namespace] UI
+{
+    // 变量组模板
+    [Template] @Var Colors
+    {
+        primary: "#3498db";
+        secondary: "#2ecc71";
+        danger: "#e74c3c";
+        warning: "#f39c12";
+        dark: "#34495e";
+        light: "#ecf0f1";
+    }
+    
+    // 样式组模板
+    [Template] @Style ButtonBase
+    {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    // 自定义样式组（支持无值属性）
+    [Custom] @Style FlexLayout
+    {
+        display: flex;
+        justify-content,
+        align-items,
+        flex-direction;
+    }
+}
+
+// 自定义元素
+[Custom] @Element Modal
+{
+    div
+    {
+        style
+        {
+            .modal-backdrop
+            {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: none;
+                z-index: 1000;
+            }
+        }
+        
+        div
+        {
+            style
+            {
+                .modal-content
+                {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 30px;
+                    border-radius: 8px;
+                    max-width: 500px;
+                    width: 90%;
+                }
+            }
+            
+            // 插槽位置 - 允许自定义内容
+            div
+            {
+                class: modal-header;
+            }
+            
+            div
+            {
+                class: modal-body;
+            }
+            
+            div
+            {
+                class: modal-footer;
+                
+                style
+                {
+                    @Style FlexLayout from UI
+                    {
+                        justify-content: flex-end;
+                        align-items: center;
+                    }
+                    
+                    margin-top: 20px;
+                }
+            }
+        }
+    }
+}
+
+// 主页面
+html
+{
+    head
+    {
+        title: "CHTL高级示例";
+        meta
+        {
+            charset: "UTF-8";
+        }
+    }
+    
+    body
+    {
+        style
+        {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: UI.Colors(light);
+        }
+        
+        // 导航栏
+        nav
+        {
+            style
+            {
+                @Style FlexLayout from UI
+                {
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                background-color: UI.Colors(dark);
+                padding: 1rem 2rem;
+                color: white;
+            }
+            
+            div
+            {
+                class: logo;
+                
+                text { "CHTL示例" }
+                
+                style
+                {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+            }
+            
+            ul
+            {
+                style
+                {
+                    @Style FlexLayout from UI
+                    {
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    gap: 2rem;
+                }
+                
+                li { text { "首页" } }
+                li { text { "文档" } }
+                li { text { "示例" } }
+                li { text { "关于" } }
+            }
+        }
+        
+        // 主要内容
+        main
+        {
+            style
+            {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 2rem;
+            }
+            
+            // 使用自定义元素
+            @Element Modal from UI
+            {
+                div[0]  // 访问modal-header
+                {
+                    h2
+                    {
+                        text { "欢迎使用CHTL" }
+                        style { margin: 0; }
+                    }
+                }
+                
+                div[1]  // 访问modal-body
+                {
+                    text { "这是一个使用自定义元素创建的模态框示例。" }
+                }
+                
+                div[2]  // 访问modal-footer
+                {
+                    button
+                    {
+                        style
+                        {
+                            @Style ButtonBase from UI;
+                            background-color: UI.Colors(primary);
+                            color: white;
+                            
+                            &:hover
+                            {
+                                background-color: #2980b9;
+                            }
+                        }
+                        
+                        text { "确定" }
+                        
+                        script
+                        {
+                            {{.modal-backdrop}}->listen({
+                                click: function() {
+                                    this.style.display = 'none';
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // 按钮组
+            section
+            {
+                style
+                {
+                    margin-top: 3rem;
+                }
+                
+                h2 { text { "按钮示例" } }
+                
+                div
+                {
+                    style
+                    {
+                        @Style FlexLayout from UI
+                        {
+                            justify-content: flex-start;
+                            align-items: center;
+                            flex-direction: row;
+                        }
+                        
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                    }
+                    
+                    // 不同风格的按钮
+                    button
+                    {
+                        style
+                        {
+                            @Style ButtonBase from UI;
+                            background-color: UI.Colors(primary);
+                            color: white;
+                        }
+                        text { "主要按钮" }
+                    }
+                    
+                    button
+                    {
+                        style
+                        {
+                            @Style ButtonBase from UI;
+                            background-color: UI.Colors(secondary);
+                            color: white;
+                        }
+                        text { "成功按钮" }
+                    }
+                    
+                    button
+                    {
+                        style
+                        {
+                            @Style ButtonBase from UI;
+                            background-color: UI.Colors(danger);
+                            color: white;
+                        }
+                        text { "危险按钮" }
+                    }
+                }
+            }
+        }
+        
+        // 全局脚本
+        script
+        {
+            // 使用事件委托处理所有按钮点击
+            {{body}}->delegate({
+                target: {{button}},
+                click: function(e) {
+                    console.log('按钮被点击:', this.textContent);
+                    
+                    // 显示模态框
+                    if (this.textContent === '主要按钮') {
+                        {{.modal-backdrop}}.style.display = 'block';
+                    }
+                }
+            });
+            
+            // 动画示例
+            animate({
+                duration: 1000,
+                easing: ease-in-out,
+                
+                begin: {
+                    opacity: 0,
+                    transform: 'translateY(20px)'
+                },
+                
+                when: [
+                    {
+                        at: 0.5,
+                        opacity: 0.8,
+                        transform: 'translateY(10px)'
+                    }
+                ],
+                
+                end: {
+                    opacity: 1,
+                    transform: 'translateY(0)'
+                },
+                
+                target: {{main}},
+                delay: 100
+            });
+        }
+        
+        // 原始嵌入（用于特殊情况）
+        [Origin] @JavaScript analytics
+        {
+            // Google Analytics 或其他第三方脚本
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        }
+    }
+}

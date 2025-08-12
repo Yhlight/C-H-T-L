@@ -1,0 +1,118 @@
+// Example with interactive JavaScript and enhanced selectors
+
+body {
+    style {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    h1 {
+        text {
+            "Interactive CHTL Demo"
+        }
+    }
+    
+    div {
+        style {
+            .counter-box {
+                background-color: #f0f0f0;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+            }
+        }
+        
+        p {
+            id: counter-display;
+            style {
+                font-size: 24px;
+                margin: 20px 0;
+            }
+            
+            text {
+                "Count: 0"
+            }
+        }
+        
+        button {
+            id: increment-btn;
+            style {
+                .btn {
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    background-color: #3498db;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin: 0 5px;
+                }
+                
+                &:hover {
+                    background-color: #2980b9;
+                }
+            }
+            
+            text {
+                "Increment"
+            }
+            
+            script {
+                let count = 0;
+                
+                {{increment-btn}}->addEventListener('click', () => {
+                    count++;
+                    {{counter-display}}->textContent = 'Count: ' + count;
+                });
+            }
+        }
+        
+        button {
+            id: decrement-btn;
+            style {
+                @Style btn;
+                background-color: #e74c3c;
+                
+                &:hover {
+                    background-color: #c0392b;
+                }
+            }
+            
+            text {
+                "Decrement"
+            }
+            
+            script {
+                {{decrement-btn}}->addEventListener('click', () => {
+                    count--;
+                    {{counter-display}}->textContent = 'Count: ' + count;
+                });
+            }
+        }
+        
+        button {
+            id: reset-btn;
+            style {
+                @Style btn;
+                background-color: #95a5a6;
+                
+                &:hover {
+                    background-color: #7f8c8d;
+                }
+            }
+            
+            text {
+                "Reset"
+            }
+            
+            script {
+                {{reset-btn}}->addEventListener('click', () => {
+                    count = 0;
+                    {{counter-display}}->textContent = 'Count: 0';
+                });
+            }
+        }
+    }
+}

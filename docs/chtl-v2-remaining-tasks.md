@@ -4,19 +4,19 @@
 
 ### 1. 导入系统集成
 **目标**：完成导入功能的解析和生成
-- [ ] 在 `ChtlParser::parseDeclaration()` 中添加导入解析
-- [ ] 实现 `parseImportDeclaration()` 方法
-- [ ] 在 `ChtlGenerator` 中集成 `ImportProcessor`
+- [x] 在 `ChtlParser::parseDeclaration()` 中添加导入解析
+- [x] 实现 `parseImportDeclaration()` 方法
+- [x] 在 `ChtlGenerator` 中集成 `ImportProcessor`
 - [ ] 处理循环导入检测
 - [ ] 实现导入内容缓存
 
 ### 2. 基础 CLI 工具
 **目标**：提供基本的命令行使用能力
-- [ ] 创建 `src/CLI/main.cpp`
-- [ ] 实现 `compile` 命令
-- [ ] 实现 `--output` 选项
-- [ ] 添加 `--help` 和版本信息
-- [ ] 基本的错误报告
+- [x] 创建 `src/CLI/main.cpp`
+- [x] 实现 `compile` 命令
+- [x] 实现 `--output` 选项
+- [x] 添加 `--help` 和版本信息
+- [x] 基本的错误报告
 
 ## 优先级：中 🟡
 

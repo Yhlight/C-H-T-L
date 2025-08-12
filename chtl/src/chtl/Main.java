@@ -30,5 +30,12 @@ public class Main {
 
         ParseTree tree = parser.program();
         System.out.println(tree.toStringTree(parser));
+
+        if (args.length >= 2 && "--scan".equals(args[1])) {
+            var spans = chtl.scanner.Scanner.scan(tokens);
+            for (var s : spans) {
+                System.out.println(s);
+            }
+        }
     }
 }

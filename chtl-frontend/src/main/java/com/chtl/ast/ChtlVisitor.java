@@ -25,4 +25,6 @@ public interface ChtlVisitor<T> {
     T visitInherit(InheritNode node);
     T visitAtReference(AtReferenceNode node);
     T visitSpecialization(SpecializationNode node);
+    T visitInfo(InfoNode node);
+    T visitExport(ExportNode node);
 }

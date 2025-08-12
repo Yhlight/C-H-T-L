@@ -18,6 +18,8 @@ declaration
     | importDeclaration
     | namespaceDeclaration
     | configurationDeclaration
+    | infoDeclaration
+    | exportDeclaration
     | styleBlock
     | scriptBlock
     ;
@@ -317,4 +319,26 @@ stringLiteral
 booleanLiteral
     : 'true'
     | 'false'
+    ;
+
+// Info declaration (CMOD)
+infoDeclaration
+    : INFO LBRACE infoProperty* RBRACE
+    ;
+
+infoProperty
+    : IDENTIFIER EQUALS stringLiteral SEMICOLON
+    ;
+
+// Export declaration (CMOD)
+exportDeclaration
+    : EXPORT LBRACE exportItem* RBRACE
+    ;
+
+exportItem
+    : templateType exportNameList SEMICOLON
+    ;
+
+exportNameList
+    : IDENTIFIER (COMMA IDENTIFIER)*
     ;

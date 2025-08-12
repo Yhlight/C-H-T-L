@@ -2,7 +2,10 @@
 #include <fstream>
 #include <string>
 #include <cstring>
-#include "CompilerDispatcher.h"
+#include <memory>
+#include "Common/GlobalMap.h"
+#include "Parser/StandardParser.h"
+#include "Generator/StandardGenerator.h"
 
 void printUsage(const char* programName) {
     std::cout << "用法: " << programName << " [选项] <输入文件>" << std::endl;
@@ -14,13 +17,14 @@ void printUsage(const char* programName) {
     std::cout << "  -a           输出所有文件（HTML、CSS、JS）" << std::endl;
     std::cout << "  --minify     压缩输出" << std::endl;
     std::cout << "  --prettify   美化输出（默认）" << std::endl;
+    std::cout << "  --debug      启用调试模式" << std::endl;
     std::cout << "  --help       显示此帮助信息" << std::endl;
     std::cout << "  --version    显示版本信息" << std::endl;
 }
 
 void printVersion() {
     std::cout << "CHTL编译器 版本 1.0.0" << std::endl;
-    std::cout << "基于ANTLR4实现的超文本语言编译器" << std::endl;
+    std::cout << "基于模块化架构的超文本语言编译器" << std::endl;
 }
 
 std::string readFile(const std::string& filename) {
@@ -46,14 +50,20 @@ void writeFile(const std::string& filename, const std::string& content) {
 }
 
 std::string getBaseName(const std::string& filename) {
-    size_t lastDot = filename.find_last_of('.');
+    size_t lastSlash = filename.find_last_of("/\\");
+    std::string name = (lastSlash != std::string::npos) ? filename.substr(lastSlash + 1) : filename;
+    
+    size_t lastDot = name.find_last_of('.');
     if (lastDot != std::string::npos) {
-        return filename.substr(0, lastDot);
+        return name.substr(0, lastDot);
     }
-    return filename;
+    return name;
 }
 
 int main(int argc, char* argv[]) {
+    // 初始化全局映射表
+    CHTL::GlobalMap::getInstance().initialize();
+    
     // 默认选项
     std::string inputFile;
     std::string outputBase;
@@ -62,6 +72,7 @@ int main(int argc, char* argv[]) {
     bool outputJS = false;
     bool minify = false;
     bool prettify = true;
+    bool debug = false;
     
     // 解析命令行参数
     for (int i = 1; i < argc; i++) {
@@ -96,6 +107,9 @@ int main(int argc, char* argv[]) {
             prettify = true;
             minify = false;
         }
+        else if (strcmp(argv[i], "--debug") == 0) {
+            debug = true;
+        }
         else if (argv[i][0] != '-') {
             inputFile = argv[i];
         }
@@ -127,32 +141,45 @@ int main(int argc, char* argv[]) {
         // 读取输入文件
         std::string content = readFile(inputFile);
         
-        // 创建编译器调度器
-        CHTL::CompilerDispatcher dispatcher;
+        // 创建解析器
+        auto parser = std::make_unique<CHTL::StandardParser>();
+        parser->setDebugMode(debug);
         
-        // 设置配置
-        if (minify) {
-            dispatcher.setConfiguration("minify", "true");
-        }
-        if (prettify) {
-            dispatcher.setConfiguration("prettify", "true");
+        // 解析
+        std::cout << "正在解析 " << inputFile << "..." << std::endl;
+        auto ast = parser->parse(content);
+        
+        if (!ast) {
+            std::cerr << "解析失败！" << std::endl;
+            
+            // 输出错误信息
+            for (const auto& error : parser->getErrors()) {
+                std::cerr << "错误: " << error << std::endl;
+            }
+            
+            return 1;
         }
         
-        // 编译
-        std::cout << "正在编译 " << inputFile << "..." << std::endl;
-        CHTL::CompilationResult result = dispatcher.compile(content);
+        // 输出警告信息
+        for (const auto& warning : parser->getWarnings()) {
+            std::cout << "警告: " << warning << std::endl;
+        }
+        
+        // 创建生成器
+        auto generator = std::make_unique<CHTL::StandardGenerator>();
+        generator->setMinify(minify);
+        generator->setPrettify(prettify);
+        
+        // 生成代码
+        std::cout << "正在生成代码..." << std::endl;
+        auto result = generator->generate(ast);
         
         if (!result.success) {
-            std::cerr << "编译失败！" << std::endl;
+            std::cerr << "代码生成失败！" << std::endl;
             
             // 输出错误信息
             for (const auto& error : result.errors) {
                 std::cerr << "错误: " << error << std::endl;
-            }
-            
-            // 输出警告信息
-            for (const auto& warning : result.warnings) {
-                std::cerr << "警告: " << warning << std::endl;
             }
             
             return 1;
@@ -160,11 +187,6 @@ int main(int argc, char* argv[]) {
         
         // 输出成功
         std::cout << "编译成功！" << std::endl;
-        
-        // 输出警告信息
-        for (const auto& warning : result.warnings) {
-            std::cout << "警告: " << warning << std::endl;
-        }
         
         // 写入输出文件
         if (outputHTML && !result.html.empty()) {

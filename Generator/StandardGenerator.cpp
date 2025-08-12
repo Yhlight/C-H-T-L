@@ -57,52 +57,72 @@ private:
         if (tagName == "document") {
             // 生成标准HTML5文档结构
             ss << "<!DOCTYPE html>\n";
-            ss << "<html>\n";
             
-            // 查找head和body
-            NodePtr head = nullptr;
-            NodePtr body = nullptr;
-            
+            // 查找html节点
+            NodePtr htmlNode = nullptr;
             for (size_t i = 0; i < element->getChildCount(); ++i) {
                 auto child = element->getChild(i);
                 if (child->getType() == NodeType::ELEMENT) {
                     auto childElement = std::dynamic_pointer_cast<ElementNode>(child);
-                    if (childElement) {
-                        if (childElement->getTagName() == "head") {
-                            head = child;
-                        } else if (childElement->getTagName() == "body") {
-                            body = child;
+                    if (childElement && childElement->getTagName() == "html") {
+                        htmlNode = child;
+                        break;
+                    }
+                }
+            }
+            
+            if (htmlNode) {
+                // 生成html节点
+                generateNode(htmlNode, ss, 0);
+            } else {
+                // 如果没有html节点，生成默认结构
+                ss << "<html>\n";
+                
+                // 查找head和body
+                NodePtr head = nullptr;
+                NodePtr body = nullptr;
+                
+                for (size_t i = 0; i < element->getChildCount(); ++i) {
+                    auto child = element->getChild(i);
+                    if (child->getType() == NodeType::ELEMENT) {
+                        auto childElement = std::dynamic_pointer_cast<ElementNode>(child);
+                        if (childElement) {
+                            if (childElement->getTagName() == "head") {
+                                head = child;
+                            } else if (childElement->getTagName() == "body") {
+                                body = child;
+                            }
                         }
                     }
                 }
-            }
-            
-            // 生成head
-            if (head) {
-                generateNode(head, ss, 1);
-            } else {
-                ss << "  <head>\n";
-                ss << "    <meta charset=\"UTF-8\">\n";
-                ss << "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-                ss << "  </head>\n";
-            }
-            
-            // 生成body
-            if (body) {
-                generateNode(body, ss, 1);
-            } else {
-                ss << "  <body>\n";
-                // 生成其他子节点
-                for (size_t i = 0; i < element->getChildCount(); ++i) {
-                    auto child = element->getChild(i);
-                    if (child != head && child != body) {
-                        generateNode(child, ss, 2);
-                    }
+                
+                // 生成head
+                if (head) {
+                    generateNode(head, ss, 1);
+                } else {
+                    ss << "  <head>\n";
+                    ss << "    <meta charset=\"UTF-8\">\n";
+                    ss << "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
+                    ss << "  </head>\n";
                 }
-                ss << "  </body>\n";
+                
+                // 生成body
+                if (body) {
+                    generateNode(body, ss, 1);
+                } else {
+                    ss << "  <body>\n";
+                    // 生成其他子节点
+                    for (size_t i = 0; i < element->getChildCount(); ++i) {
+                        auto child = element->getChild(i);
+                        if (child != head && child != body && child != htmlNode) {
+                            generateNode(child, ss, 2);
+                        }
+                    }
+                    ss << "  </body>\n";
+                }
+                
+                ss << "</html>";
             }
-            
-            ss << "</html>";
             return;
         }
         
@@ -232,11 +252,24 @@ private:
         // 生成内联样式（作为独立的样式块）
         if (!styleNode->getInlineStyles().empty()) {
             // 如果有作用域，生成作用域类
+            std::string scopeSelector;
             if (!styleNode->getScope().empty() && !styleNode->isGlobal()) {
-                ss << "." << styleNode->getScope() << " {\n";
-                for (const auto& [prop, value] : styleNode->getInlineStyles()) {
+                scopeSelector = "." + styleNode->getScope() + " ";
+            }
+            
+            // 处理内联样式
+            bool hasBodyStyles = false;
+            for (const auto& [prop, value] : styleNode->getInlineStyles()) {
+                // 检查是否是选择器（以.或#开头）
+                if (prop[0] != '.' && prop[0] != '#') {
+                    if (!hasBodyStyles) {
+                        ss << scopeSelector << "body {\n";
+                        hasBodyStyles = true;
+                    }
                     ss << "  " << prop << ": " << value << ";\n";
                 }
+            }
+            if (hasBodyStyles) {
                 ss << "}\n\n";
             }
         }
@@ -371,6 +404,15 @@ const CHTL = {
             size_t endPos = result.find("}}", pos);
             if (endPos != std::string::npos) {
                 std::string selector = result.substr(pos + 2, endPos - pos - 2);
+                
+                // 去除选择器两端的引号（如果有）
+                if (selector.size() >= 2) {
+                    if ((selector[0] == '"' && selector[selector.size()-1] == '"') ||
+                        (selector[0] == '\'' && selector[selector.size()-1] == '\'')) {
+                        selector = selector.substr(1, selector.size() - 2);
+                    }
+                }
+                
                 std::string replacement = "CHTL.select('" + selector + "')";
                 result.replace(pos, endPos - pos + 2, replacement);
                 pos += replacement.length();

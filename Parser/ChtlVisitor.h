@@ -106,6 +106,12 @@ private:
     
     // 配置信息
     std::unordered_map<std::string, std::string> config_;
+    
+    // CSS选择器状态
+    enum class SelectorType { NONE, CLASS, ID, ELEMENT, PSEUDO };
+    std::string currentSelector_;
+    SelectorType currentSelectorType_ = SelectorType::NONE;
+    std::string currentSelectorName_;
 };
 
 } // namespace CHTL

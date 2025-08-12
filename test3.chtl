@@ -1,0 +1,126 @@
+// 定义一个样式模板
+[@Template] @Style button-style {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+// 定义一个元素模板
+[@Template] @Element card {
+    div {
+        class: "card";
+        
+        div {
+            class: "card-header";
+            text {"Card Header"}
+        }
+        
+        div {
+            class: "card-body";
+            text {"Card content goes here"}
+        }
+    }
+}
+
+// 主文档
+html {
+    head {
+        title: "CHTL Advanced Test";
+        
+        // 原生CSS
+        [@Origin] @Style {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+            }
+        }
+    }
+    
+    body {
+        div {
+            class: "container";
+            
+            h1 {
+                text {"CHTL Advanced Features"}
+            }
+            
+            // 使用元素模板
+            @Element card;
+            
+            button {
+                id: "myButton";
+                text {"Click Me!"}
+                
+                // 使用样式模板
+                style {
+                    @Style button-style;
+                }
+            }
+            
+            // 内联样式块
+            style {
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                
+                .card {
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                
+                .card-header {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-bottom: 1px solid #ddd;
+                    font-weight: bold;
+                }
+                
+                .card-body {
+                    padding: 15px;
+                }
+            }
+        }
+        
+        // 原生JavaScript
+        [@Origin] @JavaScript {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Page loaded!');
+            });
+        }
+        
+        // CHTL JavaScript
+        script {
+            {{"#myButton"}}->listen({
+                click: function(e) {
+                    console.log("Button clicked!");
+                    this.style.backgroundColor = "#28a745";
+                }
+            });
+            
+            {{"#myButton"}}->animate({
+                duration: 300,
+                begin: { opacity: 0.8 },
+                end: { opacity: 1 },
+                easing: "ease-in-out"
+            });
+        }
+    }
+}

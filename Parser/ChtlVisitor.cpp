@@ -158,14 +158,70 @@ std::any ChtlVisitor::visitCssProperty(CHTLParser::CssPropertyContext* ctx) {
     if (styleNode && ctx->cssPropertyName() && ctx->cssPropertyValue()) {
         std::string property = ctx->cssPropertyName()->getText();
         std::string value = ctx->cssPropertyValue()->getText();
-        styleNode->addInlineStyle(property, value);
+        
+        // 根据当前选择器上下文决定如何添加属性
+        if (currentSelectorType_ == SelectorType::CLASS && !currentSelectorName_.empty()) {
+            styleNode->addClassRule(currentSelectorName_, property, value);
+        } else if (currentSelectorType_ == SelectorType::ID && !currentSelectorName_.empty()) {
+            styleNode->addIdRule(currentSelectorName_, property, value);
+        } else {
+            // 没有选择器，作为内联样式
+            styleNode->addInlineStyle(property, value);
+        }
     }
     return nullptr;
 }
 
 std::any ChtlVisitor::visitCssSelector(CHTLParser::CssSelectorContext* ctx) {
-    // 处理CSS选择器及其规则
-    return visitChildren(ctx);
+    auto styleNode = std::dynamic_pointer_cast<StyleNode>(currentNode_);
+    if (!styleNode) return nullptr;
+    
+    // 获取选择器模式
+    std::string selector;
+    if (ctx->selectorPattern()) {
+        // 检查选择器类型
+        auto selectorPattern = ctx->selectorPattern();
+        if (selectorPattern->classSelector()) {
+            selector = selectorPattern->classSelector()->getText();
+        } else if (selectorPattern->idSelector()) {
+            selector = selectorPattern->idSelector()->getText();
+        } else if (selectorPattern->ampersandSelector()) {
+            selector = selectorPattern->ampersandSelector()->getText();
+        } else if (selectorPattern->pseudoSelector()) {
+            selector = selectorPattern->pseudoSelector()->getText();
+        }
+    }
+    
+    // 处理选择器中的CSS属性
+    if (!selector.empty() && !ctx->cssProperty().empty()) {
+        // 保存当前选择器
+        currentSelector_ = selector;
+        
+        // 根据选择器类型添加到相应的集合
+        if (selector[0] == '.') {
+            std::string className = selector.substr(1);
+            styleNode->addClassSelector(className);
+            currentSelectorType_ = SelectorType::CLASS;
+            currentSelectorName_ = className;
+        } else if (selector[0] == '#') {
+            std::string id = selector.substr(1);
+            styleNode->addIdSelector(id);
+            currentSelectorType_ = SelectorType::ID;
+            currentSelectorName_ = id;
+        }
+        
+        // 访问该选择器下的所有属性
+        for (auto prop : ctx->cssProperty()) {
+            visit(prop);
+        }
+        
+        // 清除当前选择器
+        currentSelector_.clear();
+        currentSelectorType_ = SelectorType::NONE;
+        currentSelectorName_.clear();
+    }
+    
+    return nullptr;
 }
 
 std::any ChtlVisitor::visitClassSelector(CHTLParser::ClassSelectorContext* ctx) {
@@ -208,7 +264,68 @@ std::any ChtlVisitor::visitScriptBlock(CHTLParser::ScriptBlockContext* ctx) {
 
 // 简化其他方法实现
 std::any ChtlVisitor::visitTemplateDeclaration(CHTLParser::TemplateDeclarationContext* ctx) {
-    return nullptr; // TODO: 实现
+    if (!ctx->templateType() || !ctx->templateName()) {
+        return nullptr;
+    }
+    
+    // 获取模板类型
+    std::string typeStr = ctx->templateType()->getText();
+    TemplateNode::TemplateType type;
+    
+    if (typeStr == "@Style" || typeStr == "@style") {
+        type = TemplateNode::TemplateType::STYLE;
+    } else if (typeStr == "@Element" || typeStr == "@element") {
+        type = TemplateNode::TemplateType::ELEMENT;
+    } else if (typeStr == "@Var" || typeStr == "@var") {
+        type = TemplateNode::TemplateType::VAR;
+    } else {
+        return nullptr;
+    }
+    
+    // 获取模板名称
+    std::string name = ctx->templateName()->getText();
+    
+    // 创建模板节点
+    auto templateNode = createTemplateNode(type, name);
+    templateNode->setLocation(
+        ctx->getStart()->getLine(),
+        ctx->getStart()->getCharPositionInLine(),
+        ctx->getStop()->getLine(),
+        ctx->getStop()->getCharPositionInLine()
+    );
+    
+    // 设置命名空间
+    if (!currentNamespace_.empty()) {
+        auto templateNodePtr = std::dynamic_pointer_cast<TemplateNode>(templateNode);
+        if (templateNodePtr) {
+            templateNodePtr->setNamespace(currentNamespace_);
+        }
+    }
+    
+    // 注册到符号表
+    registerTemplate(name, templateNode);
+    
+    // 处理模板内容
+    if (ctx->templateBody()) {
+        nodeStack_.push(currentNode_);
+        currentNode_ = templateNode;
+        
+        // 访问模板内容
+        auto templateContents = ctx->templateBody()->templateContent();
+        if (!templateContents.empty()) {
+            for (auto content : templateContents) {
+                visit(content);
+            }
+        }
+        
+        currentNode_ = nodeStack_.top();
+        nodeStack_.pop();
+    }
+    
+    // 添加到根节点
+    rootNode_->addChild(templateNode);
+    
+    return templateNode;
 }
 
 std::any ChtlVisitor::visitTemplateType(CHTLParser::TemplateTypeContext* ctx) {
@@ -240,7 +357,61 @@ std::any ChtlVisitor::visitCustomUsage(CHTLParser::CustomUsageContext* ctx) {
 }
 
 std::any ChtlVisitor::visitOriginBlock(CHTLParser::OriginBlockContext* ctx) {
-    return nullptr; // TODO: 实现
+    if (!ctx->originType()) {
+        return nullptr;
+    }
+    
+    std::string originType = ctx->originType()->getText();
+    std::string content;
+    
+    if (ctx->originBody() && ctx->originBody()->rawContent()) {
+        content = ctx->originBody()->rawContent()->getText();
+    }
+    
+    if (originType == "@Html" || originType == "@html" || originType == "@HTML") {
+        // 创建原始HTML文本节点
+        auto textNode = createTextNode(content);
+        auto textNodePtr = std::dynamic_pointer_cast<TextNode>(textNode);
+        if (textNodePtr) {
+            textNodePtr->setRaw(true);
+        }
+        textNode->setLocation(
+            ctx->getStart()->getLine(),
+            ctx->getStart()->getCharPositionInLine(),
+            ctx->getStop()->getLine(),
+            ctx->getStop()->getCharPositionInLine()
+        );
+        currentNode_->addChild(textNode);
+        return textNode;
+    } else if (originType == "@Style" || originType == "@style" || originType == "@CSS" || originType == "@css") {
+        // 创建原始CSS样式节点
+        auto styleNode = createStyleNode();
+        auto styleNodePtr = std::dynamic_pointer_cast<StyleNode>(styleNode);
+        if (styleNodePtr) {
+            styleNodePtr->setRawCSS(content);
+        }
+        styleNode->setLocation(
+            ctx->getStart()->getLine(),
+            ctx->getStart()->getCharPositionInLine(),
+            ctx->getStop()->getLine(),
+            ctx->getStop()->getCharPositionInLine()
+        );
+        currentNode_->addChild(styleNode);
+        return styleNode;
+    } else if (originType == "@JavaScript" || originType == "@javascript" || originType == "@JS" || originType == "@js") {
+        // 创建原始JavaScript脚本节点
+        auto scriptNode = createScriptNode(content, false);
+        scriptNode->setLocation(
+            ctx->getStart()->getLine(),
+            ctx->getStart()->getCharPositionInLine(),
+            ctx->getStop()->getLine(),
+            ctx->getStop()->getCharPositionInLine()
+        );
+        currentNode_->addChild(scriptNode);
+        return scriptNode;
+    }
+    
+    return nullptr;
 }
 
 std::any ChtlVisitor::visitImportStatement(CHTLParser::ImportStatementContext* ctx) {

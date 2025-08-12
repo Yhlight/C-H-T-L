@@ -317,7 +317,7 @@ std::shared_ptr<Node> StandardParser::parseElement() {
                     auto styleChild = std::static_pointer_cast<Style>(child);
                     // 如果父元素是 head，则为全局样式
                     // 否则为局部样式（在 body 内的元素中）
-                    if (element->getTag() == "head") {
+                    if (element->getTagName() == "head") {
                         styleChild->setType(Style::StyleScope::GLOBAL);
                     } else {
                         styleChild->setType(Style::StyleScope::LOCAL);
@@ -584,6 +584,31 @@ void StandardParser::parseStyleContent(std::shared_ptr<Style> styleNode) {
         skipWhitespaceAndComments();
         
         if (check(TokenType::RIGHT_BRACE)) break;
+        
+        // 检查 text 块（用于全局样式）
+        if (currentToken_.value == "text") {
+            advance();  // 消费 'text'
+            consume(TokenType::LEFT_BRACE, "Expected '{'");
+            
+            // 收集 text 块中的所有内容作为 CSS
+            std::string cssContent;
+            while (!check(TokenType::RIGHT_BRACE) && !isAtEnd()) {
+                auto token = advance();
+                
+                if (token.type == TokenType::STRING_LITERAL) {
+                    cssContent += token.value;
+                } else if (token.type == TokenType::UNQUOTED_LITERAL) {
+                    cssContent += token.value;
+                }
+                // 可以添加其他需要的 token 类型
+            }
+            
+            consume(TokenType::RIGHT_BRACE, "Expected '}'");
+            
+            // 设置 CSS 内容
+            styleNode->setCssContent(cssContent);
+            continue;
+        }
         
         // 检查@Style, @Var引用
         if (check(TokenType::AT_STYLE) || check(TokenType::AT_VAR)) {

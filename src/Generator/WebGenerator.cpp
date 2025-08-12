@@ -279,21 +279,41 @@ void WebGenerator::visitElement(const std::shared_ptr<Element>& element) {
         return;
     }
     
-    // 特殊处理 delete 节点（不生成 HTML）
-    if (tag == "delete") {
-        return;  // delete 节点不应该生成任何输出
-    }
-
-    
-    // 特殊处理 body 节点
-    if (tag == "body") {
-        // body 元素不生成标签，只处理其子节点
-        // 因为 HTML 文档模板已经包含了 body 标签
+    // 特殊处理 html、head 和 body 标签
+    // 这些标签的结构由 generateHTMLDocument 处理
+    if (tag == "html") {
+        // 只处理子节点
         for (const auto& child : element->getChildren()) {
             visit(child);
         }
         return;
     }
+    
+    if (tag == "head") {
+        // head 的内容已经在 generateHTMLDocument 中处理
+        // 但我们需要处理其中的 style 节点
+        for (const auto& child : element->getChildren()) {
+            if (child->getType() == NodeType::STYLE) {
+                visit(child);
+            }
+            // title 等其他内容已经被提取
+        }
+        return;
+    }
+    
+    if (tag == "body") {
+        // 只处理子节点，不生成 body 标签本身
+        for (const auto& child : element->getChildren()) {
+            visit(child);
+        }
+        return;
+    }
+    
+    // 特殊处理 delete 节点（不生成 HTML）
+    if (tag == "delete") {
+        return;  // delete 节点不应该生成任何输出
+    }
+
     
     // 生成开始标签
     htmlCollector_.append("<" + tag);
@@ -738,12 +758,16 @@ void WebGenerator::executeInsertOperation(std::shared_ptr<Node> target,
 }
 
 void WebGenerator::visitStyle(const std::shared_ptr<Style>& style) {
-    // 检查是否是局部样式（在元素内的样式）
+    // 检查是否是局部样式（在元素内的样式，但不包括 head 元素）
     auto parent = style->getParent();
     if (parent && parent->getType() == NodeType::ELEMENT) {
-        // 局部样式应该作为父元素的 style 属性，而不是全局 CSS
-        // 不需要处理，因为我们将在 visitElement 中处理
-        return;
+        auto element = std::static_pointer_cast<Element>(parent);
+        // 如果父元素是 head，这是全局样式
+        if (element->getTagName() != "head") {
+            // 局部样式应该作为父元素的 style 属性，而不是全局 CSS
+            // 不需要处理，因为我们将在 visitElement 中处理
+            return;
+        }
     }
     
 

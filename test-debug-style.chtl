@@ -1,0 +1,18 @@
+// 简单的全局样式测试
+
+html {
+    head {
+        title { text { "调试测试" } }
+        
+        // 全局样式块
+        style {
+            text {
+                "body { background: #ff0000; }"
+            }
+        }
+    }
+    
+    body {
+        div { text { "测试内容" } }
+    }
+}

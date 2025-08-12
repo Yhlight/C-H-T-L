@@ -1,0 +1,8 @@
+// 测试 html/body 结构
+
+html {
+    body {
+        h1 { text { "测试标题" } }
+        p { text { "测试段落" } }
+    }
+}

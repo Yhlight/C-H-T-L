@@ -45,4 +45,9 @@ void Reference::accept(NodeVisitor& visitor) {
     visitor.visitReference(this);
 }
 
+// Import 方法
+void Import::accept(NodeVisitor& visitor) {
+    visitor.visitImport(this);
+}
+
 } // namespace chtl::v2

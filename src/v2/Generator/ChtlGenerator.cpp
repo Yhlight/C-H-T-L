@@ -230,21 +230,191 @@ void ChtlGenerator::generateAttributes(Element* node) {
 }
 
 void ChtlGenerator::processLocalStyle(Element* node) {
-    // 生成唯一类名
-    std::string uniqueClass = generateUniqueClass();
+    std::string localStyle = node->getLocalStyle();
+    if (localStyle.empty()) return;
     
-    // 添加类名到元素
-    const_cast<Element*>(node)->addClass(uniqueClass);
+    // 解析局部样式内容
+    std::string inlineStyles;
+    std::string globalStyles;
+    std::vector<std::string> autoClasses;
+    std::string autoId;
     
-    // 生成 CSS 规则
-    std::string css = "." + uniqueClass + " {\n";
-    css += node->getLocalStyle();
-    if (!css.empty() && css.back() != '\n') {
-        css += '\n';
+    // 简单的解析器状态
+    enum State { NORMAL, IN_SELECTOR, IN_BLOCK };
+    State state = NORMAL;
+    std::string currentSelector;
+    std::string currentBlock;
+    int braceDepth = 0;
+    
+    for (size_t i = 0; i < localStyle.length(); ++i) {
+        char ch = localStyle[i];
+        
+        if (state == NORMAL) {
+            if (ch == '.' || ch == '#' || ch == '&') {
+                // 开始选择器
+                state = IN_SELECTOR;
+                currentSelector = ch;
+            } else if (ch == '{') {
+                // 直接的属性块（内联样式）
+                size_t endBrace = findMatchingBrace(localStyle, i);
+                if (endBrace != std::string::npos) {
+                    inlineStyles = localStyle.substr(i + 1, endBrace - i - 1);
+                    i = endBrace;
+                }
+            } else if (!std::isspace(ch)) {
+                // 可能是直接的属性（内联样式）
+                size_t propEnd = localStyle.find_first_of(";}", i);
+                if (propEnd != std::string::npos) {
+                    std::string prop = localStyle.substr(i, propEnd - i + 1);
+                    if (prop.find(':') != std::string::npos) {
+                        inlineStyles += prop;
+                        if (localStyle[propEnd] != '}') {
+                            inlineStyles += " ";
+                        }
+                        i = propEnd;
+                    }
+                }
+            }
+        } else if (state == IN_SELECTOR) {
+            if (ch == '{') {
+                // 选择器结束，开始块
+                state = IN_BLOCK;
+                braceDepth = 1;
+                currentBlock = "";
+            } else {
+                currentSelector += ch;
+            }
+        } else if (state == IN_BLOCK) {
+            if (ch == '{') {
+                braceDepth++;
+            } else if (ch == '}') {
+                braceDepth--;
+                if (braceDepth == 0) {
+                    // 块结束，处理选择器和内容
+                    processSelector(currentSelector, currentBlock, node, 
+                                  autoClasses, autoId, globalStyles);
+                    state = NORMAL;
+                    currentSelector.clear();
+                    currentBlock.clear();
+                    continue;
+                }
+            }
+            currentBlock += ch;
+        }
     }
-    css += "}\n";
     
-    cssCollector_.appendLine(css);
+    // 应用内联样式
+    if (!inlineStyles.empty()) {
+        // 清理样式字符串
+        inlineStyles = trim(inlineStyles);
+        // 添加到元素的 style 属性
+        const_cast<Element*>(node)->setAttribute("style", inlineStyles);
+    }
+    
+    // 应用自动类名
+    for (const auto& className : autoClasses) {
+        const_cast<Element*>(node)->addClass(className);
+    }
+    
+    // 应用自动 ID
+    if (!autoId.empty()) {
+        const_cast<Element*>(node)->setId(autoId);
+    }
+    
+    // 添加全局样式
+    if (!globalStyles.empty()) {
+        cssCollector_.appendLine(globalStyles);
+    }
+}
+
+void ChtlGenerator::processSelector(const std::string& selector, 
+                                   const std::string& content,
+                                   Element* node,
+                                   std::vector<std::string>& autoClasses,
+                                   std::string& autoId,
+                                   std::string& globalStyles) {
+    std::string trimmedSelector = trim(selector);
+    std::string trimmedContent = trim(content);
+    
+    if (trimmedSelector.empty() || trimmedContent.empty()) return;
+    
+    // 处理类选择器
+    if (trimmedSelector[0] == '.') {
+        std::string className = trimmedSelector.substr(1);
+        // 去除可能的伪类部分
+        size_t colonPos = className.find(':');
+        if (colonPos != std::string::npos) {
+            className = className.substr(0, colonPos);
+        }
+        
+        if (!className.empty()) {
+            // 添加到自动类名列表
+            if (std::find(autoClasses.begin(), autoClasses.end(), className) == autoClasses.end()) {
+                autoClasses.push_back(className);
+            }
+        }
+        
+        // 添加到全局样式
+        globalStyles += trimmedSelector + " {\n" + trimmedContent + "\n}\n";
+    }
+    // 处理 ID 选择器
+    else if (trimmedSelector[0] == '#') {
+        std::string id = trimmedSelector.substr(1);
+        // 去除可能的伪类部分
+        size_t colonPos = id.find(':');
+        if (colonPos != std::string::npos) {
+            id = id.substr(0, colonPos);
+        }
+        
+        if (!id.empty() && autoId.empty()) {
+            autoId = id;
+        }
+        
+        // 添加到全局样式
+        globalStyles += trimmedSelector + " {\n" + trimmedContent + "\n}\n";
+    }
+    // 处理 & 选择器
+    else if (trimmedSelector[0] == '&') {
+        // 需要知道元素的类名或 ID
+        std::string replacement;
+        
+        // 优先使用类名
+        if (!autoClasses.empty()) {
+            replacement = "." + autoClasses[0];
+        } else if (!node->getClasses().empty()) {
+            replacement = "." + node->getClasses()[0];
+        } else if (!autoId.empty()) {
+            replacement = "#" + autoId;
+        } else if (!node->getId().empty()) {
+            replacement = "#" + node->getId();
+        }
+        
+        if (!replacement.empty()) {
+            // 替换 & 为实际的选择器
+            std::string actualSelector = replacement + trimmedSelector.substr(1);
+            globalStyles += actualSelector + " {\n" + trimmedContent + "\n}\n";
+        }
+    }
+}
+
+size_t ChtlGenerator::findMatchingBrace(const std::string& str, size_t start) {
+    int depth = 1;
+    for (size_t i = start + 1; i < str.length(); ++i) {
+        if (str[i] == '{') depth++;
+        else if (str[i] == '}') {
+            depth--;
+            if (depth == 0) return i;
+        }
+    }
+    return std::string::npos;
+}
+
+std::string ChtlGenerator::trim(const std::string& str) {
+    size_t first = str.find_first_not_of(" \t\n\r");
+    if (first == std::string::npos) return "";
+    
+    size_t last = str.find_last_not_of(" \t\n\r");
+    return str.substr(first, last - first + 1);
 }
 
 std::string ChtlGenerator::generateUniqueClass() {

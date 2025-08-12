@@ -234,6 +234,30 @@ private:
 };
 
 /**
+ * 导入节点
+ */
+class Import : public Node {
+public:
+    Import() : Node(NodeType::IMPORT) {}
+    
+    void setImportType(const std::string& type) { importType_ = type; }
+    const std::string& getImportType() const { return importType_; }
+    
+    void setPath(const std::string& path) { path_ = path; }
+    const std::string& getPath() const { return path_; }
+    
+    void setAlias(const std::string& alias) { alias_ = alias; }
+    const std::string& getAlias() const { return alias_; }
+    
+    void accept(NodeVisitor& visitor) override;
+    
+private:
+    std::string importType_;  // @Html, @Style, @JavaScript, etc.
+    std::string path_;
+    std::string alias_;
+};
+
+/**
  * 节点访问者接口
  */
 class NodeVisitor {
@@ -247,6 +271,7 @@ public:
     virtual void visitScript(Script* node) = 0;
     virtual void visitTemplate(Template* node) = 0;
     virtual void visitReference(Reference* node) = 0;
+    virtual void visitImport(Import* node) = 0;
 };
 
 } // namespace chtl::v2

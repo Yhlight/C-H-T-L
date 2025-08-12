@@ -122,6 +122,26 @@ private:
     void processLocalStyle(Element* node);
     
     /**
+     * 处理选择器
+     */
+    void processSelector(const std::string& selector, 
+                        const std::string& content,
+                        Element* node,
+                        std::vector<std::string>& autoClasses,
+                        std::string& autoId,
+                        std::string& globalStyles);
+    
+    /**
+     * 查找匹配的大括号
+     */
+    size_t findMatchingBrace(const std::string& str, size_t start);
+    
+    /**
+     * 去除字符串两端空白
+     */
+    std::string trim(const std::string& str);
+    
+    /**
      * 生成唯一类名
      */
     std::string generateUniqueClass();

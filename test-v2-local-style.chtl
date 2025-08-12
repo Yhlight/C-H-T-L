@@ -1,0 +1,98 @@
+// 测试局部样式的各种用法
+
+div #container {
+    // 测试内联样式
+    div {
+        style {
+            width: 100px;
+            height: 200px;
+            background: #f0f0f0;
+        }
+        text { "内联样式测试" }
+    }
+    
+    // 测试自动添加类名
+    div {
+        style {
+            .box {
+                width: 300px;
+                padding: 20px;
+                border: 1px solid #ccc;
+            }
+        }
+        text { "自动添加类名 .box" }
+    }
+    
+    // 测试自动添加 ID
+    div {
+        style {
+            #special {
+                background: yellow;
+                font-weight: bold;
+            }
+        }
+        text { "自动添加 ID #special" }
+    }
+    
+    // 测试 & 选择器（伪类）
+    button {
+        style {
+            .btn {
+                background: #007bff;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+            }
+            
+            &:hover {
+                background: #0056b3;
+            }
+            
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+        text { "Hover Me" }
+    }
+    
+    // 测试混合使用
+    div {
+        style {
+            // 内联样式
+            margin: 20px;
+            
+            // 自动类名
+            .card {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            // 伪元素
+            &::before {
+                content: "→ ";
+                color: #007bff;
+            }
+        }
+        text { "混合样式测试" }
+    }
+    
+    // 测试多个类名
+    div {
+        style {
+            .primary {
+                color: #007bff;
+            }
+            
+            .large {
+                font-size: 24px;
+            }
+            
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        text { "多个类名测试" }
+    }
+}

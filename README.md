@@ -100,6 +100,40 @@ chtl hello.chtl -o hello.html
 - [CJMOD开发指南](docs/CJMOD_Development_Guide.md)
 - [配置选项](docs/configuration.md)
 
+## 📦 从源码构建
+
+### 前置要求
+
+- CMake >= 3.16
+- C++17 编译器 (GCC 7+, Clang 5+, MSVC 2017+)
+- Java Runtime (可选，用于生成解析器)
+
+**注意**：CHTL已内置ANTLR4工具和运行时库，无需额外安装ANTLR4。
+
+### 构建步骤
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/Yhlight/C-H-T-L.git
+cd C-H-T-L
+
+# 2. 设置依赖（首次构建时运行）
+./setup_dependencies.sh  # Unix/Linux/macOS
+setup_dependencies.bat   # Windows
+
+# 3. 构建项目
+./build.sh              # Unix/Linux/macOS
+build.bat               # Windows
+
+# 4. 运行测试（可选）
+./build.sh --test       # Unix/Linux/macOS
+build.bat --test        # Windows
+
+# 5. 安装（可选）
+sudo ./build.sh --install  # Unix/Linux/macOS
+build.bat --install        # Windows (管理员权限)
+```
+
 ## 🛠️ 开发
 
 ### 项目结构

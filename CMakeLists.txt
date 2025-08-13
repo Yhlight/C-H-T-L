@@ -20,10 +20,36 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 find_package(Threads REQUIRED)
 find_package(Java QUIET COMPONENTS Runtime)
 
-# ANTLR4运行时 - 仅用于CSS和JS解析
-find_package(antlr4-runtime REQUIRED)
-if(NOT antlr4-runtime_FOUND)
-    message(FATAL_ERROR "ANTLR4 runtime is required for CSS/JS parsing support")
+# ANTLR4运行时 - 使用内置版本
+if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/lib")
+    # 使用预构建的ANTLR4运行时
+    set(ANTLR4_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/include")
+    
+    # 查找库文件
+    find_library(ANTLR4_RUNTIME_LIB 
+        NAMES antlr4-runtime 
+        PATHS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/lib"
+        NO_DEFAULT_PATH
+    )
+    
+    if(NOT ANTLR4_RUNTIME_LIB)
+        message(FATAL_ERROR "ANTLR4 runtime library not found. Please run: cd third_party/antlr4-runtime && ./download_and_build.sh")
+    endif()
+    
+    # 创建导入目标
+    add_library(antlr4-runtime SHARED IMPORTED)
+    set_target_properties(antlr4-runtime PROPERTIES
+        IMPORTED_LOCATION "${ANTLR4_RUNTIME_LIB}"
+        INTERFACE_INCLUDE_DIRECTORIES "${ANTLR4_INCLUDE_DIR}"
+    )
+else()
+    # 尝试从源代码构建
+    if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/CMakeLists.txt")
+        add_subdirectory(third_party/antlr4-runtime)
+        set(ANTLR4_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/src")
+    else()
+        message(FATAL_ERROR "ANTLR4 runtime not found. Please run: cd third_party/antlr4-runtime && ./download_and_build.sh")
+    endif()
 endif()
 
 # 检查ANTLR工具（用于生成解析器）
@@ -92,7 +118,7 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/generated/css")
     )
 else()
     set(CSS_ANTLR_SOURCES "")
-    message(WARNING "CSS parser not generated. Run generate_parsers.sh first.")
+    message(WARNING "CSS parser not generated. Run setup_dependencies.sh first.")
 endif()
 
 file(GLOB CSS_COMPILER_SOURCES
@@ -101,13 +127,13 @@ file(GLOB CSS_COMPILER_SOURCES
 )
 
 # ===== JS解析器 - 使用ANTLR4 =====
-if(EXISTS "${CMAKE_SOURCE_DIR}/generated/javascript")
+if(EXISTS "${CMAKE_SOURCE_DIR}/generated/js")
     file(GLOB_RECURSE JS_ANTLR_SOURCES
-        generated/javascript/*.cpp
+        generated/js/*.cpp
     )
 else()
     set(JS_ANTLR_SOURCES "")
-    message(WARNING "JS parser not generated. Run generate_parsers.sh first.")
+    message(WARNING "JS parser not generated. Run setup_dependencies.sh first.")
 endif()
 
 file(GLOB JS_COMPILER_SOURCES

@@ -60,6 +60,13 @@ generated/
 *.tokens
 *.interp
 
+# Third party
+third_party/antlr4-runtime/src/
+third_party/antlr4-runtime/include/
+third_party/antlr4-runtime/lib/
+third_party/antlr4-runtime/bin/
+third_party/antlr4-runtime/share/
+
 # Module files
 *.cmod
 *.cjmod

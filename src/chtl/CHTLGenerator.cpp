@@ -15,11 +15,16 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     originManager = std::make_shared<OriginManager>(ctx);
     // 创建导入管理器
     importManager = std::make_shared<ImportManager>(ctx);
+    // 创建命名空间管理器
+    namespaceManager = std::make_shared<NamespaceManager>(ctx);
     
     // 设置管理器之间的引用
     importManager->setTemplateManager(templateManager);
     importManager->setCustomManager(customManager);
     importManager->setOriginManager(originManager);
+    
+    namespaceManager->setTemplateManager(templateManager);
+    namespaceManager->setCustomManager(customManager);
 }
 
 std::string CHTLGenerator::indent() const {
@@ -705,6 +710,111 @@ void CHTLGenerator::configureImportPaths(const ImportPathConfig& config) {
     }
     
     importManager->configurePaths(config);
+}
+
+// 命名空间处理
+void CHTLGenerator::beginNamespace(const std::string& name) {
+    if (!namespaceManager) {
+        context->reportError("Namespace manager not initialized");
+        return;
+    }
+    
+    namespaceManager->beginNamespace(name);
+}
+
+void CHTLGenerator::endNamespace() {
+    if (!namespaceManager) {
+        context->reportError("Namespace manager not initialized");
+        return;
+    }
+    
+    namespaceManager->endNamespace();
+}
+
+void CHTLGenerator::processNamespaceDeclaration(const std::string& declaration) {
+    if (!namespaceManager) {
+        context->reportError("Namespace manager not initialized");
+        return;
+    }
+    
+    NamespaceProcessor processor(*namespaceManager, *this);
+    processor.processNamespaceDeclaration(declaration);
+}
+
+void CHTLGenerator::useTemplateFromNamespace(const std::string& templateName, const std::string& namespacePath) {
+    if (!namespaceManager || !templateManager) {
+        context->reportError("Namespace or template manager not initialized");
+        return;
+    }
+    
+    NamespaceResolver resolver(*namespaceManager);
+    
+    // 查找样式模板
+    auto styleTemplate = std::static_pointer_cast<StyleTemplate>(
+        resolver.resolveItem(templateName, NamespaceItemType::TEMPLATE_STYLE, namespacePath)
+    );
+    if (styleTemplate) {
+        templateManager->useTemplate("@Style " + templateName, *this);
+        return;
+    }
+    
+    // 查找元素模板
+    auto elementTemplate = std::static_pointer_cast<ElementTemplate>(
+        resolver.resolveItem(templateName, NamespaceItemType::TEMPLATE_ELEMENT, namespacePath)
+    );
+    if (elementTemplate) {
+        templateManager->useTemplate("@Element " + templateName, *this);
+        return;
+    }
+    
+    // 查找变量组模板
+    auto varTemplate = std::static_pointer_cast<VarTemplate>(
+        resolver.resolveItem(templateName, NamespaceItemType::TEMPLATE_VAR, namespacePath)
+    );
+    if (varTemplate) {
+        templateManager->useTemplate("@Var " + templateName, *this);
+        return;
+    }
+    
+    context->reportError("Template not found in namespace: " + templateName + " from " + namespacePath);
+}
+
+void CHTLGenerator::useCustomFromNamespace(const std::string& customName, const std::string& namespacePath) {
+    if (!namespaceManager || !customManager) {
+        context->reportError("Namespace or custom manager not initialized");
+        return;
+    }
+    
+    NamespaceResolver resolver(*namespaceManager);
+    
+    // 查找自定义样式组
+    auto customStyle = std::static_pointer_cast<CustomStyleGroup>(
+        resolver.resolveItem(customName, NamespaceItemType::CUSTOM_STYLE, namespacePath)
+    );
+    if (customStyle) {
+        customManager->useCustom("@Style " + customName, *this);
+        return;
+    }
+    
+    // 查找自定义元素
+    auto customElement = std::static_pointer_cast<CustomElement>(
+        resolver.resolveItem(customName, NamespaceItemType::CUSTOM_ELEMENT, namespacePath)
+    );
+    if (customElement) {
+        customManager->useCustom("@Element " + customName, *this);
+        return;
+    }
+    
+    // 查找自定义变量组
+    auto customVar = std::static_pointer_cast<CustomVarGroup>(
+        resolver.resolveItem(customName, NamespaceItemType::CUSTOM_VAR, namespacePath)
+    );
+    if (customVar) {
+        customManager->useCustomVar(customName, "", *this);
+        return;
+    }
+    
+    context->reportError("Custom not found in namespace: " + customName + " from " + namespacePath);
 }
 
 } // namespace chtl

@@ -12,6 +12,7 @@
 #include "CHTLCustom.h"    // 添加自定义头文件
 #include "CHTLOrigin.h"    // 添加原始嵌入头文件
 #include "CHTLImport.h"    // 添加导入头文件
+#include "CHTLNamespace.h" // 添加命名空间头文件
 
 namespace chtl {
 
@@ -50,6 +51,9 @@ private:
     
     // 导入管理器
     std::shared_ptr<ImportManager> importManager;
+    
+    // 命名空间管理器
+    std::shared_ptr<NamespaceManager> namespaceManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -106,6 +110,10 @@ public:
     // 导入支持
     void setImportManager(std::shared_ptr<ImportManager> mgr) { importManager = mgr; }
     std::shared_ptr<ImportManager> getImportManager() const { return importManager; }
+    
+    // 命名空间支持
+    void setNamespaceManager(std::shared_ptr<NamespaceManager> mgr) { namespaceManager = mgr; }
+    std::shared_ptr<NamespaceManager> getNamespaceManager() const { return namespaceManager; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -192,6 +200,15 @@ public:
     void processImportStatement(const std::string& statement);
     void processImports(const std::vector<std::string>& statements);
     void configureImportPaths(const ImportPathConfig& config);
+    
+    // 命名空间处理
+    void beginNamespace(const std::string& name);
+    void endNamespace();
+    void processNamespaceDeclaration(const std::string& declaration);
+    
+    // 带命名空间的使用
+    void useTemplateFromNamespace(const std::string& templateName, const std::string& namespacePath);
+    void useCustomFromNamespace(const std::string& customName, const std::string& namespacePath);
 };
 
 // 字面量处理器

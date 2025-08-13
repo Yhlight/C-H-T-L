@@ -84,6 +84,10 @@ private:
     int indentLevel;
     std::vector<std::string> elementStack;
     ElementContext currentElement;
+    
+    // 内联样式累积器
+    std::vector<std::pair<std::string, std::string>> pendingInlineStyles;
+    bool isAccumulatingInlineStyles = false;
     bool inHeadElement = false;  // 跟踪是否在head元素中
     
     // 样式管理
@@ -205,6 +209,8 @@ public:
     void generateStyleRule(const std::string& selector, const std::vector<std::pair<std::string, std::string>>& properties);
     void generateClassRule(const std::string& className, const std::vector<std::pair<std::string, std::string>>& properties);
     void generateIdRule(const std::string& idName, const std::vector<std::pair<std::string, std::string>>& properties);
+    void beginInlineStyleBlock();
+    void endInlineStyleBlock();
     void generatePseudoRule(const std::string& pseudo, const std::vector<std::pair<std::string, std::string>>& properties);
     
     // 注释处理

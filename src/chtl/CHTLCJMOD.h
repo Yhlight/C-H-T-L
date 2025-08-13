@@ -96,6 +96,13 @@ public:
     const CMODInfo& getInfo() const { return info; }
     const std::filesystem::path& getRootPath() const { return rootPath; }
     std::string getFullName() const;
+    
+private:
+    // 库路径
+    std::filesystem::path libraryPath;
+    
+    // 二进制解包（备用方案）
+    bool unpackBinary(const std::filesystem::path& cjmodFile, const std::filesystem::path& targetDir);
 };
 
 // CJMOD管理器

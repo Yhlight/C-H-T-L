@@ -8,6 +8,8 @@
 #include "chtl/CHTLGenerator.h"
 #include "chtl/CHTLUnifiedScanner.h"
 #include "chtl/CHTLCMOD.h"
+#include "chtl/scanner/ScannerParserIntegration.h"
+#include "chtl/CHTLTreeVisitor.h"
 
 namespace fs = std::filesystem;
 
@@ -122,10 +124,24 @@ int main(int argc, char* argv[]) {
         options.generateComments = !optimize;
         generator.setOptions(options);
         
-        // TODO: 这里应该使用实际的解析器处理扫描结果
-        // 目前只是一个占位实现
+        // 使用Scanner-Parser集成进行解析
+        scanner::ScannerParserIntegration integration(context);
+        integration.setConfigurationEnabled(true);
         
-        // 生成输出
+        auto parseResult = integration.parse(input, configFile);
+        
+        if (!parseResult.success) {
+            std::cerr << "Parse error: " << parseResult.errorMessage << std::endl;
+            return 1;
+        }
+        
+        // 使用解析树生成输出
+        CHTLTreeVisitor visitor(context);
+        if (parseResult.chtlTree) {
+            visitor.visit(parseResult.chtlTree);
+        }
+        
+        // 生成最终输出
         std::string html = generator.getHTML();
         std::string css = generator.getCSS();
         std::string js = generator.getJS();

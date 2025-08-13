@@ -82,6 +82,18 @@ private:
     // 所有定义的项（用于自动生成导出表）
     std::vector<CMODExportItem> allDefinitions;
     
+    // 加载信息文件
+    bool loadInfo(const std::filesystem::path& infoFile);
+    
+    // 从文本存档加载（备用方案）
+    bool loadFromTextArchive(const std::filesystem::path& archiveFile);
+    
+    // 解析导出表
+    void parseExportTable(const std::string& content);
+    
+    // 生成导出表
+    void generateExportTable();
+    
 public:
     CMODModule(const std::string& name, const std::filesystem::path& path, bool isSub = false);
     

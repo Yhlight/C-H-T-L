@@ -5,6 +5,10 @@
 #include <regex>
 #include <dlfcn.h>  // Linux动态库加载
 #include <cstdlib>
+#include <ctime>
+#include <cstdint>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 namespace chtl {
 
@@ -103,10 +107,75 @@ bool CJMODModule::loadFromCJMODFile(const fs::path& cjmodFile) {
         return false;
     }
     
-    // TODO: 实现完整的解包逻辑
+    // 创建临时目录
+    fs::path tempDir = fs::temp_directory_path() / ("cjmod_extract_" + std::to_string(std::time(nullptr)));
+    fs::create_directory(tempDir);
     
-    file.close();
-    return false;
+    try {
+        // 使用tar解压
+        std::string cmd = "tar -xzf " + cjmodFile.string() + " -C " + tempDir.string();
+        int result = std::system(cmd.c_str());
+        
+        if (result != 0) {
+            // 如果tar失败，尝试二进制解包
+            file.close();
+            return unpackBinary(cjmodFile, tempDir);
+        }
+        
+        // 加载元数据
+        fs::path metaFile = tempDir / ".meta";
+        if (fs::exists(metaFile)) {
+            std::ifstream meta(metaFile);
+            json metaData;
+            meta >> metaData;
+            
+            info.name = metaData.value("name", "");
+            info.version = metaData.value("version", "1.0.0");
+            info.author = metaData.value("author", "");
+            info.description = metaData.value("description", "");
+            info.exports = metaData.value("exports", std::vector<std::string>{});
+            info.dependencies = metaData.value("dependencies", std::vector<std::string>{});
+        }
+        
+        // 加载info文件
+        fs::path infoDir = tempDir / "info";
+        if (fs::exists(infoDir / "module.info")) {
+            loadInfo(infoDir / "module.info");
+        }
+        
+        // 复制共享库
+        for (const auto& entry : fs::directory_iterator(tempDir)) {
+            if (entry.is_regular_file()) {
+                auto ext = entry.path().extension();
+                if (ext == ".so" || ext == ".dll" || ext == ".dylib") {
+                    fs::path destPath = target / entry.path().filename();
+                    fs::copy_file(entry.path(), destPath, 
+                                fs::copy_options::overwrite_existing);
+                    libraryPath = destPath;
+                }
+            }
+        }
+        
+        // 复制头文件
+        fs::path includeDir = tempDir / "include";
+        if (fs::exists(includeDir)) {
+            fs::path destInclude = target / "include";
+            fs::create_directories(destInclude);
+            fs::copy(includeDir, destInclude, 
+                    fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+        }
+        
+        // 清理临时目录
+        fs::remove_all(tempDir);
+        
+        file.close();
+        return !libraryPath.empty();
+        
+    } catch (const std::exception& e) {
+        fs::remove_all(tempDir);
+        file.close();
+        return false;
+    }
 }
 
 bool CJMODModule::loadInfo(const fs::path& infoFile) {
@@ -155,6 +224,60 @@ bool CJMODModule::loadInfo(const fs::path& infoFile) {
     }
     
     return info.isValid();
+}
+
+bool CJMODModule::unpackBinary(const fs::path& cjmodFile, const fs::path& targetDir) {
+    std::ifstream file(cjmodFile, std::ios::binary);
+    if (!file.is_open()) {
+        return false;
+    }
+    
+    // 读取头部
+    char magic[6];
+    file.read(magic, 6);
+    if (std::string(magic, 6) != "CJMOD\n") {
+        return false;
+    }
+    
+    // 读取文件数量
+    uint32_t fileCount;
+    file.read(reinterpret_cast<char*>(&fileCount), sizeof(fileCount));
+    
+    // 读取每个文件
+    for (uint32_t i = 0; i < fileCount; ++i) {
+        // 读取文件名长度
+        uint32_t nameLength;
+        file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+        
+        // 读取文件名
+        std::string filename(nameLength, '\0');
+        file.read(&filename[0], nameLength);
+        
+        // 读取文件大小
+        uint64_t fileSize;
+        file.read(reinterpret_cast<char*>(&fileSize), sizeof(fileSize));
+        
+        // 读取文件内容
+        std::vector<char> content(fileSize);
+        file.read(content.data(), fileSize);
+        
+        // 创建目标文件
+        fs::path targetFile = targetDir / filename;
+        fs::create_directories(targetFile.parent_path());
+        
+        std::ofstream out(targetFile, std::ios::binary);
+        out.write(content.data(), fileSize);
+        out.close();
+        
+        // 如果是共享库，记录路径
+        auto ext = targetFile.extension();
+        if (ext == ".so" || ext == ".dll" || ext == ".dylib") {
+            libraryPath = targetFile;
+        }
+    }
+    
+    file.close();
+    return true;
 }
 
 bool CJMODModule::compileSources() {

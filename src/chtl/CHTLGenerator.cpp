@@ -76,6 +76,22 @@ void CHTLGenerator::generateElement(const std::string& tagName,
         htmlOutput << " " << key << "=\"" << escapeAttribute(value) << "\"";
     }
     
+    // 如果有累积的内联样式，生成style属性
+    if (!pendingInlineStyles.empty()) {
+        std::stringstream styleValue;
+        for (const auto& [prop, val] : pendingInlineStyles) {
+            if (!styleValue.str().empty()) {
+                styleValue << " ";
+            }
+            styleValue << prop << ": " << val << ";";
+        }
+        htmlOutput << " style=\"" << escapeAttribute(styleValue.str()) << "\"";
+        
+        // 清空累积的内联样式
+        pendingInlineStyles.clear();
+        isAccumulatingInlineStyles = false;
+    }
+    
     // 检查是否需要添加data-chtl-scope属性
     if (scriptManager) {
         std::string elementPath = ConstraintHelper::buildElementPath(elementStack);
@@ -182,12 +198,23 @@ void CHTLGenerator::endStyleBlock() {
     }
 }
 
+void CHTLGenerator::beginInlineStyleBlock() {
+    // 开始收集内联样式
+    isAccumulatingInlineStyles = true;
+}
+
+void CHTLGenerator::endInlineStyleBlock() {
+    // 内联样式块结束，但不清空累积的样式
+    // 样式将在下一个元素生成时应用
+}
+
 void CHTLGenerator::generateInlineStyle(const std::string& property, const std::string& value) {
     // 内联样式直接添加到当前元素
     std::string processedValue = processLiteral(value);
     
-    // TODO: 实际实现中需要累积内联样式并在元素生成时输出
-    // 这里简化处理
+    // 累积内联样式
+    pendingInlineStyles.push_back({property, processedValue});
+    isAccumulatingInlineStyles = true;
 }
 
 void CHTLGenerator::generateStyleRule(const std::string& selector, 
@@ -206,7 +233,10 @@ void CHTLGenerator::generateStyleRule(const std::string& selector,
     } else {
         // 普通属性作为内联样式
         rule.isInline = true;
-        // TODO: 处理内联样式
+        // 将内联样式规则的属性添加到待处理列表
+        for (const auto& prop : properties) {
+            generateInlineStyle(prop.first, prop.second);
+        }
     }
 }
 
@@ -461,7 +491,13 @@ void CHTLGenerator::addDeleteOperation(const std::string& deleteStatement) {
 void CHTLGenerator::addInsertOperation(const std::string& insertStatement) {
     // 解析插入语句
     // 格式: insert after div[0] { ... }
-    // TODO: 实现插入语句解析
+    auto insertOp = SpecializationProcessor::parseInsertStatement(insertStatement);
+    
+    SpecializationOperation op;
+    op.type = SpecializationType::INSERT;
+    op.insertOp = insertOp;
+    
+    addSpecialization(op);
 }
 
 // 生成器辅助方法

@@ -478,6 +478,45 @@ SpecializationOperation SpecializationProcessor::parseDeleteStatement(const std:
     return op;
 }
 
+InsertOperation SpecializationProcessor::parseInsertStatement(const std::string& statement) {
+    InsertOperation op;
+    
+    // 解析格式: insert [position] [selector] { elements }
+    std::regex insertRegex(R"(insert\s+(before|after|replace|at\s+top|at\s+bottom)\s+([^{]+)\s*\{([^}]*)\})");
+    std::smatch match;
+    
+    if (std::regex_search(statement, match, insertRegex)) {
+        std::string position = match[1];
+        std::string selector = match[2];
+        std::string content = match[3];
+        
+        // 解析位置
+        if (position == "before") {
+            op.position = InsertPosition::BEFORE;
+        } else if (position == "after") {
+            op.position = InsertPosition::AFTER;
+        } else if (position == "replace") {
+            op.position = InsertPosition::REPLACE;
+        } else if (position == "at top") {
+            op.position = InsertPosition::AT_TOP;
+        } else if (position == "at bottom") {
+            op.position = InsertPosition::AT_BOTTOM;
+        }
+        
+        // 解析选择器
+        op.targetSelector = parseElementSelector(selector);
+        
+        // 解析要插入的元素
+        // 简化处理：将内容作为原始HTML
+        auto element = std::make_shared<ElementNode>();
+        element->name = "div";  // 默认使用div包装
+        element->textContent = content;
+        op.elementsToInsert.push_back(element);
+    }
+    
+    return op;
+}
+
 ElementSelector SpecializationProcessor::parseElementSelector(const std::string& selector) {
     return ElementSelector::parse(selector);
 }

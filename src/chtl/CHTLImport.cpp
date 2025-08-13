@@ -4,6 +4,8 @@
 #include "CHTLCustom.h"
 #include "CHTLOrigin.h"
 #include "CHTLCMOD.h"
+#include "scanner/ScannerParserIntegration.h"
+#include "CHTLImportVisitor.h"
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -341,8 +343,38 @@ bool ImportProcessor::processChtlImport(const std::string& path) {
         return false;
     }
     
-    // TODO: 解析CHTL文件并导入所有内容
-    // 这里应该使用CHTL解析器处理文件
+    // 使用Scanner-Parser集成解析CHTL文件
+    scanner::ScannerParserIntegration integration(context);
+    auto parseResult = integration.parse(content);
+    
+    if (!parseResult.success) {
+        std::cerr << "Failed to parse imported CHTL file: " << path << std::endl;
+        std::cerr << parseResult.errorMessage << std::endl;
+        return false;
+    }
+    
+    // 创建访问器来提取定义
+    CHTLImportVisitor visitor(context, nameMapping);
+    
+    if (parseResult.chtlTree) {
+        visitor.visit(parseResult.chtlTree);
+        
+        // 获取提取的定义
+        auto templates = visitor.getTemplates();
+        auto customs = visitor.getCustoms();
+        
+        // 注册到管理器
+        auto& templateMgr = context->getTemplateManager();
+        auto& customMgr = context->getCustomManager();
+        
+        for (const auto& [name, tmpl] : templates) {
+            templateMgr.registerTemplate(name, tmpl);
+        }
+        
+        for (const auto& [name, custom] : customs) {
+            customMgr.registerCustom(name, custom);
+        }
+    }
     
     return true;
 }
@@ -377,8 +409,56 @@ bool ImportProcessor::processTemplateImport(const ImportDeclaration& decl) {
 bool ImportProcessor::extractFromChtlFile(const std::string& filePath, 
                                         const std::string& itemName,
                                         ImportType itemType) {
-    // TODO: 解析CHTL文件并提取特定项目
-    return true;
+    // 读取文件内容
+    std::string content = readFileContent(filePath);
+    if (content.empty()) {
+        return false;
+    }
+    
+    // 使用Scanner-Parser集成解析CHTL文件
+    scanner::ScannerParserIntegration integration(context);
+    auto parseResult = integration.parse(content);
+    
+    if (!parseResult.success) {
+        std::cerr << "Failed to parse CHTL file: " << filePath << std::endl;
+        std::cerr << parseResult.errorMessage << std::endl;
+        return false;
+    }
+    
+    // 创建选择性访问器
+    CHTLSelectiveImportVisitor visitor(context, itemName, itemType);
+    
+    if (parseResult.chtlTree) {
+        visitor.visit(parseResult.chtlTree);
+        
+        if (visitor.hasFoundItem()) {
+            // 根据类型注册找到的项目
+            switch (itemType) {
+                case ImportType::CustomElement:
+                case ImportType::CustomStyle:
+                case ImportType::CustomVar:
+                    if (auto custom = visitor.getFoundCustom()) {
+                        context->getCustomManager().registerCustom(itemName, custom);
+                        return true;
+                    }
+                    break;
+                    
+                case ImportType::TemplateElement:
+                case ImportType::TemplateStyle:
+                case ImportType::TemplateVar:
+                    if (auto tmpl = visitor.getFoundTemplate()) {
+                        context->getTemplateManager().registerTemplate(itemName, tmpl);
+                        return true;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+    }
+    
+    return false;
 }
 
 // FileSearcher 实现

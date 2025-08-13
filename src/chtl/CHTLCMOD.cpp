@@ -5,6 +5,8 @@
 #include <sstream>
 #include <regex>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 namespace chtl {
 
@@ -233,9 +235,76 @@ bool CMODModule::loadFromDirectory(const fs::path& dir) {
 }
 
 bool CMODModule::loadFromCMODFile(const fs::path& cmodFile) {
-    // TODO: 实现从.cmod文件加载
-    // 需要解压缩并提取内容
-    return false;
+    if (!fs::exists(cmodFile)) {
+        return false;
+    }
+    
+    // 创建临时目录
+    fs::path tempDir = fs::temp_directory_path() / ("cmod_extract_" + std::to_string(std::time(nullptr)));
+    fs::create_directory(tempDir);
+    
+    try {
+        // 使用tar命令解压（跨平台可以使用libarchive）
+        std::string cmd = "tar -xzf " + cmodFile.string() + " -C " + tempDir.string();
+        int result = std::system(cmd.c_str());
+        
+        if (result != 0) {
+            // 如果tar失败，尝试作为文本存档读取
+            return loadFromTextArchive(cmodFile);
+        }
+        
+        // 检查解压后的结构
+        fs::path srcDir = tempDir / "src";
+        fs::path infoDir = tempDir / "info";
+        fs::path exportFile = tempDir / "[Export]";
+        
+        if (!fs::exists(srcDir) || !fs::exists(infoDir)) {
+            fs::remove_all(tempDir);
+            return false;
+        }
+        
+        // 加载info文件
+        if (!loadInfo(infoDir / "module.info")) {
+            fs::remove_all(tempDir);
+            return false;
+        }
+        
+        // 加载源文件
+        for (const auto& entry : fs::recursive_directory_iterator(srcDir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".chtl") {
+                fs::path relativePath = fs::relative(entry.path(), srcDir);
+                
+                std::ifstream file(entry.path());
+                if (file.is_open()) {
+                    std::string content((std::istreambuf_iterator<char>(file)),
+                                      std::istreambuf_iterator<char>());
+                    sourceFiles[relativePath.string()] = content;
+                }
+            }
+        }
+        
+        // 加载导出表
+        if (fs::exists(exportFile)) {
+            std::ifstream file(exportFile);
+            if (file.is_open()) {
+                std::string content((std::istreambuf_iterator<char>(file)),
+                                  std::istreambuf_iterator<char>());
+                parseExportTable(content);
+            }
+        } else {
+            // 如果没有导出表，生成它
+            generateExportTable();
+        }
+        
+        // 清理临时目录
+        fs::remove_all(tempDir);
+        
+        return true;
+        
+    } catch (const std::exception& e) {
+        fs::remove_all(tempDir);
+        return false;
+    }
 }
 
 bool CMODModule::loadInfo(const fs::path& infoFile) {
@@ -286,6 +355,107 @@ bool CMODModule::loadInfo(const fs::path& infoFile) {
     exportTable = CMODExportTable::parse(content);
     
     return info.isValid();
+}
+
+bool CMODModule::loadFromTextArchive(const fs::path& archiveFile) {
+    std::ifstream file(archiveFile);
+    if (!file.is_open()) {
+        return false;
+    }
+    
+    std::string line;
+    std::string currentFile;
+    std::stringstream currentContent;
+    bool inFileSection = false;
+    
+    while (std::getline(file, line)) {
+        if (line.starts_with("=== FILE: ")) {
+            // 保存前一个文件
+            if (!currentFile.empty()) {
+                sourceFiles[currentFile] = currentContent.str();
+                currentContent.str("");
+                currentContent.clear();
+            }
+            
+            // 开始新文件
+            currentFile = line.substr(10);  // 跳过 "=== FILE: "
+            if (currentFile.ends_with(" ===")) {
+                currentFile = currentFile.substr(0, currentFile.length() - 4);
+            }
+            inFileSection = true;
+        } else if (line == "=== END ===" && inFileSection) {
+            // 保存当前文件
+            if (!currentFile.empty()) {
+                sourceFiles[currentFile] = currentContent.str();
+                currentContent.str("");
+                currentContent.clear();
+                currentFile.clear();
+            }
+            inFileSection = false;
+        } else if (inFileSection) {
+            currentContent << line << "\n";
+        } else if (line.starts_with("Name: ")) {
+            info.name = line.substr(6);
+        } else if (line.starts_with("Version: ")) {
+            info.version = line.substr(9);
+        } else if (line.starts_with("Author: ")) {
+            info.author = line.substr(8);
+        } else if (line.starts_with("Description: ")) {
+            info.description = line.substr(13);
+        }
+    }
+    
+    // 保存最后一个文件
+    if (!currentFile.empty()) {
+        sourceFiles[currentFile] = currentContent.str();
+    }
+    
+    // 生成导出表
+    generateExportTable();
+    
+    return !sourceFiles.empty();
+}
+
+void CMODModule::parseExportTable(const std::string& content) {
+    std::istringstream stream(content);
+    std::string line;
+    
+    exportTable.clear();
+    
+    while (std::getline(stream, line)) {
+        // 跳过空行和注释
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+        
+        // 解析格式: Type Name Path Exported
+        std::istringstream lineStream(line);
+        std::string type, name, path, exported;
+        
+        if (lineStream >> type >> name >> path >> exported) {
+            CMODExportItem item;
+            item.name = name;
+            item.path = path;
+            item.exported = (exported == "true");
+            
+            // 解析类型
+            if (type == "Template.Style") {
+                item.type = CMODExportType::TemplateStyle;
+            } else if (type == "Template.Element") {
+                item.type = CMODExportType::TemplateElement;
+            } else if (type == "Template.Var") {
+                item.type = CMODExportType::TemplateVar;
+            } else if (type == "Custom.Style") {
+                item.type = CMODExportType::CustomStyle;
+            } else if (type == "Custom.Element") {
+                item.type = CMODExportType::CustomElement;
+            } else if (type == "Custom.Var") {
+                item.type = CMODExportType::CustomVar;
+            }
+            
+            exportTable[name] = item;
+        }
+    }
 }
 
 bool CMODModule::loadExportTable(const fs::path& infoFile) {

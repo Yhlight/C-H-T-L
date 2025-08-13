@@ -1,0 +1,108 @@
+// 创意配置示例 - 完全自由的语法
+
+// 示例1: 无括号极简语法
+Configuration
+    DISABLE_NAME_GROUP no
+    OPTION_COUNT 20
+    
+    Name
+        KEYWORD_TEMPLATE Template, 模板, tpl, T
+        CUSTOM_STYLE Style, 样式, style:, .style
+        IMPORT_MODULE import, using, require, 导入
+        ELEMENT_TAG element, elem, 元素, <tag>
+
+// 示例2: 使用emoji和特殊符号
+🎨 Configuration 🎨
+    DISABLE_NAME_GROUP → false
+    OPTION_COUNT → 15
+    
+    💡 Name Group 💡
+        KEYWORD_TEMPLATE ➜ Template | tpl | T | 📄
+        CUSTOM_STYLE ➜ Custom | ✨Style | 🎨 | styling
+        IMPORT_MODULE ➜ Import | require | include | use | 📦
+        NAMESPACE ➜ namespace | ns | 🗂️
+        ORIGIN_HTML ➜ raw-html | <html> | HTML | 🌐
+
+// 示例3: 使用中文和其他语言
+配置 {
+    禁用名称组: 否
+    选项数量: 12
+    
+    名称组 {
+        模板关键字: 模板、範本、テンプレート、템플릿
+        自定义样式: 自定义、カスタム、커스텀、custom
+        导入模块: 导入、インポート、임포트、import
+        元素标签: 元素、エレメント、요소、element
+    }
+}
+
+// 示例4: 函数式语法
+Config() {
+    set(DISABLE_NAME_GROUP, false)
+    set(OPTION_COUNT, 10)
+    
+    define(Name) {
+        KEYWORD_TEMPLATE = fn(Template)
+        CUSTOM_STYLE = fn(Style, Custom)
+        IMPORT_MODULE = fn(Import, use, require)
+    }
+}
+
+// 示例5: 完全自定义的CHTL代码
+// 使用自定义关键字编写CHTL
+
+导入 Chtholly
+
+🗂️ MyApp
+
+模板 ✨Style 主题 {
+    背景色: #f0f0f0;
+    字体: "微软雅黑";
+}
+
+模板 📄 卡片 {
+    <div class="card">
+        <h2>{title}</h2>
+        <p>{content}</p>
+    </div>
+    
+    style {
+        使用 @主题;
+        
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    }
+}
+
+// 示例6: 混合语法
+::Configuration::
+    DISABLE_NAME_GROUP << false >>
+    OPTION_COUNT << 25 >>
+    
+    ::Name::
+        KEYWORD_TEMPLATE << [Template], <template>, template:, T >>
+        CUSTOM_STYLE << [Custom], @Custom, custom{}, C >>
+        IMPORT_MODULE << [Import], import, use, require >>
+        
+// 示例7: 基于缩进的Python风格
+Configuration:
+    DISABLE_NAME_GROUP: false
+    OPTION_COUNT: 30
+    
+    Name:
+        KEYWORD_TEMPLATE:
+            - Template
+            - template
+            - tpl
+            - T
+        CUSTOM_STYLE:
+            - Style
+            - style
+            - S
+        IMPORT_MODULE:
+            - import
+            - from
+            - use

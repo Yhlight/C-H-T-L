@@ -1,0 +1,37 @@
+{
+    "name": "chtl-syntax",
+    "displayName": "CHTL Language Support",
+    "description": "Syntax highlighting and language support for CHTL (C++ Hypertext Language)",
+    "version": "1.0.0",
+    "publisher": "chtl-team",
+    "engines": {
+        "vscode": "^1.70.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Snippets"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "chtl",
+                "aliases": ["CHTL", "chtl"],
+                "extensions": [".chtl"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "chtl",
+                "scopeName": "source.chtl",
+                "path": "./syntaxes/chtl.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "chtl",
+                "path": "./snippets/chtl.json"
+            }
+        ]
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "recommendations": [
+        // CMake工具
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        
+        // C++开发
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        
+        // 调试工具
+        "vadimcn.vscode-lldb",
+        
+        // 代码格式化
+        "xaver.clang-format",
+        
+        // Git集成
+        "eamodio.gitlens",
+        
+        // 代码补全
+        "tabnine.tabnine-vscode",
+        
+        // 项目管理
+        "alefragnani.project-manager",
+        
+        // Markdown预览
+        "yzhang.markdown-all-in-one",
+        
+        // 括号着色
+        "coenraads.bracket-pair-colorizer-2",
+        
+        // 文件图标
+        "vscode-icons-team.vscode-icons",
+        
+        // XML/语法文件支持
+        "redhat.vscode-xml",
+        
+        // 终端增强
+        "tyriar.terminal-tabs"
+    ]
+}

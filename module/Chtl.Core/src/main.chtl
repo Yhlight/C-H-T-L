@@ -1,0 +1,544 @@
+// CHTL核心标准库
+// 版权所有 (c) 2024 CHTL Team
+
+[Namespace] Chtl.Core
+
+// ===== 基础重置样式 =====
+[Template] @Style Reset {
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html, body {
+        height: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.5;
+        color: #333;
+        background-color: #fff;
+    }
+    
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    ul, ol {
+        list-style: none;
+    }
+    
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+// ===== 布局工具 =====
+[Template] @Style Flex {
+    display: flex;
+}
+
+[Template] @Style FlexRow {
+    @inherit Flex;
+    flex-direction: row;
+}
+
+[Template] @Style FlexColumn {
+    @inherit Flex;
+    flex-direction: column;
+}
+
+[Template] @Style FlexCenter {
+    @inherit Flex;
+    justify-content: center;
+    align-items: center;
+}
+
+[Template] @Style FlexBetween {
+    @inherit Flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[Template] @Style Grid(columns = 12, gap = 1rem) {
+    display: grid;
+    grid-template-columns: repeat({columns}, 1fr);
+    gap: {gap};
+}
+
+// ===== 响应式容器 =====
+[Template] @Element Container(fluid = false) {
+    div {
+        class: container;
+        
+        style {
+            .container {
+                width: 100%;
+                margin: 0 auto;
+                padding: 0 15px;
+                
+                if (!fluid) {
+                    max-width: 1200px;
+                }
+                
+                @media (max-width: 768px) {
+                    padding: 0 10px;
+                }
+            }
+        }
+        
+        children;
+    }
+}
+
+// ===== 栅格系统 =====
+[Template] @Element Row(gutter = 15) {
+    div {
+        class: row;
+        
+        style {
+            .row {
+                @use FlexRow;
+                flex-wrap: wrap;
+                margin-left: -{gutter}px;
+                margin-right: -{gutter}px;
+            }
+        }
+        
+        children;
+    }
+}
+
+[Template] @Element Col(span = 12, xs = 0, sm = 0, md = 0, lg = 0, xl = 0) {
+    div {
+        class: col col-{span};
+        
+        style {
+            .col {
+                padding-left: 15px;
+                padding-right: 15px;
+                flex: 0 0 calc({span} / 12 * 100%);
+                max-width: calc({span} / 12 * 100%);
+            }
+            
+            if (xs > 0) {
+                @media (max-width: 576px) {
+                    .col-{span} {
+                        flex: 0 0 calc({xs} / 12 * 100%);
+                        max-width: calc({xs} / 12 * 100%);
+                    }
+                }
+            }
+            
+            if (sm > 0) {
+                @media (min-width: 576px) and (max-width: 768px) {
+                    .col-{span} {
+                        flex: 0 0 calc({sm} / 12 * 100%);
+                        max-width: calc({sm} / 12 * 100%);
+                    }
+                }
+            }
+            
+            if (md > 0) {
+                @media (min-width: 768px) and (max-width: 992px) {
+                    .col-{span} {
+                        flex: 0 0 calc({md} / 12 * 100%);
+                        max-width: calc({md} / 12 * 100%);
+                    }
+                }
+            }
+            
+            if (lg > 0) {
+                @media (min-width: 992px) and (max-width: 1200px) {
+                    .col-{span} {
+                        flex: 0 0 calc({lg} / 12 * 100%);
+                        max-width: calc({lg} / 12 * 100%);
+                    }
+                }
+            }
+            
+            if (xl > 0) {
+                @media (min-width: 1200px) {
+                    .col-{span} {
+                        flex: 0 0 calc({xl} / 12 * 100%);
+                        max-width: calc({xl} / 12 * 100%);
+                    }
+                }
+            }
+        }
+        
+        children;
+    }
+}
+
+// ===== 颜色变量 =====
+[Template] @Var Colors {
+    primary: #007bff;
+    secondary: #6c757d;
+    success: #28a745;
+    danger: #dc3545;
+    warning: #ffc107;
+    info: #17a2b8;
+    light: #f8f9fa;
+    dark: #343a40;
+    white: #ffffff;
+    black: #000000;
+}
+
+// ===== 间距变量 =====
+[Template] @Var Spacing {
+    xs: 0.25rem;
+    sm: 0.5rem;
+    md: 1rem;
+    lg: 1.5rem;
+    xl: 3rem;
+}
+
+// ===== 按钮样式 =====
+[Template] @Style ButtonBase {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    
+    &:hover {
+        opacity: 0.9;
+    }
+    
+    &:active {
+        transform: translateY(1px);
+    }
+    
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+}
+
+[Template] @Style ButtonPrimary {
+    @inherit ButtonBase;
+    @use Colors;
+    
+    background-color: var(Colors.primary);
+    border-color: var(Colors.primary);
+    color: var(Colors.white);
+    
+    &:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+}
+
+[Template] @Style ButtonSecondary {
+    @inherit ButtonBase;
+    @use Colors;
+    
+    background-color: var(Colors.secondary);
+    border-color: var(Colors.secondary);
+    color: var(Colors.white);
+    
+    &:hover {
+        background-color: #545b62;
+        border-color: #4e555b;
+    }
+}
+
+[Template] @Style ButtonOutline(color = primary) {
+    @inherit ButtonBase;
+    @use Colors;
+    
+    background-color: transparent;
+    border-color: var(Colors.{color});
+    color: var(Colors.{color});
+    
+    &:hover {
+        background-color: var(Colors.{color});
+        color: var(Colors.white);
+    }
+}
+
+// ===== 按钮组件 =====
+[Template] @Element Button(variant = primary, size = md, block = false, disabled = false) {
+    button {
+        class: btn btn-{variant} btn-{size};
+        disabled: {disabled};
+        
+        style {
+            .btn {
+                @use ButtonBase;
+            }
+            
+            .btn-primary {
+                @use ButtonPrimary;
+            }
+            
+            .btn-secondary {
+                @use ButtonSecondary;
+            }
+            
+            .btn-outline-primary {
+                @use ButtonOutline(primary);
+            }
+            
+            .btn-outline-secondary {
+                @use ButtonOutline(secondary);
+            }
+            
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .btn-lg {
+                padding: 0.5rem 1rem;
+                font-size: 1.25rem;
+            }
+            
+            if (block) {
+                .btn-{variant} {
+                    display: block;
+                    width: 100%;
+                }
+            }
+        }
+        
+        children;
+    }
+}
+
+// ===== 卡片组件 =====
+[Template] @Element Card(shadow = true) {
+    div {
+        class: card;
+        
+        style {
+            .card {
+                background-color: #fff;
+                border: 1px solid rgba(0, 0, 0, 0.125);
+                border-radius: 0.25rem;
+                overflow: hidden;
+                
+                if (shadow) {
+                    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                }
+            }
+        }
+        
+        children;
+    }
+}
+
+[Template] @Element CardHeader {
+    div {
+        class: card-header;
+        
+        style {
+            .card-header {
+                padding: 0.75rem 1.25rem;
+                background-color: rgba(0, 0, 0, 0.03);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            }
+        }
+        
+        children;
+    }
+}
+
+[Template] @Element CardBody {
+    div {
+        class: card-body;
+        
+        style {
+            .card-body {
+                padding: 1.25rem;
+            }
+        }
+        
+        children;
+    }
+}
+
+[Template] @Element CardFooter {
+    div {
+        class: card-footer;
+        
+        style {
+            .card-footer {
+                padding: 0.75rem 1.25rem;
+                background-color: rgba(0, 0, 0, 0.03);
+                border-top: 1px solid rgba(0, 0, 0, 0.125);
+            }
+        }
+        
+        children;
+    }
+}
+
+// ===== 表单组件 =====
+[Template] @Style FormControl {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    
+    &:focus {
+        color: #495057;
+        background-color: #fff;
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    &:disabled {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+}
+
+[Template] @Element Input(type = text, placeholder = "", value = "", name = "", required = false, disabled = false) {
+    input {
+        type: {type};
+        class: form-control;
+        placeholder: {placeholder};
+        value: {value};
+        name: {name};
+        required: {required};
+        disabled: {disabled};
+        
+        style {
+            .form-control {
+                @use FormControl;
+            }
+        }
+    }
+}
+
+[Template] @Element Select(name = "", required = false, disabled = false) {
+    select {
+        class: form-control;
+        name: {name};
+        required: {required};
+        disabled: {disabled};
+        
+        style {
+            .form-control {
+                @use FormControl;
+            }
+        }
+        
+        children;
+    }
+}
+
+[Template] @Element Textarea(placeholder = "", rows = 3, name = "", required = false, disabled = false) {
+    textarea {
+        class: form-control;
+        placeholder: {placeholder};
+        rows: {rows};
+        name: {name};
+        required: {required};
+        disabled: {disabled};
+        
+        style {
+            .form-control {
+                @use FormControl;
+                resize: vertical;
+            }
+        }
+        
+        children;
+    }
+}
+
+// ===== 工具样式 =====
+[Template] @Style Hidden {
+    display: none !important;
+}
+
+[Template] @Style Visible {
+    display: block !important;
+}
+
+[Template] @Style TextCenter {
+    text-align: center !important;
+}
+
+[Template] @Style TextLeft {
+    text-align: left !important;
+}
+
+[Template] @Style TextRight {
+    text-align: right !important;
+}
+
+[Template] @Style TextMuted {
+    @use Colors;
+    color: var(Colors.secondary) !important;
+}
+
+// ===== 间距工具 =====
+[Template] @Style Margin(size = md, direction = all) {
+    @use Spacing;
+    
+    if (direction == "all") {
+        margin: var(Spacing.{size});
+    } else if (direction == "x") {
+        margin-left: var(Spacing.{size});
+        margin-right: var(Spacing.{size});
+    } else if (direction == "y") {
+        margin-top: var(Spacing.{size});
+        margin-bottom: var(Spacing.{size});
+    } else if (direction == "top") {
+        margin-top: var(Spacing.{size});
+    } else if (direction == "bottom") {
+        margin-bottom: var(Spacing.{size});
+    } else if (direction == "left") {
+        margin-left: var(Spacing.{size});
+    } else if (direction == "right") {
+        margin-right: var(Spacing.{size});
+    }
+}
+
+[Template] @Style Padding(size = md, direction = all) {
+    @use Spacing;
+    
+    if (direction == "all") {
+        padding: var(Spacing.{size});
+    } else if (direction == "x") {
+        padding-left: var(Spacing.{size});
+        padding-right: var(Spacing.{size});
+    } else if (direction == "y") {
+        padding-top: var(Spacing.{size});
+        padding-bottom: var(Spacing.{size});
+    } else if (direction == "top") {
+        padding-top: var(Spacing.{size});
+    } else if (direction == "bottom") {
+        padding-bottom: var(Spacing.{size});
+    } else if (direction == "left") {
+        padding-left: var(Spacing.{size});
+    } else if (direction == "right") {
+        padding-right: var(Spacing.{size});
+    }
+}

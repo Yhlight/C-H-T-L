@@ -10,6 +10,7 @@
 #include "CHTLContext.h"
 #include "CHTLTemplate.h"  // 添加模板头文件
 #include "CHTLCustom.h"    // 添加自定义头文件
+#include "CHTLOrigin.h"    // 添加原始嵌入头文件
 
 namespace chtl {
 
@@ -42,6 +43,9 @@ private:
     
     // 自定义管理器
     std::shared_ptr<CustomManager> customManager;
+    
+    // 原始嵌入管理器
+    std::shared_ptr<OriginManager> originManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -90,6 +94,10 @@ public:
     // 自定义支持
     void setCustomManager(std::shared_ptr<CustomManager> mgr) { customManager = mgr; }
     std::shared_ptr<CustomManager> getCustomManager() const { return customManager; }
+    
+    // 原始嵌入支持
+    void setOriginManager(std::shared_ptr<OriginManager> mgr) { originManager = mgr; }
+    std::shared_ptr<OriginManager> getOriginManager() const { return originManager; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -164,6 +172,13 @@ public:
     
     // 重置
     void reset();
+
+    // 原始内容生成
+    void generateRawContent(const std::string& content);
+    
+    // 原始嵌入处理
+    void processOriginBlock(const std::string& declaration, const std::string& content);
+    void useOriginBlock(const std::string& name);
 };
 
 // 字面量处理器

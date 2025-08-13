@@ -11,6 +11,8 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     templateManager = std::make_shared<TemplateManager>(ctx);
     // 创建自定义管理器
     customManager = std::make_shared<CustomManager>(ctx, templateManager);
+    // 创建原始嵌入管理器
+    originManager = std::make_shared<OriginManager>(ctx);
 }
 
 std::string CHTLGenerator::indent() const {
@@ -613,6 +615,49 @@ std::string CommentProcessor::formatAsHTMLComment(const std::string& content) {
     trimmed.erase(trimmed.find_last_not_of(" \t") + 1);
     
     return "<!-- " + trimmed + " -->";
+}
+
+// 原始内容生成
+void CHTLGenerator::generateRawContent(const std::string& content) {
+    // 原原本本输出内容，不做任何处理或转换
+    htmlOutput << content;
+}
+
+// 原始嵌入处理
+void CHTLGenerator::processOriginBlock(const std::string& declaration, const std::string& content) {
+    if (!originManager) {
+        context->reportError("Origin manager not initialized");
+        return;
+    }
+    
+    OriginProcessor processor(*originManager, *this);
+    
+    // 解析声明
+    auto decl = processor.parseOriginDeclaration(declaration);
+    
+    // 创建原始嵌入实例
+    auto origin = processor.createOriginInstance(decl);
+    if (origin) {
+        // 设置内容
+        processor.processOriginContent(origin, content);
+        
+        if (decl.isNamed) {
+            // 注册命名的原始嵌入
+            originManager->registerNamedOrigin(decl.name, origin);
+        } else {
+            // 立即生成内容
+            origin->generate(*this);
+        }
+    }
+}
+
+void CHTLGenerator::useOriginBlock(const std::string& name) {
+    if (!originManager) {
+        context->reportError("Origin manager not initialized");
+        return;
+    }
+    
+    originManager->useNamedOrigin(name, *this);
 }
 
 } // namespace chtl

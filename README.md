@@ -19,19 +19,31 @@ CHTL是一种创新的模板语言，将C++的强大功能与现代Web开发相�
 
 ### 从源码构建
 
+#### 跨平台方式（推荐）
+
 ```bash
 # 克隆仓库
 git clone https://github.com/chtl/chtl.git
 cd chtl
 
-# 生成解析器（需要ANTLR4）
-./scripts/generate_parsers.sh
+# 使用 Python 脚本构建（Windows/Linux/macOS）
+python scripts/build.py --type Release --install
+```
+
+#### 平台特定方式
+
+**Linux/macOS:**
+```bash
+./scripts/build_compiler.sh
+```
+
+**Windows:**
+```cmd
+# 首次使用请运行（需要管理员权限）
+scripts\setup-windows.bat
 
 # 构建
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
-sudo make install
+scripts\build.bat --type Release
 ```
 
 ### 使用包管理器

@@ -98,6 +98,14 @@ std::string ScriptManager::generateJavaScript() const {
     js << "    return document.querySelector(selector);\n";
     js << "  }\n\n";
     
+    // 添加CHTL JS扩展运行时
+    js << CHTLJSExtensions::RuntimeCodeGenerator::generateListenRuntime() << "\n";
+    js << CHTLJSExtensions::RuntimeCodeGenerator::generateDelegateRuntime() << "\n";
+    js << CHTLJSExtensions::RuntimeCodeGenerator::generateAnimateRuntime() << "\n";
+    
+    // 生成事件委托初始化
+    js << CHTLJSExtensions::EventDelegationManager::generateDelegationInit() << "\n";
+    
     // 生成局部脚本
     js << "  // Local scripts\n";
     for (const auto& [path, scripts] : localScripts) {
@@ -301,18 +309,23 @@ std::string ScriptProcessor::processEnhancedSelectors(const std::string& script,
     std::string processed = script;
     EnhancedSelectorProcessor selectorProcessor(manager);
     
+    // 首先转换箭头语法
+    if (ScriptHelper::hasArrowSyntax(processed)) {
+        processed = ScriptHelper::convertArrowToDot(processed);
+    }
+    
     // 正则表达式匹配增强选择器 {{...}}
     std::regex selectorRegex(R"(\{\{([^}]+)\}\})");
     std::smatch match;
     
-    std::string::const_iterator searchStart(script.cbegin());
+    std::string::const_iterator searchStart(processed.cbegin());
     std::stringstream result;
     size_t lastPos = 0;
     
-    while (std::regex_search(searchStart, script.cend(), match, selectorRegex)) {
+    while (std::regex_search(searchStart, processed.cend(), match, selectorRegex)) {
         // 添加匹配前的内容
-        size_t matchPos = std::distance(script.cbegin(), match[0].first);
-        result << script.substr(lastPos, matchPos - lastPos);
+        size_t matchPos = std::distance(processed.cbegin(), match[0].first);
+        result << processed.substr(lastPos, matchPos - lastPos);
         
         // 解析选择器
         std::string selectorStr = match[1];
@@ -321,6 +334,50 @@ std::string ScriptProcessor::processEnhancedSelectors(const std::string& script,
         
         // 生成JavaScript代码
         std::string jsCode = selectorProcessor.toJavaScript(selector, "");
+        
+        // 检查是否有方法调用
+        size_t nextPos = matchPos + match[0].length();
+        if (nextPos < processed.length() && processed[nextPos] == '.') {
+            // 检查是否是listen或delegate方法
+            std::regex methodRegex(R"(\.(\w+)\s*\()");
+            std::smatch methodMatch;
+            std::string methodStr = processed.substr(nextPos);
+            
+            if (std::regex_search(methodStr, methodMatch, methodRegex)) {
+                std::string methodName = methodMatch[1];
+                
+                if (methodName == "listen") {
+                    // 提取listen的配置
+                    std::regex configRegex(R"(\((\{[^}]+\})\))");
+                    std::smatch configMatch;
+                    if (std::regex_search(methodStr, configMatch, configRegex)) {
+                        std::string config = configMatch[1];
+                        jsCode = CHTLJSExtensions::EnhancedMethodProcessor::processListen(jsCode, config);
+                        
+                        // 跳过整个方法调用
+                        lastPos = nextPos + configMatch.position() + configMatch[0].length();
+                        searchStart = processed.cbegin() + lastPos;
+                        result << jsCode;
+                        continue;
+                    }
+                } else if (methodName == "delegate") {
+                    // 提取delegate的配置
+                    std::regex configRegex(R"(\((\{[\s\S]+?\})\))");
+                    std::smatch configMatch;
+                    if (std::regex_search(methodStr, configMatch, configRegex)) {
+                        std::string config = configMatch[1];
+                        jsCode = CHTLJSExtensions::EnhancedMethodProcessor::processDelegate(jsCode, config);
+                        
+                        // 跳过整个方法调用
+                        lastPos = nextPos + configMatch.position() + configMatch[0].length();
+                        searchStart = processed.cbegin() + lastPos;
+                        result << jsCode;
+                        continue;
+                    }
+                }
+            }
+        }
+        
         result << jsCode;
         
         // 更新位置
@@ -328,8 +385,20 @@ std::string ScriptProcessor::processEnhancedSelectors(const std::string& script,
         searchStart = match.suffix().first;
     }
     
-    // 添加剩余内容
-    result << script.substr(lastPos);
+    // 处理animate函数
+    std::regex animateRegex(R"(animate\s*\((\{[\s\S]+?\})\))");
+    std::string remaining = processed.substr(lastPos);
+    std::smatch animateMatch;
+    
+    if (std::regex_search(remaining, animateMatch, animateRegex)) {
+        result << remaining.substr(0, animateMatch.position());
+        std::string animConfig = animateMatch[1];
+        result << CHTLJSExtensions::AnimationProcessor::processAnimate(animConfig);
+        result << remaining.substr(animateMatch.position() + animateMatch[0].length());
+    } else {
+        // 添加剩余内容
+        result << remaining;
+    }
     
     return result.str();
 }
@@ -503,6 +572,443 @@ std::vector<std::string> decomposeSelector(const std::string& selector) {
     return parts;
 }
 
+bool hasArrowSyntax(const std::string& script) {
+    // 检查是否包含->语法
+    std::regex arrowRegex(R"(\}\}\s*->)");
+    return std::regex_search(script, arrowRegex);
+}
+
+std::string convertArrowToDot(const std::string& script) {
+    // 将->替换为.
+    std::regex arrowRegex(R"(->)");
+    return std::regex_replace(script, arrowRegex, ".");
+}
+
 } // namespace ScriptHelper
+
+// CHTLJSExtensions 实现
+namespace CHTLJSExtensions {
+
+// EventDelegationManager 静态成员初始化
+std::map<std::string, std::vector<EventDelegationConfig>> EventDelegationManager::delegationRegistry;
+int EventDelegationManager::delegationIdCounter = 0;
+
+// EnhancedMethodProcessor 实现
+std::string EnhancedMethodProcessor::processListen(const std::string& selector, const std::string& config) {
+    std::stringstream js;
+    auto events = parseEventConfig(config);
+    
+    js << "(" << selector << ").forEach(function(el) {\n";
+    for (const auto& event : events) {
+        js << "  " << generateEventListenerCode("el", event) << "\n";
+    }
+    js << "});\n";
+    
+    return js.str();
+}
+
+std::string EnhancedMethodProcessor::processDelegate(const std::string& selector, const std::string& config) {
+    auto delegateConfig = parseDelegateConfig(config);
+    delegateConfig.parentSelector = selector;
+    
+    return EventDelegationManager::registerDelegation(delegateConfig);
+}
+
+std::vector<EventListenerConfig> EnhancedMethodProcessor::parseEventConfig(const std::string& config) {
+    std::vector<EventListenerConfig> events;
+    
+    // 简化的解析逻辑 - 实际应该使用更复杂的解析器
+    std::regex eventRegex(R"((\w+)\s*:\s*([^,]+)(?:,|})");
+    std::smatch match;
+    std::string::const_iterator searchStart(config.cbegin());
+    
+    while (std::regex_search(searchStart, config.cend(), match, eventRegex)) {
+        EventListenerConfig event;
+        event.eventType = match[1];
+        event.callback = match[2];
+        event.isInline = event.callback.find("function") != std::string::npos ||
+                        event.callback.find("=>") != std::string::npos;
+        events.push_back(event);
+        searchStart = match.suffix().first;
+    }
+    
+    return events;
+}
+
+EventDelegationConfig EnhancedMethodProcessor::parseDelegateConfig(const std::string& config) {
+    EventDelegationConfig delegateConfig;
+    
+    // 解析target
+    std::regex targetRegex(R"(target\s*:\s*(\{[^}]+\}|\[[^\]]+\]))");
+    std::smatch targetMatch;
+    if (std::regex_search(config, targetMatch, targetRegex)) {
+        std::string targetStr = targetMatch[1];
+        
+        // 判断是单个还是数组
+        if (targetStr[0] == '[') {
+            // 数组形式
+            std::regex selectorRegex(R"(\{\{([^}]+)\}\})");
+            std::smatch selectorMatch;
+            std::string::const_iterator searchStart(targetStr.cbegin());
+            
+            while (std::regex_search(searchStart, targetStr.cend(), selectorMatch, selectorRegex)) {
+                delegateConfig.targets.push_back(selectorMatch[1]);
+                searchStart = selectorMatch.suffix().first;
+            }
+        } else {
+            // 单个选择器
+            std::regex selectorRegex(R"(\{\{([^}]+)\}\})");
+            std::smatch selectorMatch;
+            if (std::regex_search(targetStr, selectorMatch, selectorRegex)) {
+                delegateConfig.targets.push_back(selectorMatch[1]);
+            }
+        }
+    }
+    
+    // 解析事件
+    std::regex eventStartRegex(R"(target\s*:[^,]+,\s*(.+)\})");
+    std::smatch eventStartMatch;
+    if (std::regex_search(config, eventStartMatch, eventStartRegex)) {
+        std::string eventsStr = eventStartMatch[1];
+        delegateConfig.events = parseEventConfig("{" + eventsStr + "}");
+    }
+    
+    return delegateConfig;
+}
+
+std::string EnhancedMethodProcessor::generateEventListenerCode(const std::string& element, 
+                                                              const EventListenerConfig& event) {
+    std::stringstream js;
+    js << element << ".addEventListener('" << event.eventType << "', ";
+    
+    if (event.isInline) {
+        js << event.callback;
+    } else {
+        js << event.callback;
+    }
+    
+    js << ");";
+    return js.str();
+}
+
+std::string EnhancedMethodProcessor::generateDelegationCode(const EventDelegationConfig& config) {
+    std::stringstream js;
+    std::string delegationId = EventDelegationManager::getOrCreateDelegationId(config.parentSelector);
+    
+    js << "// Event delegation for " << config.parentSelector << "\n";
+    js << "(function() {\n";
+    js << "  const parent = " << config.parentSelector << ";\n";
+    js << "  if (!parent) return;\n\n";
+    
+    // 为每个事件类型生成处理器
+    std::map<std::string, std::vector<std::pair<std::string, std::string>>> eventMap;
+    for (const auto& event : config.events) {
+        for (const auto& target : config.targets) {
+            eventMap[event.eventType].push_back({target, event.callback});
+        }
+    }
+    
+    for (const auto& [eventType, handlers] : eventMap) {
+        js << "  parent.addEventListener('" << eventType << "', function(e) {\n";
+        
+        for (const auto& [target, callback] : handlers) {
+            js << "    if (e.target.matches('" << target << "')) {\n";
+            js << "      (" << callback << ").call(e.target, e);\n";
+            js << "    }\n";
+        }
+        
+        js << "  });\n\n";
+    }
+    
+    js << "})();\n";
+    
+    return js.str();
+}
+
+// AnimationProcessor 实现
+std::string AnimationProcessor::processAnimate(const std::string& config) {
+    auto animConfig = parseAnimationConfig(config);
+    return generateAnimationCode(animConfig);
+}
+
+AnimationConfig AnimationProcessor::parseAnimationConfig(const std::string& config) {
+    AnimationConfig animConfig;
+    
+    // 解析duration
+    std::regex durationRegex(R"(duration\s*:\s*(\d+))");
+    std::smatch durationMatch;
+    if (std::regex_search(config, durationMatch, durationRegex)) {
+        animConfig.duration = std::stoi(durationMatch[1]);
+    }
+    
+    // 解析easing
+    std::regex easingRegex(R"(easing\s*:\s*([^,]+))");
+    std::smatch easingMatch;
+    if (std::regex_search(config, easingMatch, easingRegex)) {
+        animConfig.easing = easingMatch[1];
+    }
+    
+    // 解析loop
+    std::regex loopRegex(R"(loop\s*:\s*(-?\d+))");
+    std::smatch loopMatch;
+    if (std::regex_search(config, loopMatch, loopRegex)) {
+        animConfig.loop = std::stoi(loopMatch[1]);
+    }
+    
+    // 解析delay
+    std::regex delayRegex(R"(delay\s*:\s*(\d+))");
+    std::smatch delayMatch;
+    if (std::regex_search(config, delayMatch, delayRegex)) {
+        animConfig.delay = std::stoi(delayMatch[1]);
+    }
+    
+    // TODO: 解析begin, end, when等复杂配置
+    
+    return animConfig;
+}
+
+std::string AnimationProcessor::generateAnimationCode(const AnimationConfig& config) {
+    std::stringstream js;
+    
+    js << "(function() {\n";
+    js << "  const duration = " << config.duration << ";\n";
+    js << "  const easing = " << parseEasing(config.easing) << ";\n";
+    js << "  const loop = " << config.loop << ";\n";
+    js << "  const delay = " << config.delay << ";\n";
+    js << "  let startTime = null;\n";
+    js << "  let currentLoop = 0;\n\n";
+    
+    js << generateRAFLoop(config);
+    
+    js << "  setTimeout(animate, delay);\n";
+    js << "})();\n";
+    
+    return js.str();
+}
+
+std::string AnimationProcessor::parseEasing(const std::string& easing) {
+    // 将缓动函数名转换为实际的函数
+    if (easing == "ease-in-out" || easing == "ease-in-out") {
+        return "function(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }";
+    } else if (easing == "ease-in" || easing == "ease-in") {
+        return "function(t) { return t*t; }";
+    } else if (easing == "ease-out" || easing == "ease-out") {
+        return "function(t) { return t*(2-t); }";
+    } else {
+        return "function(t) { return t; }"; // linear
+    }
+}
+
+std::string AnimationProcessor::generateRAFLoop(const AnimationConfig& config) {
+    std::stringstream js;
+    
+    js << "  function animate(timestamp) {\n";
+    js << "    if (!startTime) startTime = timestamp;\n";
+    js << "    const elapsed = timestamp - startTime;\n";
+    js << "    const progress = Math.min(elapsed / duration, 1);\n";
+    js << "    const easedProgress = easing(progress);\n\n";
+    
+    // TODO: 应用动画属性
+    
+    js << "    if (progress < 1) {\n";
+    js << "      requestAnimationFrame(animate);\n";
+    js << "    } else {\n";
+    js << "      currentLoop++;\n";
+    js << "      if (loop === -1 || currentLoop < loop) {\n";
+    js << "        startTime = null;\n";
+    js << "        requestAnimationFrame(animate);\n";
+    js << "      }\n";
+    js << "    }\n";
+    js << "  }\n";
+    
+    return js.str();
+}
+
+// EventDelegationManager 实现
+std::string EventDelegationManager::registerDelegation(const EventDelegationConfig& config) {
+    std::string id = getOrCreateDelegationId(config.parentSelector);
+    mergeDelegation(id, config);
+    return EnhancedMethodProcessor::generateDelegationCode(config);
+}
+
+std::string EventDelegationManager::getOrCreateDelegationId(const std::string& parentSelector) {
+    // 查找已存在的委托
+    for (const auto& [id, configs] : delegationRegistry) {
+        if (!configs.empty() && configs[0].parentSelector == parentSelector) {
+            return id;
+        }
+    }
+    
+    // 创建新的委托ID
+    std::string newId = "delegation_" + std::to_string(++delegationIdCounter);
+    delegationRegistry[newId] = std::vector<EventDelegationConfig>();
+    return newId;
+}
+
+void EventDelegationManager::mergeDelegation(const std::string& id, const EventDelegationConfig& config) {
+    delegationRegistry[id].push_back(config);
+}
+
+std::string EventDelegationManager::generateDelegationInit() {
+    std::stringstream js;
+    
+    js << "// Event delegation initialization\n";
+    js << "const CHTL_DELEGATIONS = {};\n\n";
+    
+    for (const auto& [id, configs] : delegationRegistry) {
+        if (!configs.empty()) {
+            js << "CHTL_DELEGATIONS['" << id << "'] = {\n";
+            js << "  parent: '" << configs[0].parentSelector << "',\n";
+            js << "  handlers: []\n";
+            js << "};\n";
+        }
+    }
+    
+    return js.str();
+}
+
+void EventDelegationManager::clear() {
+    delegationRegistry.clear();
+    delegationIdCounter = 0;
+}
+
+// RuntimeCodeGenerator 实现
+std::string RuntimeCodeGenerator::generateListenRuntime() {
+    return R"(
+// CHTL listen runtime support
+function chtl_listen(element, config) {
+    if (!element) return;
+    
+    const elements = Array.isArray(element) ? element : [element];
+    
+    elements.forEach(function(el) {
+        Object.keys(config).forEach(function(eventType) {
+            el.addEventListener(eventType, config[eventType]);
+        });
+    });
+}
+)";
+}
+
+std::string RuntimeCodeGenerator::generateDelegateRuntime() {
+    return R"(
+// CHTL delegate runtime support
+function chtl_delegate(parent, config) {
+    if (!parent) return;
+    
+    const targets = Array.isArray(config.target) ? config.target : [config.target];
+    
+    Object.keys(config).forEach(function(key) {
+        if (key === 'target') return;
+        
+        parent.addEventListener(key, function(e) {
+            targets.forEach(function(selector) {
+                if (e.target.matches(selector)) {
+                    config[key].call(e.target, e);
+                }
+            });
+        });
+    });
+}
+)";
+}
+
+std::string RuntimeCodeGenerator::generateAnimateRuntime() {
+    return R"(
+// CHTL animate runtime support
+function chtl_animate(config) {
+    const element = config.element;
+    const duration = config.duration || 1000;
+    const easing = config.easing || function(t) { return t; };
+    const loop = config.loop || 1;
+    const delay = config.delay || 0;
+    
+    let startTime = null;
+    let currentLoop = 0;
+    
+    function interpolate(start, end, progress) {
+        if (typeof start === 'number' && typeof end === 'number') {
+            return start + (end - start) * progress;
+        }
+        return progress < 0.5 ? start : end;
+    }
+    
+    function applyProperties(element, properties) {
+        Object.keys(properties).forEach(function(prop) {
+            if (prop === 'transform') {
+                element.style.transform = properties[prop];
+            } else {
+                element.style[prop] = properties[prop];
+            }
+        });
+    }
+    
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = easing(progress);
+        
+        // Apply animation
+        if (config.begin && progress === 0) {
+            applyProperties(element, config.begin);
+        }
+        
+        if (config.when) {
+            // Apply keyframes
+            for (let i = 0; i < config.when.length; i++) {
+                const keyframe = config.when[i];
+                if (easedProgress >= keyframe.at) {
+                    applyProperties(element, keyframe);
+                }
+            }
+        }
+        
+        if (config.end && progress === 1) {
+            applyProperties(element, config.end);
+        }
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            currentLoop++;
+            if (loop === -1 || currentLoop < loop) {
+                startTime = null;
+                requestAnimationFrame(animate);
+            } else if (config.callback) {
+                config.callback();
+            }
+        }
+    }
+    
+    setTimeout(function() {
+        requestAnimationFrame(animate);
+    }, delay);
+}
+)";
+}
+
+std::string RuntimeCodeGenerator::generateFullRuntime() {
+    std::stringstream runtime;
+    
+    runtime << "// CHTL JS Runtime Support\n";
+    runtime << "(function(window) {\n";
+    runtime << "  'use strict';\n\n";
+    
+    runtime << generateListenRuntime() << "\n";
+    runtime << generateDelegateRuntime() << "\n";
+    runtime << generateAnimateRuntime() << "\n";
+    
+    runtime << "  // Export to global scope\n";
+    runtime << "  window.chtl_listen = chtl_listen;\n";
+    runtime << "  window.chtl_delegate = chtl_delegate;\n";
+    runtime << "  window.chtl_animate = chtl_animate;\n";
+    
+    runtime << "})(window);\n";
+    
+    return runtime.str();
+}
+
+} // namespace CHTLJSExtensions
 
 } // namespace chtl

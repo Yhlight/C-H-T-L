@@ -230,7 +230,135 @@ namespace ScriptHelper {
     
     // 分解复合选择器
     std::vector<std::string> decomposeSelector(const std::string& selector);
+    
+    // 检查是否包含箭头语法
+    bool hasArrowSyntax(const std::string& script);
+    
+    // 转换箭头语法为点语法
+    std::string convertArrowToDot(const std::string& script);
 }
+
+// CHTL JS扩展功能
+namespace CHTLJSExtensions {
+
+// 事件监听器配置
+struct EventListenerConfig {
+    std::string eventType;
+    std::string callback;
+    bool isInline;
+};
+
+// 事件委托配置
+struct EventDelegationConfig {
+    std::vector<std::string> targets;     // 目标选择器列表
+    std::vector<EventListenerConfig> events;  // 事件配置列表
+    std::string parentSelector;           // 父元素选择器
+};
+
+// 动画关键帧
+struct AnimationKeyframe {
+    double at;                            // 时间点（0-1）
+    std::map<std::string, std::string> properties;  // CSS属性
+};
+
+// 动画配置
+struct AnimationConfig {
+    int duration;                         // 持续时间(ms)
+    std::string easing;                   // 缓动函数
+    std::map<std::string, std::string> begin;    // 起始状态
+    std::vector<AnimationKeyframe> when;          // 关键帧
+    std::map<std::string, std::string> end;      // 结束状态
+    int loop;                             // 循环次数（-1为无限）
+    std::string direction;                // 播放方向
+    int delay;                            // 延迟(ms)
+    std::string callback;                 // 回调函数
+};
+
+// 增强方法调用处理器
+class EnhancedMethodProcessor {
+public:
+    // 处理listen方法
+    static std::string processListen(const std::string& selector, const std::string& config);
+    
+    // 处理delegate方法
+    static std::string processDelegate(const std::string& selector, const std::string& config);
+    
+    // 解析事件配置
+    static std::vector<EventListenerConfig> parseEventConfig(const std::string& config);
+    
+    // 解析委托配置
+    static EventDelegationConfig parseDelegateConfig(const std::string& config);
+    
+    // 生成事件监听代码
+    static std::string generateEventListenerCode(const std::string& element, 
+                                                const EventListenerConfig& event);
+    
+    // 生成事件委托代码
+    static std::string generateDelegationCode(const EventDelegationConfig& config);
+};
+
+// 动画处理器
+class AnimationProcessor {
+public:
+    // 处理animate函数
+    static std::string processAnimate(const std::string& config);
+    
+    // 解析动画配置
+    static AnimationConfig parseAnimationConfig(const std::string& config);
+    
+    // 生成动画代码
+    static std::string generateAnimationCode(const AnimationConfig& config);
+    
+    // 生成关键帧代码
+    static std::string generateKeyframeCode(const AnimationKeyframe& keyframe);
+    
+    // 解析缓动函数
+    static std::string parseEasing(const std::string& easing);
+    
+    // 生成RAF循环代码
+    static std::string generateRAFLoop(const AnimationConfig& config);
+};
+
+// 事件委托管理器
+class EventDelegationManager {
+private:
+    static std::map<std::string, std::vector<EventDelegationConfig>> delegationRegistry;
+    static int delegationIdCounter;
+    
+public:
+    // 注册事件委托
+    static std::string registerDelegation(const EventDelegationConfig& config);
+    
+    // 获取或创建委托ID
+    static std::string getOrCreateDelegationId(const std::string& parentSelector);
+    
+    // 合并委托配置
+    static void mergeDelegation(const std::string& id, const EventDelegationConfig& config);
+    
+    // 生成委托初始化代码
+    static std::string generateDelegationInit();
+    
+    // 清理
+    static void clear();
+};
+
+// CHTL JS运行时代码生成器
+class RuntimeCodeGenerator {
+public:
+    // 生成listen运行时支持
+    static std::string generateListenRuntime();
+    
+    // 生成delegate运行时支持
+    static std::string generateDelegateRuntime();
+    
+    // 生成animate运行时支持
+    static std::string generateAnimateRuntime();
+    
+    // 生成完整的运行时代码
+    static std::string generateFullRuntime();
+};
+
+} // namespace CHTLJSExtensions
 
 } // namespace chtl
 

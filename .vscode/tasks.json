@@ -1,0 +1,182 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "${workspaceFolder}",
+                "-B",
+                "${workspaceFolder}/build",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "配置CMake项目"
+        },
+        {
+            "label": "CMake: Build All",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/build",
+                "--parallel",
+                "$(nproc)"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "构建所有目标",
+            "dependsOn": ["CMake: Configure"]
+        },
+        {
+            "label": "Generate Parsers",
+            "type": "shell",
+            "command": "make",
+            "args": ["generate-parsers"],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "生成ANTLR4解析器"
+        },
+        {
+            "label": "Build CHTL Compiler",
+            "type": "shell",
+            "command": "make",
+            "args": ["chtlc"],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "构建CHTL编译器"
+        },
+        {
+            "label": "Build IDE",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/ide/build",
+                "--target",
+                "chtl-ide"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "构建CHTL IDE",
+            "dependsOn": ["Configure IDE"]
+        },
+        {
+            "label": "Configure IDE",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "${workspaceFolder}/ide",
+                "-B",
+                "${workspaceFolder}/ide/build",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/ide"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "配置IDE项目"
+        },
+        {
+            "label": "Pack Modules",
+            "type": "shell",
+            "command": "make",
+            "args": ["pack-modules"],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "打包CHTL模块"
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "rm",
+            "args": ["-rf", "build"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "清理构建目录"
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "ctest",
+            "args": ["--verbose"],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "test",
+            "problemMatcher": [],
+            "detail": "运行所有测试"
+        },
+        {
+            "label": "Compile Current CHTL File",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/bin/chtlc",
+            "args": [
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.html"
+            ],
+            "group": "build",
+            "problemMatcher": {
+                "owner": "chtl",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            },
+            "detail": "编译当前CHTL文件",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Format C++ Code",
+            "type": "shell",
+            "command": "find",
+            "args": [
+                "${workspaceFolder}/src",
+                "-name",
+                "*.cpp",
+                "-o",
+                "-name",
+                "*.h",
+                "|",
+                "xargs",
+                "clang-format",
+                "-i"
+            ],
+            "group": "none",
+            "problemMatcher": [],
+            "detail": "格式化所有C++代码"
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "CHTL Compiler"
+        },
+        {
+            "path": "ide",
+            "name": "CHTL IDE"
+        },
+        {
+            "path": "module",
+            "name": "CHTL Modules"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/build": false,
+            "**/generated": false
+        },
+        "cmake.sourceDirectory": "${workspaceFolder:CHTL Compiler}",
+        "cmake.buildDirectory": "${workspaceFolder:CHTL Compiler}/build"
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [],
+        "compounds": []
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.cmake-tools",
+            "ms-vscode.cpptools",
+            "twxs.cmake"
+        ]
+    }
+}

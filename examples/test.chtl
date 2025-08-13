@@ -1,0 +1,199 @@
+// CHTL示例文件 - 用于测试VSCode环境
+// 导入珂朵莉模块
+[Import] @Chtl from Chtholly
+
+// 定义页面命名空间
+[Namespace] ExamplePage
+
+// 创建一个卡片模板
+[Template] @Element ExampleCard
+{
+    div
+    {
+        style
+        {
+            @Style Chtholly.FairyCard;
+            margin: Chtholly.ChthollysSpacing(md);
+            
+            .card-content
+            {
+                padding: Chtholly.ChthollysSpacing(lg);
+            }
+            
+            &:hover
+            {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                transform: translateY(-2px);
+                transition: all 0.3s ease;
+            }
+        }
+        
+        div
+        {
+            class: "card-content";
+            slot;  -- 插槽内容
+        }
+    }
+}
+
+// 主页面结构
+html
+{
+    head
+    {
+        meta { charset: "UTF-8"; }
+        meta { name: "viewport"; content: "width=device-width, initial-scale=1.0"; }
+        title: "CHTL VSCode 示例";
+        
+        -- 全局样式
+        style
+        {
+            * {
+                @Style Chtholly.ChthollysBase;
+                box-sizing: border-box;
+            }
+            
+            body {
+                background: Chtholly.ChthollysColors(backgroundColor);
+                font-family: Chtholly.ChthollysTypography(fontFamily);
+                line-height: Chtholly.ChthollysTypography(lineHeight);
+                margin: 0;
+                padding: Chtholly.ChthollysSpacing(xl);
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+    }
+    
+    body
+    {
+        div
+        {
+            class: "container";
+            
+            -- 页面标题
+            h1
+            {
+                style 
+                { 
+                    @Style Chtholly.ChthollysH1;
+                    text-align: center;
+                    margin-bottom: Chtholly.ChthollysSpacing(xl);
+                }
+                text { "CHTL VSCode 开发环境" }
+            }
+            
+            -- 使用卡片模板
+            @Element ExampleCard from ExamplePage
+            {
+                h2 
+                { 
+                    style { @Style Chtholly.ChthollysH2; }
+                    text { "功能特性" }
+                }
+                
+                ul
+                {
+                    style { @Style Chtholly.FairyList; }
+                    
+                    li { text { "完整的语法高亮支持" } }
+                    li { text { "智能代码补全" } }
+                    li { text { "一键编译运行（F6）" } }
+                    li { text { "集成调试功能（F5）" } }
+                    li { text { "模块自动打包（F8）" } }
+                }
+            }
+            
+            -- 交互示例
+            div
+            {
+                style
+                {
+                    text-align: center;
+                    margin-top: Chtholly.ChthollysSpacing(xl);
+                }
+                
+                button
+                {
+                    style { @Style Chtholly.SenioriousPrimaryButton; }
+                    text { "点击测试" }
+                    
+                    script
+                    {
+                        {{button}}->listen({
+                            click: () => {
+                                alert('VSCode + CHTL 运行正常！');
+                            }
+                        });
+                    }
+                }
+                
+                button
+                {
+                    style 
+                    { 
+                        @Style Chtholly.SenioriousGhostButton;
+                        margin-left: Chtholly.ChthollysSpacing(md);
+                    }
+                    text { "动画效果" }
+                    
+                    script
+                    {
+                        let fadeIn = animate({
+                            duration: 300,
+                            easing: 'ease-in-out',
+                            begin: { opacity: 0, transform: 'scale(0.9)' },
+                            end: { opacity: 1, transform: 'scale(1)' }
+                        });
+                        
+                        {{button[1]}}->listen({
+                            click: () => {
+                                fadeIn({{.card-content}});
+                            }
+                        });
+                    }
+                }
+            }
+            
+            -- 代码展示
+            @Element ExampleCard from ExamplePage
+            {
+                h3
+                {
+                    style { @Style Chtholly.ChthollysH3; }
+                    text { "CHTL 代码示例" }
+                }
+                
+                pre
+                {
+                    style
+                    {
+                        background: #f5f5f5;
+                        padding: Chtholly.ChthollysSpacing(md);
+                        border-radius: 4px;
+                        overflow-x: auto;
+                        font-family: 'Consolas', 'Monaco', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    code
+                    {
+                        text { 
+                            "// CHTL JS 增强语法\n" +
+                            "script {\n" +
+                            "    {{.button}}->listen({\n" +
+                            "        click: () => {\n" +
+                            "            console.log('Hello CHTL!');\n" +
+                            "        }\n" +
+                            "    });\n" +
+                            "}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

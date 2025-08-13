@@ -234,9 +234,9 @@
     @inherit ButtonBase;
     @use Colors;
     
-    background-color: var(Colors.primary);
-    border-color: var(Colors.primary);
-    color: var(Colors.white);
+    background-color: Colors(primary);
+    border-color: Colors(primary);
+    color: Colors(white);
     
     &:hover {
         background-color: #0056b3;
@@ -248,9 +248,9 @@
     @inherit ButtonBase;
     @use Colors;
     
-    background-color: var(Colors.secondary);
-    border-color: var(Colors.secondary);
-    color: var(Colors.white);
+    background-color: Colors(secondary);
+    border-color: Colors(secondary);
+    color: Colors(white);
     
     &:hover {
         background-color: #545b62;
@@ -263,12 +263,12 @@
     @use Colors;
     
     background-color: transparent;
-    border-color: var(Colors.{color});
-    color: var(Colors.{color});
+    border-color: Colors({color});
+    color: Colors({color});
     
     &:hover {
-        background-color: var(Colors.{color});
-        color: var(Colors.white);
+        background-color: Colors({color});
+        color: Colors(white);
     }
 }
 
@@ -495,7 +495,7 @@
 
 [Template] @Style TextMuted {
     @use Colors;
-    color: var(Colors.secondary) !important;
+    color: Colors(secondary) !important;
 }
 
 // ===== 间距工具 =====
@@ -503,21 +503,21 @@
     @use Spacing;
     
     if (direction == "all") {
-        margin: var(Spacing.{size});
+        margin: Spacing({size});
     } else if (direction == "x") {
-        margin-left: var(Spacing.{size});
-        margin-right: var(Spacing.{size});
+        margin-left: Spacing({size});
+        margin-right: Spacing({size});
     } else if (direction == "y") {
-        margin-top: var(Spacing.{size});
-        margin-bottom: var(Spacing.{size});
+        margin-top: Spacing({size});
+        margin-bottom: Spacing({size});
     } else if (direction == "top") {
-        margin-top: var(Spacing.{size});
+        margin-top: Spacing({size});
     } else if (direction == "bottom") {
-        margin-bottom: var(Spacing.{size});
+        margin-bottom: Spacing({size});
     } else if (direction == "left") {
-        margin-left: var(Spacing.{size});
+        margin-left: Spacing({size});
     } else if (direction == "right") {
-        margin-right: var(Spacing.{size});
+        margin-right: Spacing({size});
     }
 }
 
@@ -525,20 +525,20 @@
     @use Spacing;
     
     if (direction == "all") {
-        padding: var(Spacing.{size});
+        padding: Spacing({size});
     } else if (direction == "x") {
-        padding-left: var(Spacing.{size});
-        padding-right: var(Spacing.{size});
+        padding-left: Spacing({size});
+        padding-right: Spacing({size});
     } else if (direction == "y") {
-        padding-top: var(Spacing.{size});
-        padding-bottom: var(Spacing.{size});
+        padding-top: Spacing({size});
+        padding-bottom: Spacing({size});
     } else if (direction == "top") {
-        padding-top: var(Spacing.{size});
+        padding-top: Spacing({size});
     } else if (direction == "bottom") {
-        padding-bottom: var(Spacing.{size});
+        padding-bottom: Spacing({size});
     } else if (direction == "left") {
-        padding-left: var(Spacing.{size});
+        padding-left: Spacing({size});
     } else if (direction == "right") {
-        padding-right: var(Spacing.{size});
+        padding-right: Spacing({size});
     }
 }

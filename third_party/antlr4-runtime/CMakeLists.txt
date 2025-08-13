@@ -83,28 +83,11 @@ if(ANTLR4_BUILD_STATIC)
     )
 endif()
 
-# 导出配置
-install(EXPORT antlr4-targets
-    FILE antlr4-runtime-targets.cmake
-    NAMESPACE antlr4::
-    DESTINATION lib/cmake/antlr4-runtime
-)
-
-# 创建配置文件
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/antlr4-runtime-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-
-configure_file(cmake/antlr4-runtime-config.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/antlr4-runtime-config.cmake"
-    @ONLY
-)
-
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/antlr4-runtime-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/antlr4-runtime-config-version.cmake"
-    DESTINATION lib/cmake/antlr4-runtime
-)
+# 导出配置（简化版本）
+if(NOT CHTL_INTERNAL_BUILD)
+    install(EXPORT antlr4-targets
+        FILE antlr4-runtime-targets.cmake
+        NAMESPACE antlr4::
+        DESTINATION lib/cmake/antlr4-runtime
+    )
+endif()

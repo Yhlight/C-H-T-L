@@ -34,21 +34,19 @@ if exist "tools\antlr-4.13.1-complete.jar" (
     cd ..
 )
 
-rem Note about ANTLR4 runtime
-echo.
-echo [INFO] ANTLR4 Runtime for Windows:
-echo.
-echo For Windows builds, you have two options:
-echo.
-echo 1. Use prebuilt binaries (recommended):
-echo    - Download from: https://github.com/antlr/antlr4/releases
-echo    - Extract to: third_party\antlr4-runtime\
-echo.
-echo 2. Build from source:
-echo    - Install Visual Studio 2019 or later
-echo    - Install CMake
-echo    - Run: third_party\antlr4-runtime\build_windows.bat
-echo.
+rem Download ANTLR4 runtime source if not present
+if exist "third_party\antlr4-runtime\src" (
+    echo [INFO] ANTLR4 runtime source already present
+) else (
+    echo [INFO] Downloading ANTLR4 runtime source...
+    cd third_party\antlr4-runtime
+    call download_source.bat
+    if errorlevel 1 (
+        echo [ERROR] Failed to download ANTLR4 runtime source
+        exit /b 1
+    )
+    cd ..\..
+)
 
 rem Generate parsers
 if exist "generated\css" if exist "generated\js" (

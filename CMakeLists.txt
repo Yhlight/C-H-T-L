@@ -21,7 +21,22 @@ find_package(Threads REQUIRED)
 find_package(Java QUIET COMPONENTS Runtime)
 
 # ANTLR4运行时 - 使用内置版本
-if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/lib")
+if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/src")
+    # 使用简化的CMakeLists.txt从源码构建
+    if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/CMakeLists.txt.simple")
+        # 复制简化版作为主CMakeLists.txt
+        configure_file(
+            "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/CMakeLists.txt.simple"
+            "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/CMakeLists.txt"
+            COPYONLY
+        )
+    endif()
+    
+    # 设置标志以避免复杂的安装配置
+    set(CHTL_INTERNAL_BUILD ON)
+    add_subdirectory(third_party/antlr4-runtime)
+    set(ANTLR4_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/src")
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/lib")
     # 使用预构建的ANTLR4运行时
     set(ANTLR4_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/include")
     
@@ -33,23 +48,17 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/lib")
     )
     
     if(NOT ANTLR4_RUNTIME_LIB)
-        message(FATAL_ERROR "ANTLR4 runtime library not found. Please run: cd third_party/antlr4-runtime && ./download_and_build.sh")
+        message(FATAL_ERROR "ANTLR4 runtime library not found.")
     endif()
     
     # 创建导入目标
-    add_library(antlr4-runtime SHARED IMPORTED)
+    add_library(antlr4-runtime STATIC IMPORTED)
     set_target_properties(antlr4-runtime PROPERTIES
         IMPORTED_LOCATION "${ANTLR4_RUNTIME_LIB}"
         INTERFACE_INCLUDE_DIRECTORIES "${ANTLR4_INCLUDE_DIR}"
     )
 else()
-    # 尝试从源代码构建
-    if(EXISTS "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/CMakeLists.txt")
-        add_subdirectory(third_party/antlr4-runtime)
-        set(ANTLR4_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/antlr4-runtime/src")
-    else()
-        message(FATAL_ERROR "ANTLR4 runtime not found. Please run: cd third_party/antlr4-runtime && ./download_and_build.sh")
-    endif()
+    message(FATAL_ERROR "ANTLR4 runtime not found. Please run setup_dependencies script first.")
 endif()
 
 # 检查ANTLR工具（用于生成解析器）

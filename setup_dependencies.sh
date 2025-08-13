@@ -35,21 +35,25 @@ echo "CHTL Dependencies Setup"
 echo "========================================"
 echo
 
-# Check if ANTLR4 is already set up
-if [ -f "third_party/antlr4-runtime/lib/libantlr4-runtime.a" ] || [ -f "third_party/antlr4-runtime/lib/libantlr4-runtime.so" ] || [ -f "third_party/antlr4-runtime/lib/libantlr4-runtime.dylib" ]; then
-    print_info "ANTLR4 runtime is already set up"
+# Check if ANTLR4 source is present
+if [ -d "third_party/antlr4-runtime/src" ]; then
+    print_info "ANTLR4 runtime source already present"
 else
-    print_info "Setting up ANTLR4 runtime..."
+    print_info "Downloading ANTLR4 runtime source..."
     
     # Make script executable
-    chmod +x third_party/antlr4-runtime/download_and_build.sh
+    chmod +x third_party/antlr4-runtime/download_source.sh
     
-    # Run the download and build script
+    # Run the download script
     cd third_party/antlr4-runtime
-    ./download_and_build.sh
+    ./download_source.sh
+    if [ $? -ne 0 ]; then
+        print_error "Failed to download ANTLR4 runtime source"
+        exit 1
+    fi
     cd "$SCRIPT_DIR"
     
-    print_success "ANTLR4 runtime setup completed"
+    print_success "ANTLR4 runtime source downloaded"
 fi
 
 # Check if ANTLR4 JAR exists

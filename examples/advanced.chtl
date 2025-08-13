@@ -1,0 +1,497 @@
+[Template] @Style Button
+{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+[Template] @Style Card
+{
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 10px;
+}
+
+[Template] @Element Navigation
+{
+    nav
+    {
+        class: navigation;
+        
+        style
+        {
+            .navigation
+            {
+                background-color: #333;
+                padding: 15px 0;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }
+            
+            .nav-list
+            {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+            }
+            
+            .nav-item
+            {
+                margin: 0;
+            }
+            
+            .nav-link
+            {
+                @Style Button;
+                color: white;
+                text-decoration: none;
+                background-color: transparent;
+                border: 1px solid transparent;
+            }
+            
+            .nav-link:hover
+            {
+                background-color: white;
+                color: #333;
+                border-color: white;
+            }
+        }
+        
+        ul
+        {
+            class: nav-list;
+            
+            li
+            {
+                class: nav-item;
+                
+                a
+                {
+                    class: nav-link;
+                    href: "#home";
+                    text
+                    {
+                        首页
+                    }
+                }
+            }
+            
+            li
+            {
+                class: nav-item;
+                
+                a
+                {
+                    class: nav-link;
+                    href: "#about";
+                    text
+                    {
+                        关于
+                    }
+                }
+            }
+            
+            li
+            {
+                class: nav-item;
+                
+                a
+                {
+                    class: nav-link;
+                    href: "#contact";
+                    text
+                    {
+                        联系
+                    }
+                }
+            }
+        }
+    }
+}
+
+[Template] @Element Hero
+{
+    section
+    {
+        class: hero;
+        
+        style
+        {
+            .hero
+            {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-align: center;
+                padding: 80px 20px;
+                min-height: 60vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .hero-content
+            {
+                max-width: 800px;
+            }
+            
+            .hero-title
+            {
+                font-size: 3rem;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+            
+            .hero-subtitle
+            {
+                font-size: 1.5rem;
+                margin-bottom: 30px;
+                opacity: 0.9;
+            }
+            
+            .hero-button
+            {
+                @Style Button;
+                background-color: white;
+                color: #667eea;
+                font-size: 18px;
+                padding: 15px 30px;
+            }
+            
+            .hero-button:hover
+            {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+        }
+        
+        div
+        {
+            class: hero-content;
+            
+            h1
+            {
+                class: hero-title;
+                text
+                {
+                    CHTL编译器演示
+                }
+            }
+            
+            p
+            {
+                class: hero-subtitle;
+                text
+                {
+                    基于ANTLR4实现的强大超文本语言编译器
+                }
+            }
+            
+            button
+            {
+                class: hero-button;
+                text
+                {
+                    开始使用
+                }
+            }
+        }
+    }
+}
+
+[Template] @Element FeatureCard
+{
+    div
+    {
+        class: feature-card;
+        
+        style
+        {
+            .feature-card
+            {
+                @Style Card;
+                text-align: center;
+                transition: transform 0.3s ease;
+            }
+            
+            .feature-card:hover
+            {
+                transform: translateY(-5px);
+            }
+            
+            .feature-icon
+            {
+                font-size: 3rem;
+                margin-bottom: 20px;
+                color: #667eea;
+            }
+            
+            .feature-title
+            {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+                color: #333;
+            }
+            
+            .feature-description
+            {
+                color: #666;
+                line-height: 1.6;
+            }
+        }
+        
+        div
+        {
+            class: feature-icon;
+            text
+            {
+                🚀
+            }
+        }
+        
+        h3
+        {
+            class: feature-title;
+            text
+            {
+                高性能
+            }
+        }
+        
+        p
+        {
+            class: feature-description;
+            text
+                CHTL编译器采用状态机和上下文推导技术，提供高效的代码解析和生成能力。
+            }
+        }
+    }
+}
+
+html
+{
+    head
+    {
+        meta
+        {
+            charset: utf-8;
+        }
+        
+        meta
+        {
+            name: viewport;
+            content: width=device-width, initial-scale=1.0;
+        }
+        
+        title
+        {
+            text
+            {
+                CHTL编译器 - 高级演示
+            }
+        }
+        
+        style
+        {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                line-height: 1.6;
+                color: #333;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+                padding: 60px 0;
+            }
+            
+            .footer {
+                background-color: #333;
+                color: white;
+                text-align: center;
+                padding: 40px 0;
+                margin-top: 60px;
+            }
+        }
+    }
+    
+    body
+    {
+        @Element Navigation;
+        
+        @Element Hero;
+        
+        main
+        {
+            class: container;
+            
+            section
+            {
+                class: features;
+                
+                h2
+                {
+                    text-align: center;
+                    font-size: 2.5rem;
+                    margin: 60px 0 40px 0;
+                    color: #333;
+                }
+                
+                div
+                {
+                    class: features-grid;
+                    
+                    @Element FeatureCard;
+                    
+                    div
+                    {
+                        class: feature-card;
+                        
+                        div
+                        {
+                            class: feature-icon;
+                            text
+                            {
+                                🎨
+                            }
+                        }
+                        
+                        h3
+                        {
+                            class: feature-title;
+                            text
+                            {
+                                灵活样式
+                            }
+                        }
+                        
+                        p
+                        {
+                            class: feature-description;
+                            text
+                            {
+                                支持局部样式块和上下文推导，让样式管理更加灵活和高效。
+                            }
+                        }
+                    }
+                    
+                    div
+                    {
+                        class: feature-card;
+                        
+                        div
+                        {
+                            class: feature-icon;
+                            text
+                            {
+                                ⚡
+                            }
+                        }
+                        
+                        h3
+                        {
+                            class: feature-title;
+                            text
+                            {
+                                智能编译
+                            }
+                        }
+                        
+                        p
+                        {
+                            class: feature-description;
+                            text
+                            {
+                                基于状态机的智能解析，自动生成优化的HTML、CSS和JavaScript代码。
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        footer
+        {
+            class: footer;
+            
+            p
+            {
+                text
+                {
+                    © 2024 CHTL编译器. 基于ANTLR4构建，支持现代Web开发需求。
+                }
+            }
+        }
+        
+        script
+        {
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('.navigation');
+                if (window.scrollY > 100) {
+                    nav.style.backgroundColor = 'rgba(51, 51, 51, 0.95)';
+                } else {
+                    nav.style.backgroundColor = '#333';
+                }
+            });
+            
+            // 特性卡片动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        }
+    }
+}

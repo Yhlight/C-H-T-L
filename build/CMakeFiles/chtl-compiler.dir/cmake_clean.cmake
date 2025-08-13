@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/chtl-compiler.dir/link.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/compiler/Compiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/compiler/Compiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/css/CSSCompiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/css/CSSCompiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/js/JavaScriptCompiler.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/js/JavaScriptCompiler.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/main.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/main.cpp.o.d"
+  "CMakeFiles/chtl-compiler.dir/src/scanner/CodeScanner.cpp.o"
+  "CMakeFiles/chtl-compiler.dir/src/scanner/CodeScanner.cpp.o.d"
+  "chtl-compiler"
+  "chtl-compiler.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/chtl-compiler.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

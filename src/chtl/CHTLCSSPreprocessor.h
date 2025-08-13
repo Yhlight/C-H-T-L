@@ -216,21 +216,7 @@ private:
     bool isDimensionProperty(const std::string& property);
     bool isFontProperty(const std::string& property);
     
-private:
-    // 选择器分析辅助方法
-    void analyzeSelectorType(const std::string& selector);
-    void calculateSpecificity(const std::string& selector);
-    void analyzeStyleGroupReference(const std::string& selector);
-    void analyzeEnhancedSelector(const std::string& selector);
-    
-    // 声明分析辅助方法
-    void analyzePropertyType(const std::string& property, const std::string& value);
-    void analyzeVariableReference(const std::string& property, const std::string& value);
-    void analyzeComputedValue(const std::string& property, const std::string& value);
-    
-    // 媒体查询分析辅助方法
-    void analyzeMediaCondition(const std::string& condition);
-    void analyzeBreakpoints(const std::string& condition);
+
 };
 
 } // namespace chtl

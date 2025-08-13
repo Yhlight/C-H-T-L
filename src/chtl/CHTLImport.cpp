@@ -10,6 +10,7 @@
 #include <sstream>
 #include <regex>
 #include <algorithm>
+#include "CHTLCJMOD.h"
 
 namespace chtl {
 
@@ -321,12 +322,50 @@ bool ImportProcessor::processJavaScriptImport(const ImportDeclaration& decl) {
 }
 
 bool ImportProcessor::processChtlImport(const std::string& path) {
-    // 如果路径包含点号，可能是CMOD子模块引用
-    if (path.find('.') != std::string::npos && !path.ends_with(".chtl")) {
-        // 这是一个模块引用，如 Chtholly 或 Chtholly.Space
+    // 处理模块导入（不含路径分隔符的情况）
+    if (path.find('/') == std::string::npos && path.find('\\') == std::string::npos && !path.ends_with(".chtl")) {
+        // 这是一个模块引用，如 Chtholly
         if (manager.cmodManager) {
-            CMODProcessor cmodProcessor(*manager.cmodManager, generator);
-            return cmodProcessor.processCMODImport(path);
+            // 在module目录中查找模块
+            std::filesystem::path moduleBase = manager.pathConfig.moduleDirectory / path;
+            
+            // 检查是否是混合模块结构
+            std::filesystem::path cmodPath = moduleBase / "CMOD" / path;
+            if (std::filesystem::exists(cmodPath) && std::filesystem::is_directory(cmodPath)) {
+                // 混合模块，加载CMOD部分
+                CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+                return cmodProcessor.processCMODImport(cmodPath.string());
+            }
+            
+            // 检查是否是直接的CMOD模块
+            if (std::filesystem::exists(moduleBase / "src") && std::filesystem::exists(moduleBase / "info")) {
+                CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+                return cmodProcessor.processCMODImport(moduleBase.string());
+            }
+            
+            // 尝试查找已打包的.cmod文件
+            std::filesystem::path cmodFile = manager.pathConfig.moduleDirectory / (path + ".cmod");
+            if (std::filesystem::exists(cmodFile)) {
+                CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+                return cmodProcessor.processCMODImport(cmodFile.string());
+            }
+        }
+    }
+    
+    // 处理子模块导入（使用点号分隔）
+    if (path.find('.') != std::string::npos && !path.ends_with(".chtl")) {
+        // 将点号转换为路径分隔符
+        std::string modulePath = path;
+        std::replace(modulePath.begin(), modulePath.end(), '.', '/');
+        
+        if (manager.cmodManager) {
+            std::filesystem::path moduleBase = manager.pathConfig.moduleDirectory / modulePath;
+            
+            // 检查子模块路径
+            if (std::filesystem::exists(moduleBase / "src") && std::filesystem::exists(moduleBase / "info")) {
+                CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+                return cmodProcessor.processCMODImport(moduleBase.string());
+            }
         }
     }
     
@@ -343,56 +382,138 @@ bool ImportProcessor::processChtlImport(const std::string& path) {
         return false;
     }
     
-    // 使用Scanner-Parser集成解析CHTL文件
-    scanner::ScannerParserIntegration integration(context);
-    auto parseResult = integration.parse(content);
+    // 使用扫描器处理CHTL文件
+    auto scanner = std::make_shared<ScannerParserIntegration>();
+    CHTLImportVisitor visitor(manager);
     
-    if (!parseResult.success) {
-        std::cerr << "Failed to parse imported CHTL file: " << path << std::endl;
-        std::cerr << parseResult.errorMessage << std::endl;
+    try {
+        scanner->parseFile(filePath, content);
+        scanner->accept(&visitor);
+        
+        // 将解析的内容添加到生成器
+        if (visitor.hasContent()) {
+            generator.addImportedContent(visitor.getGeneratedContent());
+        }
+        
+        // 处理嵌套的导入
+        for (const auto& nestedImport : visitor.getImports()) {
+            ImportDeclaration nestedDecl = ImportHelper::parseImportStatement(nestedImport);
+            if (!manager.processImport(nestedDecl, generator)) {
+                return false;
+            }
+        }
+    } catch (const std::exception& e) {
+        manager.context->reportError("Failed to parse imported CHTL file: " + std::string(e.what()));
         return false;
-    }
-    
-    // 创建访问器来提取定义
-    CHTLImportVisitor visitor(context, nameMapping);
-    
-    if (parseResult.chtlTree) {
-        visitor.visit(parseResult.chtlTree);
-        
-        // 获取提取的定义
-        auto templates = visitor.getTemplates();
-        auto customs = visitor.getCustoms();
-        
-        // 注册到管理器
-        auto& templateMgr = context->getTemplateManager();
-        auto& customMgr = context->getCustomManager();
-        
-        for (const auto& [name, tmpl] : templates) {
-            templateMgr.registerTemplate(name, tmpl);
-        }
-        
-        for (const auto& [name, custom] : customs) {
-            customMgr.registerCustom(name, custom);
-        }
     }
     
     return true;
 }
 
 bool ImportProcessor::processCjmodImport(const std::string& path) {
-    // 使用CMOD管理器处理.cjmod文件
-    if (manager.cmodManager) {
-        // .cjmod是编译后的CMOD文件
-        std::string moduleName = path;
-        if (moduleName.ends_with(".cjmod")) {
-            moduleName = moduleName.substr(0, moduleName.length() - 6);
+    // 处理CJMOD模块导入
+    if (path.find('/') == std::string::npos && path.find('\\') == std::string::npos && !path.ends_with(".cjmod")) {
+        // 这是一个模块引用，如 Chtholly
+        if (manager.cjmodManager) {
+            // 在module目录中查找模块
+            std::filesystem::path moduleBase = manager.pathConfig.moduleDirectory / path;
+            
+            // 检查是否是混合模块结构
+            std::filesystem::path cjmodPath = moduleBase / "CJMOD" / path;
+            if (std::filesystem::exists(cjmodPath) && std::filesystem::is_directory(cjmodPath)) {
+                // 混合模块，加载CJMOD部分
+                // 使用CJMOD管理器直接加载模块
+                auto module = std::make_shared<CJMODModule>(path, cjmodPath);
+                if (manager.cjmodManager->loadModule(module)) {
+                    manager.cjmodManager->registerModule(path, module);
+                    return true;
+                }
+                return false;
+            }
+            
+            // 检查是否是直接的CJMOD模块（包含C++源文件）
+            if (std::filesystem::exists(moduleBase / "src")) {
+                bool hasCppFiles = false;
+                for (const auto& entry : std::filesystem::directory_iterator(moduleBase / "src")) {
+                    if (entry.path().extension() == ".cpp" || 
+                        entry.path().extension() == ".cc" ||
+                        entry.path().extension() == ".cxx") {
+                        hasCppFiles = true;
+                        break;
+                    }
+                }
+                
+                if (hasCppFiles && std::filesystem::exists(moduleBase / "info")) {
+                    auto module = std::make_shared<CJMODModule>(path, moduleBase);
+                    if (manager.cjmodManager->loadModule(module)) {
+                        manager.cjmodManager->registerModule(path, module);
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            
+            // 尝试查找已打包的.cjmod文件
+            std::filesystem::path cjmodFile = manager.pathConfig.moduleDirectory / (path + ".cjmod");
+            if (std::filesystem::exists(cjmodFile)) {
+                auto module = std::make_shared<CJMODModule>(path, cjmodFile);
+                if (module->loadFromCJMODFile(cjmodFile, manager.pathConfig.moduleDirectory / "cjmod_extracted" / path)) {
+                    manager.cjmodManager->registerModule(path, module);
+                    return true;
+                }
+                return false;
+            }
         }
-        
-        CMODProcessor cmodProcessor(*manager.cmodManager, generator);
-        return cmodProcessor.processCMODImport(moduleName);
     }
     
-    manager.context->reportError("CMOD manager not available for .cjmod import");
+    // 处理子模块导入（使用点号分隔）
+    if (path.find('.') != std::string::npos && !path.ends_with(".cjmod")) {
+        // 将点号转换为路径分隔符
+        std::string modulePath = path;
+        std::replace(modulePath.begin(), modulePath.end(), '.', '/');
+        
+        if (manager.cjmodManager) {
+            std::filesystem::path moduleBase = manager.pathConfig.moduleDirectory / modulePath;
+            
+            // 检查子模块路径（CJMOD）
+            bool hasCppFiles = false;
+            if (std::filesystem::exists(moduleBase / "src")) {
+                for (const auto& entry : std::filesystem::directory_iterator(moduleBase / "src")) {
+                    if (entry.path().extension() == ".cpp" || 
+                        entry.path().extension() == ".cc" ||
+                        entry.path().extension() == ".cxx") {
+                        hasCppFiles = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (hasCppFiles && std::filesystem::exists(moduleBase / "info")) {
+                // 使用原始路径作为模块名（保留点号）
+                auto module = std::make_shared<CJMODModule>(path, moduleBase);
+                if (manager.cjmodManager->loadModule(module)) {
+                    manager.cjmodManager->registerModule(path, module);
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+    
+    // 处理直接的.cjmod文件路径
+    if (path.ends_with(".cjmod")) {
+        if (manager.cjmodManager) {
+            std::string moduleName = std::filesystem::path(path).stem().string();
+            auto module = std::make_shared<CJMODModule>(moduleName, path);
+            if (module->loadFromCJMODFile(path, manager.pathConfig.moduleDirectory / "cjmod_extracted" / moduleName)) {
+                manager.cjmodManager->registerModule(moduleName, module);
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    manager.context->reportError("CJMOD module not found: " + path);
     return false;
 }
 

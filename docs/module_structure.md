@@ -1,139 +1,171 @@
-# CHTL模块结构说明
+# CHTL 模块结构说明
 
 ## 模块类型
 
-CHTL支持两种模块类型：
+CHTL 支持三种模块类型：
 
-### 1. CMOD (CHTL Module)
-纯CHTL模块，只包含`.chtl`文件，用于提供：
-- UI组件
-- 样式定义
-- 模板
-- 变量组
-
-### 2. CJMOD (CHTL JavaScript Module)
-C++扩展模块，包含`.cpp`和`.h`文件，用于：
-- 扩展CHTL JS语法
-- 提供高性能功能
-- 实现底层操作
-
-## 模块结构规范
-
-### 单一类型模块
-
-#### CMOD结构
+### 1. 纯 CMOD 模块（CHTL 组件）
 ```
 ModuleName/
 ├── src/
 │   └── ModuleName.chtl    # 主模块文件
 └── info/
-    └── ModuleName.chtl    # 模块信息文件
+    └── ModuleName.chtl    # 模块信息
 ```
 
-#### CJMOD结构
+### 2. 纯 CJMOD 模块（JavaScript 扩展）
 ```
 ModuleName/
 ├── src/
-│   ├── *.cpp             # C++源文件
-│   └── *.h               # C++头文件
+│   └── modulename.cpp     # C++ 实现
 └── info/
-    └── ModuleName.chtl    # 模块信息文件
+    └── ModuleName.chtl    # 模块信息
 ```
 
-### 混合模块（CMOD + CJMOD）
-
-当模块需要同时提供CHTL组件和JS扩展时：
-
+### 3. 混合模块（CMOD + CJMOD）
 ```
 ModuleName/
-├── CMOD/
+├── CMOD/                  # CHTL 组件部分
 │   └── ModuleName/
 │       ├── src/
 │       │   └── ModuleName.chtl
 │       └── info/
 │           └── ModuleName.chtl
-└── CJMOD/
+└── CJMOD/                 # JavaScript 扩展部分
     └── ModuleName/
         ├── src/
-        │   ├── *.cpp
-        │   └── *.h
+        │   └── modulename.cpp
         └── info/
             └── ModuleName.chtl
 ```
 
-### 带子模块的结构
+## 导入语法
+
+### 基本导入
+
+```chtl
+-- 导入 CMOD（CHTL 组件）
+[Import] @Chtl from ModuleName
+
+-- 导入 CJMOD（JavaScript 扩展）
+[Import] @CJmod from ModuleName
+
+-- 导入子模块（使用点号分隔）
+[Import] @Chtl from UIKit.Button
+[Import] @CJmod from Utils.Math
+
+-- 导入嵌套文件夹的模块（使用斜杠）
+[Import] @Chtl from Chtl/Core
+[Import] @CJmod from Tools/Parser
+```
+
+### 导入规则
+
+1. **模块名解析**：
+   - 不带路径分隔符的名称（如 `Chtholly`）被视为模块名
+   - 系统会在 `module/` 目录下查找对应的模块
+
+2. **混合模块处理**：
+   - 使用 `@Chtl` 导入时，只加载 CMOD 部分
+   - 使用 `@CJmod` 导入时，只加载 CJMOD 部分
+   - 不会自动同时加载两部分
+
+3. **子模块支持**：
+   - 使用点号（`.`）表示子模块关系
+   - 例如：`UIKit.Button` 会查找 `module/UIKit/Button/`
+
+4. **路径转换**：
+   - 点号（`.`）会转换为路径分隔符
+   - 例如：`Chtl.Core` → `module/Chtl/Core/`
+
+## 模块示例
+
+### 示例 1：珂朵莉模块（混合模块）
 
 ```
-UIKit/
+module/Chtholly/
+├── CMOD/Chtholly/         # UI 组件
+│   ├── src/
+│   │   └── Chtholly.chtl  # 样式、元素定义
+│   └── info/
+│       └── Chtholly.chtl
+└── CJMOD/Chtholly/        # JS 扩展
+    ├── src/
+    │   └── chtholly.cpp   # 动画函数实现
+    └── info/
+        └── Chtholly.chtl
+```
+
+使用方式：
+```chtl
+-- 只导入 UI 组件
+[Import] @Chtl from Chtholly
+
+-- 只导入 JS 扩展
+[Import] @CJmod from Chtholly
+
+-- 在 CHTL 中使用
+body {
+    @Element ChthollysCard from Chtholly;
+}
+
+-- 在 script 中使用
+script {
+    // CJMOD 函数自动可用
+    fadeIn({{.card}}, 500);
+}
+```
+
+### 示例 2：带子模块的结构
+
+```
+module/UIKit/
 └── CMOD/
     ├── Button/
     │   ├── src/
     │   │   └── Button.chtl
     │   └── info/
     │       └── Button.chtl
-    ├── Card/
+    ├── Form/
     │   ├── src/
-    │   │   └── Card.chtl
+    │   │   └── Form.chtl
     │   └── info/
-    │       └── Card.chtl
-    └── Modal/
+    │       └── Form.chtl
+    └── Layout/
         ├── src/
-        │   └── Modal.chtl
+        │   └── Layout.chtl
         └── info/
-            └── Modal.chtl
+            └── Layout.chtl
 ```
-
-## 使用方式
-
-### 导入CMOD
-```chtl
-// 导入整个CMOD模块
-[Import] @Chtl ModuleName
-
-// 导入子模块（使用点号分隔）
-[Import] @Chtl UIKit.Button
-
-// 导入嵌套文件夹的模块
-[Import] @Chtl Chtl/Core
-```
-
-### 导入CJMOD
-```chtl
-// 导入CJMOD模块
-[Import] @CJmod ModuleName
-
-// 导入混合模块的CJMOD部分
-[Import] @CJmod Chtholly
-```
-
-## 重要说明
-
-1. **命名一致性**：模块文件夹、主文件、info文件必须同名
-2. **类型分离**：CHTL不会统一处理CMOD和CJMOD，需要分别导入
-3. **info文件中的name字段**：不决定实际使用的名称，实际名称由文件夹/文件名决定
-4. **导入语法**：支持无修饰字符串，不需要引号
-5. **路径分隔**：使用 `/` 表示文件夹嵌套，使用 `.` 表示子模块
-
-## 示例
-
-### Chtl/Core（纯CMOD）
-提供CHTL标准库功能：
-- 基础样式重置
-- 布局工具
-- 常用组件
 
 使用方式：
 ```chtl
-[Import] @Chtl Chtl/Core
+-- 导入特定子模块
+[Import] @Chtl from UIKit.Button
+[Import] @Chtl from UIKit.Form
+[Import] @Chtl from UIKit.Layout
+
+-- 使用导入的组件
+@Element Button from UIKit.Button;
+@Element Form from UIKit.Form;
+@Style FlexLayout from UIKit.Layout;
 ```
 
-### Chtholly（混合模块）
-- **CMOD部分**：提供珂朵莉主题UI组件
-- **CJMOD部分**：提供动画和交互的JS扩展
+## 最佳实践
 
-### UIKit（带子模块的CMOD）
-包含多个独立的UI组件：
-- Button
-- Card  
-- Modal
-等等
+1. **模块命名**：
+   - 使用 PascalCase 命名模块
+   - 子模块名应该反映其功能
+
+2. **目录结构**：
+   - 保持 CMOD 和 CJMOD 分离
+   - 每个模块都应有完整的 info 文件
+
+3. **导入策略**：
+   - 只导入需要的部分（CMOD 或 CJMOD）
+   - 避免循环依赖
+   - 使用明确的模块路径
+
+4. **版本兼容**：
+   - 在 info 文件中指定兼容的 CHTL 版本
+   - 保持向后兼容性

@@ -34,16 +34,20 @@ python scripts/build.py --type Release --install
 
 **Linux/macOS:**
 ```bash
-./scripts/build_compiler.sh
+# 使用便捷脚本
+./build.sh --type Release
+
+# 或使用特定脚本
+./scripts/build/build_compiler.sh
 ```
 
 **Windows:**
 ```cmd
 # 首次使用请运行（需要管理员权限）
-scripts\setup-windows.bat
+scripts\platform\windows\setup-windows.bat
 
-# 构建
-scripts\build.bat --type Release
+# 使用便捷脚本构建
+build.bat --type Release
 ```
 
 ### 使用包管理器

@@ -18,8 +18,8 @@ CHTL 提供了两套脚本系统：
 
 跨平台的 Python 脚本，在所有平台上提供一致的体验：
 
-- `scripts/build.py` - 构建脚本
-- `scripts/pack.py` - 打包脚本
+- `scripts/cross-platform/build.py` - 构建脚本
+- `scripts/cross-platform/pack.py` - 打包脚本
 
 ### 2. 平台特定脚本
 
@@ -68,17 +68,17 @@ CHTL 提供了两套脚本系统：
 ### Windows 构建命令
 
 ```cmd
-# 使用批处理文件
-scripts\build.bat --type Release
+# 使用便捷脚本（推荐）
+build.bat --type Release
+pack.bat --all
 
 # 或直接使用 Python
-python scripts\build.py --type Release
+python build.py --type Release
+python pack.py --all
 
-# 打包模块
-scripts\pack.bat --all
-
-# 或
-python scripts\pack.py --all
+# 或使用完整路径
+scripts\platform\windows\build.bat --type Release
+python scripts\cross-platform\build.py --type Release
 ```
 
 ## Linux 开发环境设置

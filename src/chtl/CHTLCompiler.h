@@ -198,6 +198,10 @@ private:
     void processTextBlock(const std::string& line);
     void processScriptBlock(const std::string& line);
     
+    // HTML标签管理方法
+    void updateHTMLElement(const std::shared_ptr<CompilerContext>& context);
+    void closeElement();
+    
     // 模板和自定义处理
     void processTemplate(const std::string& line);
     void processCustom(const std::string& line);

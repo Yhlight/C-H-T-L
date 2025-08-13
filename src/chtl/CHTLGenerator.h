@@ -11,6 +11,7 @@
 #include "CHTLTemplate.h"  // 添加模板头文件
 #include "CHTLCustom.h"    // 添加自定义头文件
 #include "CHTLOrigin.h"    // 添加原始嵌入头文件
+#include "CHTLImport.h"    // 添加导入头文件
 
 namespace chtl {
 
@@ -46,6 +47,9 @@ private:
     
     // 原始嵌入管理器
     std::shared_ptr<OriginManager> originManager;
+    
+    // 导入管理器
+    std::shared_ptr<ImportManager> importManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -98,6 +102,10 @@ public:
     // 原始嵌入支持
     void setOriginManager(std::shared_ptr<OriginManager> mgr) { originManager = mgr; }
     std::shared_ptr<OriginManager> getOriginManager() const { return originManager; }
+    
+    // 导入支持
+    void setImportManager(std::shared_ptr<ImportManager> mgr) { importManager = mgr; }
+    std::shared_ptr<ImportManager> getImportManager() const { return importManager; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -179,6 +187,11 @@ public:
     // 原始嵌入处理
     void processOriginBlock(const std::string& declaration, const std::string& content);
     void useOriginBlock(const std::string& name);
+    
+    // 导入处理
+    void processImportStatement(const std::string& statement);
+    void processImports(const std::vector<std::string>& statements);
+    void configureImportPaths(const ImportPathConfig& config);
 };
 
 // 字面量处理器

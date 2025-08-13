@@ -13,6 +13,13 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     customManager = std::make_shared<CustomManager>(ctx, templateManager);
     // 创建原始嵌入管理器
     originManager = std::make_shared<OriginManager>(ctx);
+    // 创建导入管理器
+    importManager = std::make_shared<ImportManager>(ctx);
+    
+    // 设置管理器之间的引用
+    importManager->setTemplateManager(templateManager);
+    importManager->setCustomManager(customManager);
+    importManager->setOriginManager(originManager);
 }
 
 std::string CHTLGenerator::indent() const {
@@ -658,6 +665,46 @@ void CHTLGenerator::useOriginBlock(const std::string& name) {
     }
     
     originManager->useNamedOrigin(name, *this);
+}
+
+// 导入处理
+void CHTLGenerator::processImportStatement(const std::string& statement) {
+    if (!importManager) {
+        context->reportError("Import manager not initialized");
+        return;
+    }
+    
+    ImportProcessor processor(*importManager, *this);
+    ImportDeclaration decl = processor.parseImportStatement(statement);
+    
+    if (!importManager->processImport(decl, *this)) {
+        context->reportError("Failed to process import: " + statement);
+    }
+}
+
+void CHTLGenerator::processImports(const std::vector<std::string>& statements) {
+    if (!importManager) {
+        context->reportError("Import manager not initialized");
+        return;
+    }
+    
+    std::vector<ImportDeclaration> declarations;
+    ImportProcessor processor(*importManager, *this);
+    
+    for (const auto& statement : statements) {
+        declarations.push_back(processor.parseImportStatement(statement));
+    }
+    
+    importManager->processImports(declarations, *this);
+}
+
+void CHTLGenerator::configureImportPaths(const ImportPathConfig& config) {
+    if (!importManager) {
+        context->reportError("Import manager not initialized");
+        return;
+    }
+    
+    importManager->configurePaths(config);
 }
 
 } // namespace chtl

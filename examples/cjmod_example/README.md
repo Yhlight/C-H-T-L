@@ -32,7 +32,7 @@ chtl --pack-cjmod .
 
 ```chtl
 // 导入CJMOD
-[Import] @CJmod "MathUtils"
+[Import] @CJmod MathUtils
 
 script {
     // 创建数学工具实例

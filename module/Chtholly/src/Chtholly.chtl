@@ -1,0 +1,461 @@
+-- Chtholly Module: 致敬最幸福的女孩
+-- 基于《末日时在做什么？有没有空？可以来拯救吗？》中的珂朵莉·诺塔·瑟尼欧里斯
+
+[Namespace] Chtholly
+
+-- ===== 颜色主题 =====
+-- 基于珂朵莉的特征：蓝色头发、红色眼睛、白色服装
+
+[Template] @Var ChthollysColors
+{
+    -- 主要颜色
+    skyBlue: "#87CEEB";        -- 珂朵莉的天蓝色头发
+    crimsonRed: "#DC143C";     -- 珂朵莉的深红色眼睛
+    pureWhite: "#FAFAFA";      -- 纯白色
+    softGray: "#F5F5F5";       -- 柔和的灰色
+    
+    -- 情感色彩
+    happyYellow: "#FFD700";    -- 幸福的金黄色
+    gentlePink: "#FFB6C1";     -- 温柔的粉色
+    melancholyBlue: "#4682B4"; -- 忧郁的蓝色
+    
+    -- 功能色彩
+    primaryColor: "#87CEEB";   -- 主色调（天蓝色）
+    secondaryColor: "#DC143C"; -- 次要色调（深红色）
+    backgroundColor: "#FAFAFA"; -- 背景色
+    textColor: "#333333";      -- 文本色
+    borderColor: "#E0E0E0";    -- 边框色
+}
+
+-- ===== 字体样式 =====
+-- 优雅而温柔的字体设置
+
+[Template] @Var ChthollysTypography
+{
+    -- 字体家族
+    primaryFont: "'Noto Serif', 'Georgia', serif";           -- 主要字体（优雅的衬线体）
+    secondaryFont: "'Noto Sans', 'Arial', sans-serif";      -- 次要字体（清晰的无衬线体）
+    codeFont: "'Fira Code', 'Courier New', monospace";      -- 代码字体
+    
+    -- 字体大小
+    baseFontSize: "16px";
+    smallFontSize: "14px";
+    largeFontSize: "18px";
+    titleFontSize: "24px";
+    heroFontSize: "32px";
+    
+    -- 行高
+    baseLineHeight: "1.6";
+    tightLineHeight: "1.3";
+    looseLineHeight: "1.8";
+}
+
+-- ===== 间距系统 =====
+[Template] @Var ChthollysSpacing
+{
+    -- 基础间距
+    xs: "4px";
+    sm: "8px";
+    md: "16px";
+    lg: "24px";
+    xl: "32px";
+    xxl: "48px";
+    
+    -- 组件间距
+    buttonPadding: "12px 24px";
+    cardPadding: "20px";
+    sectionMargin: "40px";
+}
+
+-- ===== 基础样式组 =====
+
+[Template] @Style ChthollysBase
+{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: ChthollysTypography(primaryFont);
+    line-height: ChthollysTypography(baseLineHeight);
+    color: ChthollysColors(textColor);
+}
+
+-- ===== 按钮样式 =====
+-- 圣剑瑟尼欧里斯风格的按钮
+
+[Template] @Style SenioriousButton
+{
+    @Style ChthollysBase;
+    display: inline-block;
+    padding: ChthollysSpacing(buttonPadding);
+    background: linear-gradient(135deg, ChthollysColors(skyBlue), ChthollysColors(primaryColor));
+    color: ChthollysColors(pureWhite);
+    border: none;
+    border-radius: 25px;
+    font-size: ChthollysTypography(baseFontSize);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(135, 206, 235, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+[Custom] @Style SenioriousPrimaryButton
+{
+    @Style SenioriousButton;
+    background: linear-gradient(135deg, ChthollysColors(crimsonRed), #B22222);
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+}
+
+[Custom] @Style SenioriousGhostButton
+{
+    @Style SenioriousButton;
+    background: transparent;
+    color: ChthollysColors(primaryColor);
+    border: 2px solid ChthollysColors(primaryColor);
+    box-shadow: none;
+}
+
+-- ===== 卡片组件 =====
+-- 妖精兵风格的卡片
+
+[Template] @Style FairyCard
+{
+    @Style ChthollysBase;
+    background: ChthollysColors(pureWhite);
+    border-radius: 12px;
+    padding: ChthollysSpacing(cardPadding);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+[Custom] @Style FairyCardHover
+{
+    @Style FairyCard;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(135, 206, 235, 0.2);
+    }
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(135deg, ChthollysColors(skyBlue), ChthollysColors(crimsonRed));
+        border-radius: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    
+    &:hover::before {
+        opacity: 1;
+    }
+}
+
+-- ===== 标题样式 =====
+-- 优雅的标题设计
+
+[Template] @Style ChthollysHeading
+{
+    @Style ChthollysBase;
+    font-family: ChthollysTypography(primaryFont);
+    font-weight: 700;
+    margin-bottom: ChthollysSpacing(md);
+    color: ChthollysColors(textColor);
+    position: relative;
+}
+
+[Custom] @Style ChthollysH1
+{
+    @Style ChthollysHeading;
+    font-size: ChthollysTypography(heroFontSize);
+    line-height: ChthollysTypography(tightLineHeight);
+    
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, ChthollysColors(skyBlue), transparent);
+    }
+}
+
+[Custom] @Style ChthollysH2
+{
+    @Style ChthollysHeading;
+    font-size: ChthollysTypography(titleFontSize);
+}
+
+[Custom] @Style ChthollysH3
+{
+    @Style ChthollysHeading;
+    font-size: ChthollysTypography(largeFontSize);
+}
+
+-- ===== 幸福元素 =====
+-- 最幸福的时光
+
+[Template] @Element HappinessMemory
+{
+    div
+    {
+        class: "happiness-memory";
+        
+        style
+        {
+            @Style FairyCardHover;
+            background: linear-gradient(135deg, ChthollysColors(pureWhite), ChthollysColors(softGray));
+            position: relative;
+            
+            &::after {
+                content: "✨";
+                position: absolute;
+                top: ChthollysSpacing(md);
+                right: ChthollysSpacing(md);
+                font-size: 24px;
+                opacity: 0.5;
+            }
+        }
+        
+        h3
+        {
+            style
+            {
+                @Style ChthollysH3;
+                color: ChthollysColors(primaryColor);
+                margin-bottom: ChthollysSpacing(sm);
+            }
+        }
+        
+        p
+        {
+            style
+            {
+                @Style ChthollysBase;
+                color: ChthollysColors(textColor);
+                font-size: ChthollysTypography(baseFontSize);
+                line-height: ChthollysTypography(looseLineHeight);
+            }
+        }
+    }
+}
+
+-- ===== 圣剑容器 =====
+-- 瑟尼欧里斯的力量
+
+[Template] @Element SenioriousContainer
+{
+    div
+    {
+        class: "seniorious-container";
+        
+        style
+        {
+            @Style ChthollysBase;
+            position: relative;
+            padding: ChthollysSpacing(xl);
+            background: linear-gradient(135deg, rgba(135, 206, 235, 0.1), rgba(220, 20, 60, 0.05));
+            border-radius: 20px;
+            overflow: hidden;
+            
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, 
+                    ChthollysColors(skyBlue), 
+                    ChthollysColors(crimsonRed), 
+                    ChthollysColors(skyBlue));
+                animation: seniorious-glow 3s ease-in-out infinite;
+            }
+            
+            @keyframes seniorious-glow {
+                0%, 100% { opacity: 0.5; }
+                50% { opacity: 1; }
+            }
+        }
+    }
+}
+
+-- ===== 妖精兵列表 =====
+-- 优雅的列表样式
+
+[Template] @Style FairyList
+{
+    @Style ChthollysBase;
+    list-style: none;
+    padding: 0;
+    margin: ChthollysSpacing(md) 0;
+    
+    li {
+        padding: ChthollysSpacing(sm) 0;
+        padding-left: ChthollysSpacing(lg);
+        position: relative;
+        
+        &::before {
+            content: "❀";
+            position: absolute;
+            left: 0;
+            color: ChthollysColors(primaryColor);
+        }
+        
+        &:hover::before {
+            color: ChthollysColors(crimsonRed);
+            transform: rotate(180deg);
+            transition: all 0.3s ease;
+        }
+    }
+}
+
+-- ===== 引用样式 =====
+-- 温柔的话语
+
+[Template] @Style ChthollysQuote
+{
+    @Style ChthollysBase;
+    padding: ChthollysSpacing(lg);
+    margin: ChthollysSpacing(lg) 0;
+    background: ChthollysColors(softGray);
+    border-left: 4px solid ChthollysColors(primaryColor);
+    font-style: italic;
+    font-size: ChthollysTypography(largeFontSize);
+    color: ChthollysColors(melancholyBlue);
+    position: relative;
+    
+    &::before {
+        content: """;
+        position: absolute;
+        top: ChthollysSpacing(sm);
+        left: ChthollysSpacing(md);
+        font-size: 48px;
+        color: ChthollysColors(primaryColor);
+        opacity: 0.3;
+    }
+}
+
+-- ===== 徽章组件 =====
+-- 妖精兵徽章
+
+[Template] @Style FairyBadge
+{
+    @Style ChthollysBase;
+    display: inline-block;
+    padding: ChthollysSpacing(xs) ChthollysSpacing(sm);
+    background: ChthollysColors(primaryColor);
+    color: ChthollysColors(pureWhite);
+    border-radius: 20px;
+    font-size: ChthollysTypography(smallFontSize);
+    font-weight: 500;
+    margin-right: ChthollysSpacing(sm);
+}
+
+[Custom] @Style FairyBadgeRed
+{
+    @Style FairyBadge;
+    background: ChthollysColors(crimsonRed);
+}
+
+[Custom] @Style FairyBadgeYellow
+{
+    @Style FairyBadge;
+    background: ChthollysColors(happyYellow);
+    color: ChthollysColors(textColor);
+}
+
+-- ===== 动画效果 =====
+-- 妖精之翼效果
+
+[Template] @Style FairyWingAnimation
+{
+    animation: fairy-float 4s ease-in-out infinite;
+    
+    @keyframes fairy-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+}
+
+-- ===== 响应式布局 =====
+-- 适配各种设备
+
+[Template] @Style ChthollysResponsive
+{
+    @media (max-width: 768px) {
+        padding: ChthollysSpacing(md);
+        
+        h1 { font-size: ChthollysTypography(titleFontSize); }
+        h2 { font-size: ChthollysTypography(largeFontSize); }
+        h3 { font-size: ChthollysTypography(baseFontSize); }
+    }
+}
+
+-- ===== 导出特殊组件 =====
+-- 珂朵莉的记忆碎片
+
+[Template] @Element MemoryFragment
+{
+    div
+    {
+        class: "memory-fragment";
+        
+        style
+        {
+            @Style FairyWingAnimation;
+            @Style FairyCard;
+            text-align: center;
+            padding: ChthollysSpacing(xl);
+            
+            &:hover {
+                background: linear-gradient(135deg, 
+                    rgba(135, 206, 235, 0.1), 
+                    rgba(255, 182, 193, 0.1));
+            }
+        }
+        
+        img
+        {
+            style
+            {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                margin-bottom: ChthollysSpacing(md);
+                border: 3px solid ChthollysColors(primaryColor);
+            }
+        }
+        
+        h4
+        {
+            style
+            {
+                @Style ChthollysBase;
+                font-size: ChthollysTypography(largeFontSize);
+                color: ChthollysColors(primaryColor);
+                margin-bottom: ChthollysSpacing(sm);
+            }
+        }
+        
+        p
+        {
+            style
+            {
+                @Style ChthollysBase;
+                color: ChthollysColors(melancholyBlue);
+                font-style: italic;
+            }
+        }
+    }
+}

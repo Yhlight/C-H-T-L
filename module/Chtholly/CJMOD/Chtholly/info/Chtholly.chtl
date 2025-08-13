@@ -1,0 +1,38 @@
+// Chtholly CJMOD模块信息 - 提供CHTL JS语法扩展
+
+[Info]
+{
+    name = "Chtholly";
+    version = "1.0.0";
+    description = "珂朵莉CHTL JS语法扩展 - 动画和交互功能";
+    author = "CHTL Team";
+    license = "MIT";
+    dependencies = "";
+    category = "extension";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
+}
+
+// 导出的JavaScript扩展功能
+[Export]
+{
+    // 动画相关扩展
+    @Function fadeIn, fadeOut, slideIn, slideOut, bounce, shake,
+              rotate, scale, flip, pulse, swing, rubberBand;
+    
+    // DOM操作扩展
+    @Function addClass, removeClass, toggleClass, hasClass,
+              show, hide, toggle, fadeToggle, slideToggle;
+    
+    // 事件处理扩展  
+    @Function on, off, once, trigger, delegate,
+              ready, load, click, hover, focus, blur;
+    
+    // 工具函数扩展
+    @Function each, map, filter, find, extend, merge,
+              debounce, throttle, delay, defer;
+              
+    // 珂朵莉特有功能
+    @Function chthollyAnimate, chthollyParticles, chthollyGlow,
+              chthollyTransition, chthollyMagic;
+}

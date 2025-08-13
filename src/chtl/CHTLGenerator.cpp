@@ -17,7 +17,8 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     scriptManager = std::make_shared<ScriptManager>(ctx);
     cmodManager = std::make_shared<CMODManager>(ctx);
     cjmodManager = std::make_shared<CJMODManager>(ctx);
-    cssProcessor = std::make_shared<CHTLCSSProcessor>(ctx);  // 初始化CSS处理器
+    cssProcessor = std::make_shared<CHTLCSSProcessor>(ctx);
+    jsProcessor = std::make_shared<CHTLJSProcessor>(ctx);  // 初始化JS处理器
     
     // 设置交叉引用
     importManager->setTemplateManager(templateManager.get());
@@ -476,11 +477,34 @@ std::string CHTLGenerator::generateAutoId(const std::string& hint) {
 
 // 输出获取方法
 std::string CHTLGenerator::getJS() const {
-    // 如果有脚本管理器，生成处理后的JavaScript
+    // 合并来自scriptManager和jsProcessor的JavaScript
+    std::string finalJS;
+    
+    // 首先获取CHTL JS处理器的输出（包含增强选择器等）
     if (scriptManager) {
-        return scriptManager->generateJavaScript();
+        finalJS = scriptManager->generateJavaScript();
     }
-    return jsOutput.str();
+    
+    // 然后添加通过jsProcessor处理的标准JavaScript
+    if (jsProcessor) {
+        std::string processedJS = jsProcessor->generateFinalJS();
+        if (!processedJS.empty()) {
+            if (!finalJS.empty()) {
+                finalJS += "\n\n";
+            }
+            finalJS += processedJS;
+        }
+    }
+    
+    // 最后添加任何直接输出到jsOutput的内容
+    if (!jsOutput.str().empty()) {
+        if (!finalJS.empty()) {
+            finalJS += "\n\n";
+        }
+        finalJS += jsOutput.str();
+    }
+    
+    return finalJS;
 }
 
 std::string CHTLGenerator::getCombinedOutput() const {
@@ -989,6 +1013,24 @@ std::string CHTLGenerator::getCSS() const {
     }
     
     return finalCSS;
+}
+
+void CHTLGenerator::processGlobalScriptBlock(const std::string& jsContent, const std::string& type) {
+    if (!jsProcessor) {
+        context->reportError("JavaScript processor not initialized");
+        return;
+    }
+    
+    // 添加到JS处理器
+    jsProcessor->addGlobalScript(jsContent, type);
+    
+    // 如果在head元素中，生成script标签
+    if (inHeadElement) {
+        htmlOutput << "<script type=\"" << type << "\">\n";
+        // JS内容将在最后统一处理和优化
+        htmlOutput << "/* Global JavaScript will be inserted here */\n";
+        htmlOutput << "</script>\n";
+    }
 }
 
 } // namespace chtl

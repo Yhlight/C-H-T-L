@@ -17,6 +17,7 @@
 #include "CHTLScript.h"    // 添加脚本头文件
 #include "CHTLCMOD.h"      // 添加CMOD头文件
 #include "CHTLCSSCompiler.h"
+#include "CHTLJSCompiler.h"
 
 namespace chtl {
 
@@ -70,6 +71,9 @@ private:
     
     // CSS处理器
     std::shared_ptr<CHTLCSSProcessor> cssProcessor;
+    
+    // JavaScript处理器
+    std::shared_ptr<CHTLJSProcessor> jsProcessor;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -150,6 +154,10 @@ public:
     // CSS处理器
     void setCSSProcessor(std::shared_ptr<CHTLCSSProcessor> processor) { cssProcessor = processor; }
     std::shared_ptr<CHTLCSSProcessor> getCSSProcessor() const { return cssProcessor; }
+    
+    // JavaScript处理器
+    void setJSProcessor(std::shared_ptr<CHTLJSProcessor> processor) { jsProcessor = processor; }
+    std::shared_ptr<CHTLJSProcessor> getJSProcessor() const { return jsProcessor; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -260,6 +268,9 @@ public:
 
     // 处理全局样式块
     void processGlobalStyleBlock(const std::string& cssContent);
+
+    // 处理全局脚本块
+    void processGlobalScriptBlock(const std::string& jsContent, const std::string& type = "text/javascript");
 };
 
 // 字面量处理器

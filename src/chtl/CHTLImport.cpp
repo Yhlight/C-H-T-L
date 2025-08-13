@@ -3,6 +3,7 @@
 #include "CHTLTemplate.h"
 #include "CHTLCustom.h"
 #include "CHTLOrigin.h"
+#include "CHTLCMOD.h"
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -87,10 +88,10 @@ bool ImportManager::processImport(const ImportDeclaration& decl, CHTLGenerator& 
             success = processor.processJavaScriptImport(decl);
             break;
         case ImportType::CHTL:
-            success = processor.processChtlImport(decl);
+            success = processor.processChtlImport(decl.sourcePath);
             break;
         case ImportType::CJMOD:
-            success = processor.processCjmodImport(decl);
+            success = processor.processCjmodImport(decl.sourcePath);
             break;
         case ImportType::CUSTOM_ELEMENT:
         case ImportType::CUSTOM_STYLE:
@@ -225,6 +226,31 @@ ImportDeclaration ImportProcessor::parseImportStatement(const std::string& state
     return decl;
 }
 
+std::string ImportProcessor::searchChtlFile(const std::string& path) {
+    FileSearcher searcher;
+    
+    // 如果是具体文件路径
+    if (path.find('/') != std::string::npos || path.find('\\') != std::string::npos) {
+        std::filesystem::path filePath(path);
+        if (std::filesystem::exists(filePath)) {
+            return filePath.string();
+        }
+        return "";
+    }
+    
+    // 搜索文件
+    std::vector<std::string> extensions = {".chtl", ".cmod"};
+    for (const auto& ext : extensions) {
+        std::string found = searcher.searchFile(path + ext, ImportType::CHTL);
+        if (!found.empty()) {
+            return found;
+        }
+    }
+    
+    // 尝试不带扩展名
+    return searcher.searchFile(path, ImportType::CHTL);
+}
+
 bool ImportProcessor::processHtmlImport(const ImportDeclaration& decl) {
     if (!decl.hasAsClause) {
         // 没有as子句，直接跳过
@@ -292,16 +318,50 @@ bool ImportProcessor::processJavaScriptImport(const ImportDeclaration& decl) {
     return true;
 }
 
-bool ImportProcessor::processChtlImport(const ImportDeclaration& decl) {
-    // 处理CHTL文件导入
-    // TODO: 解析CHTL文件并导入所有定义
+bool ImportProcessor::processChtlImport(const std::string& path) {
+    // 如果路径包含点号，可能是CMOD子模块引用
+    if (path.find('.') != std::string::npos && !path.ends_with(".chtl")) {
+        // 这是一个模块引用，如 Chtholly 或 Chtholly.Space
+        if (manager.cmodManager) {
+            CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+            return cmodProcessor.processCMODImport(path);
+        }
+    }
+    
+    // 查找CHTL文件
+    std::string filePath = searchChtlFile(path);
+    if (filePath.empty()) {
+        manager.context->reportError("CHTL file not found: " + path);
+        return false;
+    }
+    
+    // 读取文件内容
+    std::string content = manager.readFileContent(filePath);
+    if (content.empty()) {
+        return false;
+    }
+    
+    // TODO: 解析CHTL文件并导入所有内容
+    // 这里应该使用CHTL解析器处理文件
+    
     return true;
 }
 
-bool ImportProcessor::processCjmodImport(const ImportDeclaration& decl) {
-    // 处理CJMOD文件导入
-    // TODO: 解析并加载CJMOD模块
-    return true;
+bool ImportProcessor::processCjmodImport(const std::string& path) {
+    // 使用CMOD管理器处理.cjmod文件
+    if (manager.cmodManager) {
+        // .cjmod是编译后的CMOD文件
+        std::string moduleName = path;
+        if (moduleName.ends_with(".cjmod")) {
+            moduleName = moduleName.substr(0, moduleName.length() - 6);
+        }
+        
+        CMODProcessor cmodProcessor(*manager.cmodManager, generator);
+        return cmodProcessor.processCMODImport(moduleName);
+    }
+    
+    manager.context->reportError("CMOD manager not available for .cjmod import");
+    return false;
 }
 
 bool ImportProcessor::processCustomImport(const ImportDeclaration& decl) {

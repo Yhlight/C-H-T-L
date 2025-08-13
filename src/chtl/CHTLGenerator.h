@@ -15,6 +15,7 @@
 #include "CHTLNamespace.h" // 添加命名空间头文件
 #include "CHTLConstraint.h" // 添加约束头文件
 #include "CHTLScript.h"    // 添加脚本头文件
+#include "CHTLCMOD.h"      // 添加CMOD头文件
 
 namespace chtl {
 
@@ -62,6 +63,9 @@ private:
     
     // 脚本管理器
     std::shared_ptr<ScriptManager> scriptManager;
+    
+    // CMOD管理器
+    std::shared_ptr<CMODManager> cmodManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -133,6 +137,10 @@ public:
     // 脚本支持
     void setScriptManager(std::shared_ptr<ScriptManager> mgr) { scriptManager = mgr; }
     std::shared_ptr<ScriptManager> getScriptManager() const { return scriptManager; }
+    
+    // CMOD支持
+    void setCMODManager(std::shared_ptr<CMODManager> mgr) { cmodManager = mgr; }
+    std::shared_ptr<CMODManager> getCMODManager() const { return cmodManager; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);

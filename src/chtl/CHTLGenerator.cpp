@@ -21,16 +21,21 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     constraintManager = std::make_shared<ConstraintManager>(ctx);
     // 创建脚本管理器
     scriptManager = std::make_shared<ScriptManager>(ctx);
+    // 创建CMOD管理器
+    cmodManager = std::make_shared<CMODManager>(ctx);
     
     // 设置管理器之间的引用
     importManager->setTemplateManager(templateManager);
     importManager->setCustomManager(customManager);
     importManager->setOriginManager(originManager);
+    importManager->setCMODManager(cmodManager);
     
     namespaceManager->setTemplateManager(templateManager);
     namespaceManager->setCustomManager(customManager);
     
     constraintManager->setNamespaceManager(namespaceManager);
+    
+    cmodManager->setImportManager(importManager);
 }
 
 std::string CHTLGenerator::indent() const {

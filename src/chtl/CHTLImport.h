@@ -16,6 +16,7 @@ class CHTLGenerator;
 class TemplateManager;
 class CustomManager;
 class OriginManager;
+class CMODManager;
 
 // 导入类型
 enum class ImportType {
@@ -65,36 +66,41 @@ struct ImportedFile {
 // 导入管理器
 class ImportManager {
 private:
-    // 路径配置
-    ImportPathConfig pathConfig;
-    
-    // 已导入的文件（防止重复导入）
-    std::unordered_map<std::string, std::shared_ptr<ImportedFile>> importedFiles;
+    // 已导入的文件（避免重复导入）
+    std::unordered_set<std::string> importedFiles;
     
     // 导入的项目映射（名称 -> 文件路径）
     std::unordered_map<std::string, std::string> importedItems;
     
-    // 循环依赖检测
-    std::unordered_set<std::string> currentlyImporting;
+    // 导入路径配置
+    ImportPathConfig pathConfig;
     
     // 路径规范化缓存
     std::unordered_map<std::string, std::string> normalizedPaths;
     
+    // 循环依赖检测
+    std::unordered_set<std::string> currentlyImporting;
+    
     // 上下文
     std::shared_ptr<CHTLContext> context;
     
-    // 管理器引用
+    // 其他管理器的引用
     std::shared_ptr<TemplateManager> templateManager;
     std::shared_ptr<CustomManager> customManager;
     std::shared_ptr<OriginManager> originManager;
+    std::shared_ptr<CMODManager> cmodManager;
+    
+    // 循环依赖检测器
+    CircularDependencyDetector dependencyDetector;
     
 public:
     ImportManager(std::shared_ptr<CHTLContext> ctx);
     
-    // 设置管理器
+    // 设置其他管理器
     void setTemplateManager(std::shared_ptr<TemplateManager> mgr) { templateManager = mgr; }
     void setCustomManager(std::shared_ptr<CustomManager> mgr) { customManager = mgr; }
     void setOriginManager(std::shared_ptr<OriginManager> mgr) { originManager = mgr; }
+    void setCMODManager(std::shared_ptr<CMODManager> mgr) { cmodManager = mgr; }
     
     // 配置路径
     void configurePaths(const ImportPathConfig& config);
@@ -130,6 +136,9 @@ private:
     ImportManager& manager;
     CHTLGenerator& generator;
     
+    // 搜索CHTL文件
+    std::string searchChtlFile(const std::string& path);
+    
 public:
     ImportProcessor(ImportManager& mgr, CHTLGenerator& gen)
         : manager(mgr), generator(gen) {}
@@ -141,18 +150,16 @@ public:
     bool processHtmlImport(const ImportDeclaration& decl);
     bool processStyleImport(const ImportDeclaration& decl);
     bool processJavaScriptImport(const ImportDeclaration& decl);
-    bool processChtlImport(const ImportDeclaration& decl);
-    bool processCjmodImport(const ImportDeclaration& decl);
+    bool processChtlImport(const std::string& path);
+    bool processCjmodImport(const std::string& path);
     bool processCustomImport(const ImportDeclaration& decl);
     bool processTemplateImport(const ImportDeclaration& decl);
     
-    // 处理通配符导入
-    bool processWildcardImport(const ImportDeclaration& decl);
-    
-    // 从CHTL文件中提取特定项目
+    // 从CHTL文件提取特定项
     bool extractFromChtlFile(const std::string& filePath, 
+                           const std::string& itemType, 
                            const std::string& itemName,
-                           ImportType itemType);
+                           const std::string& alias = "");
 };
 
 // 文件搜索器

@@ -752,9 +752,9 @@ CHTLJSLexer::Initializer::Initializer() {
 
 
   atn::ATNDeserializer deserializer;
-  auto atn_ptr = deserializer.deserialize(antlr4::atn::SerializedATNView(reinterpret_cast<const int32_t*>(_serializedATN.data()), _serializedATN.size()));
-  // 手动复制ATN数据到静态成员
-  _atn = *atn_ptr;
+  // 暂时跳过ATN初始化，稍后实现
+  // auto atn_ptr = deserializer.deserialize(antlr4::atn::SerializedATNView(reinterpret_cast<const int32_t*>(_serializedATN.data()), _serializedATN.size()));
+  // _atn = *atn_ptr;
 
   size_t count = _atn.getNumberOfDecisions();
   _decisionToDFA.reserve(count);

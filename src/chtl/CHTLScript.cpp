@@ -1,6 +1,7 @@
 #include "CHTLScript.h"
 #include "CHTLGenerator.h"
 #include "CHTLCJMOD.h"
+#include "CHTLJSContext.h"
 #include <regex>
 #include <sstream>
 #include <algorithm>
@@ -286,27 +287,50 @@ std::shared_ptr<ScriptBlock> ScriptProcessor::processScriptBlock(const std::stri
                                                                 const std::string& scope) {
     auto block = std::make_shared<ScriptBlock>(ScriptType::JAVASCRIPT, scope);
     
+    // 获取JS上下文
+    auto jsContext = manager.getJSContext();
+    if (!jsContext) {
+        return block;
+    }
+    
+    // 进入脚本状态
+    jsContext->getStateMachine().handleEvent(CHTLJSEvent::EnterScript);
+    
     // 检测脚本类型
     ScriptType type = detectScriptType(content);
     block->type = type;
     
     std::string processedContent = content;
     
-    // 如果是CHTL JS，处理增强选择器和应用CJMOD扩展
+    // 如果是CHTL JS，处理增强功能
     if (type == ScriptType::CHTLJS) {
         // 应用CJMOD扩展（预处理）
         if (cjmodManager) {
             processedContent = cjmodManager->preprocessScript(processedContent);
         }
         
+        // 处理无修饰字面量
+        processedContent = processUnquotedLiterals(processedContent, jsContext);
+        
+        // 处理箭头语法
+        if (ScriptHelper::hasArrowSyntax(processedContent)) {
+            processedContent = ScriptHelper::convertArrowToDot(processedContent);
+        }
+        
         // 处理增强选择器
         processedContent = processEnhancedSelectors(processedContent, block->selectors);
+        
+        // 检测并处理特殊方法
+        processedContent = detectAndProcessMethods(processedContent);
         
         // 应用CJMOD扩展（转换）
         if (cjmodManager) {
             processedContent = cjmodManager->transformScript(processedContent);
         }
     }
+    
+    // 退出脚本状态
+    jsContext->getStateMachine().handleEvent(CHTLJSEvent::ExitScript);
     
     block->content = processedContent;
     block->isProcessed = true;

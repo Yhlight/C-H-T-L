@@ -4,279 +4,157 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include <vector>
 #include <stack>
-#include <optional>
-#include <functional>
+#include <vector>
 #include "CHTLJSStateMachine.h"
 
-namespace chtljs {
+namespace chtl {
 
 // 前向声明
-class DOMReference;
-class EventBinding;
-class AnimationDefinition;
-class CHTLMethodCall;
+class CHTLContext;
 
-// DOM元素引用类型
-enum class DOMReferenceType {
-    CLASS_SELECTOR,     // .className
-    ID_SELECTOR,        // #id
-    ELEMENT_SELECTOR,   // element
-    COMPLEX_SELECTOR,   // 复合选择器
-    INDEXED_SELECTOR    // 带索引的选择器
-};
-
-// DOM元素引用
-class DOMReference {
-private:
-    std::string selector;
-    DOMReferenceType type;
-    std::optional<int> index;
-    std::string originalExpression;  // 原始的{{}}表达式
-    
-public:
-    DOMReference(const std::string& sel, DOMReferenceType t) 
-        : selector(sel), type(t) {}
-    
-    const std::string& getSelector() const { return selector; }
-    DOMReferenceType getType() const { return type; }
-    
-    void setIndex(int idx) { index = idx; }
-    std::optional<int> getIndex() const { return index; }
-    
-    void setOriginalExpression(const std::string& expr) { originalExpression = expr; }
-    const std::string& getOriginalExpression() const { return originalExpression; }
-    
-    // 生成JavaScript代码
-    std::string toJavaScript() const;
-    std::string toQuerySelector() const;
-};
-
-// 事件处理器信息
-struct EventHandler {
-    std::string eventName;
-    std::string handlerCode;
-    bool isArrowFunction;
-    bool isAnonymous;
-    std::string functionName;
-};
-
-// 事件绑定
-class EventBinding {
-private:
-    std::shared_ptr<DOMReference> target;
-    std::vector<EventHandler> handlers;
-    bool isDelegated;
-    std::vector<std::shared_ptr<DOMReference>> delegateTargets;
-    
-public:
-    EventBinding(std::shared_ptr<DOMReference> t) : target(t), isDelegated(false) {}
-    
-    void addHandler(const EventHandler& handler);
-    void setDelegated(bool delegated) { isDelegated = delegated; }
-    void addDelegateTarget(std::shared_ptr<DOMReference> target);
-    
-    const std::shared_ptr<DOMReference>& getTarget() const { return target; }
-    const std::vector<EventHandler>& getHandlers() const { return handlers; }
-    bool getIsDelegated() const { return isDelegated; }
-    
-    // 生成addEventListener代码
-    std::string generateListenerCode() const;
-    // 生成事件委托代码
-    std::string generateDelegateCode() const;
-};
-
-// CSS属性
-struct CSSProperty {
-    std::string name;
-    std::string value;
-    bool isVariable;  // 是否是CSS变量
-};
-
-// 动画关键帧
-struct AnimationKeyframe {
-    float at;  // 0.0 - 1.0
-    std::vector<CSSProperty> properties;
-};
-
-// 动画定义
-class AnimationDefinition {
-private:
-    int duration;  // ms
-    std::string easing;
-    std::vector<CSSProperty> beginState;
-    std::vector<CSSProperty> endState;
-    std::vector<AnimationKeyframe> keyframes;
-    int loop;  // -1 表示无限循环
-    std::string direction;
-    int delay;  // ms
-    std::string callbackCode;
-    
-public:
-    AnimationDefinition() : duration(0), loop(1), delay(0) {}
-    
-    // Setters
-    void setDuration(int d) { duration = d; }
-    void setEasing(const std::string& e) { easing = e; }
-    void setLoop(int l) { loop = l; }
-    void setDirection(const std::string& d) { direction = d; }
-    void setDelay(int d) { delay = d; }
-    void setCallback(const std::string& c) { callbackCode = c; }
-    
-    void addBeginProperty(const CSSProperty& prop) { beginState.push_back(prop); }
-    void addEndProperty(const CSSProperty& prop) { endState.push_back(prop); }
-    void addKeyframe(const AnimationKeyframe& kf) { keyframes.push_back(kf); }
-    
-    // 生成requestAnimationFrame代码
-    std::string generateAnimationCode() const;
-    // 生成CSS动画代码（如果可能）
-    std::string generateCSSAnimation() const;
-};
-
-// CHTL方法调用信息
-class CHTLMethodCall {
-public:
-    enum class MethodType {
-        LISTEN,
-        DELEGATE,
-        ANIMATE
+// CHTL JS符号信息
+struct CHTLJSSymbol {
+    enum Type {
+        Variable,
+        Function,
+        Selector,
+        Method,
+        Animation,
+        UnquotedValue
     };
     
+    Type type;
+    std::string name;
+    std::string value;
+    std::string scope;
+    int lineNumber;
+    
+    // 无修饰字面量特定信息
+    bool isUnquoted = false;
+    std::string quotedValue;  // 转换后的引号版本
+};
+
+// CHTL JS作用域
+class CHTLJSScope {
 private:
-    MethodType type;
-    std::shared_ptr<DOMReference> target;  // 对于animate可能为null
-    std::string configCode;  // 原始配置代码
+    std::string name;
+    std::unordered_map<std::string, CHTLJSSymbol> symbols;
+    std::shared_ptr<CHTLJSScope> parent;
     
 public:
-    CHTLMethodCall(MethodType t) : type(t) {}
+    CHTLJSScope(const std::string& n, std::shared_ptr<CHTLJSScope> p = nullptr)
+        : name(n), parent(p) {}
     
-    void setTarget(std::shared_ptr<DOMReference> t) { target = t; }
-    void setConfigCode(const std::string& code) { configCode = code; }
+    void addSymbol(const std::string& name, const CHTLJSSymbol& symbol);
+    CHTLJSSymbol* findSymbol(const std::string& name);
+    const CHTLJSSymbol* findSymbol(const std::string& name) const;
     
-    MethodType getType() const { return type; }
-    const std::shared_ptr<DOMReference>& getTarget() const { return target; }
-    const std::string& getConfigCode() const { return configCode; }
+    const std::string& getName() const { return name; }
+    std::shared_ptr<CHTLJSScope> getParent() const { return parent; }
 };
 
 // CHTL JS上下文
 class CHTLJSContext {
 private:
+    std::shared_ptr<CHTLContext> baseContext;
+    std::shared_ptr<CHTLJSScope> globalScope;
+    std::shared_ptr<CHTLJSScope> currentScope;
+    std::stack<std::shared_ptr<CHTLJSScope>> scopeStack;
+    
     // 状态机
     std::unique_ptr<CHTLJSStateMachine> stateMachine;
     
-    // DOM引用管理
-    std::vector<std::shared_ptr<DOMReference>> domReferences;
-    std::unordered_map<std::string, std::shared_ptr<DOMReference>> selectorCache;
+    // DOM引用缓存
+    std::unordered_map<std::string, std::string> domReferences;
     
-    // 事件绑定管理
-    std::vector<std::shared_ptr<EventBinding>> eventBindings;
+    // 事件绑定记录
+    std::vector<std::pair<std::string, std::string>> eventBindings;
     
-    // 动画管理
-    std::vector<std::shared_ptr<AnimationDefinition>> animations;
+    // 动画定义
+    std::unordered_map<std::string, std::string> animations;
     
-    // CHTL方法调用追踪
-    std::vector<std::shared_ptr<CHTLMethodCall>> methodCalls;
+    // 无修饰字面量映射
+    std::unordered_map<std::string, std::string> unquotedLiterals;
     
-    // 当前处理的上下文
-    std::shared_ptr<DOMReference> currentTarget;
-    std::shared_ptr<EventBinding> currentBinding;
-    std::shared_ptr<AnimationDefinition> currentAnimation;
-    
-    // 符号表（变量和函数）
-    std::unordered_map<std::string, std::string> variables;
-    std::unordered_map<std::string, std::string> functions;
-    
-    // 父CHTL上下文引用（用于查找CSS类名等）
-    void* parentCHTLContext;  // 避免循环依赖
-    
-    // 错误和警告
-    std::vector<std::string> errors;
-    std::vector<std::string> warnings;
+    // 配置选项
+    struct Config {
+        bool allowUnquotedLiterals = true;
+        bool autoQuoteUnquoted = true;
+        bool validateUnquoted = true;
+    } config;
     
 public:
-    CHTLJSContext();
-    ~CHTLJSContext() = default;
+    CHTLJSContext(std::shared_ptr<CHTLContext> base);
+    
+    // 作用域管理
+    void enterScope(const std::string& name);
+    void exitScope();
+    std::shared_ptr<CHTLJSScope> getCurrentScope() const { return currentScope; }
+    
+    // 符号管理
+    void addVariable(const std::string& name, const std::string& value, bool isUnquoted = false);
+    void addFunction(const std::string& name, const std::string& params);
+    void addSelector(const std::string& selector);
+    void addMethod(const std::string& object, const std::string& method);
+    void addAnimation(const std::string& name, const std::string& config);
+    
+    // 无修饰字面量管理
+    bool isUnquotedLiteralAllowed() const;
+    bool validateUnquotedLiteral(const std::string& value) const;
+    std::string processUnquotedLiteral(const std::string& value);
+    void registerUnquotedLiteral(const std::string& original, const std::string& quoted);
+    
+    // DOM引用管理
+    void addDOMReference(const std::string& selector, const std::string& jsCode);
+    std::string getDOMReference(const std::string& selector) const;
+    
+    // 事件绑定管理
+    void addEventBinding(const std::string& selector, const std::string& event);
+    const std::vector<std::pair<std::string, std::string>>& getEventBindings() const { 
+        return eventBindings; 
+    }
     
     // 状态机访问
     CHTLJSStateMachine& getStateMachine() { return *stateMachine; }
+    const CHTLJSStateMachine& getStateMachine() const { return *stateMachine; }
     
-    // DOM引用管理
-    std::shared_ptr<DOMReference> createDOMReference(const std::string& selector);
-    std::shared_ptr<DOMReference> getCachedReference(const std::string& selector);
-    void registerDOMReference(std::shared_ptr<DOMReference> ref);
+    // 配置
+    void setAllowUnquotedLiterals(bool allow) { config.allowUnquotedLiterals = allow; }
+    void setAutoQuoteUnquoted(bool autoQuote) { config.autoQuoteUnquoted = autoQuote; }
+    void setValidateUnquoted(bool validate) { config.validateUnquoted = validate; }
     
-    // 事件绑定管理
-    std::shared_ptr<EventBinding> createEventBinding(std::shared_ptr<DOMReference> target);
-    void registerEventBinding(std::shared_ptr<EventBinding> binding);
-    std::vector<std::shared_ptr<EventBinding>> getBindingsForTarget(const std::string& selector);
+    bool getAllowUnquotedLiterals() const { return config.allowUnquotedLiterals; }
+    bool getAutoQuoteUnquoted() const { return config.autoQuoteUnquoted; }
+    bool getValidateUnquoted() const { return config.validateUnquoted; }
     
-    // 动画管理
-    std::shared_ptr<AnimationDefinition> createAnimation();
-    void registerAnimation(std::shared_ptr<AnimationDefinition> animation);
+    // 错误处理
+    void reportError(const std::string& error);
+    void reportWarning(const std::string& warning);
     
-    // CHTL方法调用
-    void registerMethodCall(std::shared_ptr<CHTLMethodCall> call);
-    const std::vector<std::shared_ptr<CHTLMethodCall>>& getMethodCalls() const { return methodCalls; }
-    
-    // 当前上下文管理
-    void setCurrentTarget(std::shared_ptr<DOMReference> target) { currentTarget = target; }
-    void setCurrentBinding(std::shared_ptr<EventBinding> binding) { currentBinding = binding; }
-    void setCurrentAnimation(std::shared_ptr<AnimationDefinition> animation) { currentAnimation = animation; }
-    
-    std::shared_ptr<DOMReference> getCurrentTarget() const { return currentTarget; }
-    std::shared_ptr<EventBinding> getCurrentBinding() const { return currentBinding; }
-    std::shared_ptr<AnimationDefinition> getCurrentAnimation() const { return currentAnimation; }
-    
-    // 符号表管理
-    void registerVariable(const std::string& name, const std::string& value);
-    void registerFunction(const std::string& name, const std::string& body);
-    std::optional<std::string> lookupVariable(const std::string& name) const;
-    std::optional<std::string> lookupFunction(const std::string& name) const;
-    
-    // 父上下文
-    void setParentContext(void* ctx) { parentCHTLContext = ctx; }
-    void* getParentContext() const { return parentCHTLContext; }
-    
-    // 验证
-    bool validateSelector(const std::string& selector);
-    bool validateEventName(const std::string& eventName);
-    bool validateCSSProperty(const std::string& property);
-    
-    // 代码生成
-    std::string generateInitializationCode() const;
-    std::string generateDOMReadyWrapper(const std::string& code) const;
-    
-    // 错误和警告
-    void addError(const std::string& error) { errors.push_back(error); }
-    void addWarning(const std::string& warning) { warnings.push_back(warning); }
-    const std::vector<std::string>& getErrors() const { return errors; }
-    const std::vector<std::string>& getWarnings() const { return warnings; }
-    bool hasErrors() const { return !errors.empty(); }
-    
-    // 重置上下文
+    // 重置
     void reset();
     
-    // 检测CHTL特性使用情况
-    bool isUsingCHTLFeatures() const;
-    std::vector<std::string> getUsedCHTLFeatures() const;
+    // 调试
+    void dumpSymbols() const;
+    void dumpUnquotedLiterals() const;
 };
 
-// 辅助函数
-namespace CHTLJSHelper {
-    // 解析选择器
-    DOMReferenceType parseSelector(const std::string& selector);
-    std::string extractSelectorBase(const std::string& selector);
-    std::optional<int> extractSelectorIndex(const std::string& selector);
+// CHTL JS上下文辅助工具
+namespace CHTLJSContextHelper {
+    // 检测是否需要引号
+    bool needsQuotes(const std::string& value);
     
-    // 验证JavaScript代码片段
-    bool isValidJavaScriptIdentifier(const std::string& identifier);
-    bool isValidEventName(const std::string& eventName);
+    // 智能引号添加
+    std::string smartQuote(const std::string& value);
     
-    // 生成唯一ID
-    std::string generateUniqueId(const std::string& prefix = "chtl");
+    // 验证标识符
+    bool isValidIdentifier(const std::string& identifier);
+    
+    // 提取选择器类型
+    std::string extractSelectorType(const std::string& selector);
 }
 
-} // namespace chtljs
+} // namespace chtl
 
 #endif // CHTLJS_CONTEXT_H

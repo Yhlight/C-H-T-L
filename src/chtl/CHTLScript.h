@@ -14,6 +14,7 @@ namespace chtl {
 class CHTLGenerator;
 class Scanner;
 class CJMODManager;
+class CHTLJSContext;
 
 // 脚本类型
 enum class ScriptType {
@@ -86,22 +87,16 @@ public:
 // 脚本管理器
 class ScriptManager {
 private:
-    // 局部脚本块（元素路径 -> 脚本块列表）
-    std::unordered_map<std::string, std::vector<std::shared_ptr<ScriptBlock>>> localScripts;
-    
-    // 全局脚本块
-    std::vector<std::shared_ptr<ScriptBlock>> globalScripts;
-    
-    // 自动生成的作用域ID映射
-    std::unordered_map<std::string, std::string> scopeIdMap;
-    int scopeIdCounter;
-    
-    // 上下文
-    std::shared_ptr<CHTLContext> context;
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
     
 public:
-    ScriptManager(std::shared_ptr<CHTLContext> ctx)
-        : context(ctx), scopeIdCounter(0) {}
+    ScriptManager(std::shared_ptr<CHTLContext> context);
+    ~ScriptManager();
+    
+    // 获取上下文
+    std::shared_ptr<CHTLContext> getContext() const;
+    std::shared_ptr<CHTLJSContext> getJSContext() const;
     
     // 添加局部脚本
     void addLocalScript(const std::string& elementPath, std::shared_ptr<ScriptBlock> script);
@@ -190,6 +185,17 @@ private:
     
     // 应用CJMOD扩展
     std::string applyCJMODExtensions(const std::string& script);
+    
+    // 处理无修饰字面量
+    std::string processUnquotedLiterals(const std::string& script, 
+                                      std::shared_ptr<CHTLJSContext> jsContext);
+    
+    // 处理单行中的无修饰字面量
+    std::string processLineForUnquotedLiterals(const std::string& line,
+                                             std::shared_ptr<CHTLJSContext> jsContext);
+    
+    // 检测并处理方法调用
+    std::string detectAndProcessMethods(const std::string& script);
 };
 
 // CHTL JS转换器

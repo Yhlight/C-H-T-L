@@ -185,3 +185,26 @@ STRING_LITERAL
     ;
 
 WS : [ \t\r\n]+ -> skip;
+
+// 字面量
+literal
+    : DecimalLiteral
+    | HexIntegerLiteral
+    | OctalIntegerLiteral
+    | OctalIntegerLiteral2
+    | BinaryIntegerLiteral
+    | BooleanLiteral
+    | StringLiteral
+    | NullLiteral
+    | UnquotedLiteral     // 添加无修饰字面量
+    ;
+
+// 无修饰字面量（在某些上下文中允许）
+UnquotedLiteral
+    : UnquotedIdentifier
+    ;
+
+// 无修饰标识符
+UnquotedIdentifier
+    : [a-zA-Z_] [a-zA-Z0-9_-]*
+    ;

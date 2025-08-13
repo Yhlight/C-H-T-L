@@ -65,7 +65,7 @@ chtl/
 ├── pack.bat          # 📦 Windows打包脚本
 ├── pack.sh           # 📦 Unix打包脚本
 ├── src/              # 💻 源代码
-├── module/           # 📚 模块库
+├── src/module/       # 📚 模块库
 ├── docs/             # 📖 文档
 ├── examples/         # 🎯 示例
 └── scripts/          # 🛠️ 更多脚本
@@ -134,7 +134,7 @@ pack.bat --all -o dist
 ./pack.sh --all
 
 # Pack specific module
-./pack.sh module/Chtholly
+./pack.sh src/module/Chtholly
 
 # Specify output directory
 ./pack.sh --all -o dist/

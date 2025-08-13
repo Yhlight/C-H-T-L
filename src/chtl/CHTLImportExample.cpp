@@ -130,7 +130,7 @@ int main() {
     // 配置导入路径
     ImportPathConfig pathConfig;
     pathConfig.currentDirectory = std::filesystem::current_path();
-    pathConfig.moduleDirectory = pathConfig.currentDirectory / "module";
+    pathConfig.moduleDirectory = pathConfig.currentDirectory / "src" / "module";
     pathConfig.officialModulePath = ""; // 示例中不使用官方模块
     pathConfig.searchOfficialFirst = false;
     

@@ -1,0 +1,163 @@
+{
+  "Template Style": {
+    "prefix": "template-style",
+    "body": [
+      "[Template] @Style ${1:StyleName}",
+      "{",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建样式模板"
+  },
+  "Template Element": {
+    "prefix": "template-element",
+    "body": [
+      "[Template] @Element ${1:ElementName}",
+      "{",
+      "\t${2:div} {",
+      "\t\t${0}",
+      "\t}",
+      "}"
+    ],
+    "description": "创建元素模板"
+  },
+  "Template Variable": {
+    "prefix": "template-var",
+    "body": [
+      "[Template] @Var ${1:VarName}",
+      "{",
+      "\t${2:property} = ${3:value};",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建变量模板"
+  },
+  "Custom Style": {
+    "prefix": "custom-style",
+    "body": [
+      "[Custom] @Style ${1:CustomStyleName}",
+      "{",
+      "\t@Style ${2:BaseStyle};",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建自定义样式"
+  },
+  "Custom Element": {
+    "prefix": "custom-element",
+    "body": [
+      "[Custom] @Element ${1:CustomElementName}",
+      "{",
+      "\t@Element ${2:BaseElement};",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建自定义元素"
+  },
+  "Import": {
+    "prefix": "import",
+    "body": [
+      "[Import] @${1|Chtl,CJmod,Html,Style,JavaScript|} from ${2:module}"
+    ],
+    "description": "导入模块"
+  },
+  "Namespace": {
+    "prefix": "namespace",
+    "body": [
+      "[Namespace] ${1:NamespaceName}"
+    ],
+    "description": "定义命名空间"
+  },
+  "Configuration": {
+    "prefix": "config",
+    "body": [
+      "[Configuration] ${1:Name}",
+      "{",
+      "\t${2:OPTION_NAME} = ${3:value};",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建配置块"
+  },
+  "Origin HTML": {
+    "prefix": "origin-html",
+    "body": [
+      "[Origin] @Html ${1:name}",
+      "${0}"
+    ],
+    "description": "嵌入原生HTML"
+  },
+  "Origin Style": {
+    "prefix": "origin-style",
+    "body": [
+      "[Origin] @Style ${1:name}",
+      "${0}"
+    ],
+    "description": "嵌入原生CSS"
+  },
+  "Origin JavaScript": {
+    "prefix": "origin-js",
+    "body": [
+      "[Origin] @JavaScript ${1:name}",
+      "${0}"
+    ],
+    "description": "嵌入原生JavaScript"
+  },
+  "Style Block": {
+    "prefix": "style",
+    "body": [
+      "style {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建样式块"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": [
+      "script {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建脚本块"
+  },
+  "Element with Class": {
+    "prefix": "element-class",
+    "body": [
+      "${1:div}.${2:className} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建带类名的元素"
+  },
+  "Element with ID": {
+    "prefix": "element-id",
+    "body": [
+      "${1:div}#${2:idName} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "创建带ID的元素"
+  },
+  "Interpolation": {
+    "prefix": "inter",
+    "body": [
+      "{{${1:expression}}}"
+    ],
+    "description": "创建插值表达式"
+  },
+  "Directive": {
+    "prefix": "directive",
+    "body": [
+      "@${1|Element,Style|} ${2:Name} from ${3:namespace};"
+    ],
+    "description": "使用指令"
+  },
+  "Variable Reference": {
+    "prefix": "varref",
+    "body": [
+      "${1:VarName}(${2:property})"
+    ],
+    "description": "引用变量属性"
+  }
+}

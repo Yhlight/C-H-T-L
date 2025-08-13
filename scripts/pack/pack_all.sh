@@ -417,7 +417,7 @@ pack_module() {
 # Main execution
 if [ $PACK_ALL -eq 1 ]; then
     print_info "Packing all modules..."
-    for module_dir in module/*/; do
+    for module_dir in src/module/*/; do
         if [ -d "$module_dir" ]; then
             pack_module "$module_dir"
         fi

@@ -1,7 +1,10 @@
 #!/bin/bash
-# CJMOD打包脚本
+# CHTL CJMOD打包脚本
 
-set -e
+# 脚本目录和根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$ROOT_DIR"
 
 # 颜色定义
 RED='\033[0;31m'
@@ -11,75 +14,76 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # 打印函数
-print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
 
-# 脚本目录
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
 
 # 默认参数
-MODULE_PATH=""
-OUTPUT_DIR="${PROJECT_ROOT}/build/cjmod"
-MODULE_NAME=""
+OUTPUT_DIR="output"
 BUILD_TYPE="Release"
-VERBOSE=false
+VERBOSE=0
+MODULE_PATH=""
+JOBS=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
 # 显示帮助
 show_help() {
     cat << EOF
-CJMOD打包脚本
+CHTL CJMOD打包脚本
 
-用法: $0 [选项] <模块路径>
+用法: $0 <模块路径> [选项]
 
 选项:
-    -h, --help              显示此帮助信息
-    -o, --output DIR        输出目录 [默认: ./build/cjmod]
-    -n, --name NAME         模块名称 [默认: 从info文件读取]
-    -b, --build-type TYPE   构建类型 (Debug/Release) [默认: Release]
-    -v, --verbose           显示详细信息
+  --help, -h          显示帮助信息
+  --output DIR, -o    输出目录 [默认: output]
+  --build-type TYPE   构建类型 (Debug/Release) [默认: Release]
+  --jobs N, -j N      并行编译任务数 [默认: $JOBS]
+  --verbose, -v       显示详细输出
 
 示例:
-    $0 module/Chtholly                         # 打包Chtholly模块（自动检测CJMOD部分）
-    $0 module/Chtholly/CJMOD/Chtholly         # 直接打包CJMOD部分
-    $0 -o dist module/MyModule                 # 打包到dist目录
+  $0 src/module/Chtholly                    # 打包Chtholly模块的CJMOD部分
+  $0 src/module/MyModule -o dist            # 打包到dist目录
+  $0 src/module/MyModule --build-type Debug # Debug构建
 
-CJMOD标准结构:
-    ModuleName/
-    ├── CMOD/                     # CMOD部分（可选）
-    └── CJMOD/                    # CJMOD部分
-        └── ModuleName/
-            ├── src/              # C++源代码
-            │   └── modulename.cpp
-            └── info/             # 模块信息
-                └── ModuleName.chtl
+支持的模块结构:
+  1. 混合模块: ModuleName/CJMOD/ModuleName/
+  2. 纯CJMOD模块: ModuleName/src/ (包含C++文件)
 
 EOF
+    exit 0
 }
 
-# 解析命令行参数
+# 解析参数
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
             show_help
-            exit 0
             ;;
         -o|--output)
             OUTPUT_DIR="$2"
             shift 2
             ;;
-        -n|--name)
-            MODULE_NAME="$2"
-            shift 2
-            ;;
-        -b|--build-type)
+        --build-type)
             BUILD_TYPE="$2"
             shift 2
             ;;
+        -j|--jobs)
+            JOBS="$2"
+            shift 2
+            ;;
         -v|--verbose)
-            VERBOSE=true
+            VERBOSE=1
             shift
             ;;
         *)
@@ -93,301 +97,260 @@ done
 if [ -z "$MODULE_PATH" ]; then
     print_error "请指定模块路径"
     show_help
+fi
+
+if [ ! -d "$MODULE_PATH" ]; then
+    print_error "模块路径不存在: $MODULE_PATH"
     exit 1
 fi
 
-# 转换为绝对路径
-MODULE_PATH="$(cd "$MODULE_PATH" 2>/dev/null && pwd)" || {
-    print_error "模块路径不存在: $MODULE_PATH"
+# 检查依赖
+if ! command -v cmake &> /dev/null; then
+    print_error "未找到CMake，CJMOD编译需要CMake"
     exit 1
-}
+fi
 
-# 检测模块结构
-detect_module_structure() {
-    local path="$1"
-    
-    # 检查是否是混合模块（包含CMOD和/或CJMOD）
-    if [ -d "$path/CMOD" ] || [ -d "$path/CJMOD" ]; then
-        echo "mixed"
-    # 检查是否是直接的CJMOD模块
-    elif [ -d "$path/src" ] && [ -f "$path/src/"*.cpp ]; then
-        echo "direct"
-    else
-        echo "unknown"
-    fi
-}
+if ! command -v g++ &> /dev/null && ! command -v clang++ &> /dev/null; then
+    print_error "未找到C++编译器"
+    exit 1
+fi
 
 # 获取模块名称
-get_module_name() {
-    local module_dir="$1"
-    local info_file=""
-    
-    # 查找info文件
-    if [ -f "$module_dir/info/$(basename "$module_dir").chtl" ]; then
-        info_file="$module_dir/info/$(basename "$module_dir").chtl"
-    elif [ -f "$module_dir/info/module.info" ]; then
-        info_file="$module_dir/info/module.info"
+MODULE_NAME=$(basename "$MODULE_PATH")
+
+# 查找实际的CJMOD路径
+ACTUAL_CJMOD_PATH=""
+
+# 检查混合模块结构
+if [ -d "$MODULE_PATH/CJMOD/$MODULE_NAME" ]; then
+    ACTUAL_CJMOD_PATH="$MODULE_PATH/CJMOD/$MODULE_NAME"
+    print_info "检测到混合模块结构"
+# 检查纯CJMOD模块结构
+elif [ -d "$MODULE_PATH/src" ]; then
+    # 确认是CJMOD模块（包含C++文件）
+    if find "$MODULE_PATH/src" -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" | grep -q .; then
+        ACTUAL_CJMOD_PATH="$MODULE_PATH"
+        print_info "检测到纯CJMOD模块结构"
     fi
-    
-    if [ -n "$info_file" ] && [ -f "$info_file" ]; then
-        # 从info文件中提取name字段
-        local name=$(grep -E '^\s*name\s*=' "$info_file" | sed 's/.*=\s*"\?\([^"]*\)"\?;*/\1/' | tr -d ' ')
-        if [ -n "$name" ]; then
-            echo "$name"
-            return
+fi
+
+if [ -z "$ACTUAL_CJMOD_PATH" ]; then
+    print_error "未找到有效的CJMOD模块结构"
+    print_info "请确保模块包含以下结构之一:"
+    print_info "  1. $MODULE_PATH/CJMOD/$MODULE_NAME/src/ (包含C++文件)"
+    print_info "  2. $MODULE_PATH/src/ (包含C++文件)"
+    exit 1
+fi
+
+# 验证模块结构
+if [ ! -d "$ACTUAL_CJMOD_PATH/src" ]; then
+    print_error "未找到src目录: $ACTUAL_CJMOD_PATH/src"
+    exit 1
+fi
+
+# 查找C++源文件
+CPP_FILES=$(find "$ACTUAL_CJMOD_PATH/src" -name "*.cpp" -o -name "*.cc" -o -name "*.cxx")
+if [ -z "$CPP_FILES" ]; then
+    print_error "未找到C++源文件"
+    exit 1
+fi
+
+# 查找info文件
+INFO_FILE=""
+if [ -d "$ACTUAL_CJMOD_PATH/info" ]; then
+    for file in "$ACTUAL_CJMOD_PATH/info"/*.chtl; do
+        if [ -f "$file" ]; then
+            INFO_FILE="$file"
+            break
         fi
-    fi
-    
-    # 默认使用目录名
-    basename "$module_dir"
-}
+    done
+fi
 
-# 验证CJMOD结构
-validate_cjmod() {
-    local cjmod_dir="$1"
-    local errors=0
-    
-    print_info "验证CJMOD结构: $cjmod_dir"
-    
-    # 检查必要的目录
-    if [ ! -d "$cjmod_dir/src" ]; then
-        print_error "缺少src目录"
-        ((errors++))
-    fi
-    
-    if [ ! -d "$cjmod_dir/info" ]; then
-        print_error "缺少info目录"
-        ((errors++))
-    fi
-    
-    # 检查是否有C++源文件
-    if ! ls "$cjmod_dir/src"/*.cpp >/dev/null 2>&1; then
-        print_error "src目录中没有找到C++源文件"
-        ((errors++))
-    fi
-    
-    # 获取模块名
-    local module_name=$(get_module_name "$cjmod_dir")
-    
-    # 检查info文件
-    if [ ! -f "$cjmod_dir/info/$module_name.chtl" ]; then
-        print_error "缺少模块信息文件: info/$module_name.chtl"
-        ((errors++))
-    fi
-    
-    return $errors
-}
+# 从info文件名获取模块名（如果存在）
+if [ -n "$INFO_FILE" ]; then
+    REAL_MODULE_NAME=$(basename "$INFO_FILE" .chtl)
+else
+    REAL_MODULE_NAME="$MODULE_NAME"
+fi
 
-# 编译CJMOD
-compile_cjmod() {
-    local cjmod_dir="$1"
-    local build_dir="$2"
-    local module_name="$3"
-    
-    print_info "编译CJMOD模块: $module_name"
-    
-    # 创建构建目录
-    mkdir -p "$build_dir"
-    
-    # 创建CMakeLists.txt
-    cat > "$build_dir/CMakeLists.txt" << EOF
+print_info "模块名称: $REAL_MODULE_NAME"
+print_info "构建类型: $BUILD_TYPE"
+
+# 创建构建目录
+BUILD_DIR=$(mktemp -d)
+print_info "构建目录: $BUILD_DIR"
+
+# 创建CMakeLists.txt
+cat > "$BUILD_DIR/CMakeLists.txt" << EOF
 cmake_minimum_required(VERSION 3.16)
-project($module_name VERSION 1.0.0 LANGUAGES CXX)
+project($REAL_MODULE_NAME LANGUAGES CXX)
 
-# C++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# 包含项目头文件
-include_directories("${PROJECT_ROOT}/src")
-include_directories("${PROJECT_ROOT}/include")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # 查找源文件
-file(GLOB SOURCES "${cjmod_dir}/src/*.cpp")
+file(GLOB_RECURSE SOURCES "$ACTUAL_CJMOD_PATH/src/*.cpp" "$ACTUAL_CJMOD_PATH/src/*.cc" "$ACTUAL_CJMOD_PATH/src/*.cxx")
 
 # 创建共享库
-add_library($module_name SHARED \${SOURCES})
+add_library($REAL_MODULE_NAME SHARED \${SOURCES})
 
-# 设置输出名称（小写）
-set_target_properties($module_name PROPERTIES 
-    OUTPUT_NAME "${module_name,,}"
+# 包含目录
+target_include_directories($REAL_MODULE_NAME PRIVATE
+    "$ROOT_DIR/src"
+    "$ROOT_DIR/src/chtl"
+    "$ACTUAL_CJMOD_PATH/src"
+)
+
+# 设置输出名称
+set_target_properties($REAL_MODULE_NAME PROPERTIES
     PREFIX ""
+    OUTPUT_NAME "$REAL_MODULE_NAME"
 )
 
 # 平台特定设置
 if(WIN32)
-    set_target_properties($module_name PROPERTIES
-        SUFFIX ".dll"
-        WINDOWS_EXPORT_ALL_SYMBOLS ON
-    )
+    target_compile_definitions($REAL_MODULE_NAME PRIVATE CJMOD_EXPORTS)
 elseif(APPLE)
-    set_target_properties($module_name PROPERTIES
+    set_target_properties($REAL_MODULE_NAME PROPERTIES
         SUFFIX ".dylib"
-    )
-else()
-    set_target_properties($module_name PROPERTIES
-        SUFFIX ".so"
     )
 endif()
 
 # 优化设置
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_options($module_name PRIVATE -O3 -DNDEBUG)
+    target_compile_options($REAL_MODULE_NAME PRIVATE
+        $<$<CXX_COMPILER_ID:GNU,Clang>:-O3 -DNDEBUG>
+        $<$<CXX_COMPILER_ID:MSVC>:/O2 /DNDEBUG>
+    )
 endif()
-
-# 导出符号
-target_compile_definitions($module_name PRIVATE BUILDING_CJMOD)
 EOF
-    
-    # 配置项目
-    print_info "配置CMake项目..."
-    (cd "$build_dir" && cmake . -DCMAKE_BUILD_TYPE="$BUILD_TYPE")
-    
-    # 编译
-    print_info "编译共享库..."
-    (cd "$build_dir" && cmake --build . --config "$BUILD_TYPE")
-    
-    # 查找生成的库文件
-    local lib_file=""
-    for ext in "so" "dll" "dylib"; do
-        if [ -f "$build_dir/${module_name,,}.$ext" ]; then
-            lib_file="$build_dir/${module_name,,}.$ext"
-            break
-        fi
-    done
-    
-    if [ -z "$lib_file" ] || [ ! -f "$lib_file" ]; then
-        print_error "编译失败：未找到生成的库文件"
-        return 1
-    fi
-    
-    print_success "编译成功: $(basename "$lib_file")"
-    echo "$lib_file"
-}
 
-# 创建CJMOD包
-create_cjmod_package() {
-    local cjmod_dir="$1"
-    local output_dir="$2"
-    local module_name="$3"
-    
-    # 如果没有指定模块名，从info文件获取
-    if [ -z "$module_name" ]; then
-        module_name=$(get_module_name "$cjmod_dir")
+# 配置和构建
+cd "$BUILD_DIR"
+
+print_info "配置CMake..."
+if [ $VERBOSE -eq 1 ]; then
+    cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+else
+    cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE > /dev/null 2>&1
+fi
+
+if [ $? -ne 0 ]; then
+    print_error "CMake配置失败"
+    cd "$ROOT_DIR"
+    rm -rf "$BUILD_DIR"
+    exit 1
+fi
+
+print_info "编译模块..."
+if [ $VERBOSE -eq 1 ]; then
+    cmake --build . --config $BUILD_TYPE -j $JOBS
+else
+    cmake --build . --config $BUILD_TYPE -j $JOBS > /dev/null 2>&1
+fi
+
+if [ $? -ne 0 ]; then
+    print_error "编译失败"
+    cd "$ROOT_DIR"
+    rm -rf "$BUILD_DIR"
+    exit 1
+fi
+
+cd "$ROOT_DIR"
+
+# 查找生成的库文件
+LIB_FILE=""
+for ext in so dylib dll; do
+    if [ -f "$BUILD_DIR/$REAL_MODULE_NAME.$ext" ]; then
+        LIB_FILE="$BUILD_DIR/$REAL_MODULE_NAME.$ext"
+        break
+    elif [ -f "$BUILD_DIR/lib$REAL_MODULE_NAME.$ext" ]; then
+        LIB_FILE="$BUILD_DIR/lib$REAL_MODULE_NAME.$ext"
+        break
+    elif [ -f "$BUILD_DIR/$BUILD_TYPE/$REAL_MODULE_NAME.$ext" ]; then
+        LIB_FILE="$BUILD_DIR/$BUILD_TYPE/$REAL_MODULE_NAME.$ext"
+        break
     fi
-    
-    print_info "打包CJMOD模块: $module_name"
-    
-    # 创建输出目录
-    mkdir -p "$output_dir"
-    
-    # 创建临时构建目录
-    local temp_dir=$(mktemp -d)
-    local build_dir="$temp_dir/build"
-    
-    # 编译模块
-    local lib_file=$(compile_cjmod "$cjmod_dir" "$build_dir" "$module_name")
-    if [ $? -ne 0 ]; then
-        rm -rf "$temp_dir"
-        return 1
-    fi
-    
-    # 创建打包目录
-    local package_dir="$temp_dir/package/$module_name"
-    mkdir -p "$package_dir/lib"
-    mkdir -p "$package_dir/src"
-    mkdir -p "$package_dir/info"
-    
-    # 复制文件
-    print_info "准备打包文件..."
-    cp "$lib_file" "$package_dir/lib/"
-    cp -r "$cjmod_dir/src"/* "$package_dir/src/"
-    cp -r "$cjmod_dir/info"/* "$package_dir/info/"
-    
-    # 创建元数据文件
-    local metadata_file="$package_dir/.cjmod_metadata"
-    cat > "$metadata_file" << EOF
+done
+
+if [ -z "$LIB_FILE" ]; then
+    print_error "未找到生成的库文件"
+    rm -rf "$BUILD_DIR"
+    exit 1
+fi
+
+print_success "编译成功: $(basename "$LIB_FILE")"
+
+# 创建输出目录
+mkdir -p "$OUTPUT_DIR"
+
+# 创建临时打包目录
+TEMP_DIR=$(mktemp -d)
+PACKAGE_DIR="$TEMP_DIR/$REAL_MODULE_NAME"
+mkdir -p "$PACKAGE_DIR/lib"
+mkdir -p "$PACKAGE_DIR/src"
+
+# 复制文件
+print_info "准备打包文件..."
+cp "$LIB_FILE" "$PACKAGE_DIR/lib/"
+cp -r "$ACTUAL_CJMOD_PATH/src"/* "$PACKAGE_DIR/src/"
+
+# 复制info文件（如果存在）
+if [ -d "$ACTUAL_CJMOD_PATH/info" ]; then
+    mkdir -p "$PACKAGE_DIR/info"
+    cp -r "$ACTUAL_CJMOD_PATH/info"/* "$PACKAGE_DIR/info/"
+fi
+
+# 创建元数据文件
+cat > "$PACKAGE_DIR/.cjmod_metadata" << EOF
 {
-    "format_version": "1.0",
-    "package_type": "CJMOD",
-    "created_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-    "compiler_version": "1.0.0",
-    "build_type": "$BUILD_TYPE",
-    "platform": "$(uname -s)",
-    "architecture": "$(uname -m)"
+  "module_name": "$REAL_MODULE_NAME",
+  "package_type": "CJMOD",
+  "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "platform": "$(uname -s | tr '[:upper:]' '[:lower:]')",
+  "architecture": "$(uname -m)",
+  "build_type": "$BUILD_TYPE",
+  "chtl_version": "1.0.0"
 }
 EOF
-    
-    # 创建tar.gz包
-    local output_file="$output_dir/${module_name}.cjmod"
-    print_info "创建压缩包: $output_file"
-    
-    (cd "$temp_dir/package" && tar -czf "$output_file" "$module_name")
-    
-    # 清理临时文件
-    rm -rf "$temp_dir"
-    
-    # 显示包信息
-    local size=$(du -h "$output_file" | cut -f1)
+
+# 创建tar.gz包
+OUTPUT_FILE="$OUTPUT_DIR/${REAL_MODULE_NAME}.cjmod"
+print_info "创建CJMOD包: $OUTPUT_FILE"
+
+cd "$TEMP_DIR"
+if [ $VERBOSE -eq 1 ]; then
+    tar -czvf "$OUTPUT_FILE" "$REAL_MODULE_NAME"
+else
+    tar -czf "$OUTPUT_FILE" "$REAL_MODULE_NAME"
+fi
+
+cd "$ROOT_DIR"
+
+# 清理
+rm -rf "$BUILD_DIR"
+rm -rf "$TEMP_DIR"
+
+# 验证输出文件
+if [ -f "$OUTPUT_FILE" ]; then
+    FILE_SIZE=$(du -h "$OUTPUT_FILE" | cut -f1)
     print_success "CJMOD包创建成功"
-    print_info "文件: $output_file"
-    print_info "大小: $size"
+    print_info "文件: $OUTPUT_FILE"
+    print_info "大小: $FILE_SIZE"
+    print_info "平台: $(uname -s)"
+    print_info "架构: $(uname -m)"
     
-    if [ "$VERBOSE" = true ]; then
-        print_info "包含内容:"
-        tar -tzf "$output_file" | head -20
-        echo "..."
+    # 显示包内容（如果verbose）
+    if [ $VERBOSE -eq 1 ]; then
+        print_info "包内容:"
+        tar -tzf "$OUTPUT_FILE" | head -20
+        TOTAL_FILES=$(tar -tzf "$OUTPUT_FILE" | wc -l)
+        print_info "总文件数: $TOTAL_FILES"
     fi
-}
+else
+    print_error "CJMOD包创建失败"
+    exit 1
+fi
 
-# 主函数
-main() {
-    print_info "开始CJMOD打包流程"
-    
-    # 检测模块结构
-    local structure=$(detect_module_structure "$MODULE_PATH")
-    local cjmod_path=""
-    
-    case $structure in
-        "mixed")
-            # 混合模块，查找CJMOD部分
-            if [ -d "$MODULE_PATH/CJMOD" ]; then
-                # 查找CJMOD子目录
-                for dir in "$MODULE_PATH/CJMOD"/*; do
-                    if [ -d "$dir" ] && [ -d "$dir/src" ] && [ -d "$dir/info" ]; then
-                        cjmod_path="$dir"
-                        break
-                    fi
-                done
-            fi
-            
-            if [ -z "$cjmod_path" ]; then
-                print_error "在混合模块中未找到有效的CJMOD部分"
-                exit 1
-            fi
-            ;;
-        "direct")
-            # 直接的CJMOD模块
-            cjmod_path="$MODULE_PATH"
-            ;;
-        *)
-            print_error "无法识别的模块结构"
-            print_error "请确保模块遵循CJMOD标准结构"
-            exit 1
-            ;;
-    esac
-    
-    # 验证CJMOD结构
-    if ! validate_cjmod "$cjmod_path"; then
-        print_error "CJMOD结构验证失败"
-        exit 1
-    fi
-    
-    # 创建CJMOD包
-    create_cjmod_package "$cjmod_path" "$OUTPUT_DIR" "$MODULE_NAME"
-    
-    print_success "CJMOD打包完成！"
-}
-
-# 执行主函数
-main
+exit 0

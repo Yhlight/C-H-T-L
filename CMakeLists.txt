@@ -172,7 +172,7 @@ install(DIRECTORY include/chtl
 )
 
 # 模块
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/module
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/module
     DESTINATION share/chtl
 )
 

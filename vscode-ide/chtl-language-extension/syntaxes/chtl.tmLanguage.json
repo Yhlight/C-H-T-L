@@ -1,0 +1,434 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CHTL",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#configuration" },
+    { "include": "#imports" },
+    { "include": "#namespace" },
+    { "include": "#template" },
+    { "include": "#custom" },
+    { "include": "#constraint" },
+    { "include": "#origin" },
+    { "include": "#elements" },
+    { "include": "#styles" },
+    { "include": "#scripts" },
+    { "include": "#text" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.chtl",
+          "match": "--.*$"
+        },
+        {
+          "name": "comment.block.chtl",
+          "begin": "<!--",
+          "end": "-->"
+        }
+      ]
+    },
+    "configuration": {
+      "patterns": [
+        {
+          "name": "meta.configuration.chtl",
+          "begin": "\\[Configuration\\]\\s+(\\w+)",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.configuration.chtl" },
+            "1": { "name": "entity.name.type.configuration.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "#config-block" }
+          ]
+        }
+      ]
+    },
+    "config-block": {
+      "patterns": [
+        {
+          "name": "meta.config-block.chtl",
+          "begin": "\\{",
+          "end": "\\}",
+          "patterns": [
+            { "include": "#config-assignment" },
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "config-assignment": {
+      "patterns": [
+        {
+          "match": "(\\w+)\\s*(=)\\s*(.+?)(?:;|$)",
+          "captures": {
+            "1": { "name": "variable.other.config.chtl" },
+            "2": { "name": "keyword.operator.assignment.chtl" },
+            "3": { "name": "string.unquoted.config.chtl" }
+          }
+        }
+      ]
+    },
+    "imports": {
+      "patterns": [
+        {
+          "name": "meta.import.chtl",
+          "match": "\\[Import\\]\\s+(@\\w+)\\s+(from)\\s+([\\w\\./-]+)(?:\\s+(as)\\s+(\\w+))?",
+          "captures": {
+            "0": { "name": "keyword.control.import.chtl" },
+            "1": { "name": "support.type.import.chtl" },
+            "2": { "name": "keyword.control.from.chtl" },
+            "3": { "name": "string.unquoted.module.chtl" },
+            "4": { "name": "keyword.control.as.chtl" },
+            "5": { "name": "entity.name.alias.chtl" }
+          }
+        }
+      ]
+    },
+    "namespace": {
+      "patterns": [
+        {
+          "name": "meta.namespace.chtl",
+          "match": "\\[Namespace\\]\\s+([\\w\\.]+)",
+          "captures": {
+            "0": { "name": "keyword.control.namespace.chtl" },
+            "1": { "name": "entity.name.namespace.chtl" }
+          }
+        }
+      ]
+    },
+    "template": {
+      "patterns": [
+        {
+          "name": "meta.template.chtl",
+          "begin": "\\[Template\\]\\s+(@\\w+)\\s+(\\w+)",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.template.chtl" },
+            "1": { "name": "support.type.template.chtl" },
+            "2": { "name": "entity.name.type.template.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "#template-body" }
+          ]
+        }
+      ]
+    },
+    "custom": {
+      "patterns": [
+        {
+          "name": "meta.custom.chtl",
+          "begin": "\\[Custom\\]\\s+(@\\w+)\\s+(\\w+)",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.custom.chtl" },
+            "1": { "name": "support.type.custom.chtl" },
+            "2": { "name": "entity.name.type.custom.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "#custom-body" }
+          ]
+        }
+      ]
+    },
+    "constraint": {
+      "patterns": [
+        {
+          "name": "meta.constraint.chtl",
+          "match": "\\[Constraint\\]\\s+(except)\\s+([\\w,\\s]+)",
+          "captures": {
+            "0": { "name": "keyword.control.constraint.chtl" },
+            "1": { "name": "keyword.control.except.chtl" },
+            "2": { "name": "variable.parameter.constraint.chtl" }
+          }
+        }
+      ]
+    },
+    "origin": {
+      "patterns": [
+        {
+          "name": "meta.origin.html.chtl",
+          "begin": "\\[Origin\\]\\s+@Html(?:\\s+(\\w+))?",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.origin.chtl" },
+            "1": { "name": "entity.name.tag.origin.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "text.html.basic" }
+          ]
+        },
+        {
+          "name": "meta.origin.css.chtl",
+          "begin": "\\[Origin\\]\\s+@Style(?:\\s+(\\w+))?",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.origin.chtl" },
+            "1": { "name": "entity.name.tag.origin.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "source.css" }
+          ]
+        },
+        {
+          "name": "meta.origin.js.chtl",
+          "begin": "\\[Origin\\]\\s+@JavaScript(?:\\s+(\\w+))?",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.origin.chtl" },
+            "1": { "name": "entity.name.tag.origin.chtl" }
+          },
+          "end": "(?=\\[|$)",
+          "patterns": [
+            { "include": "source.js" }
+          ]
+        }
+      ]
+    },
+    "template-body": {
+      "patterns": [
+        {
+          "begin": "\\{",
+          "end": "\\}",
+          "patterns": [
+            { "include": "#style-content" },
+            { "include": "#element-content" },
+            { "include": "#variable-content" }
+          ]
+        }
+      ]
+    },
+    "custom-body": {
+      "patterns": [
+        {
+          "begin": "\\{",
+          "end": "\\}",
+          "patterns": [
+            { "include": "#inheritance" },
+            { "include": "#specialization" },
+            { "include": "#style-content" },
+            { "include": "#element-content" }
+          ]
+        }
+      ]
+    },
+    "inheritance": {
+      "patterns": [
+        {
+          "match": "(@\\w+)\\s+(\\w+)(?:\\s+(from)\\s+([\\w\\.]+))?\\s*;",
+          "captures": {
+            "1": { "name": "support.type.inheritance.chtl" },
+            "2": { "name": "entity.name.type.inherited.chtl" },
+            "3": { "name": "keyword.control.from.chtl" },
+            "4": { "name": "entity.name.namespace.chtl" }
+          }
+        }
+      ]
+    },
+    "specialization": {
+      "patterns": [
+        {
+          "match": "(\\+|-)\\s*(\\w+(?:\\.\\w+)*)\\s*(?:=\\s*(.+?))?\\s*;",
+          "captures": {
+            "1": { "name": "keyword.operator.specialization.chtl" },
+            "2": { "name": "variable.other.property.chtl" },
+            "3": { "name": "string.unquoted.value.chtl" }
+          }
+        },
+        {
+          "name": "meta.insert.chtl",
+          "match": "(insert)\\s+(\\w+)\\s+(?:(before|after|into)\\s+(\\w+))?",
+          "captures": {
+            "1": { "name": "keyword.control.insert.chtl" },
+            "2": { "name": "entity.name.tag.chtl" },
+            "3": { "name": "keyword.control.position.chtl" },
+            "4": { "name": "entity.name.tag.target.chtl" }
+          }
+        }
+      ]
+    },
+    "elements": {
+      "patterns": [
+        {
+          "name": "meta.element.chtl",
+          "begin": "(\\w+)\\s*(?:\\.([\\w-]+))?\\s*(?:#([\\w-]+))?\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "entity.name.tag.chtl" },
+            "2": { "name": "entity.name.class.chtl" },
+            "3": { "name": "entity.name.id.chtl" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#element-content" }
+          ]
+        },
+        {
+          "name": "meta.element.self-closing.chtl",
+          "match": "(\\w+)\\s*(?:\\.([\\w-]+))?\\s*(?:#([\\w-]+))?\\s*;",
+          "captures": {
+            "1": { "name": "entity.name.tag.chtl" },
+            "2": { "name": "entity.name.class.chtl" },
+            "3": { "name": "entity.name.id.chtl" }
+          }
+        }
+      ]
+    },
+    "element-content": {
+      "patterns": [
+        { "include": "#attributes" },
+        { "include": "#directive" },
+        { "include": "#elements" },
+        { "include": "#text" },
+        { "include": "#interpolation" },
+        { "include": "#comments" }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "match": "(\\w+(?:-\\w+)*)\\s*=\\s*\"([^\"]*)\"",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.quoted.double.chtl" }
+          }
+        },
+        {
+          "match": "(\\w+(?:-\\w+)*)\\s*=\\s*'([^']*)'",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "string.quoted.single.chtl" }
+          }
+        },
+        {
+          "match": "(\\w+(?:-\\w+)*)\\s*=\\s*(\\w+)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.chtl" },
+            "2": { "name": "variable.other.chtl" }
+          }
+        }
+      ]
+    },
+    "directive": {
+      "patterns": [
+        {
+          "match": "(@\\w+)\\s+(\\w+)(?:\\s+(from)\\s+([\\w\\.]+))?\\s*;",
+          "captures": {
+            "1": { "name": "keyword.control.directive.chtl" },
+            "2": { "name": "entity.name.type.chtl" },
+            "3": { "name": "keyword.control.from.chtl" },
+            "4": { "name": "entity.name.namespace.chtl" }
+          }
+        }
+      ]
+    },
+    "styles": {
+      "patterns": [
+        {
+          "name": "meta.style.chtl",
+          "begin": "style\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.style.chtl" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#style-content" }
+          ]
+        }
+      ]
+    },
+    "style-content": {
+      "patterns": [
+        { "include": "#style-property" },
+        { "include": "#variable-reference" },
+        { "include": "#comments" }
+      ]
+    },
+    "style-property": {
+      "patterns": [
+        {
+          "match": "([\\w-]+)\\s*:\\s*(.+?)\\s*;",
+          "captures": {
+            "1": { "name": "support.type.property-name.css" },
+            "2": { "name": "support.constant.property-value.css" }
+          }
+        }
+      ]
+    },
+    "scripts": {
+      "patterns": [
+        {
+          "name": "meta.script.chtl",
+          "begin": "script\\s*\\{",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.script.chtl" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#chtl-js" },
+            { "include": "source.js" }
+          ]
+        }
+      ]
+    },
+    "chtl-js": {
+      "patterns": [
+        { "include": "#interpolation" },
+        { "include": "#directive" },
+        {
+          "match": "(var)\\s+(\\w+)\\s*=\\s*(@\\w+)\\s+(\\w+)(?:\\s+(from)\\s+([\\w\\.]+))?",
+          "captures": {
+            "1": { "name": "storage.type.var.chtl" },
+            "2": { "name": "variable.other.chtl" },
+            "3": { "name": "support.type.chtl" },
+            "4": { "name": "entity.name.type.chtl" },
+            "5": { "name": "keyword.control.from.chtl" },
+            "6": { "name": "entity.name.namespace.chtl" }
+          }
+        }
+      ]
+    },
+    "variable-content": {
+      "patterns": [
+        {
+          "match": "(\\w+)\\s*=\\s*(.+?)\\s*;",
+          "captures": {
+            "1": { "name": "variable.other.chtl" },
+            "2": { "name": "string.unquoted.chtl" }
+          }
+        }
+      ]
+    },
+    "variable-reference": {
+      "patterns": [
+        {
+          "match": "(\\w+)\\((\\w+)\\)",
+          "captures": {
+            "1": { "name": "variable.other.chtl" },
+            "2": { "name": "variable.parameter.chtl" }
+          }
+        }
+      ]
+    },
+    "interpolation": {
+      "patterns": [
+        {
+          "name": "meta.interpolation.chtl",
+          "begin": "\\{\\{",
+          "end": "\\}\\}",
+          "patterns": [
+            { "include": "source.js" }
+          ]
+        }
+      ]
+    },
+    "text": {
+      "patterns": [
+        {
+          "name": "string.unquoted.text.chtl",
+          "match": "[^<>{};\\s][^<>{};]*"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.chtl"
+}

@@ -96,7 +96,7 @@ if errorlevel 1 (
 rem Pack all modules if requested
 if %PACK_ALL%==1 (
     echo Packing all modules...
-    for /d %%M in (module\*) do (
+    for /d %%M in (src\module\*) do (
         if exist "%%M" (
             call :pack_module "%%M"
         )

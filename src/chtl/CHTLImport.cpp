@@ -18,7 +18,7 @@ namespace chtl {
 ImportManager::ImportManager(std::shared_ptr<CHTLContext> ctx) : context(ctx) {
     // 默认路径配置
     pathConfig.currentDirectory = std::filesystem::current_path();
-    pathConfig.moduleDirectory = pathConfig.currentDirectory / "module";
+    pathConfig.moduleDirectory = pathConfig.currentDirectory / "src" / "module";
     pathConfig.searchOfficialFirst = true;
 }
 

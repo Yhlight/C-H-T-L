@@ -33,12 +33,12 @@
 
 [Template] @Element Button {
     button class=ButtonBase {
-        @content;
+        // TODO: placeholder for content
     }
 }
 
 [Template] @Element ButtonPrimary {
     button class=ButtonPrimary {
-        @content;
+        // TODO: placeholder for content
     }
 }

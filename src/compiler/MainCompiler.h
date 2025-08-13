@@ -22,6 +22,9 @@ public:
     // 编译完整的CHTL文件
     bool compile(const std::string& sourceCode);
     
+    // 验证代码
+    bool validate(const std::string& sourceCode);
+    
     // 获取编译结果
     std::string getHTML() const { return htmlOutput_; }
     std::string getCSS() const { return cssOutput_; }

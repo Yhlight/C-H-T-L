@@ -233,9 +233,9 @@ chtlStatement: chtlSelectorStatement | chtlListenStatement | chtlDelegateStateme
 // CHTL选择器语句
 chtlSelectorStatement: chtlSelector (DOT | CHTL_ARROW) methodCall;
 chtlSelector: CHTL_DOUBLE_BRACE selectorContent CHTL_DOUBLE_BRACE_CLOSE;
-selectorContent: (selectorType)? IDENTIFIER (selectorModifier)*;
+selectorContent: (selectorType)? IDENTIFIER (selectorModifier)+;
 selectorType: DOT | HASH;
-selectorModifier: LBRACKET NUMBER RBRACKET | (WS selectorContent)*;
+selectorModifier: LBRACKET NUMBER RBRACKET | (WS selectorContent)+;
 
 // CHTL监听器语句
 chtlListenStatement: chtlSelector DOT CHTL_LISTEN LPAREN chtlListenObject RPAREN;

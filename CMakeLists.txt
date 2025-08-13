@@ -37,6 +37,26 @@ set(HEADERS
 # 创建可执行文件
 add_executable(chtl-compiler ${SOURCES} ${HEADERS})
 
+# 添加ANTLR4生成的源文件
+# target_sources(chtl-compiler PRIVATE
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp
+#     # generated/css/grammars/css/grammars/css/CSSLexer.cpp
+#     # generated/css/grammars/css/grammars/css/CSSParser.cpp
+#     # generated/css/grammars/css/grammars/css/CSSListener.cpp
+#     # generated/css/grammars/css/grammars/css/CSSBaseListener.cpp
+#     generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp
+#     generated/js/grammars/js/grammars/js/JavaScriptParser.cpp
+#     generated/js/grammars/js/grammars/js/JavaScriptListener.cpp
+#     generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp
+# )
+
 # 链接ANTLR4库
 target_link_libraries(chtl-compiler antlr4-runtime)
 
@@ -50,6 +70,12 @@ target_include_directories(chtl-compiler PRIVATE
     src/js
     src/chtljs
     src/utils
+    generated
+    generated/chtl/grammars/chtl/grammars/chtl
+    generated/css/grammars/css/grammars/css
+    generated/js/grammars/js/grammars/js
+    generated/chtljs/grammars/chtljs/grammars/chtljs
+    /usr/include/antlr4-runtime
 )
 
 # 安装目标
@@ -62,6 +88,26 @@ install(TARGETS chtl-compiler
 # 安装头文件
 install(FILES ${HEADERS}
     DESTINATION include/chtl-compiler
+)
+
+# 安装生成的ANTLR4头文件
+install(FILES generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.h
+    generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.h
+    generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.h
+    generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.h
+    generated/css/grammars/css/grammars/css/CSSLexer.h
+    generated/css/grammars/css/grammars/css/CSSParser.h
+    generated/css/grammars/css/grammars/css/CSSListener.h
+    generated/css/grammars/css/grammars/css/CSSBaseListener.h
+    generated/js/grammars/js/grammars/js/JavaScriptLexer.h
+    generated/js/grammars/js/grammars/js/JavaScriptParser.h
+    generated/js/grammars/js/grammars/js/JavaScriptListener.h
+    generated/js/grammars/js/grammars/js/JavaScriptBaseListener.h
+    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.h
+    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.h
+    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.h
+    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.h
+    DESTINATION include/chtl-compiler/antlr
 )
 
 # 安装语法文件

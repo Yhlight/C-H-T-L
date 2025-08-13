@@ -201,7 +201,6 @@ classDeclaration: CLASS identifier (EXTENDS identifier)? LBRACE classBody? RBRAC
 classBody: classElement+;
 classElement: methodDefinition;
 methodDefinition: (GET | SET)? propertyName LPAREN formalParameterList? RPAREN LBRACE functionBody RBRACE;
-propertyName: identifierName;
 
 importStatement: IMPORT importClause fromClause SEMICOLON | IMPORT moduleSpecifier SEMICOLON;
 importClause: defaultImport | nameSpaceImport | namedImports | defaultImport COMMA nameSpaceImport | defaultImport COMMA namedImports;
@@ -253,9 +252,9 @@ elementList: (ELLIPSIS)? assignmentExpression (COMMA (ELLIPSIS)? assignmentExpre
 objectLiteral: LBRACE (propertyDefinition (COMMA propertyDefinition)*)? RBRACE;
 propertyDefinition: identifierName COLON assignmentExpression | (GET | SET)? propertyName LPAREN formalParameterList? RPAREN LBRACE functionBody RBRACE | (ELLIPSIS)? assignmentExpression;
 parenthesizedExpression: LPAREN expression RPAREN;
-templateLiteral: BACKTICK templateElement* BACKTICK;
+templateLiteral: BACKTICK templateElement+ BACKTICK;
 templateElement: templateCharacters | templateSubstitution;
-templateCharacters: TEMPLATE_CHAR*;
+templateCharacters: TEMPLATE_CHAR+;
 TEMPLATE_CHAR: ~[`$\\] | '\\' .;
 templateSubstitution: '$' LBRACE expression RBRACE;
 yieldExpression: YIELD (assignmentExpression)?;

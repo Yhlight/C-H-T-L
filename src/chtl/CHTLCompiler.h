@@ -65,6 +65,9 @@ public:
     // 编译CHTL代码
     bool compile(const std::string& sourceCode);
     
+    // 验证CHTL代码
+    bool validate(const std::string& sourceCode);
+    
     // 获取编译后的HTML
     std::string getHTML() const { return htmlOutput_; }
     
@@ -161,6 +164,13 @@ private:
     void parseCustomContent(const std::string& line);
     void endCustom();
     
+    // 验证方法
+    bool validateCHTLLine(const std::string& line);
+    
+    // 辅助方法
+    std::string trim(const std::string& str);
+    bool isComment(const std::string& line);
+    
     // 其他指令处理
     void parseImport(const std::string& line);
     void parseNamespace(const std::string& line);
@@ -173,8 +183,6 @@ private:
     bool isSingleTagElement(const std::string& elementName);
     
     // 工具方法
-    bool isComment(const std::string& line);
-    std::string trim(const std::string& str);
     void processUnclosedElements();
     
     // 后处理方法

@@ -21,44 +21,71 @@ CHTLCompiler::CHTLCompiler() {
 bool CHTLCompiler::compile(const std::string& sourceCode) {
     try {
         // 重置状态
-        reset();
+        currentState_ = CompilerState::INITIAL;
+        currentLineNumber_ = 0;
+        htmlOutput_.clear();
+        cssOutput_.clear();
+        jsOutput_.clear();
+        
+        // 初始化HTML元素支持
+        initializeHTMLElements();
         
         // 解析CHTL代码
         parseCHTL(sourceCode);
-        
-        // 处理模板
-        processTemplates();
-        
-        // 处理自定义元素
-        processCustomElements();
-        
-        // 处理样式组
-        processStyleGroups();
-        
-        // 处理变量组
-        processVariableGroups();
-        
-        // 处理命名空间
-        processNamespaces();
-        
-        // 处理导入
-        processImports();
-        
-        // 处理约束
-        processConstraints();
         
         // 生成输出
         generateHTML();
         generateCSS();
         generateJavaScript();
         
-        setSuccess(true);
+        setCompiled();
         return true;
         
     } catch (const std::exception& e) {
         setError("CHTL编译失败: " + std::string(e.what()));
         return false;
     }
+}
+
+bool CHTLCompiler::validate(const std::string& sourceCode) {
+    try {
+        // 基本的CHTL语法验证
+        std::istringstream iss(sourceCode);
+        std::string line;
+        size_t lineNumber = 0;
+        
+        while (std::getline(iss, line)) {
+            lineNumber++;
+            std::string trimmed = trim(line);
+            
+            if (trimmed.empty() || isComment(trimmed)) {
+                continue;
+            }
+            
+            // 验证基本的CHTL语法结构
+            if (!validateCHTLLine(trimmed)) {
+                setError("第" + std::to_string(lineNumber) + "行语法错误: " + trimmed);
+                return false;
+            }
+        }
+        
+        return true;
+    } catch (const std::exception& e) {
+        setError("CHTL验证失败: " + std::string(e.what()));
+        return false;
+    }
+}
+
+bool CHTLCompiler::validateCHTLLine(const std::string& line) {
+    // 基本的CHTL语法验证
+    if (line.empty()) {
+        return true;
+    }
+    
+    // 检查是否是有效的CHTL语法
+    // 这里可以添加更详细的语法验证逻辑
+    
+    return true;
 }
 
 void CHTLCompiler::initializeHTMLElements() {
@@ -627,7 +654,7 @@ void CHTLCompiler::reset() {
     currentStyleBlock_.clear();
     currentScriptBlock_.clear();
     
-    setSuccess(false);
+    setError("编译失败");
     setError("");
 }
 

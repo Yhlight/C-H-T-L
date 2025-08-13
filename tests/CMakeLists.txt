@@ -4,9 +4,24 @@
 add_executable(test_scanner test_scanner.cpp)
 add_executable(test_chtl_compiler test_chtl_compiler.cpp)
 
-# 链接必要的库
-target_link_libraries(test_scanner)
-target_link_libraries(test_chtl_compiler)
+# 链接必要的库 - 链接到包含CHTL编译器实现的源文件
+target_sources(test_scanner PRIVATE
+    ../src/scanner/CodeScanner.cpp
+    ../src/compiler/Compiler.cpp
+    ../src/chtl/CHTLCompiler.cpp
+    ../src/css/CSSCompiler.cpp
+    ../src/js/JavaScriptCompiler.cpp
+    ../src/chtljs/CHTLJSCompiler.cpp
+)
+
+target_sources(test_chtl_compiler PRIVATE
+    ../src/scanner/CodeScanner.cpp
+    ../src/compiler/Compiler.cpp
+    ../src/chtl/CHTLCompiler.cpp
+    ../src/css/CSSCompiler.cpp
+    ../src/js/JavaScriptCompiler.cpp
+    ../src/chtljs/CHTLJSCompiler.cpp
+)
 
 # 设置包含目录
 target_include_directories(test_scanner PRIVATE

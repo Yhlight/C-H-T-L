@@ -52,202 +52,84 @@ EOF
 
 ### 2. 编写C++代码
 
-创建头文件 `include/my_cjmod.h`：
+使用CHTL提供的简化接口，创建 `src/my_cjmod.cpp`：
 
 ```cpp
-#ifndef MY_CJMOD_H
-#define MY_CJMOD_H
-
-#include <string>
-#include <vector>
-
-#ifdef _WIN32
-    #define CJMOD_EXPORT __declspec(dllexport)
-#else
-    #define CJMOD_EXPORT __attribute__((visibility("default")))
-#endif
-
-namespace my_cjmod {
-
-// 示例类：计算器
-class Calculator {
-public:
-    double add(double a, double b);
-    double multiply(double a, double b);
-    double power(double base, double exponent);
-};
-
-// 示例：字符串工具
-class StringUtils {
-public:
-    std::string reverse(const std::string& str);
-    std::vector<std::string> split(const std::string& str, char delimiter);
-    std::string join(const std::vector<std::string>& parts, const std::string& delimiter);
-};
-
-} // namespace my_cjmod
-
-// C接口 - 供CHTL调用
-extern "C" {
-    CJMOD_EXPORT void cjmod_init();
-    CJMOD_EXPORT void cjmod_cleanup();
-    
-    // Calculator接口
-    CJMOD_EXPORT void* calculator_create();
-    CJMOD_EXPORT void calculator_destroy(void* calc);
-    CJMOD_EXPORT double calculator_add(void* calc, double a, double b);
-    CJMOD_EXPORT double calculator_multiply(void* calc, double a, double b);
-    CJMOD_EXPORT double calculator_power(void* calc, double base, double exp);
-    
-    // StringUtils接口
-    CJMOD_EXPORT void* string_utils_create();
-    CJMOD_EXPORT void string_utils_destroy(void* utils);
-    CJMOD_EXPORT const char* string_utils_reverse(void* utils, const char* str);
-    CJMOD_EXPORT const char** string_utils_split(void* utils, const char* str, char delim, int* count);
-    CJMOD_EXPORT const char* string_utils_join(void* utils, const char** parts, int count, const char* delim);
-}
-
-#endif // MY_CJMOD_H
-```
-
-创建实现文件 `src/my_cjmod.cpp`：
-
-```cpp
-#include "../include/my_cjmod.h"
-#include <algorithm>
+#include "CHTLJSExtension.h"
 #include <cmath>
+#include <algorithm>
 #include <sstream>
-#include <cstring>
 
-namespace my_cjmod {
+using namespace chtl::js;
 
-// Calculator实现
-double Calculator::add(double a, double b) {
-    return a + b;
-}
-
-double Calculator::multiply(double a, double b) {
-    return a * b;
-}
-
-double Calculator::power(double base, double exponent) {
-    return std::pow(base, exponent);
-}
-
-// StringUtils实现
-std::string StringUtils::reverse(const std::string& str) {
-    std::string result = str;
-    std::reverse(result.begin(), result.end());
-    return result;
-}
-
-std::vector<std::string> StringUtils::split(const std::string& str, char delimiter) {
-    std::vector<std::string> tokens;
-    std::stringstream ss(str);
-    std::string token;
+// 定义你的CJMOD扩展
+CJMOD_BEGIN(MyCJMOD)
     
-    while (std::getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
+    // ===== 计算器功能 =====
     
-    return tokens;
-}
-
-std::string StringUtils::join(const std::vector<std::string>& parts, const std::string& delimiter) {
-    if (parts.empty()) return "";
+    CJMOD_FUNCTION(add, {
+        double a = getArg<double>(args, 0, 0.0);
+        double b = getArg<double>(args, 1, 0.0);
+        return a + b;
+    })
     
-    std::string result = parts[0];
-    for (size_t i = 1; i < parts.size(); ++i) {
-        result += delimiter + parts[i];
-    }
+    CJMOD_FUNCTION(multiply, {
+        double a = getArg<double>(args, 0, 0.0);
+        double b = getArg<double>(args, 1, 0.0);
+        return a * b;
+    })
     
-    return result;
-}
-
-} // namespace my_cjmod
-
-// C接口实现
-extern "C" {
-
-// 用于存储返回的字符串
-static thread_local std::string g_return_buffer;
-static thread_local std::vector<std::string> g_split_result;
-static thread_local std::vector<const char*> g_split_ptrs;
-
-CJMOD_EXPORT void cjmod_init() {
-    // 初始化代码
-}
-
-CJMOD_EXPORT void cjmod_cleanup() {
-    // 清理代码
-}
-
-// Calculator接口
-CJMOD_EXPORT void* calculator_create() {
-    return new my_cjmod::Calculator();
-}
-
-CJMOD_EXPORT void calculator_destroy(void* calc) {
-    delete static_cast<my_cjmod::Calculator*>(calc);
-}
-
-CJMOD_EXPORT double calculator_add(void* calc, double a, double b) {
-    auto* calculator = static_cast<my_cjmod::Calculator*>(calc);
-    return calculator->add(a, b);
-}
-
-CJMOD_EXPORT double calculator_multiply(void* calc, double a, double b) {
-    auto* calculator = static_cast<my_cjmod::Calculator*>(calc);
-    return calculator->multiply(a, b);
-}
-
-CJMOD_EXPORT double calculator_power(void* calc, double base, double exp) {
-    auto* calculator = static_cast<my_cjmod::Calculator*>(calc);
-    return calculator->power(base, exp);
-}
-
-// StringUtils接口
-CJMOD_EXPORT void* string_utils_create() {
-    return new my_cjmod::StringUtils();
-}
-
-CJMOD_EXPORT void string_utils_destroy(void* utils) {
-    delete static_cast<my_cjmod::StringUtils*>(utils);
-}
-
-CJMOD_EXPORT const char* string_utils_reverse(void* utils, const char* str) {
-    auto* string_utils = static_cast<my_cjmod::StringUtils*>(utils);
-    g_return_buffer = string_utils->reverse(str);
-    return g_return_buffer.c_str();
-}
-
-CJMOD_EXPORT const char** string_utils_split(void* utils, const char* str, char delim, int* count) {
-    auto* string_utils = static_cast<my_cjmod::StringUtils*>(utils);
-    g_split_result = string_utils->split(str, delim);
+    CJMOD_FUNCTION(power, {
+        double base = getArg<double>(args, 0, 0.0);
+        double exp = getArg<double>(args, 1, 0.0);
+        return std::pow(base, exp);
+    })
     
-    g_split_ptrs.clear();
-    for (const auto& s : g_split_result) {
-        g_split_ptrs.push_back(s.c_str());
-    }
+    // ===== 字符串工具 =====
     
-    *count = static_cast<int>(g_split_ptrs.size());
-    return g_split_ptrs.data();
-}
+    CJMOD_FUNCTION(reverse, {
+        std::string str = getArg<std::string>(args, 0, "");
+        std::reverse(str.begin(), str.end());
+        return str;
+    })
+    
+    CJMOD_FUNCTION(split, {
+        std::string str = getArg<std::string>(args, 0, "");
+        std::string delimiter = getArg<std::string>(args, 1, ",");
+        
+        Array result;
+        size_t pos = 0;
+        while ((pos = str.find(delimiter)) != std::string::npos) {
+            result.push_back(str.substr(0, pos));
+            str.erase(0, pos + delimiter.length());
+        }
+        if (!str.empty()) {
+            result.push_back(str);
+        }
+        
+        return result;
+    })
+    
+    CJMOD_FUNCTION(join, {
+        Array parts = getArg<Array>(args, 0, Array{});
+        std::string delimiter = getArg<std::string>(args, 1, ",");
+        
+        std::stringstream ss;
+        for (size_t i = 0; i < parts.size(); ++i) {
+            if (i > 0) ss << delimiter;
+            ss << value_cast<std::string>(parts[i]);
+        }
+        
+        return ss.str();
+    })
 
-CJMOD_EXPORT const char* string_utils_join(void* utils, const char** parts, int count, const char* delim) {
-    auto* string_utils = static_cast<my_cjmod::StringUtils*>(utils);
-    
-    std::vector<std::string> vec;
-    for (int i = 0; i < count; ++i) {
-        vec.push_back(parts[i]);
-    }
-    
-    g_return_buffer = string_utils->join(vec, delim);
-    return g_return_buffer.c_str();
-}
+CJMOD_END()
 
-} // extern "C"
+// 导出模块
+CJMOD_EXPORT(MyCJMOD)
 ```
+
+
 
 ### 3. 创建CMakeLists.txt
 
@@ -409,69 +291,31 @@ extern "C" {
 }
 ```
 
-### 4. 创建JavaScript绑定
+### 4. 在CHTL中使用CJMOD
 
-创建 `bindings/my_cjmod.js`：
+使用新的简化接口后，在CHTL JS中可以直接调用函数：
 
-```javascript
-// 自动生成的JavaScript绑定
-const MyCJMOD = {
-    Calculator: class {
-        constructor() {
-            this._handle = __cjmod_calculator_create();
-        }
-        
-        destroy() {
-            if (this._handle) {
-                __cjmod_calculator_destroy(this._handle);
-                this._handle = null;
-            }
-        }
-        
-        add(a, b) {
-            return __cjmod_calculator_add(this._handle, a, b);
-        }
-        
-        multiply(a, b) {
-            return __cjmod_calculator_multiply(this._handle, a, b);
-        }
-        
-        power(base, exponent) {
-            return __cjmod_calculator_power(this._handle, base, exponent);
-        }
-    },
+```chtl
+// 导入CJMOD模块
+[Import] @CJmod "MyCJMOD"
+
+script {
+    // 直接使用计算器功能
+    var sum = add(10, 20);           // 30
+    var product = multiply(5, 6);     // 30
+    var result = power(2, 8);         // 256
     
-    StringUtils: class {
-        constructor() {
-            this._handle = __cjmod_string_utils_create();
-        }
-        
-        destroy() {
-            if (this._handle) {
-                __cjmod_string_utils_destroy(this._handle);
-                this._handle = null;
-            }
-        }
-        
-        reverse(str) {
-            return __cjmod_string_utils_reverse(this._handle, str);
-        }
-        
-        split(str, delimiter) {
-            return __cjmod_string_utils_split(this._handle, str, delimiter);
-        }
-        
-        join(parts, delimiter) {
-            return __cjmod_string_utils_join(this._handle, parts, delimiter);
-        }
-    }
-};
-
-// 导出
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = MyCJMOD;
+    // 字符串工具
+    var reversed = reverse("Hello");  // "olleH"
+    var parts = split("a,b,c", ","); // ["a", "b", "c"]
+    var joined = join(parts, "-");    // "a-b-c"
+    
+    console.log("Sum:", sum);
+    console.log("Reversed:", reversed);
 }
 ```
+
+CHTL会自动处理CJMOD函数的注册和调用，无需手动管理句柄或生命周期。
 
 ## API设计
 

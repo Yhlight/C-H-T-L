@@ -88,22 +88,22 @@ UIKit/
 ### 导入CMOD
 ```chtl
 // 导入整个CMOD模块
-[Import] @Chtl "ModuleName"
+[Import] @Chtl ModuleName
 
-// 导入混合模块的CMOD部分
-[Import] @Chtl "ModuleName"
+// 导入子模块（使用点号分隔）
+[Import] @Chtl UIKit.Button
 
-// 导入子模块
-[Import] @Chtl "UIKit.Button"
+// 导入嵌套文件夹的模块
+[Import] @Chtl Chtl/Core
 ```
 
 ### 导入CJMOD
 ```chtl
 // 导入CJMOD模块
-[Import] @CJmod "ModuleName"
+[Import] @CJmod ModuleName
 
 // 导入混合模块的CJMOD部分
-[Import] @CJmod "ModuleName"
+[Import] @CJmod Chtholly
 ```
 
 ## 重要说明
@@ -111,14 +111,21 @@ UIKit/
 1. **命名一致性**：模块文件夹、主文件、info文件必须同名
 2. **类型分离**：CHTL不会统一处理CMOD和CJMOD，需要分别导入
 3. **info文件中的name字段**：不决定实际使用的名称，实际名称由文件夹/文件名决定
+4. **导入语法**：支持无修饰字符串，不需要引号
+5. **路径分隔**：使用 `/` 表示文件夹嵌套，使用 `.` 表示子模块
 
 ## 示例
 
-### Chtl.Core（纯CMOD）
+### Chtl/Core（纯CMOD）
 提供CHTL标准库功能：
 - 基础样式重置
 - 布局工具
 - 常用组件
+
+使用方式：
+```chtl
+[Import] @Chtl Chtl/Core
+```
 
 ### Chtholly（混合模块）
 - **CMOD部分**：提供珂朵莉主题UI组件

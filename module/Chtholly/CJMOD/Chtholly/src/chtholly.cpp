@@ -1,253 +1,172 @@
-#include "../include/chtholly.h"
+#include "../../../../../src/chtl/CHTLJSExtension.h"
 #include <cmath>
 #include <chrono>
-#include <random>
-#include <sstream>
-#include <iomanip>
+#include <thread>
 
-namespace chtholly {
+using namespace chtl::js;
 
-// 动画实现类
-class Animation::Impl {
-public:
-    Impl(const std::string& elementId) : elementId_(elementId), isPlaying_(false), progress_(0.0) {}
+// Chtholly扩展模块
+CJMOD_BEGIN(Chtholly)
     
-    void animate(const std::vector<AnimationProperty>& properties, const AnimationConfig& config) {
-        currentProperties_ = properties;
-        currentConfig_ = config;
-        startTime_ = std::chrono::steady_clock::now();
-        isPlaying_ = true;
-    }
+    // ===== 动画函数 =====
     
-    void updateProgress() {
-        if (!isPlaying_) return;
+    CJMOD_FUNCTION(fadeIn, {
+        auto element = getArg<std::string>(args, 0);
+        auto duration = getArg<double>(args, 1, 400.0);
         
-        auto now = std::chrono::steady_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime_).count();
+        // 实现淡入效果
+        return "fadeIn(" + element + ", " + std::to_string(duration) + ")";
+    })
+    
+    CJMOD_FUNCTION(fadeOut, {
+        auto element = getArg<std::string>(args, 0);
+        auto duration = getArg<double>(args, 1, 400.0);
         
-        if (elapsed < currentConfig_.delay) {
-            progress_ = 0.0;
-            return;
+        // 实现淡出效果
+        return "fadeOut(" + element + ", " + std::to_string(duration) + ")";
+    })
+    
+    CJMOD_FUNCTION(slideIn, {
+        auto element = getArg<std::string>(args, 0);
+        auto direction = getArg<std::string>(args, 1, "left");
+        auto duration = getArg<double>(args, 2, 400.0);
+        
+        return "slideIn(" + element + ", " + direction + ", " + std::to_string(duration) + ")";
+    })
+    
+    CJMOD_FUNCTION(bounce, {
+        auto element = getArg<std::string>(args, 0);
+        auto times = getArg<int>(args, 1, 3);
+        
+        return "bounce(" + element + ", " + std::to_string(times) + ")";
+    })
+    
+    // ===== DOM操作函数 =====
+    
+    CJMOD_FUNCTION(addClass, {
+        auto element = getArg<std::string>(args, 0);
+        auto className = getArg<std::string>(args, 1);
+        
+        return element + ".classList.add('" + className + "')";
+    })
+    
+    CJMOD_FUNCTION(removeClass, {
+        auto element = getArg<std::string>(args, 0);
+        auto className = getArg<std::string>(args, 1);
+        
+        return element + ".classList.remove('" + className + "')";
+    })
+    
+    CJMOD_FUNCTION(toggleClass, {
+        auto element = getArg<std::string>(args, 0);
+        auto className = getArg<std::string>(args, 1);
+        
+        return element + ".classList.toggle('" + className + "')";
+    })
+    
+    // ===== 工具函数 =====
+    
+    CJMOD_FUNCTION(debounce, {
+        auto func = getArg<std::string>(args, 0);
+        auto delay = getArg<double>(args, 1, 250.0);
+        
+        return "debounce(" + func + ", " + std::to_string(delay) + ")";
+    })
+    
+    CJMOD_FUNCTION(throttle, {
+        auto func = getArg<std::string>(args, 0);
+        auto limit = getArg<double>(args, 1, 250.0);
+        
+        return "throttle(" + func + ", " + std::to_string(limit) + ")";
+    })
+    
+    // ===== 珂朵莉特效 =====
+    
+    CJMOD_FUNCTION(chthollyAnimate, {
+        auto element = getArg<std::string>(args, 0);
+        auto animation = getArg<std::string>(args, 1, "glow");
+        
+        // 珂朵莉特有的动画效果
+        if (animation == "glow") {
+            return element + ".style.animation = 'chtholly-glow 2s infinite'";
+        } else if (animation == "sparkle") {
+            return element + ".style.animation = 'chtholly-sparkle 3s infinite'";
+        } else if (animation == "float") {
+            return element + ".style.animation = 'chtholly-float 4s ease-in-out infinite'";
         }
         
-        double effectiveElapsed = elapsed - currentConfig_.delay;
-        progress_ = std::min(1.0, effectiveElapsed / currentConfig_.duration);
+        return element + ".style.animation = '" + animation + "'";
+    })
+    
+    CJMOD_FUNCTION(chthollyParticles, {
+        auto container = getArg<std::string>(args, 0);
+        auto count = getArg<int>(args, 1, 50);
+        auto color = getArg<std::string>(args, 2, "#ff6b6b");
         
-        // 应用缓动函数
-        double easedProgress = utils::ease(currentConfig_.easing, progress_);
+        // 生成粒子效果代码
+        std::string code = "createParticles('" + container + "', {";
+        code += "count: " + std::to_string(count) + ", ";
+        code += "color: '" + color + "', ";
+        code += "animation: 'float'";
+        code += "})";
         
-        // 更新属性
-        for (const auto& prop : currentProperties_) {
-            double value = prop.from + (prop.to - prop.from) * easedProgress;
-            applyProperty(prop.name, value, prop.unit);
-        }
+        return code;
+    })
+    
+    CJMOD_FUNCTION(chthollyMagic, {
+        auto element = getArg<std::string>(args, 0);
         
-        // 回调
-        if (currentConfig_.onProgress) {
-            currentConfig_.onProgress(progress_);
-        }
+        // 珂朵莉的魔法效果组合
+        std::string code = "(() => {\n";
+        code += "  const el = document.querySelector('" + element + "');\n";
+        code += "  el.classList.add('chtholly-magic');\n";
+        code += "  el.style.transform = 'scale(1.1)';\n";
+        code += "  el.style.filter = 'brightness(1.2) hue-rotate(10deg)';\n";
+        code += "  setTimeout(() => {\n";
+        code += "    el.style.transform = 'scale(1)';\n";
+        code += "    el.style.filter = 'brightness(1) hue-rotate(0deg)';\n";
+        code += "  }, 500);\n";
+        code += "})()";
         
-        // 完成检查
-        if (progress_ >= 1.0) {
-            if (currentConfig_.iterations > 1 || currentConfig_.iterations == -1) {
-                // 重复或无限循环
-                startTime_ = now;
-                if (currentConfig_.alternate) {
-                    // 反向动画
-                    for (auto& prop : currentProperties_) {
-                        std::swap(prop.from, prop.to);
-                    }
-                }
-            } else {
-                isPlaying_ = false;
-                if (currentConfig_.onComplete) {
-                    currentConfig_.onComplete();
-                }
-            }
-        }
-    }
+        return code;
+    })
     
-    void applyProperty(const std::string& name, double value, const std::string& unit) {
-        // 这里应该调用JavaScript来更新DOM
-        // 简化实现，实际需要通过绑定机制
-        std::stringstream js;
-        js << "document.getElementById('" << elementId_ << "').style." << name 
-           << " = '" << value << unit << "';";
-        // executeJS(js.str());
-    }
+    // ===== 事件处理 =====
     
-    std::string elementId_;
-    bool isPlaying_;
-    double progress_;
-    std::chrono::steady_clock::time_point startTime_;
-    std::vector<AnimationProperty> currentProperties_;
-    AnimationConfig currentConfig_;
-};
-
-Animation::Animation(const std::string& elementId) 
-    : pImpl(std::make_unique<Impl>(elementId)) {}
-
-Animation::~Animation() = default;
-
-Animation& Animation::animate(const std::vector<AnimationProperty>& properties, 
-                            const AnimationConfig& config) {
-    pImpl->animate(properties, config);
-    return *this;
-}
-
-void Animation::play() {
-    pImpl->isPlaying_ = true;
-}
-
-void Animation::pause() {
-    pImpl->isPlaying_ = false;
-}
-
-bool Animation::isPlaying() const {
-    return pImpl->isPlaying_;
-}
-
-double Animation::getProgress() const {
-    return pImpl->progress_;
-}
-
-// 缓动函数实现
-namespace utils {
-
-double ease(EasingType type, double t) {
-    switch (type) {
-        case EasingType::Linear:
-            return t;
-            
-        case EasingType::EaseIn:
-            return t * t;
-            
-        case EasingType::EaseOut:
-            return t * (2 - t);
-            
-        case EasingType::EaseInOut:
-            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            
-        case EasingType::EaseInQuad:
-            return t * t;
-            
-        case EasingType::EaseOutQuad:
-            return t * (2 - t);
-            
-        case EasingType::EaseInOutQuad:
-            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            
-        case EasingType::EaseInCubic:
-            return t * t * t;
-            
-        case EasingType::EaseOutCubic:
-            return (--t) * t * t + 1;
-            
-        case EasingType::EaseInOutCubic:
-            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-            
-        case EasingType::EaseInElastic:
-            if (t == 0 || t == 1) return t;
-            return -std::pow(2, 10 * (t - 1)) * std::sin((t - 1.1) * 5 * M_PI);
-            
-        case EasingType::EaseOutElastic:
-            if (t == 0 || t == 1) return t;
-            return std::pow(2, -10 * t) * std::sin((t - 0.1) * 5 * M_PI) + 1;
-            
-        case EasingType::EaseInBounce: {
-            return 1 - ease(EasingType::EaseOutBounce, 1 - t);
-        }
-            
-        case EasingType::EaseOutBounce: {
-            if (t < 1/2.75) {
-                return 7.5625 * t * t;
-            } else if (t < 2/2.75) {
-                t -= 1.5/2.75;
-                return 7.5625 * t * t + 0.75;
-            } else if (t < 2.5/2.75) {
-                t -= 2.25/2.75;
-                return 7.5625 * t * t + 0.9375;
-            } else {
-                t -= 2.625/2.75;
-                return 7.5625 * t * t + 0.984375;
-            }
-        }
-            
-        default:
-            return t;
-    }
-}
-
-std::string interpolateColor(const std::string& from, const std::string& to, double t) {
-    // 简化的颜色插值实现
-    // 假设输入是 #RRGGBB 格式
-    if (from.length() != 7 || to.length() != 7 || from[0] != '#' || to[0] != '#') {
-        return from;
-    }
+    CJMOD_FUNCTION(on, {
+        auto element = getArg<std::string>(args, 0);
+        auto event = getArg<std::string>(args, 1);
+        auto handler = getArg<std::string>(args, 2);
+        
+        return element + ".addEventListener('" + event + "', " + handler + ")";
+    })
     
-    auto hexToInt = [](const std::string& hex, size_t start) {
-        return std::stoi(hex.substr(start, 2), nullptr, 16);
-    };
+    CJMOD_FUNCTION(once, {
+        auto element = getArg<std::string>(args, 0);
+        auto event = getArg<std::string>(args, 1);
+        auto handler = getArg<std::string>(args, 2);
+        
+        return element + ".addEventListener('" + event + "', " + handler + ", {once: true})";
+    })
     
-    int r1 = hexToInt(from, 1), g1 = hexToInt(from, 3), b1 = hexToInt(from, 5);
-    int r2 = hexToInt(to, 1), g2 = hexToInt(to, 3), b2 = hexToInt(to, 5);
+    // ===== 实用工具 =====
     
-    int r = r1 + (r2 - r1) * t;
-    int g = g1 + (g2 - g1) * t;
-    int b = b1 + (b2 - b1) * t;
+    CJMOD_FUNCTION(delay, {
+        auto ms = getArg<double>(args, 0, 1000.0);
+        
+        // 返回Promise延迟
+        return "new Promise(resolve => setTimeout(resolve, " + std::to_string(ms) + "))";
+    })
     
-    std::stringstream ss;
-    ss << "#" << std::hex << std::setfill('0') 
-       << std::setw(2) << r 
-       << std::setw(2) << g 
-       << std::setw(2) << b;
-    
-    return ss.str();
-}
+    CJMOD_FUNCTION(random, {
+        auto min = getArg<double>(args, 0, 0.0);
+        auto max = getArg<double>(args, 1, 1.0);
+        
+        double value = min + (max - min) * (rand() / double(RAND_MAX));
+        return value;
+    })
 
-std::string randomColor() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> dis(0, 255);
-    
-    std::stringstream ss;
-    ss << "#" << std::hex << std::setfill('0')
-       << std::setw(2) << dis(gen)
-       << std::setw(2) << dis(gen)
-       << std::setw(2) << dis(gen);
-    
-    return ss.str();
-}
+CJMOD_END()
 
-} // namespace utils
-
-// C接口实现
-extern "C" {
-
-void chtholly_init() {
-    // 初始化代码
-}
-
-void* chtholly_create_animation(const char* elementId) {
-    return new Animation(elementId);
-}
-
-void chtholly_play_animation(void* animation) {
-    if (animation) {
-        static_cast<Animation*>(animation)->play();
-    }
-}
-
-void chtholly_stop_animation(void* animation) {
-    if (animation) {
-        static_cast<Animation*>(animation)->pause();
-    }
-}
-
-void chtholly_destroy_animation(void* animation) {
-    delete static_cast<Animation*>(animation);
-}
-
-} // extern "C"
-
-} // namespace chtholly
+// 导出模块
+CJMOD_EXPORT(Chtholly)

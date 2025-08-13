@@ -204,7 +204,7 @@ originType
     ;
 
 originContent
-    : ORIGIN_CONTENT
+    : (~'}')*
     ;
 
 // HTML元素
@@ -318,11 +318,12 @@ cssArgument
 
 // 脚本块
 scriptBlock
-    : 'script' '{' scriptContent* '}'
+    : 'script' '{' scriptContent '}'
     ;
 
 scriptContent
-    : .*?  // JavaScript代码，需要传递给JS编译器
+    : (~'}')+  // 至少匹配一个字符，避免空匹配
+    |  // 允许空脚本块
     ;
 
 // 元素使用
@@ -415,9 +416,5 @@ NUMBER : [0-9]+ ('.' [0-9]+)?;
 STRING_LITERAL : '"' (~["\r\n] | '\\"')* '"' | '\'' (~['\r\n] | '\\\'')* '\'';
 UNQUOTED_LITERAL : [a-zA-Z0-9_#]+ ([a-zA-Z0-9_\-#:()]* [a-zA-Z0-9_#])?;
 IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]*;
-
-// 原始内容：在词法分析阶段处理，匹配到'}'为止
-fragment ORIGIN_TEXT : ~[{}]+ | '{' ~[}]* '}';
-ORIGIN_CONTENT : ORIGIN_TEXT*?;
 
 WS : [ \t\r\n]+ -> skip;

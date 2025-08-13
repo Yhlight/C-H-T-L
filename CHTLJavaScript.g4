@@ -79,14 +79,14 @@ callExpression
     | callExpression templateLiteral
     | callExpression '?.' identifierName
     | callExpression '?.' '[' expression ']'
-    | chtlMethodCall  // CHTL特殊方法调用
+    | callExpression '->' 'listen' '(' listenConfig ')'     // CHTL listen方法
+    | callExpression '->' 'delegate' '(' delegateConfig ')'  // CHTL delegate方法
+    | animateCall  // 独立的animate调用
     ;
 
-// CHTL特殊方法调用
-chtlMethodCall
-    : callExpression '->' 'listen' '(' listenConfig ')'
-    | callExpression '->' 'delegate' '(' delegateConfig ')'
-    | 'animate' '(' animateConfig ')'
+// animate调用（非递归）
+animateCall
+    : 'animate' '(' animateConfig ')'
     ;
 
 // listen配置

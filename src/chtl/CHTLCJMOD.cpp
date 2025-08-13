@@ -10,112 +10,6 @@ namespace chtl {
 
 namespace fs = std::filesystem;
 
-// CJMODInfo 实现
-std::string CJMODInfo::toString() const {
-    std::stringstream ss;
-    
-    // 首先输出基类信息
-    ss << CMODInfo::toString();
-    
-    // 添加CJMOD特定信息
-    ss << "\n// CJMOD Specific Info\n";
-    ss << "jsVersion = \"" << jsVersion << "\";\n";
-    ss << "syntaxExtensions = \"" << syntaxExtensions << "\";\n";
-    ss << "requiredHeaders = \"" << requiredHeaders << "\";\n";
-    
-    return ss.str();
-}
-
-// CJMODExportTable 实现
-void CJMODExportTable::addExport(const CJMODExport& exp) {
-    if (exp.type == "function") {
-        functions.push_back(exp);
-    } else if (exp.type == "operator") {
-        operators.push_back(exp);
-    } else if (exp.type == "syntax") {
-        syntaxes.push_back(exp);
-    } else if (exp.type == "transformer") {
-        transformers.push_back(exp);
-    }
-}
-
-bool CJMODExportTable::isExported(const std::string& type, const std::string& name) const {
-    if (!isExplicit) {
-        return true;
-    }
-    
-    const std::vector<CJMODExport>* exports = nullptr;
-    if (type == "function") exports = &functions;
-    else if (type == "operator") exports = &operators;
-    else if (type == "syntax") exports = &syntaxes;
-    else if (type == "transformer") exports = &transformers;
-    
-    if (!exports) return false;
-    
-    return std::any_of(exports->begin(), exports->end(),
-        [&name](const CJMODExport& exp) { return exp.name == name; });
-}
-
-std::string CJMODExportTable::toString() const {
-    std::stringstream ss;
-    ss << "[JSExport]\n{\n";
-    
-    // 导出函数
-    if (!functions.empty()) {
-        ss << "    functions {\n";
-        for (const auto& func : functions) {
-            ss << "        " << func.name << ": \"" << func.signature << "\"";
-            if (!func.description.empty()) {
-                ss << " // " << func.description;
-            }
-            ss << ";\n";
-        }
-        ss << "    }\n\n";
-    }
-    
-    // 导出操作符
-    if (!operators.empty()) {
-        ss << "    operators {\n";
-        for (const auto& op : operators) {
-            ss << "        " << op.name << ": \"" << op.signature << "\";\n";
-        }
-        ss << "    }\n\n";
-    }
-    
-    // 导出语法
-    if (!syntaxes.empty()) {
-        ss << "    syntaxes {\n";
-        for (const auto& syn : syntaxes) {
-            ss << "        " << syn.name << ": \"" << syn.signature << "\";\n";
-        }
-        ss << "    }\n";
-    }
-    
-    ss << "}\n";
-    return ss.str();
-}
-
-CJMODExportTable CJMODExportTable::parse(const std::string& exportBlock) {
-    CJMODExportTable table;
-    
-    // 检查是否有[JSExport]块
-    std::regex exportRegex(R"(\[JSExport\]\s*\{([^}]*)\})");
-    std::smatch exportMatch;
-    
-    if (!std::regex_search(exportBlock, exportMatch, exportRegex)) {
-        table.isExplicit = false;
-        return table;
-    }
-    
-    table.isExplicit = true;
-    std::string content = exportMatch[1];
-    
-    // 解析各种导出类型
-    // TODO: 实现详细的解析逻辑
-    
-    return table;
-}
-
 // CJMODModule 实现
 CJMODModule::CJMODModule(const std::string& n, const fs::path& path, bool isSub)
     : name(n), rootPath(path), isSubModule(isSub) {}
@@ -149,13 +43,13 @@ bool CJMODModule::loadFromDirectory(const fs::path& dir) {
         return false;
     }
     
-    // 加载模块信息
+    // 加载模块信息 - info文件必须与模块名相同
     fs::path infoFile = infoDir / (name + ".chtl");
     if (!loadInfo(infoFile)) {
         return false;
     }
     
-    // 扫描源文件
+    // 扫描源文件 - 不要求特定的主文件
     for (const auto& entry : fs::recursive_directory_iterator(srcDir)) {
         if (fs::is_regular_file(entry)) {
             std::string ext = entry.path().extension().string();
@@ -196,7 +90,22 @@ bool CJMODModule::loadFromDirectory(const fs::path& dir) {
 }
 
 bool CJMODModule::loadFromCJMODFile(const fs::path& cjmodFile) {
-    // TODO: 实现从.cjmod文件加载
+    // 简单的解包实现
+    std::ifstream file(cjmodFile, std::ios::binary);
+    if (!file.is_open()) {
+        return false;
+    }
+    
+    // 读取文件头
+    std::string header;
+    std::getline(file, header);
+    if (header != "CJMOD") {
+        return false;
+    }
+    
+    // TODO: 实现完整的解包逻辑
+    
+    file.close();
     return false;
 }
 
@@ -214,7 +123,7 @@ bool CJMODModule::loadInfo(const fs::path& infoFile) {
                        std::istreambuf_iterator<char>());
     file.close();
     
-    // 解析基本信息（使用CMODInfo的解析）
+    // 解析基本的[Info]块
     std::regex infoRegex(R"(\[Info\]\s*\{([^}]+)\})");
     std::smatch infoMatch;
     
@@ -230,7 +139,7 @@ bool CJMODModule::loadInfo(const fs::path& infoFile) {
             std::string key = (*it)[1];
             std::string value = (*it)[2];
             
-            // 基类字段
+            // 只使用基础的CMODInfo字段
             if (key == "name") info.name = value;
             else if (key == "version") info.version = value;
             else if (key == "description") info.description = value;
@@ -240,17 +149,10 @@ bool CJMODModule::loadInfo(const fs::path& infoFile) {
             else if (key == "category") info.category = value;
             else if (key == "minCHTLVersion") info.minCHTLVersion = value;
             else if (key == "maxCHTLVersion") info.maxCHTLVersion = value;
-            // CJMOD特定字段
-            else if (key == "jsVersion") info.jsVersion = value;
-            else if (key == "syntaxExtensions") info.syntaxExtensions = value;
-            else if (key == "requiredHeaders") info.requiredHeaders = value;
             
             ++it;
         }
     }
-    
-    // 加载导出表
-    exportTable = CJMODExportTable::parse(content);
     
     return info.isValid();
 }
@@ -263,6 +165,9 @@ bool CJMODModule::compileSources() {
     // 生成编译命令
     std::stringstream cmd;
     cmd << "g++ -std=c++17 -fPIC -shared";
+    
+    // 添加CHTL头文件路径
+    cmd << " -I/usr/include/chtl";
     
     // 添加源文件
     for (const auto& src : sourceFiles) {
@@ -364,10 +269,6 @@ std::string CJMODModule::getFullName() const {
         return p->getFullName() + "." + name;
     }
     return name;
-}
-
-bool CJMODModule::canExport(const std::string& type, const std::string& name) const {
-    return exportTable.isExported(type, name);
 }
 
 // CJMODManager 实现
@@ -540,7 +441,7 @@ bool CJMODBuilder::compile(const fs::path& srcDir, const fs::path& outputFile) {
 }
 
 bool CJMODBuilder::package(const fs::path& moduleDir, const fs::path& outputFile) {
-    // 简单的打包实现（类似CMOD）
+    // 简单的打包实现
     std::ofstream out(outputFile, std::ios::binary);
     if (!out.is_open()) {
         return false;
@@ -549,7 +450,7 @@ bool CJMODBuilder::package(const fs::path& moduleDir, const fs::path& outputFile
     out << "CJMOD\n";
     out << "1.0\n";
     
-    // TODO: 实现文件打包逻辑
+    // TODO: 实现完整的文件打包逻辑
     
     out.close();
     return true;
@@ -568,7 +469,7 @@ bool CJMODBuilder::validate(const fs::path& moduleDir) {
         return false;
     }
     
-    // 检查info文件
+    // 检查info文件（必须与模块名相同）
     std::string moduleName = moduleDir.filename().string();
     fs::path infoFile = infoDir / (moduleName + ".chtl");
     
@@ -616,16 +517,17 @@ bool createExtensionTemplate(const fs::path& path,
         
         // 创建信息文件
         std::ofstream infoFile(path / moduleName / "info" / (moduleName + ".chtl"));
-        CJMODInfo info;
-        info.name = moduleName;
-        info.version = "1.0.0";
-        info.description = "CJMOD extension for " + extensionType;
-        info.author = "Your Name";
-        info.license = "MIT";
-        info.jsVersion = "ES6+";
-        info.syntaxExtensions = extensionType;
-        
-        infoFile << info.toString();
+        infoFile << "[Info]\n";
+        infoFile << "{\n";
+        infoFile << "    name = \"" << moduleName << "\";\n";
+        infoFile << "    version = \"1.0.0\";\n";
+        infoFile << "    description = \"CJMOD extension for " << extensionType << "\";\n";
+        infoFile << "    author = \"Your Name\";\n";
+        infoFile << "    license = \"MIT\";\n";
+        infoFile << "    category = \"extension\";\n";
+        infoFile << "    minCHTLVersion = \"1.0.0\";\n";
+        infoFile << "    maxCHTLVersion = \"2.0.0\";\n";
+        infoFile << "}\n";
         infoFile.close();
         
         // 创建源文件

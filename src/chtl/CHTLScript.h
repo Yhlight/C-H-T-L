@@ -190,6 +190,9 @@ private:
     std::string processUnquotedLiterals(const std::string& script, 
                                       std::shared_ptr<CHTLJSContext> jsContext);
     
+    // 判断是否应该处理该行的无修饰字面量
+    bool shouldProcessLineForUnquoted(const std::string& line);
+    
     // 处理单行中的无修饰字面量
     std::string processLineForUnquotedLiterals(const std::string& line,
                                              std::shared_ptr<CHTLJSContext> jsContext);

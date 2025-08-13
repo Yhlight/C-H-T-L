@@ -2,29 +2,27 @@
 
 ## 概述
 
-CJMOD是CHTL提供的一种扩展CHTL JS语法的模块系统。与CMOD不同，CJMOD允许开发者通过C++接口自由扩展JavaScript语法，创建新的语言特性，而无需修改CHTL编译器源码。
+CJMOD是CHTL提供的一种扩展CHTL JS语法的模块系统。与CMOD不同，CJMOD专注于JavaScript语法扩展，允许开发者通过C++接口自由扩展JavaScript语法，创建新的语言特性，而无需修改CHTL编译器源码。
 
-## 核心特性
+## CJMOD vs CMOD
 
-### 1. 语法扩展
-- 添加新的语法结构（如async/await、管道操作符）
-- 实现DSL（领域特定语言）
-- 语法糖转换
+### 主要区别
 
-### 2. 函数扩展
-- 注册自定义JavaScript函数
-- 提供运行时功能扩展
-- 性能优化的原生实现
+| 特性 | CMOD | CJMOD |
+|------|------|-------|
+| 用途 | CHTL模板和自定义 | JavaScript语法扩展 |
+| 主文件要求 | 需要同名主文件 | 无需主文件 |
+| 导出控制 | 使用[Export] | 无导出控制 |
+| 信息文件 | 基础[Info] | 基础[Info]（不扩展） |
+| 文件类型 | .chtl文件 | .cpp/.h文件 |
+| 运行时 | 编译时处理 | 动态加载扩展 |
 
-### 3. 预处理器
-- 在解析前修改脚本
-- 宏展开
-- 条件编译
+### CJMOD特点
 
-### 4. 转换器
-- AST级别的代码转换
-- 语法降级
-- 优化passes
+1. **无主文件要求**：src目录下的所有C++文件都会被编译，不需要特定的主文件
+2. **简化的Info**：只使用基础的CMODInfo字段，不需要扩展信息
+3. **动态扩展**：编译为动态库，运行时加载
+4. **专注JS扩展**：专门用于扩展CHTL JS语法
 
 ## CJMOD结构
 
@@ -32,19 +30,21 @@ CJMOD是CHTL提供的一种扩展CHTL JS语法的模块系统。与CMOD不同，
 
 ```
 ModuleName/
-├── src/
-│   ├── ModuleName.h      # 扩展头文件
-│   ├── ModuleName.cpp    # 扩展实现
-│   └── SubModule/        # 子模块（可选）
-│       ├── src/
-│       └── info/
+├── src/                # C++源代码
+│   ├── Extension1.h    # 可以有多个扩展类
+│   ├── Extension1.cpp
+│   ├── Extension2.h
+│   ├── Extension2.cpp
+│   └── Utils.cpp       # 辅助代码
 ├── info/
-│   └── ModuleName.chtl   # 模块信息和导出表
-└── build/                # 构建输出（自动生成）
-    └── ModuleName.so     # 编译后的动态库
+│   └── ModuleName.chtl # 信息文件（必须与模块名相同）
+└── build/              # 构建输出（自动生成）
+    └── ModuleName.so   # 编译后的动态库
 ```
 
 ### 信息文件格式
+
+CJMOD使用标准的[Info]块，不需要特殊扩展：
 
 ```chtl
 [Info]
@@ -54,30 +54,16 @@ ModuleName/
     description = "Adds async/await syntax support to CHTL JS";
     author = "CHTL Team";
     license = "MIT";
-    
-    // CJMOD特定字段
-    jsVersion = "ES6+";           // 支持的JS版本
-    syntaxExtensions = "async, await";  // 提供的语法扩展
-    requiredHeaders = "coroutine";      // 需要的C++头文件
-}
-
-[JSExport]
-{
-    functions {
-        delay: "delay(ms: number): Promise<void>";
-        sleep: "sleep(ms: number): Promise<void>";
-    }
-    
-    syntaxes {
-        async: "async function|arrow";
-        await: "await expression";
-    }
-    
-    operators {
-        pipeline: "|>";
-    }
+    category = "js-extension";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
 }
 ```
+
+注意：
+- 不使用[JSExport]或[Export]
+- 不需要jsVersion等扩展字段
+- info文件名必须与模块名相同
 
 ## C++ API
 
@@ -126,41 +112,40 @@ CJMOD_EXTENSION_FACTORY(YourExtensionClass)
 
 ## 创建CJMOD扩展
 
-### 示例1：异步语法扩展
+### 最小示例
 
 ```cpp
-// AsyncAwait.h
-class AsyncAwaitExtension : public CJMODExtensionBase {
+// MyExtension.h
+#include <chtl/CHTLCJMOD.h>
+
+class MyExtension : public chtl::CJMODExtensionBase {
 public:
-    AsyncAwaitExtension()
-        : CJMODExtensionBase("AsyncAwait", "1.0.0", 
-                            "Adds async/await support") {}
+    MyExtension()
+        : CJMODExtensionBase("MyExtension", "1.0.0", "My custom extension") {}
     
-    std::string preprocess(const std::string& script) override {
-        // 标记async函数
-        std::regex asyncFunc(R"(async\s+function\s+(\w+))");
-        return std::regex_replace(script, asyncFunc, 
-                                 "function $1 /* __async__ */");
-    }
-    
+    // 只重写需要的方法
     std::string transform(const std::string& script) override {
-        // 转换await为yield
-        std::regex awaitExpr(R"(await\s+([^;]+);)");
-        return std::regex_replace(script, awaitExpr, 
-                                 "yield $1; /* __await__ */");
-    }
-    
-    void registerFunctions(std::shared_ptr<ScriptProcessor> processor) override {
-        processor->registerFunction("delay", 
-            [](const std::vector<std::string>& args) -> std::string {
-                return "new Promise(resolve => setTimeout(resolve, " + 
-                       args[0] + "))";
-            });
+        // 你的转换逻辑
+        return script;
     }
 };
 
-// AsyncAwait.cpp
-CJMOD_EXTENSION_FACTORY(AsyncAwaitExtension)
+// MyExtension.cpp
+#include "MyExtension.h"
+
+// 导出工厂函数
+CJMOD_EXTENSION_FACTORY(MyExtension)
+```
+
+### 目录结构示例
+
+```
+MyModule/
+├── src/
+│   ├── MyExtension.h
+│   └── MyExtension.cpp    # 不需要MyModule.cpp主文件
+├── info/
+│   └── MyModule.chtl      # 必须与模块名相同
 ```
 
 ### 示例2：管道操作符

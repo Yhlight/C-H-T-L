@@ -1,5 +1,44 @@
 # CHTL JS 无修饰字面量文档
 
+## 重要说明
+
+⚠️ **安全使用原则**：无修饰字面量只能在已经确定为CHTL JS语法的上下文中使用。扫描器不会将无修饰字面量作为判断CHTL JS的依据，以避免与普通JavaScript代码混淆。
+
+### 何时可以使用无修饰字面量
+
+无修饰字面量**只能**在以下确定的CHTL JS上下文中使用：
+
+1. **animate()函数的配置对象内**
+2. **->listen()方法的配置对象内**
+3. **->delegate()方法的配置对象内**
+4. **增强选择器后的style赋值**（如 `{{.box}}->style = {...}`）
+5. **已经包含其他CHTL JS特性的代码块中**
+
+### 示例：正确的使用
+
+```chtl
+script
+{
+    // ✅ 正确：在animate配置中使用
+    const fadeIn = animate({
+        duration: 1000,
+        easing: ease-in-out,
+        direction: alternate
+    });
+    
+    // ✅ 正确：在增强选择器后的style赋值
+    {{.box}}->style = {
+        backgroundColor: lightblue,
+        padding: 20px
+    };
+    
+    // ❌ 错误：普通对象不能使用无修饰字面量
+    const config = {
+        color: red  // 这会导致错误
+    };
+}
+```
+
 ## 概述
 
 CHTL JS 支持无修饰字面量（Unquoted Literals），允许在特定上下文中省略引号，使代码更简洁、更接近CSS的书写习惯。这个特性通过状态机和上下文管理实现智能的字面量处理。

@@ -17,46 +17,6 @@ namespace chtl {
 class CHTLJSContext;
 class ScriptProcessor;
 
-// CJMOD特定的信息（扩展CMODInfo）
-struct CJMODInfo : public CMODInfo {
-    std::string jsVersion;           // 支持的JS版本
-    std::string syntaxExtensions;    // 提供的语法扩展列表
-    std::string requiredHeaders;     // 需要的头文件
-    
-    // 转换为字符串（包含基类信息）
-    std::string toString() const;
-};
-
-// CJMOD导出的JS扩展
-struct CJMODExport {
-    std::string name;               // 扩展名称
-    std::string type;               // 扩展类型（function, operator, syntax等）
-    std::string description;        // 描述
-    std::string signature;          // 函数签名或语法模式
-};
-
-// CJMOD导出表
-struct CJMODExportTable {
-    std::vector<CJMODExport> functions;      // 导出的函数
-    std::vector<CJMODExport> operators;      // 导出的操作符
-    std::vector<CJMODExport> syntaxes;       // 导出的语法结构
-    std::vector<CJMODExport> transformers;   // 导出的转换器
-    
-    bool isExplicit = false;
-    
-    // 添加导出
-    void addExport(const CJMODExport& exp);
-    
-    // 检查是否导出
-    bool isExported(const std::string& type, const std::string& name) const;
-    
-    // 转换为字符串
-    std::string toString() const;
-    
-    // 解析导出表
-    static CJMODExportTable parse(const std::string& exportBlock);
-};
-
 // CJMOD扩展接口
 class ICJMODExtension {
 public:
@@ -91,8 +51,7 @@ class CJMODModule : public std::enable_shared_from_this<CJMODModule> {
 private:
     std::string name;
     std::filesystem::path rootPath;
-    CJMODInfo info;
-    CJMODExportTable exportTable;
+    CMODInfo info;  // 使用基础的CMODInfo，不扩展
     std::map<std::string, std::shared_ptr<CJMODModule>> subModules;
     std::vector<std::filesystem::path> sourceFiles;
     bool isSubModule;
@@ -120,9 +79,8 @@ public:
     // 编译C++源码
     bool compileSources();
     
-    // 信息和导出表
+    // 信息加载（只需要基本的Info）
     bool loadInfo(const std::filesystem::path& infoFile);
-    bool loadExportTable(const std::filesystem::path& infoFile);
     
     // 获取扩展
     const std::vector<std::unique_ptr<ICJMODExtension>>& getExtensions() const { return extensions; }
@@ -135,13 +93,9 @@ public:
     
     // 获取器
     const std::string& getName() const { return name; }
-    const CJMODInfo& getInfo() const { return info; }
-    const CJMODExportTable& getExportTable() const { return exportTable; }
+    const CMODInfo& getInfo() const { return info; }
     const std::filesystem::path& getRootPath() const { return rootPath; }
     std::string getFullName() const;
-    
-    // 检查导出
-    bool canExport(const std::string& type, const std::string& name) const;
 };
 
 // CJMOD管理器
@@ -197,7 +151,7 @@ class CJMODBuilder {
 private:
     std::filesystem::path sourcePath;
     std::filesystem::path outputPath;
-    CJMODInfo moduleInfo;
+    CMODInfo moduleInfo;
     std::shared_ptr<CHTLContext> context;
     
 public:

@@ -9,6 +9,8 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     : context(ctx), options(opts), indentLevel(0), autoClassCounter(0), autoIdCounter(0) {
     // 创建模板管理器
     templateManager = std::make_shared<TemplateManager>(ctx);
+    // 创建自定义管理器
+    customManager = std::make_shared<CustomManager>(ctx, templateManager);
 }
 
 std::string CHTLGenerator::indent() const {
@@ -286,6 +288,18 @@ std::string CHTLGenerator::processLiteral(const std::string& value, bool inTextB
         processed = processor.processVariableReference(processed);
     }
     
+    // 如果自定义管理器存在，也尝试处理自定义变量
+    if (customManager) {
+        // 检查是否是自定义变量引用
+        auto varRef = TemplateHelper::parseVarReference(processed);
+        if (varRef.isValid) {
+            std::string customValue = customManager->useCustomVar(varRef.templateName, varRef.varName);
+            if (!customValue.empty()) {
+                processed = customValue;
+            }
+        }
+    }
+    
     return processed;
 }
 
@@ -343,6 +357,71 @@ void CHTLGenerator::addTemplateInheritance(const std::string& inheritStatement) 
     
     // 这个方法会在模板定义期间被调用
     // 实际的继承处理在具体的模板类中进行
+}
+
+// 自定义定义支持
+void CHTLGenerator::beginCustomDefinition(const std::string& type, const std::string& name) {
+    if (!customManager) {
+        context->reportError("Custom manager not initialized");
+        return;
+    }
+    
+    // 自定义定义逻辑
+    // 实际的自定义创建会在解析过程中进行
+}
+
+void CHTLGenerator::endCustomDefinition() {
+    if (!customManager) {
+        return;
+    }
+    
+    // 自定义定义结束处理
+}
+
+// 自定义使用
+void CHTLGenerator::useCustom(const std::string& statement, 
+                             const std::unordered_map<std::string, std::string>& providedValues) {
+    if (!customManager) {
+        context->reportError("Custom manager not initialized");
+        return;
+    }
+    
+    // 解析语句类型
+    if (statement.find("@Style") != std::string::npos) {
+        customManager->useCustomStyle(statement, *this, providedValues);
+    } else if (statement.find("@Element") != std::string::npos) {
+        customManager->useCustomElement(statement, *this);
+    }
+}
+
+void CHTLGenerator::useCustomWithSpecialization(const std::string& statement,
+                                               const std::vector<SpecializationOperation>& specializations) {
+    if (!customManager) {
+        context->reportError("Custom manager not initialized");
+        return;
+    }
+    
+    // 使用带特例化的自定义元素
+    if (statement.find("@Element") != std::string::npos) {
+        customManager->useCustomElement(statement, *this, specializations);
+    }
+}
+
+// 特例化支持
+void CHTLGenerator::addSpecialization(const SpecializationOperation& op) {
+    // 存储特例化操作，稍后应用
+    // 这通常在自定义定义或使用时调用
+}
+
+void CHTLGenerator::addDeleteOperation(const std::string& deleteStatement) {
+    auto op = SpecializationProcessor::parseDeleteStatement(deleteStatement);
+    addSpecialization(op);
+}
+
+void CHTLGenerator::addInsertOperation(const std::string& insertStatement) {
+    // 解析插入语句
+    // 格式: insert after div[0] { ... }
+    // TODO: 实现插入语句解析
 }
 
 // 生成器辅助方法

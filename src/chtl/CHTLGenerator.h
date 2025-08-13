@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include "CHTLContext.h"
 #include "CHTLTemplate.h"  // 添加模板头文件
+#include "CHTLCustom.h"    // 添加自定义头文件
 
 namespace chtl {
 
@@ -38,6 +39,9 @@ private:
     
     // 模板管理器
     std::shared_ptr<TemplateManager> templateManager;
+    
+    // 自定义管理器
+    std::shared_ptr<CustomManager> customManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -83,16 +87,35 @@ public:
     void setTemplateManager(std::shared_ptr<TemplateManager> mgr) { templateManager = mgr; }
     std::shared_ptr<TemplateManager> getTemplateManager() const { return templateManager; }
     
+    // 自定义支持
+    void setCustomManager(std::shared_ptr<CustomManager> mgr) { customManager = mgr; }
+    std::shared_ptr<CustomManager> getCustomManager() const { return customManager; }
+    
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
     void endTemplateDefinition();
+    
+    // 自定义定义
+    void beginCustomDefinition(const std::string& type, const std::string& name);
+    void endCustomDefinition();
     
     // 模板使用
     void useTemplate(const std::string& statement);
     std::string processVariableReference(const std::string& reference);
     
+    // 自定义使用
+    void useCustom(const std::string& statement, 
+                  const std::unordered_map<std::string, std::string>& providedValues = {});
+    void useCustomWithSpecialization(const std::string& statement,
+                                   const std::vector<SpecializationOperation>& specializations);
+    
     // 模板继承
     void addTemplateInheritance(const std::string& inheritStatement);
+    
+    // 特例化支持
+    void addSpecialization(const SpecializationOperation& op);
+    void addDeleteOperation(const std::string& deleteStatement);
+    void addInsertOperation(const std::string& insertStatement);
     
     // 主要生成方法
     void generateElement(const std::string& name, const std::unordered_map<std::string, std::string>& attributes);

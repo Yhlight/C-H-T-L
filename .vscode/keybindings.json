@@ -49,5 +49,21 @@
         "key": "ctrl+alt+c",
         "command": "workbench.action.tasks.runTask",
         "args": "Clean Build"
+    },
+    {
+        "key": "ctrl+alt+[",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && resourceExtname == .chtl",
+        "args": {
+            "snippet": "[$1] $0"
+        }
+    },
+    {
+        "key": "ctrl+shift+[",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && resourceExtname == .chtl",
+        "args": {
+            "snippet": "[${1|Template,Custom,Import,Namespace,Origin|}] $0"
+        }
     }
 ]

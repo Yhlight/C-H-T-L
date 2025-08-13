@@ -73,7 +73,13 @@
             "other": true,
             "comments": false,
             "strings": true
-        }
+        },
+        // 禁用方括号自动补全，避免与CHTL的[]关键字冲突
+        "editor.autoClosingBrackets": "never",
+        "editor.autoSurround": "never",
+        "editor.wordBasedSuggestions": false,
+        "editor.suggest.showKeywords": true,
+        "editor.suggest.insertMode": "replace"
     },
     
     // Git配置

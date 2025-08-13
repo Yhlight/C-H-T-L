@@ -1,4 +1,34 @@
 {
+    "CHTL Declaration Block": {
+        "prefix": "[",
+        "body": "[${1|Template,Custom,Import,Namespace,Configuration,Info,Export,Origin|}] $0",
+        "description": "CHTL declaration block with brackets"
+    },
+    "Quick Template": {
+        "prefix": "[t",
+        "body": "[Template] @${1|Style,Element,Var|} ${2:Name}\n{\n    $0\n}",
+        "description": "Quick template declaration"
+    },
+    "Quick Custom": {
+        "prefix": "[c",
+        "body": "[Custom] @${1|Style,Element,Var|} ${2:Name}\n{\n    $0\n}",
+        "description": "Quick custom declaration"
+    },
+    "Quick Import": {
+        "prefix": "[i",
+        "body": "[Import] @${1|Chtl,Html,Style,JavaScript,CJmod|} from ${2:path}",
+        "description": "Quick import statement"
+    },
+    "Quick Namespace": {
+        "prefix": "[n",
+        "body": "[Namespace] ${1:NamespaceName}\n{\n    $0\n}",
+        "description": "Quick namespace declaration"
+    },
+    "Quick Origin": {
+        "prefix": "[o",
+        "body": "[Origin] @${1|Html,Style,JavaScript|}\n{\n    $0\n}",
+        "description": "Quick origin block"
+    },
     "HTML Template": {
         "prefix": "html",
         "body": [

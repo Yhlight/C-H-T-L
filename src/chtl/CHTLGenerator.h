@@ -13,6 +13,7 @@
 #include "CHTLOrigin.h"    // 添加原始嵌入头文件
 #include "CHTLImport.h"    // 添加导入头文件
 #include "CHTLNamespace.h" // 添加命名空间头文件
+#include "CHTLConstraint.h" // 添加约束头文件
 
 namespace chtl {
 
@@ -55,15 +56,18 @@ private:
     // 命名空间管理器
     std::shared_ptr<NamespaceManager> namespaceManager;
     
+    // 约束管理器
+    std::shared_ptr<ConstraintManager> constraintManager;
+    
     // 输出流
     std::stringstream htmlOutput;
     std::stringstream cssOutput;
     std::stringstream jsOutput;
     
-    // 当前状态
+    // 状态跟踪
     int indentLevel;
-    std::string currentElementName;
     std::vector<std::string> elementStack;
+    ElementContext currentElement;
     
     // 样式管理
     std::vector<StyleRule> globalStyles;
@@ -114,6 +118,10 @@ public:
     // 命名空间支持
     void setNamespaceManager(std::shared_ptr<NamespaceManager> mgr) { namespaceManager = mgr; }
     std::shared_ptr<NamespaceManager> getNamespaceManager() const { return namespaceManager; }
+    
+    // 约束支持
+    void setConstraintManager(std::shared_ptr<ConstraintManager> mgr) { constraintManager = mgr; }
+    std::shared_ptr<ConstraintManager> getConstraintManager() const { return constraintManager; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -209,6 +217,12 @@ public:
     // 带命名空间的使用
     void useTemplateFromNamespace(const std::string& templateName, const std::string& namespacePath);
     void useCustomFromNamespace(const std::string& customName, const std::string& namespacePath);
+    
+    // 约束处理
+    void processExceptStatement(const std::string& statement);
+    void addElementConstraint(const std::string& elementPath, const std::string& exceptClause);
+    void addNamespaceConstraint(const std::string& namespacePath, const std::string& exceptClause);
+    bool checkConstraint(const std::string& usage);
 };
 
 // 字面量处理器

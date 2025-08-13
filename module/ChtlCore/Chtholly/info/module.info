@@ -1,9 +1,0 @@
-name = Chtholly
-version = 1.0.0
-author = CHTL Team
-description = Chtholly C++ extension module providing advanced animation and interaction features
-type = cjmod
-license = MIT
-homepage = https://github.com/chtl/chtholly
-dependencies = 
-min_chtl_version = 1.0.0

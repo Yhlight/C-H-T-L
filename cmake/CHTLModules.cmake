@@ -67,10 +67,26 @@ endfunction()
 
 # 打包CMOD模块
 function(pack_cmod module_path output_dir)
-    get_filename_component(module_name "${module_path}" NAME)
+    # 从module.info读取实际的模块名
+    set(module_info_file "${module_path}/info/module.info")
+    if(EXISTS "${module_info_file}")
+        file(STRINGS "${module_info_file}" module_info_lines)
+        foreach(line ${module_info_lines})
+            if(line MATCHES "^name[ ]*=[ ]*(.+)")
+                string(STRIP "${CMAKE_MATCH_1}" module_name)
+                break()
+            endif()
+        endforeach()
+    endif()
+    
+    # 如果无法从module.info读取，使用目录名
+    if(NOT module_name)
+        get_filename_component(module_name "${module_path}" NAME)
+    endif()
+    
     set(output_file "${output_dir}/${module_name}.cmod")
     
-    message(STATUS "Packing CMOD: ${module_name}")
+    message(STATUS "Packing CMOD: ${module_name} from ${module_path}")
     
     # 创建临时目录
     set(temp_dir "${CMAKE_CURRENT_BINARY_DIR}/temp_cmod_${module_name}")
@@ -225,33 +241,33 @@ function(process_chtl_modules)
         return()
     endif()
     
-    file(GLOB module_candidates "${ARG_SOURCE_DIR}/*")
+    # 递归扫描模块目录，支持嵌套结构
+    file(GLOB_RECURSE module_info_files "${ARG_SOURCE_DIR}/*/info/module.info")
     
     set(cmod_count 0)
     set(cjmod_count 0)
     
-    foreach(candidate ${module_candidates})
-        if(IS_DIRECTORY "${candidate}")
-            get_filename_component(module_name "${candidate}" NAME)
-            
-            # 检查是否为CMOD
-            is_valid_cmod("${candidate}" is_cmod)
-            if(is_cmod)
-                pack_cmod("${candidate}" "${ARG_OUTPUT_DIR}")
-                math(EXPR cmod_count "${cmod_count} + 1")
-                continue()
-            endif()
-            
-            # 检查是否为CJMOD
-            is_valid_cjmod("${candidate}" is_cjmod)
-            if(is_cjmod)
-                pack_cjmod("${candidate}" "${ARG_OUTPUT_DIR}")
-                math(EXPR cjmod_count "${cjmod_count} + 1")
-                continue()
-            endif()
-            
-            message(STATUS "Skipping ${module_name} - not a valid CMOD/CJMOD")
+    foreach(info_file ${module_info_files})
+        # 获取模块目录（info文件的父目录的父目录）
+        get_filename_component(info_dir "${info_file}" DIRECTORY)
+        get_filename_component(candidate "${info_dir}" DIRECTORY)
+        
+        # 检查是否为CMOD
+        is_valid_cmod("${candidate}" is_cmod)
+        if(is_cmod)
+            pack_cmod("${candidate}" "${ARG_OUTPUT_DIR}")
+            math(EXPR cmod_count "${cmod_count} + 1")
+            continue()
         endif()
+        
+        # 检查是否为CJMOD
+        is_valid_cjmod("${candidate}" is_cjmod)
+        if(is_cjmod)
+            pack_cjmod("${candidate}" "${ARG_OUTPUT_DIR}")
+            math(EXPR cjmod_count "${cjmod_count} + 1")
+            continue()
+        endif()
+            
     endforeach()
     
     message(STATUS "Found ${cmod_count} CMOD(s) and ${cjmod_count} CJMOD(s)")

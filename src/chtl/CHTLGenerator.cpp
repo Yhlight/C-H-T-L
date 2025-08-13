@@ -19,6 +19,8 @@ CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOp
     namespaceManager = std::make_shared<NamespaceManager>(ctx);
     // 创建约束管理器
     constraintManager = std::make_shared<ConstraintManager>(ctx);
+    // 创建脚本管理器
+    scriptManager = std::make_shared<ScriptManager>(ctx);
     
     // 设置管理器之间的引用
     importManager->setTemplateManager(templateManager);
@@ -67,6 +69,16 @@ void CHTLGenerator::generateElement(const std::string& tagName,
     // 生成属性
     for (const auto& [key, value] : attributes) {
         htmlOutput << " " << key << "=\"" << escapeAttribute(value) << "\"";
+    }
+    
+    // 检查是否需要添加data-chtl-scope属性
+    if (scriptManager) {
+        std::string elementPath = ConstraintHelper::buildElementPath(elementStack);
+        auto scripts = scriptManager->getScriptsForElement(elementPath);
+        if (!scripts.empty()) {
+            std::string scopeId = scriptManager->generateScopeId(elementPath);
+            htmlOutput << " data-chtl-scope=\"" << scopeId << "\"";
+        }
     }
     
     htmlOutput << ">" << std::endl;
@@ -449,6 +461,15 @@ std::string CHTLGenerator::generateAutoClassName(const std::string& hint) {
 std::string CHTLGenerator::generateAutoId(const std::string& hint) {
     std::string base = hint.empty() ? "id" : hint;
     return base + "_" + std::to_string(++autoIdCounter);
+}
+
+// 输出获取方法
+std::string CHTLGenerator::getJS() const {
+    // 如果有脚本管理器，生成处理后的JavaScript
+    if (scriptManager) {
+        return scriptManager->generateJavaScript();
+    }
+    return jsOutput.str();
 }
 
 std::string CHTLGenerator::getCombinedOutput() const {
@@ -881,6 +902,48 @@ bool CHTLGenerator::checkConstraint(const std::string& usage) {
     std::string currentScope = ConstraintHelper::buildElementPath(elementStack);
     ConstraintProcessor processor(*constraintManager, *this);
     return processor.validateUsage(usage, currentScope);
+}
+
+// 脚本处理
+void CHTLGenerator::beginScriptBlock() {
+    if (!scriptManager) {
+        context->reportError("Script manager not initialized");
+        return;
+    }
+    
+    // 标记正在处理脚本块
+    currentScriptContent.clear();
+}
+
+void CHTLGenerator::endScriptBlock() {
+    if (!scriptManager) {
+        context->reportError("Script manager not initialized");
+        return;
+    }
+    
+    // 处理脚本内容
+    if (!currentScriptContent.empty()) {
+        processLocalScript(currentScriptContent);
+        currentScriptContent.clear();
+    }
+}
+
+void CHTLGenerator::addScriptContent(const std::string& content) {
+    currentScriptContent += content;
+}
+
+void CHTLGenerator::processLocalScript(const std::string& script) {
+    if (!scriptManager) {
+        context->reportError("Script manager not initialized");
+        return;
+    }
+    
+    // 获取当前元素路径
+    std::string currentScope = ConstraintHelper::buildElementPath(elementStack);
+    
+    // 创建脚本处理器
+    ScriptProcessor processor(*scriptManager, *this);
+    processor.processScriptBlock(script, currentScope);
 }
 
 } // namespace chtl

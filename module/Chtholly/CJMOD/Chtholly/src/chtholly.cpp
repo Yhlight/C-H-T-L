@@ -1,172 +1,152 @@
+/**
+ * 珂朵莉CJMOD扩展
+ * 提供CHTL JS的动画和交互功能
+ */
+
 #include "../../../../../src/chtl/CHTLJSExtension.h"
+#include <string>
+#include <sstream>
 #include <cmath>
-#include <chrono>
-#include <thread>
 
 using namespace chtl::js;
 
-// Chtholly扩展模块
 CJMOD_BEGIN(Chtholly)
-    
-    // ===== 动画函数 =====
-    
+    // 淡入动画
     CJMOD_FUNCTION(fadeIn, {
         auto element = getArg<std::string>(args, 0);
         auto duration = getArg<double>(args, 1, 400.0);
         
-        // 实现淡入效果
-        return "fadeIn(" + element + ", " + std::to_string(duration) + ")";
+        std::stringstream js;
+        js << "(function(){"
+           << "  var el = " << element << ";"
+           << "  el.style.opacity = '0';"
+           << "  el.style.transition = 'opacity " << duration << "ms ease-in';"
+           << "  setTimeout(function() { el.style.opacity = '1'; }, 10);"
+           << "})()";
+        
+        return js.str();
     })
     
+    // 淡出动画
     CJMOD_FUNCTION(fadeOut, {
         auto element = getArg<std::string>(args, 0);
         auto duration = getArg<double>(args, 1, 400.0);
         
-        // 实现淡出效果
-        return "fadeOut(" + element + ", " + std::to_string(duration) + ")";
+        std::stringstream js;
+        js << "(function(){"
+           << "  var el = " << element << ";"
+           << "  el.style.transition = 'opacity " << duration << "ms ease-out';"
+           << "  el.style.opacity = '0';"
+           << "})()";
+        
+        return js.str();
     })
     
+    // 滑入动画
     CJMOD_FUNCTION(slideIn, {
         auto element = getArg<std::string>(args, 0);
         auto direction = getArg<std::string>(args, 1, "left");
         auto duration = getArg<double>(args, 2, 400.0);
         
-        return "slideIn(" + element + ", " + direction + ", " + std::to_string(duration) + ")";
-    })
-    
-    CJMOD_FUNCTION(bounce, {
-        auto element = getArg<std::string>(args, 0);
-        auto times = getArg<int>(args, 1, 3);
+        std::stringstream js;
+        js << "(function(){"
+           << "  var el = " << element << ";"
+           << "  var translate = '" << direction << "' === 'left' ? 'translateX(-100%)' : 'translateY(-100%)';"
+           << "  el.style.transform = translate;"
+           << "  el.style.transition = 'transform " << duration << "ms ease-out';"
+           << "  setTimeout(function() { el.style.transform = 'translate(0)'; }, 10);"
+           << "})()";
         
-        return "bounce(" + element + ", " + std::to_string(times) + ")";
+        return js.str();
     })
     
-    // ===== DOM操作函数 =====
-    
+    // 添加类
     CJMOD_FUNCTION(addClass, {
         auto element = getArg<std::string>(args, 0);
         auto className = getArg<std::string>(args, 1);
         
-        return element + ".classList.add('" + className + "')";
+        std::stringstream js;
+        js << element << ".classList.add('" << className << "')";
+        
+        return js.str();
     })
     
+    // 移除类
     CJMOD_FUNCTION(removeClass, {
         auto element = getArg<std::string>(args, 0);
         auto className = getArg<std::string>(args, 1);
         
-        return element + ".classList.remove('" + className + "')";
+        std::stringstream js;
+        js << element << ".classList.remove('" << className << "')";
+        
+        return js.str();
     })
     
+    // 切换类
     CJMOD_FUNCTION(toggleClass, {
         auto element = getArg<std::string>(args, 0);
         auto className = getArg<std::string>(args, 1);
         
-        return element + ".classList.toggle('" + className + "')";
+        std::stringstream js;
+        js << element << ".classList.toggle('" << className << "')";
+        
+        return js.str();
     })
     
-    // ===== 工具函数 =====
-    
+    // 防抖函数
     CJMOD_FUNCTION(debounce, {
         auto func = getArg<std::string>(args, 0);
-        auto delay = getArg<double>(args, 1, 250.0);
+        auto delay = getArg<double>(args, 1, 300.0);
         
-        return "debounce(" + func + ", " + std::to_string(delay) + ")";
+        std::stringstream js;
+        js << "(function(){"
+           << "  var timer = null;"
+           << "  return function() {"
+           << "    var context = this, args = arguments;"
+           << "    clearTimeout(timer);"
+           << "    timer = setTimeout(function() {"
+           << "      " << func << ".apply(context, args);"
+           << "    }, " << delay << ");"
+           << "  };"
+           << "})()";
+        
+        return js.str();
     })
     
-    CJMOD_FUNCTION(throttle, {
-        auto func = getArg<std::string>(args, 0);
-        auto limit = getArg<double>(args, 1, 250.0);
-        
-        return "throttle(" + func + ", " + std::to_string(limit) + ")";
-    })
-    
-    // ===== 珂朵莉特效 =====
-    
-    CJMOD_FUNCTION(chthollyAnimate, {
+    // 珂朵莉特效 - 闪光效果
+    CJMOD_FUNCTION(chthollyGlow, {
         auto element = getArg<std::string>(args, 0);
-        auto animation = getArg<std::string>(args, 1, "glow");
+        auto color = getArg<std::string>(args, 1, "#87CEEB");
+        auto duration = getArg<double>(args, 2, 1000.0);
         
-        // 珂朵莉特有的动画效果
-        if (animation == "glow") {
-            return element + ".style.animation = 'chtholly-glow 2s infinite'";
-        } else if (animation == "sparkle") {
-            return element + ".style.animation = 'chtholly-sparkle 3s infinite'";
-        } else if (animation == "float") {
-            return element + ".style.animation = 'chtholly-float 4s ease-in-out infinite'";
-        }
+        std::stringstream js;
+        js << "(function(){"
+           << "  var el = " << element << ";"
+           << "  el.style.boxShadow = '0 0 20px " << color << "';"
+           << "  el.style.transition = 'box-shadow " << duration << "ms ease-in-out';"
+           << "  setTimeout(function() {"
+           << "    el.style.boxShadow = '0 0 0 transparent';"
+           << "  }, " << duration << ");"
+           << "})()";
         
-        return element + ".style.animation = '" + animation + "'";
+        return js.str();
     })
     
-    CJMOD_FUNCTION(chthollyParticles, {
-        auto container = getArg<std::string>(args, 0);
-        auto count = getArg<int>(args, 1, 50);
-        auto color = getArg<std::string>(args, 2, "#ff6b6b");
-        
-        // 生成粒子效果代码
-        std::string code = "createParticles('" + container + "', {";
-        code += "count: " + std::to_string(count) + ", ";
-        code += "color: '" + color + "', ";
-        code += "animation: 'float'";
-        code += "})";
-        
-        return code;
-    })
-    
-    CJMOD_FUNCTION(chthollyMagic, {
+    // 珂朵莉动画 - 幸福旋转
+    CJMOD_FUNCTION(chthollyRotate, {
         auto element = getArg<std::string>(args, 0);
+        auto degrees = getArg<double>(args, 1, 360.0);
+        auto duration = getArg<double>(args, 2, 1000.0);
         
-        // 珂朵莉的魔法效果组合
-        std::string code = "(() => {\n";
-        code += "  const el = document.querySelector('" + element + "');\n";
-        code += "  el.classList.add('chtholly-magic');\n";
-        code += "  el.style.transform = 'scale(1.1)';\n";
-        code += "  el.style.filter = 'brightness(1.2) hue-rotate(10deg)';\n";
-        code += "  setTimeout(() => {\n";
-        code += "    el.style.transform = 'scale(1)';\n";
-        code += "    el.style.filter = 'brightness(1) hue-rotate(0deg)';\n";
-        code += "  }, 500);\n";
-        code += "})()";
+        std::stringstream js;
+        js << "(function(){"
+           << "  var el = " << element << ";"
+           << "  el.style.transition = 'transform " << duration << "ms ease-in-out';"
+           << "  el.style.transform = 'rotate(" << degrees << "deg)';"
+           << "})()";
         
-        return code;
+        return js.str();
     })
-    
-    // ===== 事件处理 =====
-    
-    CJMOD_FUNCTION(on, {
-        auto element = getArg<std::string>(args, 0);
-        auto event = getArg<std::string>(args, 1);
-        auto handler = getArg<std::string>(args, 2);
-        
-        return element + ".addEventListener('" + event + "', " + handler + ")";
-    })
-    
-    CJMOD_FUNCTION(once, {
-        auto element = getArg<std::string>(args, 0);
-        auto event = getArg<std::string>(args, 1);
-        auto handler = getArg<std::string>(args, 2);
-        
-        return element + ".addEventListener('" + event + "', " + handler + ", {once: true})";
-    })
-    
-    // ===== 实用工具 =====
-    
-    CJMOD_FUNCTION(delay, {
-        auto ms = getArg<double>(args, 0, 1000.0);
-        
-        // 返回Promise延迟
-        return "new Promise(resolve => setTimeout(resolve, " + std::to_string(ms) + "))";
-    })
-    
-    CJMOD_FUNCTION(random, {
-        auto min = getArg<double>(args, 0, 0.0);
-        auto max = getArg<double>(args, 1, 1.0);
-        
-        double value = min + (max - min) * (rand() / double(RAND_MAX));
-        return value;
-    })
-
 CJMOD_END()
 
-// 导出模块
 CJMOD_EXPORT(Chtholly)

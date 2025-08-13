@@ -1,10 +1,10 @@
-// Chtholly CJMOD模块信息 - 提供CHTL JS语法扩展
+-- 珂朵莉CJMOD模块信息
 
 [Info]
 {
     name = "Chtholly";
     version = "1.0.0";
-    description = "珂朵莉CHTL JS语法扩展 - 动画和交互功能";
+    description = "珂朵莉CHTL JS语法扩展 - 提供动画和交互功能";
     author = "CHTL Team";
     license = "MIT";
     dependencies = "";

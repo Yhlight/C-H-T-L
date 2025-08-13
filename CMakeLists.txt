@@ -72,6 +72,12 @@ file(GLOB_RECURSE SCANNER_SOURCES
     src/chtl/scanner/*.cpp
 )
 
+# 添加精准扫描器
+set(SCANNER_SOURCES 
+    ${SCANNER_SOURCES}
+    src/chtl/scanner/PrecisionScanner.cpp
+)
+
 # ===== 配置系统 - 由CHTL独立处理 =====
 file(GLOB_RECURSE CONFIG_SOURCES
     src/chtl/config/*.cpp

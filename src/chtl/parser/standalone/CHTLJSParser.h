@@ -1,69 +1,68 @@
 #ifndef CHTL_STANDALONE_JS_PARSER_H
 #define CHTL_STANDALONE_JS_PARSER_H
 
-#include "CHTLParser.h"
+#include "ParserRuntime.h"
 #include "CHTLJSLexer.h"
 
 namespace chtl {
 namespace parser {
 
-// CHTL JavaScript解析器 - 扩展CHTL解析器以支持在script块中的CHTL特性
-class CHTLJSParser : public CHTLParser {
+// CHTL JavaScript解析器 - 仅处理CHTL在JavaScript中的扩展
+// 原生JavaScript代码作为原始文本传递，由JS编译器处理
+class CHTLJSParser : public Parser {
 public:
-    CHTLJSParser(std::shared_ptr<TokenStream> tokens) : CHTLParser(tokens) {}
+    CHTLJSParser(std::shared_ptr<TokenStream> tokens) : Parser(tokens) {}
     
-    // 重写script块解析以支持CHTL扩展
-    std::shared_ptr<ParseContext> scriptBlock() override {
-        auto ctx = std::make_shared<ParseContext>("scriptBlock");
+    // 解析CHTL增强的JavaScript片段
+    std::shared_ptr<ParseContext> parse() {
+        auto ctx = std::make_shared<ParseContext>("chtlJSProgram");
         
-        // script 已被消费
-        consume(TokenType::LBRACE, "Expected { after script");
-        
-        // 解析CHTL增强的JavaScript代码
-        ctx->addChild(chtlJavaScript());
-        
-        consume(TokenType::RBRACE, "Expected }");
-        
-        return ctx;
-    }
-    
-private:
-    // CHTL JavaScript内容
-    std::shared_ptr<ParseContext> chtlJavaScript() {
-        auto ctx = std::make_shared<ParseContext>("chtlJavaScript");
-        
-        while (tokens_->LT(1)->getType() != TokenType::RBRACE &&
-               tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
-            
-            // 检查CHTL特有的结构
-            if (tokens_->LT(1)->getType() == TokenType::AT) {
+        while (tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
+            // 只处理CHTL特有的结构
+            if (tokens_->LT(1)->getType() == TokenType::AT ||
+                tokens_->LT(1)->getType() == TokenType::AT_ELEMENT ||
+                tokens_->LT(1)->getType() == TokenType::AT_STYLE ||
+                tokens_->LT(1)->getType() == TokenType::AT_VAR) {
                 ctx->addChild(chtlDirective());
-            } else if (tokens_->LT(1)->getText() == "{{") {
+            } else if (tokens_->LT(1)->getType() == TokenType::DOUBLE_LBRACE) {
                 ctx->addChild(chtlInterpolation());
+            } else if (tokens_->LT(1)->getType() == TokenType::KEYWORD_VAR &&
+                      tokens_->LT(2)->getType() == TokenType::IDENTIFIER &&
+                      tokens_->LT(3)->getType() == TokenType::EQUALS &&
+                      tokens_->LT(4)->getType() == TokenType::AT) {
+                // var element = @Element ...
+                ctx->addChild(chtlVarDeclaration());
             } else {
-                // 普通JavaScript代码
-                ctx->addChild(jsStatement());
+                // 其他所有内容作为原始JavaScript文本
+                ctx->addChild(rawJavaScript());
             }
         }
         
         return ctx;
     }
     
-    // CHTL指令（在JS中）
+private:
+    // CHTL指令
     std::shared_ptr<ParseContext> chtlDirective() {
         auto ctx = std::make_shared<ParseContext>("chtlDirective");
         
-        consume(TokenType::AT, "Expected @");
-        auto directive = tokens_->consume();
-        ctx->addChild(std::make_shared<TerminalNode>(directive));
+        auto atToken = tokens_->consume(); // @ 或 @Element 等
+        ctx->addChild(std::make_shared<TerminalNode>(atToken));
         
-        // 根据指令类型处理
-        if (directive->getText() == "Element") {
-            ctx->addChild(elementReference());
-        } else if (directive->getText() == "Style") {
-            ctx->addChild(styleReference());
-        } else if (directive->getText() == "Var") {
-            ctx->addChild(varReference());
+        // 元素/样式/变量名
+        auto name = consume(TokenType::IDENTIFIER, "Expected name after " + atToken->getText());
+        ctx->addChild(std::make_shared<TerminalNode>(name));
+        
+        // 可选的from子句
+        if (match(TokenType::KEYWORD_FROM)) {
+            auto namespaceName = consume(TokenType::IDENTIFIER, "Expected namespace name");
+            ctx->addChild(std::make_shared<TerminalNode>(namespaceName));
+        }
+        
+        // 可选的参数（仅Element）
+        if (atToken->getType() == TokenType::AT_ELEMENT && match(TokenType::LPAREN)) {
+            ctx->addChild(argumentList());
+            consume(TokenType::RPAREN, "Expected )");
         }
         
         return ctx;
@@ -73,153 +72,70 @@ private:
     std::shared_ptr<ParseContext> chtlInterpolation() {
         auto ctx = std::make_shared<ParseContext>("chtlInterpolation");
         
-        // 消费 {{
-        tokens_->consume();
-        tokens_->consume();
+        consume(TokenType::DOUBLE_LBRACE, "Expected {{");
         
-        // 解析表达式
-        ctx->addChild(jsExpression());
-        
-        // 消费 }}
-        if (tokens_->LT(1)->getText() == "}" && tokens_->LT(2)->getText() == "}") {
-            tokens_->consume();
-            tokens_->consume();
+        // 插值内容作为原始文本，直到遇到 }}
+        std::string content;
+        while (tokens_->LT(1)->getType() != TokenType::DOUBLE_RBRACE &&
+               tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
+            content += tokens_->consume()->getText() + " ";
         }
+        
+        ctx->addChild(std::make_shared<TerminalNode>(
+            std::make_shared<Token>(TokenType::IDENTIFIER, content, 0, 0)
+        ));
+        
+        consume(TokenType::DOUBLE_RBRACE, "Expected }}");
         
         return ctx;
     }
     
-    // JavaScript语句
-    std::shared_ptr<ParseContext> jsStatement() {
-        auto ctx = std::make_shared<ParseContext>("jsStatement");
+    // CHTL变量声明
+    std::shared_ptr<ParseContext> chtlVarDeclaration() {
+        auto ctx = std::make_shared<ParseContext>("chtlVarDeclaration");
         
-        // 简化的JS语句解析
-        // 实际应用中需要完整的JS语法支持
-        while (tokens_->LT(1)->getType() != TokenType::SEMICOLON &&
-               tokens_->LT(1)->getType() != TokenType::RBRACE &&
-               tokens_->LT(1)->getType() != TokenType::EOF_TOKEN &&
-               tokens_->LT(1)->getType() != TokenType::AT &&
-               tokens_->LT(1)->getText() != "{{") {
-            
-            auto token = tokens_->consume();
-            ctx->addChild(std::make_shared<TerminalNode>(token));
-            
-            // 处理嵌套的大括号
-            if (token->getType() == TokenType::LBRACE) {
-                ctx->addChild(jsBlock());
-            }
-        }
+        consume(TokenType::KEYWORD_VAR, "Expected var");
+        
+        auto varName = consume(TokenType::IDENTIFIER, "Expected variable name");
+        ctx->addChild(std::make_shared<TerminalNode>(varName));
+        
+        consume(TokenType::EQUALS, "Expected =");
+        
+        ctx->addChild(chtlDirective());
         
         // 可选的分号
-        if (tokens_->LT(1)->getType() == TokenType::SEMICOLON) {
-            ctx->addChild(std::make_shared<TerminalNode>(tokens_->consume()));
+        if (match(TokenType::SEMICOLON)) {
+            // 消费分号但不添加到AST
         }
         
         return ctx;
     }
     
-    // JavaScript块
-    std::shared_ptr<ParseContext> jsBlock() {
-        auto ctx = std::make_shared<ParseContext>("jsBlock");
+    // 原始JavaScript文本
+    std::shared_ptr<ParseContext> rawJavaScript() {
+        auto ctx = std::make_shared<ParseContext>("rawJavaScript");
         
-        int braceCount = 1;
-        while (braceCount > 0 && tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
-            auto token = tokens_->LT(1);
+        std::string jsCode;
+        
+        // 收集所有非CHTL特有的token作为原始JS
+        while (tokens_->LT(1)->getType() != TokenType::EOF_TOKEN &&
+               tokens_->LT(1)->getType() != TokenType::AT &&
+               tokens_->LT(1)->getType() != TokenType::AT_ELEMENT &&
+               tokens_->LT(1)->getType() != TokenType::AT_STYLE &&
+               tokens_->LT(1)->getType() != TokenType::AT_VAR &&
+               tokens_->LT(1)->getType() != TokenType::DOUBLE_LBRACE &&
+               !(tokens_->LT(1)->getType() == TokenType::KEYWORD_VAR &&
+                 tokens_->LT(2)->getType() == TokenType::IDENTIFIER &&
+                 tokens_->LT(3)->getType() == TokenType::EQUALS &&
+                 tokens_->LT(4)->getType() == TokenType::AT)) {
             
-            if (token->getType() == TokenType::LBRACE) {
-                braceCount++;
-            } else if (token->getType() == TokenType::RBRACE) {
-                braceCount--;
-                if (braceCount == 0) break;
-            } else if (token->getType() == TokenType::AT) {
-                // 嵌套的CHTL指令
-                ctx->addChild(chtlDirective());
-                continue;
-            } else if (token->getText() == "{{") {
-                // 嵌套的CHTL插值
-                ctx->addChild(chtlInterpolation());
-                continue;
-            }
-            
-            ctx->addChild(std::make_shared<TerminalNode>(tokens_->consume()));
+            jsCode += tokens_->consume()->getText() + " ";
         }
         
-        return ctx;
-    }
-    
-    // JavaScript表达式
-    std::shared_ptr<ParseContext> jsExpression() {
-        auto ctx = std::make_shared<ParseContext>("jsExpression");
-        
-        // 简化的表达式解析
-        int parenCount = 0;
-        int braceCount = 0;
-        
-        while (tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
-            auto token = tokens_->LT(1);
-            
-            if (token->getType() == TokenType::LPAREN) parenCount++;
-            else if (token->getType() == TokenType::RPAREN) parenCount--;
-            else if (token->getType() == TokenType::LBRACE) braceCount++;
-            else if (token->getType() == TokenType::RBRACE) braceCount--;
-            
-            // 检查是否到达表达式结尾
-            if (parenCount == 0 && braceCount == 0) {
-                if (token->getText() == "}" && tokens_->LT(2)->getText() == "}") {
-                    break; // 结束插值
-                }
-                if (token->getType() == TokenType::SEMICOLON ||
-                    token->getType() == TokenType::COMMA) {
-                    break;
-                }
-            }
-            
-            ctx->addChild(std::make_shared<TerminalNode>(tokens_->consume()));
-        }
-        
-        return ctx;
-    }
-    
-    // 元素引用
-    std::shared_ptr<ParseContext> elementReference() {
-        auto ctx = std::make_shared<ParseContext>("elementReference");
-        
-        // 元素名
-        auto name = consume(TokenType::IDENTIFIER, "Expected element name");
-        ctx->addChild(std::make_shared<TerminalNode>(name));
-        
-        // 可选的参数
-        if (match(TokenType::LPAREN)) {
-            ctx->addChild(argumentList());
-            consume(TokenType::RPAREN, "Expected )");
-        }
-        
-        return ctx;
-    }
-    
-    // 样式引用
-    std::shared_ptr<ParseContext> styleReference() {
-        auto ctx = std::make_shared<ParseContext>("styleReference");
-        
-        // 样式名
-        auto name = consume(TokenType::IDENTIFIER, "Expected style name");
-        ctx->addChild(std::make_shared<TerminalNode>(name));
-        
-        return ctx;
-    }
-    
-    // 变量引用
-    std::shared_ptr<ParseContext> varReference() {
-        auto ctx = std::make_shared<ParseContext>("varReference");
-        
-        // 变量组名
-        auto groupName = consume(TokenType::IDENTIFIER, "Expected variable group name");
-        ctx->addChild(std::make_shared<TerminalNode>(groupName));
-        
-        // 可选的具体变量
-        if (match(TokenType::DOT)) {
-            auto varName = consume(TokenType::IDENTIFIER, "Expected variable name");
-            ctx->addChild(std::make_shared<TerminalNode>(varName));
+        if (!jsCode.empty()) {
+            ctx->addChild(std::make_shared<TerminalNode>(
+                std::make_shared<Token>(TokenType::IDENTIFIER, jsCode, 0, 0)
+            ));
         }
         
         return ctx;
@@ -233,9 +149,24 @@ private:
             return ctx; // 空参数列表
         }
         
-        do {
-            ctx->addChild(jsExpression());
-        } while (match(TokenType::COMMA));
+        // 参数作为原始文本处理，由JS编译器解析
+        std::string args;
+        int parenCount = 0;
+        
+        while (tokens_->LT(1)->getType() != TokenType::EOF_TOKEN) {
+            if (tokens_->LT(1)->getType() == TokenType::LPAREN) {
+                parenCount++;
+            } else if (tokens_->LT(1)->getType() == TokenType::RPAREN) {
+                if (parenCount == 0) break;
+                parenCount--;
+            }
+            
+            args += tokens_->consume()->getText() + " ";
+        }
+        
+        ctx->addChild(std::make_shared<TerminalNode>(
+            std::make_shared<Token>(TokenType::IDENTIFIER, args, 0, 0)
+        ));
         
         return ctx;
     }

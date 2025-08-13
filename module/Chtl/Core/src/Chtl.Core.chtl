@@ -40,23 +40,23 @@
 }
 
 [Template] @Style FlexRow {
-    @inherit Flex;
+    @Style Flex;
     flex-direction: row;
 }
 
 [Template] @Style FlexColumn {
-    @inherit Flex;
+    @Style Flex;
     flex-direction: column;
 }
 
 [Template] @Style FlexCenter {
-    @inherit Flex;
+    @Style Flex;
     justify-content: center;
     align-items: center;
 }
 
 [Template] @Style FlexBetween {
-    @inherit Flex;
+    @Style Flex;
     justify-content: space-between;
     align-items: center;
 }
@@ -99,7 +99,7 @@
         
         style {
             .row {
-                @use FlexRow;
+                @Style FlexRow;
                 flex-wrap: wrap;
                 margin-left: -{gutter}px;
                 margin-right: -{gutter}px;
@@ -231,8 +231,7 @@
 }
 
 [Template] @Style ButtonPrimary {
-    @inherit ButtonBase;
-    @use Colors;
+    @Style ButtonBase;
     
     background-color: Colors(primary);
     border-color: Colors(primary);
@@ -245,8 +244,8 @@
 }
 
 [Template] @Style ButtonSecondary {
-    @inherit ButtonBase;
-    @use Colors;
+    @Style ButtonBase;
+    @Style Colors;
     
     background-color: Colors(secondary);
     border-color: Colors(secondary);
@@ -259,8 +258,8 @@
 }
 
 [Template] @Style ButtonOutline(color = primary) {
-    @inherit ButtonBase;
-    @use Colors;
+    @Style ButtonBase;
+    @Style Colors;
     
     background-color: transparent;
     border-color: Colors({color});
@@ -280,23 +279,23 @@
         
         style {
             .btn {
-                @use ButtonBase;
+                @Style ButtonBase;
             }
             
             .btn-primary {
-                @use ButtonPrimary;
+                @Style ButtonPrimary;
             }
             
             .btn-secondary {
-                @use ButtonSecondary;
+                @Style ButtonSecondary;
             }
             
             .btn-outline-primary {
-                @use ButtonOutline(primary);
+                @Style ButtonOutline(primary);
             }
             
             .btn-outline-secondary {
-                @use ButtonOutline(secondary);
+                @Style ButtonOutline(secondary);
             }
             
             .btn-sm {
@@ -429,7 +428,7 @@
         
         style {
             .form-control {
-                @use FormControl;
+                @Style FormControl;
             }
         }
     }
@@ -444,7 +443,7 @@
         
         style {
             .form-control {
-                @use FormControl;
+                @Style FormControl;
             }
         }
         
@@ -463,7 +462,7 @@
         
         style {
             .form-control {
-                @use FormControl;
+                @Style FormControl;
                 resize: vertical;
             }
         }
@@ -494,13 +493,13 @@
 }
 
 [Template] @Style TextMuted {
-    @use Colors;
+    @Style Colors;
     color: Colors(secondary) !important;
 }
 
 // ===== 间距工具 =====
 [Template] @Style Margin(size = md, direction = all) {
-    @use Spacing;
+    @Style Spacing;
     
     if (direction == "all") {
         margin: Spacing({size});
@@ -522,7 +521,7 @@
 }
 
 [Template] @Style Padding(size = md, direction = all) {
-    @use Spacing;
+    @Style Spacing;
     
     if (direction == "all") {
         padding: Spacing({size});

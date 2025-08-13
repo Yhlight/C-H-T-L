@@ -1,927 +1,520 @@
-# CJMOD开发完整指南
+# CJMOD 开发指南
+
+CJMOD（CHTL JavaScript Module）是 CHTL 提供的 JavaScript 扩展机制，允许开发者使用 C++ 扩展 CHTL JS 的功能。
 
 ## 目录
 
-1. [概述](#概述)
-2. [快速开始](#快速开始)
-3. [项目结构](#项目结构)
-4. [开发流程](#开发流程)
-5. [API设计](#api设计)
-6. [内存管理](#内存管理)
-7. [错误处理](#错误处理)
-8. [性能优化](#性能优化)
-9. [调试技巧](#调试技巧)
-10. [发布流程](#发布流程)
-11. [最佳实践](#最佳实践)
-12. [常见问题](#常见问题)
-
-## 概述
-
-CJMOD（CHTL JavaScript Module）是CHTL的C++扩展模块系统，允许开发者使用C++创建高性能的功能扩展，这些扩展可以在CHTL的JavaScript环境中直接调用。
-
-### 特点
-
-- **高性能**：原生C++实现，性能远超纯JavaScript
-- **类型安全**：C++强类型系统保证代码质量
-- **无缝集成**：自动生成JavaScript绑定
-- **跨平台**：支持Windows、Linux、macOS
-- **热加载**：支持动态加载和卸载
+1. [快速开始](#快速开始)
+2. [项目结构](#项目结构)
+3. [API 设计](#api-设计)
+4. [内存管理](#内存管理)
+5. [错误处理](#错误处理)
+6. [性能优化](#性能优化)
+7. [调试技巧](#调试技巧)
+8. [发布流程](#发布流程)
+9. [最佳实践](#最佳实践)
 
 ## 快速开始
 
-### 1. 创建新的CJMOD项目
-
-```bash
-# 创建项目目录
-mkdir my-cjmod && cd my-cjmod
-
-# 创建标准目录结构
-mkdir -p src include info
-
-# 创建模块信息文件
-cat > info/module.info << EOF
-name = MyCJMOD
-version = 1.0.0
-author = Your Name
-description = My awesome CJMOD extension
-type = cjmod
-license = MIT
-min_chtl_version = 1.0.0
-EOF
-```
-
-### 2. 编写C++代码
-
-使用CHTL提供的简化接口，创建 `src/my_cjmod.cpp`：
+### 1. 创建基本的 CJMOD
 
 ```cpp
 #include "CHTLJSExtension.h"
-#include <cmath>
-#include <algorithm>
+#include <string>
 #include <sstream>
 
-using namespace chtl::js;
+namespace chtl {
+namespace js {
 
-// 定义你的CJMOD扩展
-CJMOD_BEGIN(MyCJMOD)
+// 创建扩展类
+class MyExtension : public Extension {
+public:
+    MyExtension() : Extension("MyModule") {}
     
-    // ===== 计算器功能 =====
-    
-    CJMOD_FUNCTION(add, {
-        double a = getArg<double>(args, 0, 0.0);
-        double b = getArg<double>(args, 1, 0.0);
-        return a + b;
-    })
-    
-    CJMOD_FUNCTION(multiply, {
-        double a = getArg<double>(args, 0, 0.0);
-        double b = getArg<double>(args, 1, 0.0);
-        return a * b;
-    })
-    
-    CJMOD_FUNCTION(power, {
-        double base = getArg<double>(args, 0, 0.0);
-        double exp = getArg<double>(args, 1, 0.0);
-        return std::pow(base, exp);
-    })
-    
-    // ===== 字符串工具 =====
-    
-    CJMOD_FUNCTION(reverse, {
-        std::string str = getArg<std::string>(args, 0, "");
-        std::reverse(str.begin(), str.end());
-        return str;
-    })
-    
-    CJMOD_FUNCTION(split, {
-        std::string str = getArg<std::string>(args, 0, "");
-        std::string delimiter = getArg<std::string>(args, 1, ",");
+    void initialize() override {
+        // 注册一个简单的函数
+        function("greet", [](const Array& args) -> Value {
+            auto name = getArg<std::string>(args, 0, "World");
+            return "Hello, " + name + "!";
+        });
         
-        Array result;
-        size_t pos = 0;
-        while ((pos = str.find(delimiter)) != std::string::npos) {
-            result.push_back(str.substr(0, pos));
-            str.erase(0, pos + delimiter.length());
-        }
-        if (!str.empty()) {
-            result.push_back(str);
-        }
-        
-        return result;
-    })
-    
-    CJMOD_FUNCTION(join, {
-        Array parts = getArg<Array>(args, 0, Array{});
-        std::string delimiter = getArg<std::string>(args, 1, ",");
-        
-        std::stringstream ss;
-        for (size_t i = 0; i < parts.size(); ++i) {
-            if (i > 0) ss << delimiter;
-            ss << value_cast<std::string>(parts[i]);
-        }
-        
-        return ss.str();
-    })
+        // 注册一个返回数字的函数
+        function("add", [](const Array& args) -> Value {
+            double a = getArg<double>(args, 0, 0.0);
+            double b = getArg<double>(args, 1, 0.0);
+            return a + b;
+        });
+    }
+};
 
-CJMOD_END()
+// 设置导出
+struct MyExporter {
+    MyExporter() {
+        CJMODExporter::setHandlers([]() {
+            auto ext = std::make_shared<MyExtension>();
+            ExtensionManager::getInstance().registerExtension(ext);
+        });
+    }
+};
 
-// 导出模块
-CJMOD_EXPORT(MyCJMOD)
+static MyExporter exporter;
+
+} // namespace js
+} // namespace chtl
 ```
 
+### 2. 在 CHTL 中使用
 
+```chtl
+-- 导入 CJMOD
+[Import] @CJmod from MyModule
 
-### 3. 创建CMakeLists.txt
-
-```cmake
-cmake_minimum_required(VERSION 3.16)
-project(MyCJMOD VERSION 1.0.0 LANGUAGES CXX)
-
-# C++标准
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# 源文件
-set(SOURCES
-    src/my_cjmod.cpp
-)
-
-# 创建共享库
-add_library(my_cjmod SHARED ${SOURCES})
-
-# 包含目录
-target_include_directories(my_cjmod PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-
-# 设置属性
-set_target_properties(my_cjmod PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1
-    PUBLIC_HEADER include/my_cjmod.h
-)
-
-# 导出符号
-if(WIN32)
-    set_target_properties(my_cjmod PROPERTIES
-        WINDOWS_EXPORT_ALL_SYMBOLS ON
-    )
-endif()
-
-# 安装规则
-install(TARGETS my_cjmod
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    PUBLIC_HEADER DESTINATION include
-)
-
-# 复制module.info
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/info/module.info"
-    "${CMAKE_CURRENT_BINARY_DIR}/module.info"
-    COPYONLY
-)
-```
-
-### 4. 构建CJMOD
-
-```bash
-# 创建构建目录
-mkdir build && cd build
-
-# 配置
-cmake ..
-
-# 构建
-cmake --build . --config Release
-
-# 打包
-cd ..
-chtl --pack-cjmod .
+script {
+    -- 调用函数
+    var message = greet("CHTL");
+    console.log(message);  -- 输出: Hello, CHTL!
+    
+    var result = add(10, 20);
+    console.log(result);   -- 输出: 30
+}
 ```
 
 ## 项目结构
 
-标准的CJMOD项目结构：
-
 ```
-my-cjmod/
-├── CMakeLists.txt          # CMake构建文件
-├── info/
-│   └── module.info         # 模块元数据
-├── include/
-│   └── my_cjmod.h         # 公共头文件
+MyModule/
 ├── src/
-│   ├── my_cjmod.cpp       # 主实现文件
-│   └── ...                # 其他源文件
-├── tests/
-│   └── test_my_cjmod.cpp  # 单元测试
-├── examples/
-│   └── example.chtl       # 使用示例
-└── README.md              # 文档
+│   ├── mymodule.cpp      # 主实现文件
+│   └── mymodule.h        # 头文件（可选）
+└── info/
+    └── MyModule.chtl     # 模块信息文件
 ```
 
-## 开发流程
-
-### 1. 设计API
-
-设计原则：
-- **简单直观**：API应该易于理解和使用
-- **类型安全**：充分利用C++类型系统
-- **错误友好**：提供清晰的错误信息
-- **向后兼容**：谨慎修改公共API
-
-### 2. 实现功能
-
-```cpp
-// 良好的实现示例
-class ImageProcessor {
-private:
-    struct Impl; // PIMPL模式
-    std::unique_ptr<Impl> pImpl;
-    
-public:
-    ImageProcessor();
-    ~ImageProcessor();
-    
-    // 禁用拷贝
-    ImageProcessor(const ImageProcessor&) = delete;
-    ImageProcessor& operator=(const ImageProcessor&) = delete;
-    
-    // 启用移动
-    ImageProcessor(ImageProcessor&&) = default;
-    ImageProcessor& operator=(ImageProcessor&&) = default;
-    
-    // 公共接口
-    bool loadImage(const std::string& path);
-    bool saveImage(const std::string& path);
-    void resize(int width, int height);
-    void applyFilter(const std::string& filterName);
-};
-```
-
-### 3. 导出C接口
-
-```cpp
-extern "C" {
-    // 创建/销毁
-    CJMOD_EXPORT void* image_processor_create() {
-        try {
-            return new ImageProcessor();
-        } catch (...) {
-            return nullptr;
-        }
-    }
-    
-    CJMOD_EXPORT void image_processor_destroy(void* processor) {
-        delete static_cast<ImageProcessor*>(processor);
-    }
-    
-    // 功能接口
-    CJMOD_EXPORT int image_processor_load(void* processor, const char* path) {
-        try {
-            auto* p = static_cast<ImageProcessor*>(processor);
-            return p->loadImage(path) ? 1 : 0;
-        } catch (...) {
-            return 0;
-        }
-    }
-}
-```
-
-### 4. 在CHTL中使用CJMOD
-
-使用新的简化接口后，在CHTL JS中可以直接调用函数：
+### info/MyModule.chtl 示例
 
 ```chtl
-// 导入CJMOD模块
-[Import] @CJmod "MyCJMOD"
+-- MyModule CJMOD 信息
 
-script {
-    // 直接使用计算器功能
-    var sum = add(10, 20);           // 30
-    var product = multiply(5, 6);     // 30
-    var result = power(2, 8);         // 256
-    
-    // 字符串工具
-    var reversed = reverse("Hello");  // "olleH"
-    var parts = split("a,b,c", ","); // ["a", "b", "c"]
-    var joined = join(parts, "-");    // "a-b-c"
-    
-    console.log("Sum:", sum);
-    console.log("Reversed:", reversed);
+[Info]
+{
+    name = "MyModule";
+    version = "1.0.0";
+    description = "我的 CHTL JS 扩展模块";
+    author = "Your Name";
+    license = "MIT";
+    dependencies = "";
+    category = "extension";
+    minCHTLVersion = "1.0.0";
+    maxCHTLVersion = "2.0.0";
 }
 ```
 
-CHTL会自动处理CJMOD函数的注册和调用，无需手动管理句柄或生命周期。
+## API 设计
 
-## API设计
-
-### 基本原则
-
-1. **使用PIMPL模式**隐藏实现细节
-2. **提供RAII包装器**自动管理资源
-3. **使用智能指针**避免内存泄漏
-4. **异常安全**保证强异常安全性
-
-### 推荐的API模式
+### 扩展类结构
 
 ```cpp
-// 1. 工厂模式
-class ModuleFactory {
+class MyExtension : public Extension {
 public:
-    static std::unique_ptr<IModule> create(const std::string& type);
+    MyExtension() : Extension("ModuleName") {}
+    
+    void initialize() override {
+        // 在这里注册所有功能
+    }
 };
+```
 
-// 2. 建造者模式
-class ConfigBuilder {
-public:
-    ConfigBuilder& setOption(const std::string& key, const std::string& value);
-    ConfigBuilder& enableFeature(const std::string& feature);
-    std::unique_ptr<Config> build();
-};
+### 注册函数
 
-// 3. 观察者模式
-class EventEmitter {
-public:
-    void on(const std::string& event, std::function<void(const Event&)> handler);
-    void emit(const std::string& event, const Event& data);
-};
+使用 `function` 方法注册函数：
+
+```cpp
+void initialize() override {
+    // 基本函数
+    function("functionName", [](const Array& args) -> Value {
+        // 函数实现
+        return "result";
+    });
+    
+    // 带参数处理的函数
+    function("processData", [](const Array& args) -> Value {
+        auto input = getArg<std::string>(args, 0);
+        auto options = getArg<double>(args, 1, 1.0);
+        
+        // 处理逻辑
+        return processedResult;
+    });
+}
+```
+
+### 参数获取
+
+使用 `getArg` 模板函数安全地获取参数：
+
+```cpp
+// 获取字符串参数，默认值为 "default"
+auto str = getArg<std::string>(args, 0, "default");
+
+// 获取数字参数，默认值为 0.0
+auto num = getArg<double>(args, 1, 0.0);
+
+// 获取布尔参数，默认值为 false
+auto flag = getArg<bool>(args, 2, false);
+```
+
+### 返回 JavaScript 代码
+
+CJMOD 函数通常返回要执行的 JavaScript 代码字符串：
+
+```cpp
+function("createAnimation", [](const Array& args) -> Value {
+    auto element = getArg<std::string>(args, 0);
+    auto duration = getArg<double>(args, 1, 1000.0);
+    
+    std::stringstream js;
+    js << "(function() {"
+       << "  var el = " << element << ";"
+       << "  el.style.transition = 'all " << duration << "ms ease';"
+       << "  el.style.transform = 'scale(1.2)';"
+       << "})()";
+    
+    return js.str();
+});
 ```
 
 ## 内存管理
 
-### 基本规则
+### 智能指针使用
 
-1. **谁分配谁释放**：同一模块负责分配和释放
-2. **使用智能指针**：优先使用`unique_ptr`和`shared_ptr`
-3. **避免裸指针**：除非与C接口交互
-4. **提供清理函数**：确保资源能被正确释放
-
-### 内存池实现
+始终使用智能指针管理扩展对象：
 
 ```cpp
-template<typename T>
-class ObjectPool {
-private:
-    std::stack<std::unique_ptr<T>> pool_;
-    std::mutex mutex_;
-    
-public:
-    std::unique_ptr<T> acquire() {
-        std::lock_guard<std::mutex> lock(mutex_);
-        
-        if (pool_.empty()) {
-            return std::make_unique<T>();
-        }
-        
-        auto obj = std::move(pool_.top());
-        pool_.pop();
-        return obj;
-    }
-    
-    void release(std::unique_ptr<T> obj) {
-        std::lock_guard<std::mutex> lock(mutex_);
-        obj->reset(); // 重置对象状态
-        pool_.push(std::move(obj));
-    }
-};
+auto extension = std::make_shared<MyExtension>();
+ExtensionManager::getInstance().registerExtension(extension);
 ```
+
+### 避免内存泄漏
+
+- 使用 RAII 原则
+- 避免裸指针
+- 正确处理异常
 
 ## 错误处理
 
-### 错误码设计
+### 参数验证
 
 ```cpp
-enum class ErrorCode {
-    SUCCESS = 0,
-    INVALID_ARGUMENT = 1,
-    OUT_OF_MEMORY = 2,
-    FILE_NOT_FOUND = 3,
-    PERMISSION_DENIED = 4,
-    OPERATION_FAILED = 5,
-    NOT_IMPLEMENTED = 6
-};
-
-// 错误信息结构
-struct ErrorInfo {
-    ErrorCode code;
-    std::string message;
-    std::string file;
-    int line;
-    
-    std::string toString() const {
-        return std::format("[{}:{}] Error {}: {}", 
-            file, line, static_cast<int>(code), message);
-    }
-};
-
-// 全局错误处理
-class ErrorHandler {
-private:
-    static thread_local ErrorInfo lastError_;
-    
-public:
-    static void setError(ErrorCode code, const std::string& message,
-                        const char* file = __FILE__, int line = __LINE__) {
-        lastError_ = {code, message, file, line};
+function("safeDivide", [](const Array& args) -> Value {
+    if (args.size() < 2) {
+        return "throw new Error('需要两个参数')";
     }
     
-    static const ErrorInfo& getLastError() {
-        return lastError_;
+    auto a = getArg<double>(args, 0);
+    auto b = getArg<double>(args, 1);
+    
+    if (b == 0) {
+        return "throw new Error('除数不能为零')";
     }
     
-    static void clearError() {
-        lastError_ = {ErrorCode::SUCCESS, "", "", 0};
-    }
-};
-
-// 使用宏简化错误设置
-#define SET_ERROR(code, msg) ErrorHandler::setError(code, msg, __FILE__, __LINE__)
+    return std::to_string(a / b);
+});
 ```
 
-### C接口错误处理
+### 异常处理
 
 ```cpp
-extern "C" {
-    CJMOD_EXPORT int cjmod_get_last_error() {
-        return static_cast<int>(ErrorHandler::getLastError().code);
+function("riskyOperation", [](const Array& args) -> Value {
+    try {
+        // 可能抛出异常的操作
+        return performOperation(args);
+    } catch (const std::exception& e) {
+        std::stringstream js;
+        js << "throw new Error('" << e.what() << "')";
+        return js.str();
     }
-    
-    CJMOD_EXPORT const char* cjmod_get_error_message() {
-        static thread_local std::string errorMsg;
-        errorMsg = ErrorHandler::getLastError().toString();
-        return errorMsg.c_str();
-    }
-    
-    CJMOD_EXPORT void cjmod_clear_error() {
-        ErrorHandler::clearError();
-    }
-}
+});
 ```
 
 ## 性能优化
 
-### 1. 使用性能分析工具
+### 1. 缓存常用结果
 
 ```cpp
-class PerformanceProfiler {
+class OptimizedExtension : public Extension {
 private:
-    using Clock = std::chrono::high_resolution_clock;
-    using TimePoint = Clock::time_point;
-    
-    struct ProfileData {
-        std::string name;
-        TimePoint start;
-        double totalTime = 0;
-        size_t callCount = 0;
-    };
-    
-    static std::unordered_map<std::string, ProfileData> profiles_;
+    std::unordered_map<std::string, std::string> cache_;
     
 public:
-    class ScopedTimer {
-    private:
-        std::string name_;
-        TimePoint start_;
-        
-    public:
-        ScopedTimer(const std::string& name) 
-            : name_(name), start_(Clock::now()) {}
-        
-        ~ScopedTimer() {
-            auto duration = Clock::now() - start_;
-            auto ms = std::chrono::duration<double, std::milli>(duration).count();
+    void initialize() override {
+        function("cachedOperation", [this](const Array& args) -> Value {
+            auto key = getArg<std::string>(args, 0);
             
-            auto& profile = profiles_[name_];
-            profile.name = name_;
-            profile.totalTime += ms;
-            profile.callCount++;
-        }
-    };
-    
-    static void printReport() {
-        std::cout << "Performance Report:\n";
-        std::cout << std::setw(30) << "Function" 
-                  << std::setw(15) << "Total (ms)"
-                  << std::setw(15) << "Calls"
-                  << std::setw(15) << "Avg (ms)\n";
-        
-        for (const auto& [name, data] : profiles_) {
-            std::cout << std::setw(30) << name
-                      << std::setw(15) << data.totalTime
-                      << std::setw(15) << data.callCount
-                      << std::setw(15) << (data.totalTime / data.callCount) << "\n";
-        }
+            auto it = cache_.find(key);
+            if (it != cache_.end()) {
+                return it->second;
+            }
+            
+            auto result = expensiveOperation(key);
+            cache_[key] = result;
+            return result;
+        });
     }
 };
-
-// 使用示例
-#define PROFILE(name) PerformanceProfiler::ScopedTimer _timer(name)
-
-void processData() {
-    PROFILE("processData");
-    // 处理逻辑
-}
 ```
 
-### 2. 优化技巧
+### 2. 避免频繁的字符串拼接
 
-- **减少内存分配**：使用对象池和预分配
-- **避免不必要的拷贝**：使用移动语义和引用
-- **并行处理**：利用多线程和SIMD指令
-- **缓存友好**：优化数据布局
+使用 `std::stringstream` 而不是 `+` 操作符：
 
 ```cpp
-// 缓存友好的矩阵乘法
-void matrixMultiply(const float* A, const float* B, float* C, int n) {
-    const int blockSize = 64; // 缓存块大小
-    
-    #pragma omp parallel for
-    for (int i0 = 0; i0 < n; i0 += blockSize) {
-        for (int j0 = 0; j0 < n; j0 += blockSize) {
-            for (int k0 = 0; k0 < n; k0 += blockSize) {
-                // 分块处理
-                for (int i = i0; i < std::min(i0 + blockSize, n); ++i) {
-                    for (int j = j0; j < std::min(j0 + blockSize, n); ++j) {
-                        float sum = C[i * n + j];
-                        for (int k = k0; k < std::min(k0 + blockSize, n); ++k) {
-                            sum += A[i * n + k] * B[k * n + j];
-                        }
-                        C[i * n + j] = sum;
-                    }
-                }
-            }
-        }
-    }
-}
+// 好的做法
+std::stringstream js;
+js << "var result = " << value << ";";
+return js.str();
+
+// 避免
+return "var result = " + std::to_string(value) + ";";
 ```
 
 ## 调试技巧
 
-### 1. 日志系统
+### 1. 日志输出
 
 ```cpp
-enum class LogLevel {
-    DEBUG = 0,
-    INFO = 1,
-    WARNING = 2,
-    ERROR = 3
-};
-
-class Logger {
-private:
-    static LogLevel currentLevel_;
-    static std::ofstream logFile_;
+function("debugFunction", [](const Array& args) -> Value {
+    auto input = getArg<std::string>(args, 0);
     
-public:
-    template<typename... Args>
-    static void log(LogLevel level, const std::string& format, Args... args) {
-        if (level < currentLevel_) return;
-        
-        auto now = std::chrono::system_clock::now();
-        auto time = std::chrono::system_clock::to_time_t(now);
-        
-        std::ostringstream oss;
-        oss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S")
-            << " [" << getLevelString(level) << "] "
-            << std::vformat(format, std::make_format_args(args...));
-        
-        std::cout << oss.str() << std::endl;
-        
-        if (logFile_.is_open()) {
-            logFile_ << oss.str() << std::endl;
-            logFile_.flush();
-        }
-    }
+    // 在 JavaScript 控制台输出调试信息
+    std::stringstream js;
+    js << "console.log('[CJMOD Debug] Input:', '" << input << "');";
+    js << "console.log('[CJMOD Debug] Args count:', " << args.size() << ");";
     
-private:
-    static const char* getLevelString(LogLevel level) {
-        switch (level) {
-            case LogLevel::DEBUG: return "DEBUG";
-            case LogLevel::INFO: return "INFO";
-            case LogLevel::WARNING: return "WARN";
-            case LogLevel::ERROR: return "ERROR";
-            default: return "UNKNOWN";
-        }
-    }
-};
-
-// 便捷宏
-#define LOG_DEBUG(...) Logger::log(LogLevel::DEBUG, __VA_ARGS__)
-#define LOG_INFO(...) Logger::log(LogLevel::INFO, __VA_ARGS__)
-#define LOG_WARNING(...) Logger::log(LogLevel::WARNING, __VA_ARGS__)
-#define LOG_ERROR(...) Logger::log(LogLevel::ERROR, __VA_ARGS__)
+    // 实际功能
+    js << "// 功能实现";
+    
+    return js.str();
+});
 ```
 
 ### 2. 断言和检查
 
 ```cpp
-#ifdef DEBUG
-    #define CJMOD_ASSERT(condition, message) \
-        do { \
-            if (!(condition)) { \
-                std::cerr << "Assertion failed: " << #condition << "\n" \
-                         << "Message: " << message << "\n" \
-                         << "File: " << __FILE__ << "\n" \
-                         << "Line: " << __LINE__ << std::endl; \
-                std::abort(); \
-            } \
-        } while (0)
-#else
-    #define CJMOD_ASSERT(condition, message) ((void)0)
-#endif
-
-// 运行时检查
-#define CJMOD_CHECK(condition, error_code, message) \
-    do { \
-        if (!(condition)) { \
-            SET_ERROR(error_code, message); \
-            return {}; \
-        } \
-    } while (0)
+function("validateInput", [](const Array& args) -> Value {
+    if (args.empty()) {
+        return "console.error('[CJMOD] 错误：没有提供参数')";
+    }
+    
+    // 类型检查
+    if (args[0].type() != typeid(std::string)) {
+        return "console.error('[CJMOD] 错误：参数类型不正确')";
+    }
+    
+    // 正常处理
+    return processInput(args);
+});
 ```
 
 ## 发布流程
 
-### 1. 版本管理
-
-遵循语义化版本规范（Semantic Versioning）：
-- **主版本号**：不兼容的API修改
-- **次版本号**：向后兼容的功能性新增
-- **修订号**：向后兼容的问题修正
-
-### 2. 发布检查清单
+### 1. 编译 CJMOD
 
 ```bash
-#!/bin/bash
-# release_checklist.sh
+# 使用提供的打包脚本
+./scripts/pack_cjmod.sh module/MyModule
 
-echo "CJMOD发布检查清单"
-echo "=================="
-
-# 1. 版本号更新
-echo "[ ] 更新module.info中的版本号"
-echo "[ ] 更新CMakeLists.txt中的版本号"
-echo "[ ] 更新README.md中的版本号"
-
-# 2. 代码质量
-echo "[ ] 所有测试通过"
-echo "[ ] 无编译警告"
-echo "[ ] 代码格式化完成"
-echo "[ ] 文档更新完成"
-
-# 3. 构建测试
-echo "[ ] Linux构建成功"
-echo "[ ] Windows构建成功"
-echo "[ ] macOS构建成功"
-
-# 4. 打包
-echo "[ ] 创建源码包"
-echo "[ ] 创建二进制包"
-echo "[ ] 验证包完整性"
-
-# 5. 发布
-echo "[ ] 创建Git标签"
-echo "[ ] 推送到仓库"
-echo "[ ] 发布到包管理器"
-echo "[ ] 更新网站文档"
+# 或手动编译
+cd module/MyModule
+mkdir build && cd build
+cmake ..
+make
 ```
 
-### 3. 自动化发布脚本
+### 2. 测试
 
-```bash
-#!/bin/bash
-# release.sh
+创建测试文件 `test.chtl`：
 
-VERSION=$1
-if [ -z "$VERSION" ]; then
-    echo "Usage: ./release.sh <version>"
-    exit 1
-fi
+```chtl
+[Import] @CJmod from MyModule
 
-echo "Releasing version $VERSION..."
-
-# 更新版本号
-sed -i "s/version = .*/version = $VERSION/" info/module.info
-sed -i "s/project(.* VERSION .*/project(MyCJMOD VERSION $VERSION LANGUAGES CXX)/" CMakeLists.txt
-
-# 运行测试
-mkdir -p build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build .
-ctest
-
-# 创建发布包
-cd ..
-tar -czf my-cjmod-$VERSION.tar.gz --exclude=build --exclude=.git .
-
-# 创建Git标签
-git add .
-git commit -m "Release version $VERSION"
-git tag -a "v$VERSION" -m "Version $VERSION"
-git push origin main --tags
-
-echo "Release $VERSION completed!"
+script {
+    -- 测试所有功能
+    var testResults = [];
+    
+    -- 测试函数1
+    testResults.push(myFunction1("test"));
+    
+    -- 测试函数2
+    testResults.push(myFunction2(123));
+    
+    -- 输出结果
+    console.log("测试结果:", testResults);
+}
 ```
+
+### 3. 打包发布
+
+生成的 `.cjmod` 文件包含：
+- 编译后的共享库
+- 源代码
+- 模块信息
 
 ## 最佳实践
 
-### 1. 代码组织
+### 1. 命名规范
+
+- 模块名使用 PascalCase：`MyModule`
+- 函数名使用 camelCase：`myFunction`
+- 文件名使用小写：`mymodule.cpp`
+
+### 2. 文档注释
 
 ```cpp
-// 使用命名空间避免冲突
-namespace my_cjmod {
-namespace detail {
-    // 实现细节
-}
-
-// 公共API
-class PublicClass {
-    // ...
+class WellDocumentedExtension : public Extension {
+public:
+    void initialize() override {
+        // 动画效果：淡入
+        // 参数1: 元素选择器
+        // 参数2: 持续时间（毫秒，可选，默认400）
+        function("fadeIn", [](const Array& args) -> Value {
+            // 实现...
+        });
+    }
 };
-
-} // namespace my_cjmod
 ```
 
-### 2. 资源管理
+### 3. 版本兼容性
 
 ```cpp
-// RAII包装器示例
-template<typename T, typename Deleter>
-class ResourceHandle {
+void initialize() override {
+    // 新版本功能
+    function("newFeature", [](const Array& args) -> Value {
+        return "// 新功能实现";
+    });
+    
+    // 保持向后兼容
+    function("oldFeature", [](const Array& args) -> Value {
+        // 调用新功能但保持旧接口
+        return "newFeature(" + getArg<std::string>(args, 0) + ")";
+    });
+}
+```
+
+### 4. 模块化设计
+
+将相关功能组织在一起：
+
+```cpp
+class UIExtension : public Extension {
+public:
+    void initialize() override {
+        // 动画相关
+        registerAnimations();
+        
+        // DOM 操作相关
+        registerDOMHelpers();
+        
+        // 事件处理相关
+        registerEventHandlers();
+    }
+    
 private:
-    T* resource_;
-    Deleter deleter_;
+    void registerAnimations() {
+        function("fadeIn", /*...*/);
+        function("fadeOut", /*...*/);
+        function("slideIn", /*...*/);
+    }
+    
+    void registerDOMHelpers() {
+        function("addClass", /*...*/);
+        function("removeClass", /*...*/);
+        function("toggleClass", /*...*/);
+    }
+    
+    void registerEventHandlers() {
+        function("on", /*...*/);
+        function("off", /*...*/);
+        function("once", /*...*/);
+    }
+};
+```
+
+## 高级特性
+
+### 1. 状态管理
+
+```cpp
+class StatefulExtension : public Extension {
+private:
+    struct State {
+        int counter = 0;
+        std::vector<std::string> history;
+    };
+    State state_;
     
 public:
-    explicit ResourceHandle(T* resource, Deleter deleter)
-        : resource_(resource), deleter_(deleter) {}
-    
-    ~ResourceHandle() {
-        if (resource_) {
-            deleter_(resource_);
-        }
-    }
-    
-    // 禁用拷贝
-    ResourceHandle(const ResourceHandle&) = delete;
-    ResourceHandle& operator=(const ResourceHandle&) = delete;
-    
-    // 启用移动
-    ResourceHandle(ResourceHandle&& other) noexcept
-        : resource_(other.resource_), deleter_(std::move(other.deleter_)) {
-        other.resource_ = nullptr;
-    }
-    
-    ResourceHandle& operator=(ResourceHandle&& other) noexcept {
-        if (this != &other) {
-            if (resource_) {
-                deleter_(resource_);
+    void initialize() override {
+        function("increment", [this](const Array& args) -> Value {
+            state_.counter++;
+            return std::to_string(state_.counter);
+        });
+        
+        function("getHistory", [this](const Array& args) -> Value {
+            std::stringstream js;
+            js << "[";
+            for (size_t i = 0; i < state_.history.size(); ++i) {
+                if (i > 0) js << ",";
+                js << "'" << state_.history[i] << "'";
             }
-            resource_ = other.resource_;
-            deleter_ = std::move(other.deleter_);
-            other.resource_ = nullptr;
-        }
-        return *this;
-    }
-    
-    T* get() const { return resource_; }
-    T* operator->() const { return resource_; }
-    T& operator*() const { return *resource_; }
-};
-```
-
-### 3. 线程安全
-
-```cpp
-// 线程安全的单例模式
-template<typename T>
-class Singleton {
-private:
-    static std::once_flag initFlag_;
-    static std::unique_ptr<T> instance_;
-    
-public:
-    static T& getInstance() {
-        std::call_once(initFlag_, []() {
-            instance_ = std::make_unique<T>();
-        });
-        return *instance_;
-    }
-    
-    // 禁用拷贝和移动
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
-    Singleton(Singleton&&) = delete;
-    Singleton& operator=(Singleton&&) = delete;
-};
-
-template<typename T>
-std::once_flag Singleton<T>::initFlag_;
-
-template<typename T>
-std::unique_ptr<T> Singleton<T>::instance_;
-```
-
-## 常见问题
-
-### Q: 如何处理字符串编码？
-
-A: 始终使用UTF-8编码：
-
-```cpp
-// UTF-8字符串处理
-class UTF8String {
-public:
-    static std::u32string toUTF32(const std::string& utf8);
-    static std::string fromUTF32(const std::u32string& utf32);
-    static size_t length(const std::string& utf8);
-    static std::string substr(const std::string& utf8, size_t start, size_t count);
-};
-```
-
-### Q: 如何实现跨平台兼容？
-
-A: 使用条件编译和抽象层：
-
-```cpp
-#ifdef _WIN32
-    #include <windows.h>
-    using NativeHandle = HANDLE;
-#else
-    #include <pthread.h>
-    using NativeHandle = pthread_t;
-#endif
-
-class Thread {
-private:
-    NativeHandle handle_;
-    
-public:
-    void start();
-    void join();
-    // 平台无关的接口
-};
-```
-
-### Q: 如何优化模块加载时间？
-
-A: 延迟初始化和按需加载：
-
-```cpp
-class LazyLoader {
-private:
-    mutable std::once_flag loadFlag_;
-    mutable std::unique_ptr<Resource> resource_;
-    
-    void ensureLoaded() const {
-        std::call_once(loadFlag_, [this]() {
-            resource_ = loadResource();
+            js << "]";
+            return js.str();
         });
     }
-    
-public:
-    const Resource& get() const {
-        ensureLoaded();
-        return *resource_;
-    }
 };
 ```
 
-### Q: 如何调试崩溃问题？
-
-A: 使用信号处理器和堆栈跟踪：
+### 2. 异步操作
 
 ```cpp
-#include <signal.h>
-#include <execinfo.h>
-
-void signalHandler(int sig) {
-    void* array[20];
-    size_t size = backtrace(array, 20);
+function("asyncOperation", [](const Array& args) -> Value {
+    auto callback = getArg<std::string>(args, 0);
+    auto delay = getArg<double>(args, 1, 1000.0);
     
-    fprintf(stderr, "Error: signal %d:\n", sig);
-    backtrace_symbols_fd(array, size, STDERR_FILENO);
-    exit(1);
-}
+    std::stringstream js;
+    js << "setTimeout(function() {"
+       << "  " << callback << "('异步操作完成');"
+       << "}, " << delay << ")";
+    
+    return js.str();
+});
+```
 
-void installSignalHandlers() {
-    signal(SIGSEGV, signalHandler);
-    signal(SIGABRT, signalHandler);
-}
+### 3. 复杂数据结构
+
+```cpp
+function("createComplexObject", [](const Array& args) -> Value {
+    std::stringstream js;
+    js << "{"
+       << "  data: ["
+       << "    { id: 1, name: 'Item 1' },"
+       << "    { id: 2, name: 'Item 2' }"
+       << "  ],"
+       << "  methods: {"
+       << "    getData: function() { return this.data; },"
+       << "    addItem: function(item) { this.data.push(item); }"
+       << "  }"
+       << "}";
+    
+    return js.str();
+});
 ```
 
 ## 总结
 
-CJMOD开发需要注意：
+CJMOD 提供了强大而灵活的方式来扩展 CHTL JS 的功能。通过基于类的接口设计，开发者可以：
 
-1. **设计优先**：良好的API设计是成功的一半
-2. **安全第一**：始终考虑内存安全和线程安全
-3. **性能优化**：在正确的基础上追求性能
-4. **用户友好**：提供清晰的错误信息和文档
-5. **持续改进**：根据用户反馈不断优化
+- 清晰地组织代码结构
+- 安全地处理参数和错误
+- 高效地实现复杂功能
+- 轻松地维护和扩展模块
 
-通过遵循这些指南，您可以创建高质量、高性能的CJMOD扩展，为CHTL生态系统贡献价值。
+遵循本指南的最佳实践，您可以创建高质量、可维护的 CJMOD 扩展。

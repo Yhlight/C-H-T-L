@@ -1,72 +1,77 @@
 #ifndef CHTL_JS_EXTENSION_H
 #define CHTL_JS_EXTENSION_H
 
-#include <string>
-#include <vector>
+#include <any>
 #include <functional>
 #include <memory>
-#include <any>
+#include <string>
 #include <unordered_map>
+#include <vector>
+#include <stdexcept>
+#include <typeindex>
+#include <typeinfo>
 
 namespace chtl {
 namespace js {
 
-// 简化的值类型
+// 基础类型定义
 using Value = std::any;
 using Array = std::vector<Value>;
 using Object = std::unordered_map<std::string, Value>;
 using Function = std::function<Value(const Array&)>;
 
-// 类型转换助手
+// 类型安全的参数获取
 template<typename T>
-T value_cast(const Value& v) {
-    return std::any_cast<T>(v);
+T getArg(const Array& args, size_t index, const T& defaultValue = T{}) {
+    if (index >= args.size()) {
+        return defaultValue;
+    }
+    
+    try {
+        return std::any_cast<T>(args[index]);
+    } catch (const std::bad_any_cast&) {
+        // 尝试一些常见的类型转换
+        if constexpr (std::is_same_v<T, std::string>) {
+            if (args[index].type() == typeid(const char*)) {
+                return std::any_cast<const char*>(args[index]);
+            }
+        }
+        return defaultValue;
+    }
 }
 
-// JavaScript扩展模块基类
+// CJMOD扩展基类
 class Extension {
 public:
     Extension(const std::string& name) : name_(name) {}
     virtual ~Extension() = default;
     
-    // 获取模块名称
-    const std::string& getName() const { return name_; }
-    
-    // 初始化模块
+    // 子类需要实现这个方法来注册功能
     virtual void initialize() = 0;
     
-    // 清理模块
-    virtual void cleanup() {}
+    // 获取扩展名称
+    const std::string& getName() const { return name_; }
+    
+    // 获取所有注册的函数
+    const std::unordered_map<std::string, Function>& getFunctions() const {
+        return functions_;
+    }
     
 protected:
-    // 注册函数
+    // 注册函数供子类使用
     void registerFunction(const std::string& name, Function func) {
-        functions_[name] = func;
+        functions_[name] = std::move(func);
     }
     
-    // 注册属性
-    void registerProperty(const std::string& name, const Value& value) {
-        properties_[name] = value;
-    }
-    
-    // 注册类
-    template<typename T>
-    void registerClass(const std::string& name) {
-        classes_[name] = std::make_shared<ClassWrapper<T>>();
+    // 便捷的注册方法，支持lambda
+    template<typename Func>
+    void function(const std::string& name, Func&& func) {
+        registerFunction(name, std::forward<Func>(func));
     }
     
 private:
     std::string name_;
     std::unordered_map<std::string, Function> functions_;
-    std::unordered_map<std::string, Value> properties_;
-    std::unordered_map<std::string, std::shared_ptr<void>> classes_;
-    
-    template<typename T>
-    struct ClassWrapper {
-        // 类包装器实现
-    };
-    
-    friend class ExtensionManager;
 };
 
 // 扩展管理器
@@ -79,88 +84,77 @@ public:
     
     // 注册扩展
     void registerExtension(std::shared_ptr<Extension> ext) {
-        extensions_[ext->getName()] = ext;
         ext->initialize();
+        extensions_[ext->getName()] = ext;
     }
     
     // 获取扩展
     std::shared_ptr<Extension> getExtension(const std::string& name) {
         auto it = extensions_.find(name);
-        return (it != extensions_.end()) ? it->second : nullptr;
+        return it != extensions_.end() ? it->second : nullptr;
     }
     
-    // 调用函数
-    Value callFunction(const std::string& module, const std::string& func, const Array& args) {
-        auto ext = getExtension(module);
-        if (!ext) throw std::runtime_error("Module not found: " + module);
+    // 调用扩展函数
+    Value callFunction(const std::string& extName, const std::string& funcName, const Array& args) {
+        auto ext = getExtension(extName);
+        if (!ext) {
+            throw std::runtime_error("Extension not found: " + extName);
+        }
         
-        auto& functions = ext->functions_;
-        auto it = functions.find(func);
-        if (it == functions.end()) throw std::runtime_error("Function not found: " + func);
+        auto& functions = ext->getFunctions();
+        auto it = functions.find(funcName);
+        if (it == functions.end()) {
+            throw std::runtime_error("Function not found: " + funcName);
+        }
         
         return it->second(args);
     }
     
 private:
+    ExtensionManager() = default;
     std::unordered_map<std::string, std::shared_ptr<Extension>> extensions_;
 };
 
-// 便捷宏定义
-#define CJMOD_BEGIN(name) \
-    class name##Extension : public chtl::js::Extension { \
-    public: \
-        name##Extension() : Extension(#name) {} \
-        void initialize() override {
-
-#define CJMOD_END() \
-        } \
-    };
-
-#define CJMOD_FUNCTION(name, body) \
-    registerFunction(#name, [this](const chtl::js::Array& args) -> chtl::js::Value { \
-        body \
-    });
-
-#define CJMOD_EXPORT(name) \
-    extern "C" { \
-        void cjmod_init() { \
-            auto ext = std::make_shared<name##Extension>(); \
-            chtl::js::ExtensionManager::getInstance().registerExtension(ext); \
-        } \
-        void cjmod_cleanup() { \
-            /* 清理代码 */ \
-        } \
+// C接口导出辅助类
+class CJMODExporter {
+public:
+    using InitFunc = std::function<void()>;
+    using CleanupFunc = std::function<void()>;
+    
+    static void setHandlers(InitFunc init, CleanupFunc cleanup = nullptr) {
+        init_ = init;
+        cleanup_ = cleanup;
     }
-
-// 参数获取助手
-template<typename T>
-T getArg(const Array& args, size_t index, const T& defaultValue = T{}) {
-    if (index >= args.size()) return defaultValue;
-    try {
-        return value_cast<T>(args[index]);
-    } catch (...) {
-        return defaultValue;
+    
+    static void doInit() {
+        if (init_) init_();
     }
-}
-
-// 字符串参数特化
-template<>
-inline std::string getArg<std::string>(const Array& args, size_t index, const std::string& defaultValue) {
-    if (index >= args.size()) return defaultValue;
-    try {
-        // 尝试直接转换
-        return value_cast<std::string>(args[index]);
-    } catch (...) {
-        // 尝试从const char*转换
-        try {
-            return std::string(value_cast<const char*>(args[index]));
-        } catch (...) {
-            return defaultValue;
-        }
+    
+    static void doCleanup() {
+        if (cleanup_) cleanup_();
     }
-}
+    
+private:
+    static InitFunc init_;
+    static CleanupFunc cleanup_;
+};
+
+// 静态成员定义
+inline CJMODExporter::InitFunc CJMODExporter::init_ = nullptr;
+inline CJMODExporter::CleanupFunc CJMODExporter::cleanup_ = nullptr;
 
 } // namespace js
 } // namespace chtl
+
+// C接口（必需的）
+extern "C" {
+    inline void cjmod_init() {
+        chtl::js::CJMODExporter::doInit();
+    }
+    
+    inline void cjmod_cleanup() {
+        chtl::js::CJMODExporter::doCleanup();
+    }
+}
 
 #endif // CHTL_JS_EXTENSION_H

@@ -1,93 +1,99 @@
-// 简单的CJMOD示例 - 数学工具扩展
-#include "CHTLJSExtension.h"
+/**
+ * 简单的 CJMOD 示例 - MathTools
+ */
+
+#include "../src/chtl/CHTLJSExtension.h"
 #include <cmath>
 #include <numeric>
 #include <algorithm>
 
-using namespace chtl::js;
+namespace chtl {
+namespace js {
 
-CJMOD_BEGIN(MathTools)
+class MathToolsExtension : public Extension {
+public:
+    MathToolsExtension() : Extension("MathTools") {}
     
-    // 基础数学函数
-    CJMOD_FUNCTION(sqrt, {
-        double x = getArg<double>(args, 0, 0.0);
-        return std::sqrt(x);
-    })
-    
-    CJMOD_FUNCTION(abs, {
-        double x = getArg<double>(args, 0, 0.0);
-        return std::abs(x);
-    })
-    
-    CJMOD_FUNCTION(max, {
-        double a = getArg<double>(args, 0, 0.0);
-        double b = getArg<double>(args, 1, 0.0);
-        return std::max(a, b);
-    })
-    
-    CJMOD_FUNCTION(min, {
-        double a = getArg<double>(args, 0, 0.0);
-        double b = getArg<double>(args, 1, 0.0);
-        return std::min(a, b);
-    })
-    
-    // 数组操作
-    CJMOD_FUNCTION(sum, {
-        Array arr = getArg<Array>(args, 0, Array{});
-        double total = 0.0;
-        for (const auto& val : arr) {
-            total += value_cast<double>(val);
-        }
-        return total;
-    })
-    
-    CJMOD_FUNCTION(average, {
-        Array arr = getArg<Array>(args, 0, Array{});
-        if (arr.empty()) return 0.0;
+    void initialize() override {
+        // 基本数学运算
+        function("add", [](const Array& args) -> Value {
+            double a = getArg<double>(args, 0, 0.0);
+            double b = getArg<double>(args, 1, 0.0);
+            return a + b;
+        });
         
-        double total = 0.0;
-        for (const auto& val : arr) {
-            total += value_cast<double>(val);
-        }
-        return total / arr.size();
-    })
-    
-    // 实用函数
-    CJMOD_FUNCTION(clamp, {
-        double value = getArg<double>(args, 0, 0.0);
-        double min_val = getArg<double>(args, 1, 0.0);
-        double max_val = getArg<double>(args, 2, 1.0);
-        return std::clamp(value, min_val, max_val);
-    })
-    
-    CJMOD_FUNCTION(lerp, {
-        double a = getArg<double>(args, 0, 0.0);
-        double b = getArg<double>(args, 1, 1.0);
-        double t = getArg<double>(args, 2, 0.5);
-        return a + (b - a) * t;
-    })
+        function("multiply", [](const Array& args) -> Value {
+            double a = getArg<double>(args, 0, 0.0);
+            double b = getArg<double>(args, 1, 0.0);
+            return a * b;
+        });
+        
+        function("power", [](const Array& args) -> Value {
+            double base = getArg<double>(args, 0, 0.0);
+            double exp = getArg<double>(args, 1, 0.0);
+            return std::pow(base, exp);
+        });
+        
+        // 数组操作
+        function("sum", [](const Array& args) -> Value {
+            if (args.empty()) return 0.0;
+            
+            double sum = 0.0;
+            for (const auto& arg : args) {
+                try {
+                    sum += std::any_cast<double>(arg);
+                } catch(...) {
+                    // 忽略非数字参数
+                }
+            }
+            return sum;
+        });
+        
+        function("average", [](const Array& args) -> Value {
+            if (args.empty()) return 0.0;
+            
+            double sum = 0.0;
+            int count = 0;
+            for (const auto& arg : args) {
+                try {
+                    sum += std::any_cast<double>(arg);
+                    count++;
+                } catch(...) {
+                    // 忽略非数字参数
+                }
+            }
+            return count > 0 ? sum / count : 0.0;
+        });
+        
+        // 三角函数
+        function("sin", [](const Array& args) -> Value {
+            double angle = getArg<double>(args, 0, 0.0);
+            return std::sin(angle);
+        });
+        
+        function("cos", [](const Array& args) -> Value {
+            double angle = getArg<double>(args, 0, 0.0);
+            return std::cos(angle);
+        });
+        
+        function("tan", [](const Array& args) -> Value {
+            double angle = getArg<double>(args, 0, 0.0);
+            return std::tan(angle);
+        });
+    }
+};
 
-CJMOD_END()
+// 导出设置
+struct MathToolsExporter {
+    MathToolsExporter() {
+        CJMODExporter::setHandlers([]() {
+            auto extension = std::make_shared<MathToolsExtension>();
+            ExtensionManager::getInstance().registerExtension(extension);
+        });
+    }
+};
 
-CJMOD_EXPORT(MathTools)
+static MathToolsExporter exporter;
 
-// 使用示例（在CHTL中）：
-/*
-[Import] @CJmod MathTools
-
-script {
-    // 基础数学
-    var x = sqrt(16);        // 4
-    var y = abs(-5);         // 5
-    var z = max(10, 20);     // 20
-    
-    // 数组操作
-    var numbers = [1, 2, 3, 4, 5];
-    var total = sum(numbers);       // 15
-    var avg = average(numbers);     // 3
-    
-    // 实用函数
-    var clamped = clamp(150, 0, 100);  // 100
-    var interpolated = lerp(0, 100, 0.3); // 30
-}
-*/
+} // namespace js
+} // namespace chtl

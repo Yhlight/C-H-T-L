@@ -70,7 +70,7 @@ public:
     // 加载模块
     bool load();
     bool loadFromDirectory(const std::filesystem::path& dir);
-    bool loadFromCJMODFile(const std::filesystem::path& cjmodFile);
+    bool loadFromCJMODFile(const std::filesystem::path& cjmodFile, const std::filesystem::path& target);
     
     // 加载扩展
     bool loadExtensions();

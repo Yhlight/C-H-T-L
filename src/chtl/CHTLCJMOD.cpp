@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstdint>
+#include <chrono>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -93,87 +94,102 @@ bool CJMODModule::loadFromDirectory(const fs::path& dir) {
     return true;
 }
 
-bool CJMODModule::loadFromCJMODFile(const fs::path& cjmodFile) {
-    // 简单的解包实现
-    std::ifstream file(cjmodFile, std::ios::binary);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    // 读取文件头
-    std::string header;
-    std::getline(file, header);
-    if (header != "CJMOD") {
+bool CJMODModule::loadFromCJMODFile(const fs::path& cjmodFile, const fs::path& target) {
+    if (!fs::exists(cjmodFile)) {
         return false;
     }
     
     // 创建临时目录
-    fs::path tempDir = fs::temp_directory_path() / ("cjmod_extract_" + std::to_string(std::time(nullptr)));
-    fs::create_directory(tempDir);
+    std::string tempDirName = "cjmod_temp_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    fs::path tempDir = fs::temp_directory_path() / tempDirName;
+    fs::create_directories(tempDir);
+    
+    // 解压tar.gz文件
+    std::string extractCmd = "tar -xzf \"" + cjmodFile.string() + "\" -C \"" + tempDir.string() + "\"";
+    int result = std::system(extractCmd.c_str());
+    
+    if (result != 0) {
+        fs::remove_all(tempDir);
+        return false;
+    }
     
     try {
-        // 使用tar解压
-        std::string cmd = "tar -xzf " + cjmodFile.string() + " -C " + tempDir.string();
-        int result = std::system(cmd.c_str());
+        // 查找模块目录
+        fs::path moduleDir;
+        for (const auto& entry : fs::directory_iterator(tempDir)) {
+            if (entry.is_directory()) {
+                moduleDir = entry.path();
+                break;
+            }
+        }
         
-        if (result != 0) {
-            // 如果tar失败，尝试二进制解包
-            file.close();
-            return unpackBinary(cjmodFile, tempDir);
+        if (moduleDir.empty()) {
+            fs::remove_all(tempDir);
+            return false;
         }
         
         // 加载元数据
-        fs::path metaFile = tempDir / ".meta";
+        fs::path metaFile = moduleDir / ".cjmod_metadata";
         if (fs::exists(metaFile)) {
             std::ifstream meta(metaFile);
-            json metaData;
-            meta >> metaData;
-            
-            info.name = metaData.value("name", "");
-            info.version = metaData.value("version", "1.0.0");
-            info.author = metaData.value("author", "");
-            info.description = metaData.value("description", "");
-            info.exports = metaData.value("exports", std::vector<std::string>{});
-            info.dependencies = metaData.value("dependencies", std::vector<std::string>{});
-        }
-        
-        // 加载info文件
-        fs::path infoDir = tempDir / "info";
-        if (fs::exists(infoDir / "module.info")) {
-            loadInfo(infoDir / "module.info");
-        }
-        
-        // 复制共享库
-        for (const auto& entry : fs::directory_iterator(tempDir)) {
-            if (entry.is_regular_file()) {
-                auto ext = entry.path().extension();
-                if (ext == ".so" || ext == ".dll" || ext == ".dylib") {
-                    fs::path destPath = target / entry.path().filename();
-                    fs::copy_file(entry.path(), destPath, 
-                                fs::copy_options::overwrite_existing);
-                    libraryPath = destPath;
+            if (meta.is_open()) {
+                // 简单解析JSON格式的元数据
+                std::string line;
+                while (std::getline(meta, line)) {
+                    if (line.find("\"package_type\"") != std::string::npos && 
+                        line.find("\"CJMOD\"") == std::string::npos) {
+                        fs::remove_all(tempDir);
+                        return false;
+                    }
                 }
             }
         }
         
-        // 复制头文件
-        fs::path includeDir = tempDir / "include";
-        if (fs::exists(includeDir)) {
-            fs::path destInclude = target / "include";
-            fs::create_directories(destInclude);
-            fs::copy(includeDir, destInclude, 
+        // 加载info文件
+        fs::path infoDir = moduleDir / "info";
+        if (fs::exists(infoDir)) {
+            // 查找info文件（ModuleName.chtl）
+            for (const auto& entry : fs::directory_iterator(infoDir)) {
+                if (entry.is_regular_file() && entry.path().extension() == ".chtl") {
+                    loadInfo(entry.path());
+                    break;
+                }
+            }
+        }
+        
+        // 复制库文件
+        fs::path libDir = moduleDir / "lib";
+        if (fs::exists(libDir)) {
+            for (const auto& entry : fs::directory_iterator(libDir)) {
+                if (entry.is_regular_file()) {
+                    auto ext = entry.path().extension();
+                    if (ext == ".so" || ext == ".dll" || ext == ".dylib") {
+                        fs::path destPath = target / entry.path().filename();
+                        fs::create_directories(target);
+                        fs::copy_file(entry.path(), destPath, 
+                                    fs::copy_options::overwrite_existing);
+                        libraryPath = destPath;
+                    }
+                }
+            }
+        }
+        
+        // 复制源文件（可选，用于调试）
+        fs::path srcDir = moduleDir / "src";
+        if (fs::exists(srcDir)) {
+            fs::path destSrc = target / "src";
+            fs::create_directories(destSrc);
+            fs::copy(srcDir, destSrc, 
                     fs::copy_options::recursive | fs::copy_options::overwrite_existing);
         }
         
         // 清理临时目录
         fs::remove_all(tempDir);
         
-        file.close();
         return !libraryPath.empty();
         
     } catch (const std::exception& e) {
         fs::remove_all(tempDir);
-        file.close();
         return false;
     }
 }

@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <filesystem>
+#include <chrono>
 
 namespace chtl {
 
@@ -234,77 +236,46 @@ bool CMODModule::loadFromDirectory(const fs::path& dir) {
     return true;
 }
 
-bool CMODModule::loadFromCMODFile(const fs::path& cmodFile) {
-    if (!fs::exists(cmodFile)) {
+bool CMODModule::loadFromCMODFile(const fs::path& file) {
+    if (!fs::exists(file) || !CMODHelper::isCMODFile(file)) {
         return false;
     }
     
     // 创建临时目录
-    fs::path tempDir = fs::temp_directory_path() / ("cmod_extract_" + std::to_string(std::time(nullptr)));
-    fs::create_directory(tempDir);
+    std::string tempDirName = "cmod_temp_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    fs::path tempDir = fs::temp_directory_path() / tempDirName;
+    fs::create_directories(tempDir);
     
-    try {
-        // 使用tar命令解压（跨平台可以使用libarchive）
-        std::string cmd = "tar -xzf " + cmodFile.string() + " -C " + tempDir.string();
-        int result = std::system(cmd.c_str());
-        
-        if (result != 0) {
-            // 如果tar失败，尝试作为文本存档读取
-            return loadFromTextArchive(cmodFile);
-        }
-        
-        // 检查解压后的结构
-        fs::path srcDir = tempDir / "src";
-        fs::path infoDir = tempDir / "info";
-        fs::path exportFile = tempDir / "[Export]";
-        
-        if (!fs::exists(srcDir) || !fs::exists(infoDir)) {
-            fs::remove_all(tempDir);
-            return false;
-        }
-        
-        // 加载info文件
-        if (!loadInfo(infoDir / "module.info")) {
-            fs::remove_all(tempDir);
-            return false;
-        }
-        
-        // 加载源文件
-        for (const auto& entry : fs::recursive_directory_iterator(srcDir)) {
-            if (entry.is_regular_file() && entry.path().extension() == ".chtl") {
-                fs::path relativePath = fs::relative(entry.path(), srcDir);
-                
-                std::ifstream file(entry.path());
-                if (file.is_open()) {
-                    std::string content((std::istreambuf_iterator<char>(file)),
-                                      std::istreambuf_iterator<char>());
-                    sourceFiles[relativePath.string()] = content;
-                }
-            }
-        }
-        
-        // 加载导出表
-        if (fs::exists(exportFile)) {
-            std::ifstream file(exportFile);
-            if (file.is_open()) {
-                std::string content((std::istreambuf_iterator<char>(file)),
-                                  std::istreambuf_iterator<char>());
-                parseExportTable(content);
-            }
-        } else {
-            // 如果没有导出表，生成它
-            generateExportTable();
-        }
-        
-        // 清理临时目录
-        fs::remove_all(tempDir);
-        
-        return true;
-        
-    } catch (const std::exception& e) {
+    // 解压tar.gz文件
+    std::string extractCmd = "tar -xzf \"" + file.string() + "\" -C \"" + tempDir.string() + "\"";
+    int result = std::system(extractCmd.c_str());
+    
+    if (result != 0) {
         fs::remove_all(tempDir);
         return false;
     }
+    
+    // 查找模块目录（应该只有一个）
+    fs::path moduleDir;
+    for (const auto& entry : fs::directory_iterator(tempDir)) {
+        if (entry.is_directory()) {
+            moduleDir = entry.path();
+            break;
+        }
+    }
+    
+    if (moduleDir.empty()) {
+        fs::remove_all(tempDir);
+        return false;
+    }
+    
+    // 从解压的目录加载
+    bool success = loadFromDirectory(moduleDir);
+    
+    // 清理临时目录
+    fs::remove_all(tempDir);
+    
+    return success;
 }
 
 bool CMODModule::loadInfo(const fs::path& infoFile) {

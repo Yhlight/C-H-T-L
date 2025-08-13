@@ -1,6 +1,6 @@
 // CHTL示例文件 - 用于测试VSCode环境
 // 导入珂朵莉模块
-[Import] @Chtl Chtholly
+[Import] @Chtl from Chtholly
 
 // 定义页面命名空间
 [Namespace] ExamplePage

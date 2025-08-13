@@ -4,6 +4,8 @@
 #include <regex>
 #include <set>
 
+#include "CHTLCSSPreprocessor.h"
+
 namespace chtl {
 
 // CSSRule 实现
@@ -552,6 +554,21 @@ CHTLCSSProcessor::CHTLCSSProcessor(std::shared_ptr<CHTLContext> ctx)
     : context(ctx) {
     compiler = std::make_shared<CSSCompiler>(ctx);
     optimizer = std::make_shared<CSSOptimizer>();
+    enhancedCompiler = std::make_shared<CHTLEnhancedCSSCompiler>(ctx);
+}
+
+void CHTLCSSProcessor::setTemplateManager(std::shared_ptr<TemplateManager> mgr) {
+    templateManager = mgr;
+    if (enhancedCompiler) {
+        enhancedCompiler->setTemplateManager(mgr);
+    }
+}
+
+void CHTLCSSProcessor::setCustomManager(std::shared_ptr<CustomManager> mgr) {
+    customManager = mgr;
+    if (enhancedCompiler) {
+        enhancedCompiler->setCustomManager(mgr);
+    }
 }
 
 void CHTLCSSProcessor::addGlobalStyleBlock(const std::string& css) {
@@ -575,7 +592,16 @@ std::string CHTLCSSProcessor::generateFinalCSS() {
     
     // 先处理全局样式
     for (const auto& block : globalStyleBlocks) {
-        std::string compiled = compiler->compile(block);
+        std::string compiled;
+        
+        if (useEnhancedMode && enhancedCompiler) {
+            // 使用增强编译器（支持样式组和变量组）
+            compiled = enhancedCompiler->compile(block);
+        } else {
+            // 使用标准编译器
+            compiled = compiler->compile(block);
+        }
+        
         if (!compiled.empty()) {
             allBlocks.push_back(compiled);
         }

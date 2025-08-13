@@ -987,6 +987,10 @@ void CHTLGenerator::processGlobalStyleBlock(const std::string& cssContent) {
         return;
     }
     
+    // 设置管理器以支持样式组和变量组
+    cssProcessor->setTemplateManager(templateManager);
+    cssProcessor->setCustomManager(customManager);
+    
     // 添加到CSS处理器
     cssProcessor->addGlobalStyleBlock(cssContent);
     

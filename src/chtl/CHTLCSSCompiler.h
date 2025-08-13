@@ -13,6 +13,11 @@
 
 namespace chtl {
 
+// 前向声明
+class TemplateManager;
+class CustomManager;
+class CHTLEnhancedCSSCompiler;
+
 // CSS规则结构
 struct CSSRule {
     std::vector<std::string> selectors;
@@ -188,13 +193,22 @@ private:
     std::shared_ptr<CHTLContext> context;
     std::shared_ptr<CSSCompiler> compiler;
     std::shared_ptr<CSSOptimizer> optimizer;
+    std::shared_ptr<CHTLEnhancedCSSCompiler> enhancedCompiler;  // 添加增强编译器
     
     // 存储所有的CSS块
     std::vector<std::string> globalStyleBlocks;
     std::vector<std::string> localStyleBlocks;
     
+    // 模板和自定义管理器引用
+    std::shared_ptr<TemplateManager> templateManager;
+    std::shared_ptr<CustomManager> customManager;
+    
 public:
     CHTLCSSProcessor(std::shared_ptr<CHTLContext> ctx);
+    
+    // 设置管理器
+    void setTemplateManager(std::shared_ptr<TemplateManager> mgr);
+    void setCustomManager(std::shared_ptr<CustomManager> mgr);
     
     // 添加全局样式块（来自<style>标签）
     void addGlobalStyleBlock(const std::string& css);
@@ -211,6 +225,12 @@ public:
     // 验证CSS引用
     void validateReferences(const std::set<std::string>& usedClasses,
                            const std::set<std::string>& usedIds);
+                           
+    // 启用/禁用增强功能
+    void setEnhancedMode(bool enabled) { useEnhancedMode = enabled; }
+    
+private:
+    bool useEnhancedMode = true;  // 默认启用增强功能
 };
 
 } // namespace chtl

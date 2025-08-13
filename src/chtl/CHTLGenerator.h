@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "CHTLContext.h"
+#include "CHTLTemplate.h"  // 添加模板头文件
 
 namespace chtl {
 
@@ -34,6 +35,9 @@ class CHTLGenerator {
 private:
     std::shared_ptr<CHTLContext> context;
     GeneratorOptions options;
+    
+    // 模板管理器
+    std::shared_ptr<TemplateManager> templateManager;
     
     // 输出流
     std::stringstream htmlOutput;
@@ -74,6 +78,21 @@ private:
 public:
     CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOptions& opts = GeneratorOptions());
     ~CHTLGenerator() = default;
+    
+    // 模板支持
+    void setTemplateManager(std::shared_ptr<TemplateManager> mgr) { templateManager = mgr; }
+    std::shared_ptr<TemplateManager> getTemplateManager() const { return templateManager; }
+    
+    // 模板定义
+    void beginTemplateDefinition(const std::string& type, const std::string& name);
+    void endTemplateDefinition();
+    
+    // 模板使用
+    void useTemplate(const std::string& statement);
+    std::string processVariableReference(const std::string& reference);
+    
+    // 模板继承
+    void addTemplateInheritance(const std::string& inheritStatement);
     
     // 主要生成方法
     void generateElement(const std::string& name, const std::unordered_map<std::string, std::string>& attributes);

@@ -7,6 +7,8 @@ namespace chtl {
 // CHTLGenerator 实现
 CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOptions& opts)
     : context(ctx), options(opts), indentLevel(0), autoClassCounter(0), autoIdCounter(0) {
+    // 创建模板管理器
+    templateManager = std::make_shared<TemplateManager>(ctx);
 }
 
 std::string CHTLGenerator::indent() const {
@@ -276,7 +278,71 @@ std::string CHTLGenerator::resolveContextSelector(const std::string& selector) {
 
 // 字面量处理
 std::string CHTLGenerator::processLiteral(const std::string& value, bool inTextBlock) {
-    return LiteralProcessor::removeQuotes(value);
+    std::string processed = LiteralProcessor::removeQuotes(value);
+    
+    // 如果模板管理器存在，处理变量引用
+    if (templateManager) {
+        TemplateUseProcessor processor(*templateManager, *this);
+        processed = processor.processVariableReference(processed);
+    }
+    
+    return processed;
+}
+
+// 模板定义支持
+void CHTLGenerator::beginTemplateDefinition(const std::string& type, const std::string& name) {
+    if (!templateManager) {
+        context->reportError("Template manager not initialized");
+        return;
+    }
+    
+    // 设置为定义状态
+    templateManager->setTemplateState(TemplateState::DEFINITION);
+    
+    // 根据类型创建相应的模板
+    // 实际的模板创建会在解析过程中进行
+}
+
+void CHTLGenerator::endTemplateDefinition() {
+    if (!templateManager) {
+        return;
+    }
+    
+    // 恢复为使用状态
+    templateManager->setTemplateState(TemplateState::USE);
+    
+    // 处理继承关系
+    templateManager->processInheritance();
+}
+
+// 模板使用
+void CHTLGenerator::useTemplate(const std::string& statement) {
+    if (!templateManager) {
+        context->reportError("Template manager not initialized");
+        return;
+    }
+    
+    TemplateUseProcessor processor(*templateManager, *this);
+    processor.processTemplateUse(statement);
+}
+
+std::string CHTLGenerator::processVariableReference(const std::string& reference) {
+    if (!templateManager) {
+        return reference;
+    }
+    
+    TemplateUseProcessor processor(*templateManager, *this);
+    return processor.processVariableReference(reference);
+}
+
+// 模板继承
+void CHTLGenerator::addTemplateInheritance(const std::string& inheritStatement) {
+    // 解析继承语句
+    // 格式: inherit @Style TemplateName
+    // 或: @Style TemplateName
+    
+    // 这个方法会在模板定义期间被调用
+    // 实际的继承处理在具体的模板类中进行
 }
 
 // 生成器辅助方法

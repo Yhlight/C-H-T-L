@@ -1,4 +1,5 @@
 #include "ConfigurationSystem.h"
+#include "ConfigurationParser.h"
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -169,18 +170,58 @@ void ConfigurationSystem::reset() {
 
 bool ConfigurationSystem::loadConfiguration(const std::string& configContent) {
     reset();
-    return parseConfiguration(configContent);
-}
-
-bool ConfigurationSystem::loadConfigurationFromFile(const std::string& filePath) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
+    
+    FlexibleConfigurationParser parser;
+    auto result = parser.parseString(configContent);
+    
+    if (!result.success) {
         return false;
     }
     
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return loadConfiguration(buffer.str());
+    // 应用全局配置
+    for (const auto& [key, value] : result.globalConfig) {
+        configItems[key] = value;
+    }
+    
+    // 处理Name组
+    auto nameIt = result.namedGroups.find("Name");
+    if (nameIt != result.namedGroups.end()) {
+        nameGroup.initialize(nameIt->second);
+    }
+    
+    // 加载动态关键字系统
+    DynamicKeywordSystem dynamicKeywords;
+    dynamicKeywords.loadFromConfig(result);
+    
+    return true;
+}
+
+bool ConfigurationSystem::loadConfigurationFromFile(const std::string& filePath) {
+    FlexibleConfigurationParser parser;
+    auto result = parser.parseFile(filePath);
+    
+    if (!result.success) {
+        return false;
+    }
+    
+    reset();
+    
+    // 应用全局配置
+    for (const auto& [key, value] : result.globalConfig) {
+        configItems[key] = value;
+    }
+    
+    // 处理Name组
+    auto nameIt = result.namedGroups.find("Name");
+    if (nameIt != result.namedGroups.end()) {
+        nameGroup.initialize(nameIt->second);
+    }
+    
+    // 加载动态关键字系统
+    DynamicKeywordSystem dynamicKeywords;
+    dynamicKeywords.loadFromConfig(result);
+    
+    return true;
 }
 
 bool ConfigurationSystem::parseConfiguration(const std::string& content) {

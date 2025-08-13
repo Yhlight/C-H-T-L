@@ -358,6 +358,18 @@ void CHTLCompiler::handleState(const std::string& line, size_t lineNumber) {
                 currentState_ = CompilerState::ELEMENT_DECL;
                 // 立即处理元素
                 processElement(line);
+            } else if (line.find("text:") == 0 || line.find("text=") == 0) {
+                // 在ROOT状态下遇到text:，生成p标签
+                std::cout << "  -> Text in ROOT, generating p tag" << std::endl;
+                htmlOutput_ += "<p>\n";
+                // 处理文本内容
+                std::regex textPattern(R"(text\s*[:=]\s*["']?([^"']+)["']?)");
+                std::smatch match;
+                if (std::regex_search(line, match, textPattern)) {
+                    std::string textContent = match[1];
+                    htmlOutput_ += textContent + "\n";
+                }
+                htmlOutput_ += "</p>\n";
             }
             break;
             
@@ -609,12 +621,12 @@ void CHTLCompiler::processAttribute(const std::string& line) {
         
         context->attributes[attrName] = attrValue;
         
-        // 更新HTML标签 - 重新生成整个开始标签
-        updateHTMLElement(context);
+        // 重新生成HTML标签，包含新属性
+        regenerateHTMLElement(context);
     }
 }
 
-void CHTLCompiler::updateHTMLElement(const std::shared_ptr<CompilerContext>& context) {
+void CHTLCompiler::regenerateHTMLElement(const std::shared_ptr<CompilerContext>& context) {
     if (!context) return;
     
     // 重新生成HTML开始标签，包含所有属性
@@ -627,9 +639,14 @@ void CHTLCompiler::updateHTMLElement(const std::shared_ptr<CompilerContext>& con
         attributesStr += " " + attr.first + "=\"" + attr.second + "\"";
     }
     
-    // 更新HTML输出 - 这里需要更复杂的逻辑来替换现有的标签
+    // 这里需要实现标签替换逻辑
     // 暂时简化处理，在实际实现中需要更精确的标签替换
     // 现在先不实现复杂的标签替换，保持简单
+}
+
+void CHTLCompiler::updateHTMLElement(const std::shared_ptr<CompilerContext>& context) {
+    // 这个方法现在调用regenerateHTMLElement
+    regenerateHTMLElement(context);
 }
 
 void CHTLCompiler::closeElement() {

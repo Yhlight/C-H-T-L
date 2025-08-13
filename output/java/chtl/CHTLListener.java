@@ -388,6 +388,26 @@ public interface CHTLListener extends ParseTreeListener {
 	 */
 	void exitHtmlElement(CHTLParser.HtmlElementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CHTLParser#globalStyleElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalStyleElement(CHTLParser.GlobalStyleElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CHTLParser#globalStyleElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalStyleElement(CHTLParser.GlobalStyleElementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CHTLParser#globalStyleContent}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalStyleContent(CHTLParser.GlobalStyleContentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CHTLParser#globalStyleContent}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalStyleContent(CHTLParser.GlobalStyleContentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CHTLParser#elementName}.
 	 * @param ctx the parse tree
 	 */

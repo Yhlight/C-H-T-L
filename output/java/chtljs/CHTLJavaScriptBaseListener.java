@@ -341,6 +341,18 @@ public class CHTLJavaScriptBaseListener implements CHTLJavaScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLiteral(CHTLJavaScriptParser.LiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteral(CHTLJavaScriptParser.LiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterProgram(CHTLJavaScriptParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1404,18 +1416,6 @@ public class CHTLJavaScriptBaseListener implements CHTLJavaScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParenthesizedExpression(CHTLJavaScriptParser.ParenthesizedExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLiteral(CHTLJavaScriptParser.LiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLiteral(CHTLJavaScriptParser.LiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

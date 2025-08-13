@@ -473,6 +473,30 @@ public class CHTLBaseListener implements CHTLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalStyleElement(CHTLParser.GlobalStyleElementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalStyleElement(CHTLParser.GlobalStyleElementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalStyleContent(CHTLParser.GlobalStyleContentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalStyleContent(CHTLParser.GlobalStyleContentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterElementName(CHTLParser.ElementNameContext ctx) { }
 	/**
 	 * {@inheritDoc}

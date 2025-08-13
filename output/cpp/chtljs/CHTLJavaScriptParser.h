@@ -35,10 +35,13 @@ public:
     T__119 = 120, T__120 = 121, T__121 = 122, T__122 = 123, T__123 = 124, 
     T__124 = 125, T__125 = 126, T__126 = 127, T__127 = 128, T__128 = 129, 
     ARROW = 130, NUMBER = 131, IDENTIFIER = 132, STRING_LITERAL = 133, WS = 134, 
-    DECIMAL_LITERAL = 135, BINARY_LITERAL = 136, OCTAL_LITERAL = 137, HEX_LITERAL = 138, 
-    TEMPLATE_STRING_LITERAL = 139, TEMPLATE_STRING_START = 140, TEMPLATE_STRING_MIDDLE = 141, 
-    TEMPLATE_STRING_END = 142, REGEX_LITERAL = 143, SINGLE_LINE_COMMENT = 144, 
-    MULTI_LINE_COMMENT = 145, LINE_TERMINATOR = 146
+    UnquotedLiteral = 135, UnquotedIdentifier = 136, DECIMAL_LITERAL = 137, 
+    BINARY_LITERAL = 138, OCTAL_LITERAL = 139, HEX_LITERAL = 140, TEMPLATE_STRING_LITERAL = 141, 
+    TEMPLATE_STRING_START = 142, TEMPLATE_STRING_MIDDLE = 143, TEMPLATE_STRING_END = 144, 
+    REGEX_LITERAL = 145, SINGLE_LINE_COMMENT = 146, MULTI_LINE_COMMENT = 147, 
+    LINE_TERMINATOR = 148, DecimalLiteral = 149, HexIntegerLiteral = 150, 
+    OctalIntegerLiteral = 151, OctalIntegerLiteral2 = 152, BinaryIntegerLiteral = 153, 
+    BooleanLiteral = 154, StringLiteral = 155, NullLiteral = 156
   };
 
   enum {
@@ -50,51 +53,51 @@ public:
     RuleSelectorArray = 15, RuleAnimateConfig = 16, RuleAnimateProperty = 17, 
     RuleCssBlock = 18, RuleCssProperty = 19, RulePropertyName = 20, RulePropertyValue = 21, 
     RuleCssFunction = 22, RuleCssFunctionArguments = 23, RuleWhenArray = 24, 
-    RuleWhenItem = 25, RuleWhenProperty = 26, RuleProgram = 27, RuleSourceElements = 28, 
-    RuleSourceElement = 29, RuleDeclaration = 30, RuleHoistableDeclaration = 31, 
-    RuleFunctionDeclaration = 32, RuleGeneratorDeclaration = 33, RuleAsyncFunctionDeclaration = 34, 
-    RuleAsyncGeneratorDeclaration = 35, RuleClassDeclaration = 36, RuleClassExtends = 37, 
-    RuleClassBody = 38, RuleClassElement = 39, RuleMethodDefinition = 40, 
-    RuleFieldDefinition = 41, RuleLexicalDeclaration = 42, RuleLetOrConst = 43, 
-    RuleBindingList = 44, RuleLexicalBinding = 45, RuleStatement = 46, RuleBlockStatement = 47, 
-    RuleStatementList = 48, RuleVariableStatement = 49, RuleVariableDeclarationList = 50, 
-    RuleVariableDeclaration = 51, RuleEmptyStatement = 52, RuleExpressionStatement = 53, 
-    RuleIfStatement = 54, RuleIterationStatement = 55, RuleDoWhileStatement = 56, 
-    RuleWhileStatement = 57, RuleForStatement = 58, RuleForInit = 59, RuleForInStatement = 60, 
-    RuleForOfStatement = 61, RuleForInBinding = 62, RuleContinueStatement = 63, 
-    RuleBreakStatement = 64, RuleReturnStatement = 65, RuleWithStatement = 66, 
-    RuleLabelledStatement = 67, RuleSwitchStatement = 68, RuleCaseClause = 69, 
-    RuleDefaultClause = 70, RuleThrowStatement = 71, RuleTryStatement = 72, 
-    RuleCatchClause = 73, RuleCatchParameter = 74, RuleFinallyClause = 75, 
-    RuleDebuggerStatement = 76, RuleImportStatement = 77, RuleImportClause = 78, 
-    RuleImportedDefaultBinding = 79, RuleNamespaceImport = 80, RuleNamedImports = 81, 
-    RuleImportsList = 82, RuleImportSpecifier = 83, RuleModuleSpecifier = 84, 
-    RuleExportStatement = 85, RuleExportClause = 86, RuleExportsList = 87, 
-    RuleExportSpecifier = 88, RuleExpression = 89, RuleAssignmentExpression = 90, 
-    RuleAssignmentOperator = 91, RuleConditionalExpression = 92, RuleCoalesceExpression = 93, 
-    RuleLogicalORExpression = 94, RuleLogicalANDExpression = 95, RuleBitwiseORExpression = 96, 
-    RuleBitwiseXORExpression = 97, RuleBitwiseANDExpression = 98, RuleEqualityExpression = 99, 
-    RuleRelationalExpression = 100, RuleShiftExpression = 101, RuleAdditiveExpression = 102, 
-    RuleMultiplicativeExpression = 103, RuleExponentiationExpression = 104, 
-    RuleUnaryExpression = 105, RuleUpdateExpression = 106, RuleLeftHandSideExpression = 107, 
-    RuleNewExpression = 108, RuleSuperCall = 109, RuleImportCall = 110, 
-    RuleArguments = 111, RuleArgumentList = 112, RuleArgument = 113, RuleMetaProperty = 114, 
-    RuleParenthesizedExpression = 115, RuleLiteral = 116, RuleNullLiteral = 117, 
-    RuleBooleanLiteral = 118, RuleNumericLiteral = 119, RuleStringLiteral = 120, 
-    RuleArrayLiteral = 121, RuleElementList = 122, RuleArrayElement = 123, 
-    RuleObjectLiteral = 124, RulePropertyDefinitionList = 125, RulePropertyDefinition = 126, 
-    RuleFunctionExpression = 127, RuleGeneratorExpression = 128, RuleAsyncFunctionExpression = 129, 
-    RuleAsyncGeneratorExpression = 130, RuleClassExpression = 131, RuleArrowFunction = 132, 
-    RuleAsyncArrowFunction = 133, RuleArrowParameters = 134, RuleArrowBody = 135, 
-    RuleYieldExpression = 136, RuleTemplateLiteral = 137, RuleTemplateSpans = 138, 
-    RuleTemplateSpan = 139, RuleTemplateMiddle = 140, RuleRegularExpressionLiteral = 141, 
-    RuleFormalParameterList = 142, RuleFormalParameter = 143, RuleRestParameter = 144, 
-    RuleBindingElement = 145, RuleBindingPattern = 146, RuleObjectBindingPattern = 147, 
-    RuleBindingPropertyList = 148, RuleBindingProperty = 149, RuleArrayBindingPattern = 150, 
-    RuleBindingElementList = 151, RuleBindingElision = 152, RuleFunctionBody = 153, 
-    RuleInitializer = 154, RuleBindingIdentifier = 155, RuleIdentifier = 156, 
-    RuleIdentifierName = 157, RuleReservedWord = 158, RuleKeyword = 159, 
-    RuleFutureReservedWord = 160
+    RuleWhenItem = 25, RuleWhenProperty = 26, RuleLiteral = 27, RuleProgram = 28, 
+    RuleSourceElements = 29, RuleSourceElement = 30, RuleDeclaration = 31, 
+    RuleHoistableDeclaration = 32, RuleFunctionDeclaration = 33, RuleGeneratorDeclaration = 34, 
+    RuleAsyncFunctionDeclaration = 35, RuleAsyncGeneratorDeclaration = 36, 
+    RuleClassDeclaration = 37, RuleClassExtends = 38, RuleClassBody = 39, 
+    RuleClassElement = 40, RuleMethodDefinition = 41, RuleFieldDefinition = 42, 
+    RuleLexicalDeclaration = 43, RuleLetOrConst = 44, RuleBindingList = 45, 
+    RuleLexicalBinding = 46, RuleStatement = 47, RuleBlockStatement = 48, 
+    RuleStatementList = 49, RuleVariableStatement = 50, RuleVariableDeclarationList = 51, 
+    RuleVariableDeclaration = 52, RuleEmptyStatement = 53, RuleExpressionStatement = 54, 
+    RuleIfStatement = 55, RuleIterationStatement = 56, RuleDoWhileStatement = 57, 
+    RuleWhileStatement = 58, RuleForStatement = 59, RuleForInit = 60, RuleForInStatement = 61, 
+    RuleForOfStatement = 62, RuleForInBinding = 63, RuleContinueStatement = 64, 
+    RuleBreakStatement = 65, RuleReturnStatement = 66, RuleWithStatement = 67, 
+    RuleLabelledStatement = 68, RuleSwitchStatement = 69, RuleCaseClause = 70, 
+    RuleDefaultClause = 71, RuleThrowStatement = 72, RuleTryStatement = 73, 
+    RuleCatchClause = 74, RuleCatchParameter = 75, RuleFinallyClause = 76, 
+    RuleDebuggerStatement = 77, RuleImportStatement = 78, RuleImportClause = 79, 
+    RuleImportedDefaultBinding = 80, RuleNamespaceImport = 81, RuleNamedImports = 82, 
+    RuleImportsList = 83, RuleImportSpecifier = 84, RuleModuleSpecifier = 85, 
+    RuleExportStatement = 86, RuleExportClause = 87, RuleExportsList = 88, 
+    RuleExportSpecifier = 89, RuleExpression = 90, RuleAssignmentExpression = 91, 
+    RuleAssignmentOperator = 92, RuleConditionalExpression = 93, RuleCoalesceExpression = 94, 
+    RuleLogicalORExpression = 95, RuleLogicalANDExpression = 96, RuleBitwiseORExpression = 97, 
+    RuleBitwiseXORExpression = 98, RuleBitwiseANDExpression = 99, RuleEqualityExpression = 100, 
+    RuleRelationalExpression = 101, RuleShiftExpression = 102, RuleAdditiveExpression = 103, 
+    RuleMultiplicativeExpression = 104, RuleExponentiationExpression = 105, 
+    RuleUnaryExpression = 106, RuleUpdateExpression = 107, RuleLeftHandSideExpression = 108, 
+    RuleNewExpression = 109, RuleSuperCall = 110, RuleImportCall = 111, 
+    RuleArguments = 112, RuleArgumentList = 113, RuleArgument = 114, RuleMetaProperty = 115, 
+    RuleParenthesizedExpression = 116, RuleNullLiteral = 117, RuleBooleanLiteral = 118, 
+    RuleNumericLiteral = 119, RuleStringLiteral = 120, RuleArrayLiteral = 121, 
+    RuleElementList = 122, RuleArrayElement = 123, RuleObjectLiteral = 124, 
+    RulePropertyDefinitionList = 125, RulePropertyDefinition = 126, RuleFunctionExpression = 127, 
+    RuleGeneratorExpression = 128, RuleAsyncFunctionExpression = 129, RuleAsyncGeneratorExpression = 130, 
+    RuleClassExpression = 131, RuleArrowFunction = 132, RuleAsyncArrowFunction = 133, 
+    RuleArrowParameters = 134, RuleArrowBody = 135, RuleYieldExpression = 136, 
+    RuleTemplateLiteral = 137, RuleTemplateSpans = 138, RuleTemplateSpan = 139, 
+    RuleTemplateMiddle = 140, RuleRegularExpressionLiteral = 141, RuleFormalParameterList = 142, 
+    RuleFormalParameter = 143, RuleRestParameter = 144, RuleBindingElement = 145, 
+    RuleBindingPattern = 146, RuleObjectBindingPattern = 147, RuleBindingPropertyList = 148, 
+    RuleBindingProperty = 149, RuleArrayBindingPattern = 150, RuleBindingElementList = 151, 
+    RuleBindingElision = 152, RuleFunctionBody = 153, RuleInitializer = 154, 
+    RuleBindingIdentifier = 155, RuleIdentifier = 156, RuleIdentifierName = 157, 
+    RuleReservedWord = 158, RuleKeyword = 159, RuleFutureReservedWord = 160
   };
 
   explicit CHTLJavaScriptParser(antlr4::TokenStream *input);
@@ -141,6 +144,7 @@ public:
   class WhenArrayContext;
   class WhenItemContext;
   class WhenPropertyContext;
+  class LiteralContext;
   class ProgramContext;
   class SourceElementsContext;
   class SourceElementContext;
@@ -230,7 +234,6 @@ public:
   class ArgumentContext;
   class MetaPropertyContext;
   class ParenthesizedExpressionContext;
-  class LiteralContext;
   class NullLiteralContext;
   class BooleanLiteralContext;
   class NumericLiteralContext;
@@ -688,6 +691,27 @@ public:
   };
 
   WhenPropertyContext* whenProperty();
+
+  class  LiteralContext : public antlr4::ParserRuleContext {
+  public:
+    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *DecimalLiteral();
+    antlr4::tree::TerminalNode *HexIntegerLiteral();
+    antlr4::tree::TerminalNode *OctalIntegerLiteral();
+    antlr4::tree::TerminalNode *OctalIntegerLiteral2();
+    antlr4::tree::TerminalNode *BinaryIntegerLiteral();
+    antlr4::tree::TerminalNode *BooleanLiteral();
+    antlr4::tree::TerminalNode *StringLiteral();
+    antlr4::tree::TerminalNode *NullLiteral();
+    antlr4::tree::TerminalNode *UnquotedLiteral();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  LiteralContext* literal();
 
   class  ProgramContext : public antlr4::ParserRuleContext {
   public:
@@ -1958,22 +1982,6 @@ public:
   };
 
   ParenthesizedExpressionContext* parenthesizedExpression();
-
-  class  LiteralContext : public antlr4::ParserRuleContext {
-  public:
-    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    NullLiteralContext *nullLiteral();
-    BooleanLiteralContext *booleanLiteral();
-    NumericLiteralContext *numericLiteral();
-    StringLiteralContext *stringLiteral();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  LiteralContext* literal();
 
   class  NullLiteralContext : public antlr4::ParserRuleContext {
   public:

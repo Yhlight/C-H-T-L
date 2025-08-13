@@ -128,6 +128,12 @@ public:
   virtual void enterHtmlElement(CHTLParser::HtmlElementContext *ctx) = 0;
   virtual void exitHtmlElement(CHTLParser::HtmlElementContext *ctx) = 0;
 
+  virtual void enterGlobalStyleElement(CHTLParser::GlobalStyleElementContext *ctx) = 0;
+  virtual void exitGlobalStyleElement(CHTLParser::GlobalStyleElementContext *ctx) = 0;
+
+  virtual void enterGlobalStyleContent(CHTLParser::GlobalStyleContentContext *ctx) = 0;
+  virtual void exitGlobalStyleContent(CHTLParser::GlobalStyleContentContext *ctx) = 0;
+
   virtual void enterElementName(CHTLParser::ElementNameContext *ctx) = 0;
   virtual void exitElementName(CHTLParser::ElementNameContext *ctx) = 0;
 

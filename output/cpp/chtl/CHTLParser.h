@@ -36,18 +36,19 @@ public:
     RuleCustomSpecialization = 26, RuleSpecializationContent = 27, RuleDeleteStatement = 28, 
     RuleDeleteTarget = 29, RuleInsertStatement = 30, RuleInsertPosition = 31, 
     RuleElementSelector = 32, RuleInsertContent = 33, RuleOriginBlock = 34, 
-    RuleOriginType = 35, RuleOriginContent = 36, RuleHtmlElement = 37, RuleElementName = 38, 
-    RuleElementIndexAccess = 39, RuleElementBody = 40, RuleElementContent = 41, 
-    RuleAttribute = 42, RuleAttributeName = 43, RuleAttributeValue = 44, 
-    RuleTextContent = 45, RuleStyleBlock = 46, RuleStyleContent = 47, RuleStyleProperty = 48, 
-    RulePropertyName = 49, RulePropertyValue = 50, RuleCssSelector = 51, 
-    RulePseudoClass = 52, RulePseudoElement = 53, RuleCssFunction = 54, 
-    RuleCssArguments = 55, RuleCssArgument = 56, RuleScriptBlock = 57, RuleScriptContent = 58, 
-    RuleElementUsage = 59, RuleElementSpecialization = 60, RuleElementSpecializationContent = 61, 
-    RuleStyleUsage = 62, RuleStyleSpecialization = 63, RuleVariableDefinition = 64, 
-    RuleVariableUsage = 65, RuleVariableArguments = 66, RuleVariableArgument = 67, 
-    RuleVariableAssignment = 68, RuleNamespacePath = 69, RuleExceptConstraint = 70, 
-    RuleExceptTarget = 71, RuleComment = 72
+    RuleOriginType = 35, RuleOriginContent = 36, RuleHtmlElement = 37, RuleGlobalStyleElement = 38, 
+    RuleGlobalStyleContent = 39, RuleElementName = 40, RuleElementIndexAccess = 41, 
+    RuleElementBody = 42, RuleElementContent = 43, RuleAttribute = 44, RuleAttributeName = 45, 
+    RuleAttributeValue = 46, RuleTextContent = 47, RuleStyleBlock = 48, 
+    RuleStyleContent = 49, RuleStyleProperty = 50, RulePropertyName = 51, 
+    RulePropertyValue = 52, RuleCssSelector = 53, RulePseudoClass = 54, 
+    RulePseudoElement = 55, RuleCssFunction = 56, RuleCssArguments = 57, 
+    RuleCssArgument = 58, RuleScriptBlock = 59, RuleScriptContent = 60, 
+    RuleElementUsage = 61, RuleElementSpecialization = 62, RuleElementSpecializationContent = 63, 
+    RuleStyleUsage = 64, RuleStyleSpecialization = 65, RuleVariableDefinition = 66, 
+    RuleVariableUsage = 67, RuleVariableArguments = 68, RuleVariableArgument = 69, 
+    RuleVariableAssignment = 70, RuleNamespacePath = 71, RuleExceptConstraint = 72, 
+    RuleExceptTarget = 73, RuleComment = 74
   };
 
   explicit CHTLParser(antlr4::TokenStream *input);
@@ -105,6 +106,8 @@ public:
   class OriginTypeContext;
   class OriginContentContext;
   class HtmlElementContext;
+  class GlobalStyleElementContext;
+  class GlobalStyleContentContext;
   class ElementNameContext;
   class ElementIndexAccessContext;
   class ElementBodyContext;
@@ -689,6 +692,7 @@ public:
     ElementNameContext *elementName();
     ElementBodyContext *elementBody();
     ElementIndexAccessContext *elementIndexAccess();
+    GlobalStyleElementContext *globalStyleElement();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -696,6 +700,31 @@ public:
   };
 
   HtmlElementContext* htmlElement();
+
+  class  GlobalStyleElementContext : public antlr4::ParserRuleContext {
+  public:
+    GlobalStyleElementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    GlobalStyleContentContext *globalStyleContent();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  GlobalStyleElementContext* globalStyleElement();
+
+  class  GlobalStyleContentContext : public antlr4::ParserRuleContext {
+  public:
+    GlobalStyleContentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  GlobalStyleContentContext* globalStyleContent();
 
   class  ElementNameContext : public antlr4::ParserRuleContext {
   public:

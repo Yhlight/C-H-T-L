@@ -130,6 +130,12 @@ public:
   virtual void enterHtmlElement(CHTLParser::HtmlElementContext * /*ctx*/) override { }
   virtual void exitHtmlElement(CHTLParser::HtmlElementContext * /*ctx*/) override { }
 
+  virtual void enterGlobalStyleElement(CHTLParser::GlobalStyleElementContext * /*ctx*/) override { }
+  virtual void exitGlobalStyleElement(CHTLParser::GlobalStyleElementContext * /*ctx*/) override { }
+
+  virtual void enterGlobalStyleContent(CHTLParser::GlobalStyleContentContext * /*ctx*/) override { }
+  virtual void exitGlobalStyleContent(CHTLParser::GlobalStyleContentContext * /*ctx*/) override { }
+
   virtual void enterElementName(CHTLParser::ElementNameContext * /*ctx*/) override { }
   virtual void exitElementName(CHTLParser::ElementNameContext * /*ctx*/) override { }
 

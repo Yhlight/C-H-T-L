@@ -278,6 +278,16 @@ public interface CHTLJavaScriptListener extends ParseTreeListener {
 	 */
 	void exitWhenProperty(CHTLJavaScriptParser.WhenPropertyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CHTLJavaScriptParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteral(CHTLJavaScriptParser.LiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CHTLJavaScriptParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteral(CHTLJavaScriptParser.LiteralContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CHTLJavaScriptParser#program}.
 	 * @param ctx the parse tree
 	 */
@@ -1167,16 +1177,6 @@ public interface CHTLJavaScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParenthesizedExpression(CHTLJavaScriptParser.ParenthesizedExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CHTLJavaScriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterLiteral(CHTLJavaScriptParser.LiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CHTLJavaScriptParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitLiteral(CHTLJavaScriptParser.LiteralContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CHTLJavaScriptParser#nullLiteral}.
 	 * @param ctx the parse tree

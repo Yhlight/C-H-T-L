@@ -97,6 +97,9 @@ public:
   virtual void enterWhenProperty(CHTLJavaScriptParser::WhenPropertyContext * /*ctx*/) override { }
   virtual void exitWhenProperty(CHTLJavaScriptParser::WhenPropertyContext * /*ctx*/) override { }
 
+  virtual void enterLiteral(CHTLJavaScriptParser::LiteralContext * /*ctx*/) override { }
+  virtual void exitLiteral(CHTLJavaScriptParser::LiteralContext * /*ctx*/) override { }
+
   virtual void enterProgram(CHTLJavaScriptParser::ProgramContext * /*ctx*/) override { }
   virtual void exitProgram(CHTLJavaScriptParser::ProgramContext * /*ctx*/) override { }
 
@@ -363,9 +366,6 @@ public:
 
   virtual void enterParenthesizedExpression(CHTLJavaScriptParser::ParenthesizedExpressionContext * /*ctx*/) override { }
   virtual void exitParenthesizedExpression(CHTLJavaScriptParser::ParenthesizedExpressionContext * /*ctx*/) override { }
-
-  virtual void enterLiteral(CHTLJavaScriptParser::LiteralContext * /*ctx*/) override { }
-  virtual void exitLiteral(CHTLJavaScriptParser::LiteralContext * /*ctx*/) override { }
 
   virtual void enterNullLiteral(CHTLJavaScriptParser::NullLiteralContext * /*ctx*/) override { }
   virtual void exitNullLiteral(CHTLJavaScriptParser::NullLiteralContext * /*ctx*/) override { }

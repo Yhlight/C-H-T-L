@@ -199,8 +199,8 @@ script
 ```chtl
 script
 {
-    animate({
-        element: 目标元素,
+    // animate返回一个函数，该函数接受目标元素作为参数
+    const animationFn = animate({
         duration: 持续时间(ms),
         easing: 缓动函数,
         begin: { /* 起始状态 */ },
@@ -211,16 +211,15 @@ script
         delay: 延迟时间(ms),
         callback: 完成回调
     });
+    
+    // 应用动画到元素
+    animationFn(targetElement);
 }
 ```
 
 ### 配置选项
 
-#### 必需参数
-
-- **element**: 要动画的DOM元素
-
-#### 可选参数
+#### 参数说明
 
 - **duration**: 动画持续时间（毫秒），默认1000
 - **easing**: 缓动函数，支持：
@@ -247,8 +246,8 @@ script
 {
     const box = {{#myBox}};
     
-    animate({
-        element: box,
+    // 创建淡入动画
+    const fadeIn = animate({
         duration: 1000,
         easing: ease-out,
         
@@ -262,6 +261,9 @@ script
             transform: 'translateY(0)'
         }
     });
+    
+    // 应用动画
+    fadeIn(box);
 }
 ```
 
@@ -271,8 +273,8 @@ script
 script
 {
     {{#logo}}->addEventListener('click', function() {
-        animate({
-            element: this,
+        // 创建旋转动画
+        const rotate = animate({
             duration: 2000,
             easing: ease-in-out,
             
@@ -307,6 +309,9 @@ script
                 console.log('Animation completed!');
             }
         });
+        
+        // 应用动画到被点击的元素
+        rotate(this);
     });
 }
 ```
@@ -316,9 +321,8 @@ script
 ```chtl
 script
 {
-    // 无限脉冲动画
-    animate({
-        element: {{.pulse}},
+    // 创建无限脉冲动画
+    const pulse = animate({
         duration: 1500,
         easing: ease-in-out,
         
@@ -341,6 +345,38 @@ script
         },
         
         loop: -1  // 无限循环
+    });
+    
+    // 对所有pulse类元素应用动画
+    {{.pulse}}->forEach(el => pulse(el));
+}
+```
+
+#### 多元素动画
+
+```chtl
+script
+{
+    // 创建滑入动画
+    const slideIn = animate({
+        duration: 500,
+        easing: ease-out,
+        delay: 100,
+        
+        begin: {
+            opacity: 0,
+            transform: 'translateX(-50px)'
+        },
+        
+        end: {
+            opacity: 1,
+            transform: 'translateX(0)'
+        }
+    });
+    
+    // 对列表项依次应用动画
+    {{.list-item}}->forEach((item, index) => {
+        setTimeout(() => slideIn(item), index * 100);
     });
 }
 ```

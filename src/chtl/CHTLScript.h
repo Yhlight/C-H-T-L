@@ -300,14 +300,14 @@ public:
 // 动画处理器
 class AnimationProcessor {
 public:
-    // 处理animate函数
+    // 处理animate函数 - 返回一个函数
     static std::string processAnimate(const std::string& config);
     
     // 解析动画配置
     static AnimationConfig parseAnimationConfig(const std::string& config);
     
-    // 生成动画代码
-    static std::string generateAnimationCode(const AnimationConfig& config);
+    // 生成动画函数代码
+    static std::string generateAnimationFunction(const AnimationConfig& config);
     
     // 生成关键帧代码
     static std::string generateKeyframeCode(const AnimationKeyframe& keyframe);
@@ -317,6 +317,10 @@ public:
     
     // 生成RAF循环代码
     static std::string generateRAFLoop(const AnimationConfig& config);
+    
+private:
+    // 辅助函数：将map转换为JavaScript对象
+    static std::string mapToJsObject(const std::map<std::string, std::string>& map);
 };
 
 // 事件委托管理器

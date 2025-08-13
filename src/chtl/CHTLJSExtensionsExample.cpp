@@ -161,8 +161,8 @@ int main() {
         {{#animateBtn}}->addEventListener('click', function() {
             const box = {{#animatedBox}};
             
-            animate({
-                element: box,
+            // animate返回一个函数，调用该函数并传入元素
+            const animateBox = animate({
                 duration: 2000,  // 2秒
                 easing: ease-in-out,
                 
@@ -207,6 +207,9 @@ int main() {
                     box->style->border = '3px solid black';
                 }
             });
+            
+            // 对box元素应用动画
+            animateBox(box);
         });
     )");
     generator.endScriptBlock();
@@ -245,8 +248,7 @@ int main() {
                 e.target->parentElement->classList->add('active');
                 
                 // 动画效果
-                animate({
-                    element: e.target,
+                const slideAnimation = animate({
                     duration: 300,
                     easing: ease-out,
                     
@@ -265,6 +267,9 @@ int main() {
                         transform: 'translateX(0)'
                     }
                 });
+                
+                // 应用动画到目标元素
+                slideAnimation(e.target);
                 
                 console.log('Navigating to:', page);
             }

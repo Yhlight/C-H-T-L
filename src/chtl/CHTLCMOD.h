@@ -45,14 +45,26 @@ struct CMODExportTable {
     std::vector<CMODExportItem> elements;
     std::vector<CMODExportItem> variables;
     
+    // 是否显式定义（如果为true，只导出明确列出的项）
+    bool isExplicit = false;
+    
     // 添加导出项
     void addExport(const std::string& type, const std::string& category, const std::string& name);
     
     // 查找导出项
     bool hasExport(const std::string& type, const std::string& name) const;
     
+    // 检查是否允许导出
+    bool isExported(const std::string& type, const std::string& category, const std::string& name) const;
+    
     // 生成导出表字符串
     std::string toString() const;
+    
+    // 从字符串解析导出表
+    static CMODExportTable parse(const std::string& exportBlock);
+    
+    // 设置为显式导出模式
+    void setExplicitMode(bool explicit_mode) { isExplicit = explicit_mode; }
 };
 
 // 模块结构
@@ -67,6 +79,9 @@ private:
     bool isSubModule;
     std::weak_ptr<CMODModule> parent;
     
+    // 所有定义的项（用于自动生成导出表）
+    std::vector<CMODExportItem> allDefinitions;
+    
 public:
     CMODModule(const std::string& name, const std::filesystem::path& path, bool isSub = false);
     
@@ -79,6 +94,15 @@ public:
     bool loadInfo(const std::filesystem::path& infoFile);
     bool generateExportTable();
     void scanSourceFiles();
+    
+    // 加载导出表
+    bool loadExportTable(const std::filesystem::path& infoFile);
+    
+    // 扫描定义
+    void scanDefinitions();
+    
+    // 检查项是否可导出
+    bool canExport(const std::string& type, const std::string& category, const std::string& name) const;
     
     // 子模块管理
     void addSubModule(std::shared_ptr<CMODModule> subModule);
@@ -229,6 +253,10 @@ class CMODProcessor {
 private:
     CMODManager& manager;
     CHTLGenerator& generator;
+    
+    // 过滤导出内容
+    std::string filterExportedContent(std::shared_ptr<CMODModule> module, 
+                                    const std::string& content);
     
 public:
     CMODProcessor(CMODManager& mgr, CHTLGenerator& gen)

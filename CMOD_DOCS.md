@@ -49,7 +49,18 @@ info目录中的CHTL文件包含两个部分：
 }
 ```
 
-#### 2. 导出表 [Export]（自动生成）
+#### 2. 导出表 [Export]
+
+导出表控制模块对外暴露的内容。有两种模式：
+
+**隐式模式（默认）**：
+- 如果没有[Export]块，模块中所有定义的模板和自定义都会被导出
+- 适合小型模块或完全公开的模块
+
+**显式模式**：
+- 明确定义[Export]块后，只有列出的项才会被导出
+- 提供精确的访问控制
+- 适合大型模块或需要隐藏内部实现的模块
 
 ```chtl
 [Export]
@@ -62,7 +73,66 @@ info目录中的CHTL文件包含两个部分：
 }
 ```
 
-导出表由系统自动生成，用于优化模块加载性能。
+**示例：控制导出**
+
+```chtl
+// info/MyModule.chtl
+[Info]
+{
+    name = "MyModule";
+    version = "1.0.0";
+    // ...
+}
+
+[Export]
+{
+    // 只导出这些样式
+    @Style PublicStyle, SharedStyle;
+    
+    // 只导出这个元素
+    @Element PublicComponent;
+    
+    // 内部使用的PrivateStyle和InternalComponent不会被导出
+}
+```
+
+对应的源文件：
+
+```chtl
+// src/MyModule.chtl
+[Namespace] MyModule
+{
+    // 会被导出
+    [Template] @Style PublicStyle
+    {
+        color: blue;
+    }
+    
+    // 会被导出
+    [Template] @Style SharedStyle
+    {
+        font-size: 14px;
+    }
+    
+    // 不会被导出（未在Export中列出）
+    [Template] @Style PrivateStyle
+    {
+        /* 内部使用 */
+    }
+    
+    // 会被导出
+    [Template] @Element PublicComponent
+    {
+        div { /* ... */ }
+    }
+    
+    // 不会被导出
+    [Custom] @Element InternalComponent
+    {
+        /* 仅供模块内部使用 */
+    }
+}
+```
 
 ### 子模块
 
@@ -240,6 +310,20 @@ std::string path = CMODHelper::moduleNameToPath("Parent.Sub"); // "Parent/Sub"
 // 验证模块名
 bool valid = CMODHelper::isValidModuleName("MyModule"); // true
 ```
+
+### 导出控制的好处
+
+1. **封装性**：隐藏内部实现细节
+2. **稳定性**：只暴露稳定的公共API
+3. **性能**：减少导入时的处理量
+4. **维护性**：明确的公共接口便于版本管理
+
+### 导出最佳实践
+
+1. **最小化导出原则**：只导出必要的内容
+2. **语义化命名**：公共API使用清晰的命名
+3. **内部前缀**：内部使用的项可以加上`_`或`Internal`前缀
+4. **文档化**：为导出的项提供使用说明
 
 ## 创建CMOD模块
 
@@ -424,4 +508,4 @@ body
 
 ## 总结
 
-CMOD系统为CHTL提供了强大的模块化能力，使得代码重用、分发和管理变得简单高效。通过标准化的结构和完善的工具支持，开发者可以轻松创建和使用CHTL模块。
+CMOD系统为CHTL提供了强大的模块化能力，使得代码重用、分发和管理变得简单高效。通过标准化的结构、灵活的导出控制和完善的工具支持，开发者可以轻松创建和使用CHTL模块。

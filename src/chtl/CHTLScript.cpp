@@ -728,7 +728,7 @@ std::string EnhancedMethodProcessor::generateDelegationCode(const EventDelegatio
 // AnimationProcessor 实现
 std::string AnimationProcessor::processAnimate(const std::string& config) {
     auto animConfig = parseAnimationConfig(config);
-    return generateAnimationCode(animConfig);
+    return generateAnimationFunction(animConfig);
 }
 
 AnimationConfig AnimationProcessor::parseAnimationConfig(const std::string& config) {
@@ -767,10 +767,12 @@ AnimationConfig AnimationProcessor::parseAnimationConfig(const std::string& conf
     return animConfig;
 }
 
-std::string AnimationProcessor::generateAnimationCode(const AnimationConfig& config) {
+std::string AnimationProcessor::generateAnimationFunction(const AnimationConfig& config) {
     std::stringstream js;
     
-    js << "(function() {\n";
+    // 返回一个函数，该函数接受元素作为参数
+    js << "(function(element) {\n";
+    js << "  if (!element) return;\n";
     js << "  const duration = " << config.duration << ";\n";
     js << "  const easing = " << parseEasing(config.easing) << ";\n";
     js << "  const loop = " << config.loop << ";\n";
@@ -778,10 +780,22 @@ std::string AnimationProcessor::generateAnimationCode(const AnimationConfig& con
     js << "  let startTime = null;\n";
     js << "  let currentLoop = 0;\n\n";
     
+    js << "  function applyProperties(el, properties) {\n";
+    js << "    Object.keys(properties).forEach(function(prop) {\n";
+    js << "      if (prop === 'transform') {\n";
+    js << "        el.style.transform = properties[prop];\n";
+    js << "      } else {\n";
+    js << "        el.style[prop] = properties[prop];\n";
+    js << "      }\n";
+    js << "    });\n";
+    js << "  }\n\n";
+    
     js << generateRAFLoop(config);
     
-    js << "  setTimeout(animate, delay);\n";
-    js << "})();\n";
+    js << "  setTimeout(function() {\n";
+    js << "    requestAnimationFrame(animate);\n";
+    js << "  }, delay);\n";
+    js << "})";
     
     return js.str();
 }
@@ -808,7 +822,28 @@ std::string AnimationProcessor::generateRAFLoop(const AnimationConfig& config) {
     js << "    const progress = Math.min(elapsed / duration, 1);\n";
     js << "    const easedProgress = easing(progress);\n\n";
     
-    // TODO: 应用动画属性
+    // 应用动画属性
+    if (!config.begin.empty()) {
+        js << "    if (progress === 0) {\n";
+        js << "      applyProperties(element, " << mapToJsObject(config.begin) << ");\n";
+        js << "    }\n\n";
+    }
+    
+    if (!config.when.empty()) {
+        js << "    // 应用关键帧\n";
+        for (const auto& keyframe : config.when) {
+            js << "    if (easedProgress >= " << keyframe.at << ") {\n";
+            js << "      applyProperties(element, " << mapToJsObject(keyframe.properties) << ");\n";
+            js << "    }\n";
+        }
+        js << "\n";
+    }
+    
+    if (!config.end.empty()) {
+        js << "    if (progress === 1) {\n";
+        js << "      applyProperties(element, " << mapToJsObject(config.end) << ");\n";
+        js << "    }\n\n";
+    }
     
     js << "    if (progress < 1) {\n";
     js << "      requestAnimationFrame(animate);\n";
@@ -817,10 +852,38 @@ std::string AnimationProcessor::generateRAFLoop(const AnimationConfig& config) {
     js << "      if (loop === -1 || currentLoop < loop) {\n";
     js << "        startTime = null;\n";
     js << "        requestAnimationFrame(animate);\n";
-    js << "      }\n";
+    js << "      }";
+    
+    if (!config.callback.empty()) {
+        js << " else if (" << config.callback << ") {\n";
+        js << "        " << config.callback << "();\n";
+        js << "      }";
+    }
+    
+    js << "\n";
     js << "    }\n";
     js << "  }\n";
     
+    return js.str();
+}
+
+// 辅助函数：将map转换为JavaScript对象字符串
+static std::string mapToJsObject(const std::map<std::string, std::string>& map) {
+    std::stringstream js;
+    js << "{";
+    bool first = true;
+    for (const auto& [key, value] : map) {
+        if (!first) js << ", ";
+        js << "'" << key << "': ";
+        // 检查是否是字符串值（包含引号）
+        if (value.front() == '"' || value.front() == '\'') {
+            js << value;
+        } else {
+            js << "'" << value << "'";
+        }
+        first = false;
+    }
+    js << "}";
     return js.str();
 }
 
@@ -917,73 +980,80 @@ std::string RuntimeCodeGenerator::generateAnimateRuntime() {
     return R"(
 // CHTL animate runtime support
 function chtl_animate(config) {
-    const element = config.element;
-    const duration = config.duration || 1000;
-    const easing = config.easing || function(t) { return t; };
-    const loop = config.loop || 1;
-    const delay = config.delay || 0;
-    
-    let startTime = null;
-    let currentLoop = 0;
-    
-    function interpolate(start, end, progress) {
-        if (typeof start === 'number' && typeof end === 'number') {
-            return start + (end - start) * progress;
+    // 返回一个接受元素的函数
+    return function(element) {
+        if (!element) {
+            console.error('CHTL animate: element is required');
+            return;
         }
-        return progress < 0.5 ? start : end;
-    }
-    
-    function applyProperties(element, properties) {
-        Object.keys(properties).forEach(function(prop) {
-            if (prop === 'transform') {
-                element.style.transform = properties[prop];
-            } else {
-                element.style[prop] = properties[prop];
+        
+        const duration = config.duration || 1000;
+        const easing = config.easing || function(t) { return t; };
+        const loop = config.loop || 1;
+        const delay = config.delay || 0;
+        
+        let startTime = null;
+        let currentLoop = 0;
+        
+        function interpolate(start, end, progress) {
+            if (typeof start === 'number' && typeof end === 'number') {
+                return start + (end - start) * progress;
             }
-        });
-    }
-    
-    function animate(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = easing(progress);
-        
-        // Apply animation
-        if (config.begin && progress === 0) {
-            applyProperties(element, config.begin);
+            return progress < 0.5 ? start : end;
         }
         
-        if (config.when) {
-            // Apply keyframes
-            for (let i = 0; i < config.when.length; i++) {
-                const keyframe = config.when[i];
-                if (easedProgress >= keyframe.at) {
-                    applyProperties(element, keyframe);
+        function applyProperties(el, properties) {
+            Object.keys(properties).forEach(function(prop) {
+                if (prop === 'transform') {
+                    el.style.transform = properties[prop];
+                } else {
+                    el.style[prop] = properties[prop];
+                }
+            });
+        }
+        
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easing(progress);
+            
+            // Apply animation
+            if (config.begin && progress === 0) {
+                applyProperties(element, config.begin);
+            }
+            
+            if (config.when) {
+                // Apply keyframes
+                for (let i = 0; i < config.when.length; i++) {
+                    const keyframe = config.when[i];
+                    if (easedProgress >= keyframe.at) {
+                        applyProperties(element, keyframe);
+                    }
+                }
+            }
+            
+            if (config.end && progress === 1) {
+                applyProperties(element, config.end);
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                currentLoop++;
+                if (loop === -1 || currentLoop < loop) {
+                    startTime = null;
+                    requestAnimationFrame(animate);
+                } else if (config.callback) {
+                    config.callback();
                 }
             }
         }
         
-        if (config.end && progress === 1) {
-            applyProperties(element, config.end);
-        }
-        
-        if (progress < 1) {
+        setTimeout(function() {
             requestAnimationFrame(animate);
-        } else {
-            currentLoop++;
-            if (loop === -1 || currentLoop < loop) {
-                startTime = null;
-                requestAnimationFrame(animate);
-            } else if (config.callback) {
-                config.callback();
-            }
-        }
-    }
-    
-    setTimeout(function() {
-        requestAnimationFrame(animate);
-    }, delay);
+        }, delay);
+    };
 }
 )";
 }

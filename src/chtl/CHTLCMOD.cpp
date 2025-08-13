@@ -52,6 +52,87 @@ bool CMODExportTable::hasExport(const std::string& type, const std::string& name
         [&name](const CMODExportItem& item) { return item.name == name; });
 }
 
+bool CMODExportTable::isExported(const std::string& type, const std::string& category, const std::string& name) const {
+    // 如果不是显式模式，默认全部导出
+    if (!isExplicit) {
+        return true;
+    }
+    
+    // 在显式模式下，只导出明确列出的项
+    const auto& items = (type == "@Style") ? styles : 
+                       (type == "@Element") ? elements : variables;
+    
+    return std::any_of(items.begin(), items.end(),
+        [&](const CMODExportItem& item) { 
+            return item.name == name && 
+                   (category.empty() || item.category == category);
+        });
+}
+
+CMODExportTable CMODExportTable::parse(const std::string& exportBlock) {
+    CMODExportTable table;
+    
+    // 检查是否有[Export]块
+    std::regex exportRegex(R"(\[Export\]\s*\{([^}]*)\})");
+    std::smatch exportMatch;
+    
+    if (!std::regex_search(exportBlock, exportMatch, exportRegex)) {
+        // 没有显式导出表，使用默认（导出所有）
+        table.isExplicit = false;
+        return table;
+    }
+    
+    table.isExplicit = true;
+    std::string content = exportMatch[1];
+    
+    // 解析@Style导出
+    std::regex styleRegex(R"(@Style\s+([^;]+);)");
+    std::smatch styleMatch;
+    if (std::regex_search(content, styleMatch, styleRegex)) {
+        std::string styleList = styleMatch[1];
+        std::regex itemRegex(R"((\w+))");
+        std::sregex_iterator it(styleList.begin(), styleList.end(), itemRegex);
+        std::sregex_iterator end;
+        
+        while (it != end) {
+            table.addExport("@Style", "", (*it)[1]);
+            ++it;
+        }
+    }
+    
+    // 解析@Element导出
+    std::regex elementRegex(R"(@Element\s+([^;]+);)");
+    std::smatch elementMatch;
+    if (std::regex_search(content, elementMatch, elementRegex)) {
+        std::string elementList = elementMatch[1];
+        std::regex itemRegex(R"((\w+))");
+        std::sregex_iterator it(elementList.begin(), elementList.end(), itemRegex);
+        std::sregex_iterator end;
+        
+        while (it != end) {
+            table.addExport("@Element", "", (*it)[1]);
+            ++it;
+        }
+    }
+    
+    // 解析@Var导出
+    std::regex varRegex(R"(@Var\s+([^;]+);)");
+    std::smatch varMatch;
+    if (std::regex_search(content, varMatch, varRegex)) {
+        std::string varList = varMatch[1];
+        std::regex itemRegex(R"((\w+))");
+        std::sregex_iterator it(varList.begin(), varList.end(), itemRegex);
+        std::sregex_iterator end;
+        
+        while (it != end) {
+            table.addExport("@Var", "", (*it)[1]);
+            ++it;
+        }
+    }
+    
+    return table;
+}
+
 std::string CMODExportTable::toString() const {
     std::stringstream ss;
     ss << "[Export]\n{\n";
@@ -201,7 +282,29 @@ bool CMODModule::loadInfo(const fs::path& infoFile) {
         }
     }
     
+    // 加载导出表
+    exportTable = CMODExportTable::parse(content);
+    
     return info.isValid();
+}
+
+bool CMODModule::loadExportTable(const fs::path& infoFile) {
+    // 如果infoFile是路径，读取内容
+    std::string content;
+    if (fs::is_regular_file(infoFile)) {
+        std::ifstream file(infoFile);
+        if (file.is_open()) {
+            content = std::string((std::istreambuf_iterator<char>(file)),
+                                std::istreambuf_iterator<char>());
+            file.close();
+        }
+    } else {
+        // 假设infoFile实际上是内容字符串
+        content = infoFile.string();
+    }
+    
+    exportTable = CMODExportTable::parse(content);
+    return true;
 }
 
 void CMODModule::scanSourceFiles() {
@@ -229,12 +332,60 @@ void CMODModule::scanSourceFiles() {
     }
 }
 
-bool CMODModule::generateExportTable() {
-    // TODO: 扫描所有源文件，提取导出的模板和自定义
+void CMODModule::scanDefinitions() {
+    allDefinitions.clear();
+    
     for (const auto& srcFile : sourceFiles) {
-        // 解析文件内容，查找[Template]和[Custom]定义
-        // 并添加到exportTable
+        std::ifstream file(srcFile);
+        if (!file.is_open()) continue;
+        
+        std::string content((std::istreambuf_iterator<char>(file)),
+                           std::istreambuf_iterator<char>());
+        file.close();
+        
+        // 扫描[Template]定义
+        std::regex templateRegex(R"(\[Template\]\s*@(Style|Element|Var)\s+(\w+))");
+        std::sregex_iterator templateIt(content.begin(), content.end(), templateRegex);
+        std::sregex_iterator end;
+        
+        while (templateIt != end) {
+            CMODExportItem item;
+            item.type = "@" + std::string((*templateIt)[1]);
+            item.category = "[Template]";
+            item.name = (*templateIt)[2];
+            allDefinitions.push_back(item);
+            ++templateIt;
+        }
+        
+        // 扫描[Custom]定义
+        std::regex customRegex(R"(\[Custom\]\s*@(Style|Element|Var)\s+(\w+))");
+        std::sregex_iterator customIt(content.begin(), content.end(), customRegex);
+        
+        while (customIt != end) {
+            CMODExportItem item;
+            item.type = "@" + std::string((*customIt)[1]);
+            item.category = "[Custom]";
+            item.name = (*customIt)[2];
+            allDefinitions.push_back(item);
+            ++customIt;
+        }
     }
+}
+
+bool CMODModule::generateExportTable() {
+    // 如果已经有显式导出表，不需要生成
+    if (exportTable.isExplicit) {
+        return true;
+    }
+    
+    // 扫描所有定义
+    scanDefinitions();
+    
+    // 将所有定义添加到导出表（自动模式）
+    for (const auto& def : allDefinitions) {
+        exportTable.addExport(def.type, def.category, def.name);
+    }
+    
     return true;
 }
 
@@ -289,6 +440,10 @@ bool CMODModule::checkCHTLVersion(const std::string& currentVersion) const {
     }
     
     return true;
+}
+
+bool CMODModule::canExport(const std::string& type, const std::string& category, const std::string& name) const {
+    return exportTable.isExported(type, category, name);
 }
 
 // CMODManager 实现
@@ -597,8 +752,20 @@ bool CMODProcessor::processSubModuleImport(const std::string& fullModuleName) {
 bool CMODProcessor::importModuleContent(std::shared_ptr<CMODModule> module) {
     // 导入所有源文件
     for (const auto& srcFile : module->getSourceFiles()) {
-        // 使用ImportManager处理每个文件
+        // 读取文件内容
+        std::ifstream file(srcFile);
+        if (!file.is_open()) continue;
+        
+        std::string content((std::istreambuf_iterator<char>(file)),
+                           std::istreambuf_iterator<char>());
+        file.close();
+        
+        // 过滤内容：只导入允许导出的项
+        std::string filteredContent = filterExportedContent(module, content);
+        
+        // 使用过滤后的内容
         // generator.processImportStatement("@Chtl from " + srcFile.string());
+        // 实际应该处理filteredContent
     }
     
     // 导入所有子模块
@@ -610,6 +777,74 @@ bool CMODProcessor::importModuleContent(std::shared_ptr<CMODModule> module) {
     }
     
     return true;
+}
+
+std::string CMODProcessor::filterExportedContent(std::shared_ptr<CMODModule> module, 
+                                                const std::string& content) {
+    if (!module->getExportTable().isExplicit) {
+        // 非显式模式，返回全部内容
+        return content;
+    }
+    
+    // 显式模式，过滤内容
+    std::stringstream filtered;
+    std::istringstream stream(content);
+    std::string line;
+    bool inDefinition = false;
+    std::string currentType, currentCategory, currentName;
+    std::stringstream currentBlock;
+    
+    while (std::getline(stream, line)) {
+        // 检查是否是定义开始
+        std::regex defRegex(R"(\[(Template|Custom)\]\s*@(Style|Element|Var)\s+(\w+))");
+        std::smatch match;
+        
+        if (std::regex_search(line, match, defRegex)) {
+            // 如果之前在定义中，先检查是否应该包含
+            if (inDefinition) {
+                if (module->canExport(currentType, currentCategory, currentName)) {
+                    filtered << currentBlock.str();
+                }
+                currentBlock.str("");
+            }
+            
+            // 开始新定义
+            inDefinition = true;
+            currentCategory = "[" + std::string(match[1]) + "]";
+            currentType = "@" + std::string(match[2]);
+            currentName = match[3];
+        }
+        
+        if (inDefinition) {
+            currentBlock << line << "\n";
+            
+            // 检查是否是定义结束（简单检查大括号匹配）
+            static int braceCount = 0;
+            for (char c : line) {
+                if (c == '{') braceCount++;
+                else if (c == '}') braceCount--;
+            }
+            
+            if (braceCount == 0 && line.find('}') != std::string::npos) {
+                // 定义结束
+                if (module->canExport(currentType, currentCategory, currentName)) {
+                    filtered << currentBlock.str();
+                }
+                currentBlock.str("");
+                inDefinition = false;
+            }
+        } else {
+            // 不在定义中，直接包含（如命名空间等）
+            filtered << line << "\n";
+        }
+    }
+    
+    // 处理最后一个定义
+    if (inDefinition && module->canExport(currentType, currentCategory, currentName)) {
+        filtered << currentBlock.str();
+    }
+    
+    return filtered.str();
 }
 
 bool CMODProcessor::processDependencies(const CMODModule& module) {

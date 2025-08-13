@@ -1,8 +1,0 @@
-name = Chtl.Core
-version = 1.0.0
-author = CHTL Team
-description = CHTL Core Standard Library
-type = cmod
-dependencies = 
-exports = Template.*, Custom.*, Import.*, Namespace.*
-min_chtl_version = 1.0.0

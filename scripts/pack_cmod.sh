@@ -41,16 +41,18 @@ CMOD模块打包脚本
 
 示例:
     $0 module/Chtholly                     # 打包Chtholly模块
-    $0 -o dist MyModule                    # 打包到dist目录
+    $0 -o dist module/Chtl.Core            # 打包到dist目录
     $0 -n CustomName module/MyModule       # 使用自定义名称
 
 CMOD标准结构:
     ModuleName/
     ├── src/                  # 源代码目录
-    │   ├── ModuleName.chtl   # 主模块文件(可选)
+    │   ├── ModuleName.chtl   # 主模块文件
     │   └── *.chtl            # 其他CHTL文件
-    └── info/                 # 信息目录
-        └── ModuleName.chtl   # 模块信息文件(必需)
+    └── info/                 # 模块信息目录
+        └── ModuleName.chtl   # 模块信息文件
+
+模块文件夹、主模块文件、信息文件必须同名
 EOF
 }
 
@@ -74,12 +76,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         *)
-            if [ -z "$MODULE_PATH" ]; then
-                MODULE_PATH="$1"
-            else
-                print_error "多余的参数: $1"
-                exit 1
-            fi
+            MODULE_PATH="$1"
             shift
             ;;
     esac
@@ -87,203 +84,157 @@ done
 
 # 检查参数
 if [ -z "$MODULE_PATH" ]; then
-    print_error "请指定模块路径"
+    print_error "错误: 未指定模块路径"
     show_help
     exit 1
 fi
 
-# 转换为绝对路径
-if [[ ! "$MODULE_PATH" = /* ]]; then
-    MODULE_PATH="${PROJECT_ROOT}/${MODULE_PATH}"
+# 检查模块路径
+if [ ! -d "$MODULE_PATH" ]; then
+    print_error "错误: 模块路径不存在: $MODULE_PATH"
+    exit 1
 fi
 
-# 验证模块结构
-validate_module() {
-    local module_path="$1"
-    
-    if [ ! -d "$module_path" ]; then
-        print_error "模块路径不存在: $module_path"
-        return 1
-    fi
-    
-    if [ ! -d "$module_path/src" ]; then
-        print_error "缺少src目录: $module_path/src"
-        return 1
-    fi
-    
-    if [ ! -d "$module_path/info" ]; then
-        print_error "缺少info目录: $module_path/info"
-        return 1
-    fi
-    
-    # 获取模块名称
-    if [ -z "$MODULE_NAME" ]; then
-        MODULE_NAME=$(basename "$module_path")
-    fi
-    
-    # 检查info文件
-    local info_file="$module_path/info/${MODULE_NAME}.chtl"
-    if [ ! -f "$info_file" ]; then
-        print_error "缺少模块信息文件: $info_file"
-        return 1
-    fi
-    
-    # 检查是否有CHTL文件
-    local chtl_count=$(find "$module_path/src" -name "*.chtl" | wc -l)
-    if [ "$chtl_count" -eq 0 ]; then
-        print_error "src目录中没有找到.chtl文件"
-        return 1
-    fi
-    
-    # 验证info文件格式
-    if ! grep -q "\[Info\]" "$info_file"; then
-        print_error "模块信息文件缺少[Info]块"
-        return 1
-    fi
-    
-    return 0
-}
+# 获取模块名称
+if [ -z "$MODULE_NAME" ]; then
+    MODULE_NAME=$(basename "$MODULE_PATH")
+fi
 
-# 生成导出表
-generate_export_table() {
-    local module_path="$1"
-    local export_content=""
-    
-    print_info "扫描模块定义..."
-    
-    # 扫描所有CHTL文件
-    while IFS= read -r file; do
-        [ "$VERBOSE" = true ] && print_info "  扫描: $file"
-        
-        # 提取模板定义
-        grep -E "^\[Template\]\s*@(Style|Element|Var)\s+\w+" "$file" | while read -r line; do
-            if [[ $line =~ \[Template\][[:space:]]*@(Style|Element|Var)[[:space:]]+([[:alnum:]_]+) ]]; then
-                export_content="${export_content}    @${BASH_REMATCH[1]} ${BASH_REMATCH[2]};\n"
-                [ "$VERBOSE" = true ] && print_info "    找到模板: @${BASH_REMATCH[1]} ${BASH_REMATCH[2]}"
-            fi
-        done
-        
-        # 提取自定义定义
-        grep -E "^\[Custom\]\s*@(Style|Element|Var)\s+\w+" "$file" | while read -r line; do
-            if [[ $line =~ \[Custom\][[:space:]]*@(Style|Element|Var)[[:space:]]+([[:alnum:]_]+) ]]; then
-                export_content="${export_content}    @${BASH_REMATCH[1]} ${BASH_REMATCH[2]};\n"
-                [ "$VERBOSE" = true ] && print_info "    找到自定义: @${BASH_REMATCH[1]} ${BASH_REMATCH[2]}"
-            fi
-        done
-    done < <(find "$module_path/src" -name "*.chtl")
-    
-    echo -e "$export_content"
-}
+# 从info文件中读取实际的模块名
+INFO_FILE="$MODULE_PATH/info/$MODULE_NAME.chtl"
+if [ -f "$INFO_FILE" ]; then
+    # 尝试从[Info]块中提取name字段
+    ACTUAL_NAME=$(grep -A20 "^\[Info\]" "$INFO_FILE" | grep -E "name\s*=\s*" | head -1 | sed -E 's/.*name\s*=\s*"([^"]+)".*/\1/' | tr -d '\r')
+    if [ ! -z "$ACTUAL_NAME" ]; then
+        MODULE_NAME="$ACTUAL_NAME"
+        print_info "从info文件读取模块名: $MODULE_NAME"
+    fi
+fi
 
-# 创建tar归档
-create_tar_archive() {
-    local module_path="$1"
-    local output_file="$2"
-    local module_name=$(basename "$module_path")
-    
-    print_info "创建tar归档..."
-    
-    # 创建临时目录
-    local temp_dir=$(mktemp -d)
-    trap "rm -rf $temp_dir" EXIT
-    
-    # 复制模块文件
-    cp -r "$module_path" "$temp_dir/"
-    
-    # 更新导出表
-    local info_file="$temp_dir/$module_name/info/${MODULE_NAME}.chtl"
-    if grep -q "\[Export\]" "$info_file"; then
-        print_info "更新现有导出表..."
-        # 备份原文件
-        cp "$info_file" "${info_file}.bak"
+# 检查CMOD标准结构
+print_info "检查CMOD标准结构..."
+
+# 检查src目录
+if [ ! -d "$MODULE_PATH/src" ]; then
+    print_error "错误: 缺少src目录"
+    exit 1
+fi
+
+# 检查info目录
+if [ ! -d "$MODULE_PATH/info" ]; then
+    print_error "错误: 缺少info目录"
+    exit 1
+fi
+
+# 检查主模块文件（如果没有子模块则必须存在）
+MAIN_MODULE_FILE="$MODULE_PATH/src/$MODULE_NAME.chtl"
+HAS_SUBMODULES=false
+
+# 检查是否有子模块
+for dir in "$MODULE_PATH/src"/*; do
+    if [ -d "$dir" ] && [ -f "$dir/info/"$(basename "$dir")".chtl" ]; then
+        HAS_SUBMODULES=true
+        break
+    fi
+done
+
+if [ ! -f "$MAIN_MODULE_FILE" ] && [ "$HAS_SUBMODULES" = false ]; then
+    print_error "错误: 缺少主模块文件: $MAIN_MODULE_FILE"
+    exit 1
+fi
+
+# 检查模块信息文件
+if [ ! -f "$INFO_FILE" ]; then
+    print_error "错误: 缺少模块信息文件: $INFO_FILE"
+    exit 1
+fi
+
+# 创建输出目录
+mkdir -p "$OUTPUT_DIR"
+
+# 输出文件名
+OUTPUT_FILE="$OUTPUT_DIR/$MODULE_NAME.cmod"
+
+# 创建临时目录
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
+print_info "打包CMOD模块: $MODULE_NAME"
+print_info "模块路径: $MODULE_PATH"
+print_info "输出文件: $OUTPUT_FILE"
+
+# 收集所有需要打包的文件
+FILES_LIST="$TEMP_DIR/files.list"
+touch "$FILES_LIST"
+
+# 添加src目录下的所有文件（递归）
+print_info "收集源文件..."
+cd "$MODULE_PATH"
+find src -type f -name "*.chtl" | sort >> "$FILES_LIST"
+
+# 添加info目录下的所有文件
+print_info "收集信息文件..."
+find info -type f -name "*.chtl" | sort >> "$FILES_LIST"
+
+# 显示文件列表
+if [ "$VERBOSE" = true ]; then
+    print_info "文件列表:"
+    cat "$FILES_LIST" | while read file; do
+        echo "  - $file"
+    done
+fi
+
+# 创建CMOD归档
+print_info "创建CMOD归档..."
+
+# 写入魔术字符串
+echo "CHTL_CMOD_ARCHIVE_V1" > "$OUTPUT_FILE"
+
+# 写入模块信息
+echo "MODULE:$MODULE_NAME" >> "$OUTPUT_FILE"
+
+# 写入文件数量
+FILE_COUNT=$(wc -l < "$FILES_LIST")
+echo "FILES:$FILE_COUNT" >> "$OUTPUT_FILE"
+
+# 写入每个文件
+while IFS= read -r file; do
+    if [ -f "$file" ]; then
+        # 文件大小
+        FILE_SIZE=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
         
-        # 生成新的导出内容
-        local export_content=$(generate_export_table "$module_path")
+        # 写入文件头
+        echo "FILE:$file:$FILE_SIZE" >> "$OUTPUT_FILE"
         
-        # 更新导出表
-        awk -v exports="$export_content" '
-            /\[Export\]/ { 
-                print $0
-                print "{"
-                print exports
-                print "}"
-                in_export = 1
-                next
-            }
-            in_export && /^}/ { in_export = 0; next }
-            !in_export { print }
-        ' "${info_file}.bak" > "$info_file"
+        # 写入文件内容
+        cat "$file" >> "$OUTPUT_FILE"
+        
+        # 写入分隔符
+        echo "" >> "$OUTPUT_FILE"
+        
+        if [ "$VERBOSE" = true ]; then
+            print_info "  添加: $file ($FILE_SIZE bytes)"
+        fi
+    fi
+done < "$FILES_LIST"
+
+# 写入结束标记
+echo "END_ARCHIVE" >> "$OUTPUT_FILE"
+
+# 显示结果
+ARCHIVE_SIZE=$(stat -f%z "$OUTPUT_FILE" 2>/dev/null || stat -c%s "$OUTPUT_FILE")
+print_success "CMOD打包完成!"
+print_success "输出文件: $OUTPUT_FILE"
+print_success "文件大小: $ARCHIVE_SIZE bytes"
+print_success "包含文件: $FILE_COUNT"
+
+# 验证归档
+if [ "$VERBOSE" = true ]; then
+    print_info "验证归档..."
+    if grep -q "^CHTL_CMOD_ARCHIVE_V1" "$OUTPUT_FILE" && grep -q "^END_ARCHIVE" "$OUTPUT_FILE"; then
+        print_success "归档验证通过"
     else
-        print_info "添加导出表..."
-        local export_content=$(generate_export_table "$module_path")
-        echo -e "\n[Export]\n{\n${export_content}}" >> "$info_file"
-    fi
-    
-    # 创建tar文件
-    cd "$temp_dir"
-    if command -v tar >/dev/null 2>&1; then
-        tar -czf "$output_file" "$module_name"
-        print_success "使用tar创建归档"
-    else
-        print_warning "tar命令不可用，使用简单归档格式"
-        # 简单的文本归档格式
-        {
-            echo "CMOD_ARCHIVE_V1"
-            find "$module_name" -type f | while read -r file; do
-                echo "FILE:$file"
-                echo "SIZE:$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo 0)"
-                cat "$file"
-                echo "END_FILE"
-            done
-            echo "END_ARCHIVE"
-        } > "$output_file"
-    fi
-}
-
-# 主函数
-main() {
-    print_info "CMOD模块打包工具"
-    print_info "模块路径: $MODULE_PATH"
-    
-    # 验证模块
-    if ! validate_module "$MODULE_PATH"; then
+        print_error "归档验证失败"
         exit 1
     fi
-    
-    print_success "模块验证通过"
-    print_info "模块名称: $MODULE_NAME"
-    
-    # 创建输出目录
-    mkdir -p "$OUTPUT_DIR"
-    
-    # 设置输出文件名
-    local output_file="${OUTPUT_DIR}/${MODULE_NAME}.cmod"
-    
-    # 打包模块
-    create_tar_archive "$MODULE_PATH" "$output_file"
-    
-    # 显示结果
-    if [ -f "$output_file" ]; then
-        local file_size=$(ls -lh "$output_file" | awk '{print $5}')
-        print_success "模块打包完成!"
-        print_info "输出文件: $output_file"
-        print_info "文件大小: $file_size"
-        
-        # 更新模块索引
-        local index_file="${OUTPUT_DIR}/modules.index"
-        echo "[CMOD] $MODULE_NAME - $(date '+%Y-%m-%d %H:%M:%S')" >> "$index_file"
-        
-        [ "$VERBOSE" = true ] && {
-            print_info "模块内容:"
-            if [[ "$output_file" == *.tar.gz ]] || [[ "$output_file" == *.tgz ]]; then
-                tar -tzf "$output_file" | head -20
-            fi
-        }
-    else
-        print_error "打包失败"
-        exit 1
-    fi
-}
-
-# 执行主函数
-main
+fi

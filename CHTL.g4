@@ -210,6 +210,17 @@ originContent
 // HTML元素
 htmlElement
     : elementName elementIndexAccess? elementBody
+    | globalStyleElement  // 添加全局样式元素
+    ;
+
+// 全局样式元素（用于head中的style标签）
+globalStyleElement
+    : 'style' '{' globalStyleContent '}'
+    ;
+
+// 全局样式内容（原生CSS）
+globalStyleContent
+    : (~'}')*  // 匹配任何非}字符，保留原始CSS内容
     ;
 
 elementName

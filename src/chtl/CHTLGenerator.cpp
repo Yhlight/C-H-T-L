@@ -5,37 +5,28 @@
 namespace chtl {
 
 // CHTLGenerator 实现
-CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOptions& opts)
-    : context(ctx), options(opts), indentLevel(0), autoClassCounter(0), autoIdCounter(0) {
-    // 创建模板管理器
+CHTLGenerator::CHTLGenerator(std::shared_ptr<CHTLContext> ctx, const GeneratorOptions& opts) 
+    : context(ctx), options(opts) {
+    // 初始化管理器
     templateManager = std::make_shared<TemplateManager>(ctx);
-    // 创建自定义管理器
-    customManager = std::make_shared<CustomManager>(ctx, templateManager);
-    // 创建原始嵌入管理器
+    customManager = std::make_shared<CustomManager>(ctx);
     originManager = std::make_shared<OriginManager>(ctx);
-    // 创建导入管理器
     importManager = std::make_shared<ImportManager>(ctx);
-    // 创建命名空间管理器
     namespaceManager = std::make_shared<NamespaceManager>(ctx);
-    // 创建约束管理器
-    constraintManager = std::make_shared<ConstraintManager>(ctx);
-    // 创建脚本管理器
+    constraintManager = std::make_shared<ConstraintManager>(ctx, namespaceManager);
     scriptManager = std::make_shared<ScriptManager>(ctx);
-    // 创建CMOD管理器
     cmodManager = std::make_shared<CMODManager>(ctx);
+    cjmodManager = std::make_shared<CJMODManager>(ctx);
+    cssProcessor = std::make_shared<CHTLCSSProcessor>(ctx);  // 初始化CSS处理器
     
-    // 设置管理器之间的引用
-    importManager->setTemplateManager(templateManager);
-    importManager->setCustomManager(customManager);
-    importManager->setOriginManager(originManager);
+    // 设置交叉引用
+    importManager->setTemplateManager(templateManager.get());
+    importManager->setCustomManager(customManager.get());
+    importManager->setOriginManager(originManager.get());
+    importManager->setNamespaceManager(namespaceManager.get());
     importManager->setCMODManager(cmodManager);
     
-    namespaceManager->setTemplateManager(templateManager);
-    namespaceManager->setCustomManager(customManager);
-    
-    constraintManager->setNamespaceManager(namespaceManager);
-    
-    cmodManager->setImportManager(importManager);
+    scriptManager->setCJMODManager(cjmodManager.get());
 }
 
 std::string CHTLGenerator::indent() const {
@@ -51,21 +42,29 @@ void CHTLGenerator::generateElement(const std::string& tagName,
                                    const std::map<std::string, std::string>& attributes) {
     // 检查约束
     if (constraintManager) {
-        ConstraintChecker checker(*constraintManager);
-        checker.setCurrentElement(ConstraintHelper::buildElementPath(elementStack));
-        
-        if (!checker.canUseHtmlElement(tagName)) {
-            // 约束违反已经在checkConstraint中报告
+        std::string error;
+        if (!constraintManager->checkConstraint(ConstraintChecker::canUseHtmlElement, tagName, error)) {
+            context->reportError(error);
             return;
         }
+    }
+    
+    // 检查是否进入head元素
+    if (tagName == "head") {
+        inHeadElement = true;
     }
     
     // 更新元素栈
     elementStack.push_back(tagName);
     
-    // 进入新的约束作用域
+    // 清空当前元素上下文
+    currentElement = ElementContext();
+    currentElement.tagName = tagName;
+    currentElement.attributes = attributes;
+    
+    // 进入约束作用域
     if (constraintManager) {
-        constraintManager->enterScope(tagName);
+        constraintManager->enterScope(ConstraintHelper::buildElementPath(elementStack));
     }
     
     // 生成开始标签
@@ -98,13 +97,20 @@ void CHTLGenerator::closeElement() {
         return;
     }
     
+    // 获取当前元素名称
+    std::string tagName = elementStack.back();
+    
+    // 检查是否离开head元素
+    if (tagName == "head") {
+        inHeadElement = false;
+    }
+    
     // 减少缩进
     if (indentLevel > 0) {
         indentLevel--;
     }
     
     // 生成结束标签
-    std::string tagName = elementStack.back();
     htmlOutput << indent() << "</" << tagName << ">" << std::endl;
     
     // 退出约束作用域
@@ -949,6 +955,40 @@ void CHTLGenerator::processLocalScript(const std::string& script) {
     // 创建脚本处理器
     ScriptProcessor processor(*scriptManager, *this);
     processor.processScriptBlock(script, currentScope);
+}
+
+void CHTLGenerator::processGlobalStyleBlock(const std::string& cssContent) {
+    if (!cssProcessor) {
+        context->reportError("CSS processor not initialized");
+        return;
+    }
+    
+    // 添加到CSS处理器
+    cssProcessor->addGlobalStyleBlock(cssContent);
+    
+    // 如果在head元素中，生成style标签
+    if (inHeadElement) {
+        htmlOutput << "<style>\n";
+        // CSS内容将在最后统一处理和优化
+        htmlOutput << "/* Global CSS will be inserted here */\n";
+        htmlOutput << "</style>\n";
+    }
+}
+
+std::string CHTLGenerator::getCSS() const {
+    if (!cssProcessor) {
+        return cssOutput.str();
+    }
+    
+    // 获取优化后的最终CSS
+    std::string finalCSS = cssProcessor->generateFinalCSS();
+    
+    // 如果有额外的CSS输出，合并它们
+    if (!cssOutput.str().empty()) {
+        return finalCSS + "\n" + cssOutput.str();
+    }
+    
+    return finalCSS;
 }
 
 } // namespace chtl

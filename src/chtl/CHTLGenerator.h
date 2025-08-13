@@ -16,6 +16,7 @@
 #include "CHTLConstraint.h" // 添加约束头文件
 #include "CHTLScript.h"    // 添加脚本头文件
 #include "CHTLCMOD.h"      // 添加CMOD头文件
+#include "CHTLCSSCompiler.h"
 
 namespace chtl {
 
@@ -67,6 +68,9 @@ private:
     // CMOD管理器
     std::shared_ptr<CMODManager> cmodManager;
     
+    // CSS处理器
+    std::shared_ptr<CHTLCSSProcessor> cssProcessor;
+    
     // 输出流
     std::stringstream htmlOutput;
     std::stringstream cssOutput;
@@ -76,6 +80,7 @@ private:
     int indentLevel;
     std::vector<std::string> elementStack;
     ElementContext currentElement;
+    bool inHeadElement = false;  // 跟踪是否在head元素中
     
     // 样式管理
     std::vector<StyleRule> globalStyles;
@@ -141,6 +146,10 @@ public:
     // CMOD支持
     void setCMODManager(std::shared_ptr<CMODManager> mgr) { cmodManager = mgr; }
     std::shared_ptr<CMODManager> getCMODManager() const { return cmodManager; }
+    
+    // CSS处理器
+    void setCSSProcessor(std::shared_ptr<CHTLCSSProcessor> processor) { cssProcessor = processor; }
+    std::shared_ptr<CHTLCSSProcessor> getCSSProcessor() const { return cssProcessor; }
     
     // 模板定义
     void beginTemplateDefinition(const std::string& type, const std::string& name);
@@ -248,6 +257,9 @@ public:
     void endScriptBlock();
     void addScriptContent(const std::string& content);
     void processLocalScript(const std::string& script);
+
+    // 处理全局样式块
+    void processGlobalStyleBlock(const std::string& cssContent);
 };
 
 // 字面量处理器

@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
         scanner::ScannerParserIntegration integration(context);
         integration.setConfigurationEnabled(true);
         
-        auto parseResult = integration.parse(input, configFile);
+        auto parseResult = integration.parse(content, "");  // 使用content而不是input
         
         if (!parseResult.success) {
             std::cerr << "Parse error: " << parseResult.errorMessage << std::endl;
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
         }
         
         // 使用解析树生成输出
-        CHTLTreeVisitor visitor(context);
+        chtl::CHTLTreeVisitor visitor(context);
         if (parseResult.chtlTree) {
             visitor.visit(parseResult.chtlTree);
         }

@@ -153,17 +153,6 @@ file(GLOB JS_COMPILER_SOURCES
 
 # ===== 主程序 =====
 set(CHTL_MAIN_SOURCES
-    src/chtl/CHTL.cpp
-    src/chtl/CHTLCompiler.cpp
-    src/chtl/CHTLContext.cpp
-    src/chtl/CHTLImport.cpp
-    src/chtl/CHTLNamespace.cpp
-    src/chtl/CHTLTemplate.cpp
-    src/chtl/CHTLCustom.cpp
-    src/chtl/CHTLOrigin.cpp
-    src/chtl/CHTLConstraint.cpp
-    src/chtl/CHTLCMOD.cpp
-    src/chtl/CHTLCJMOD.cpp
     src/main.cpp
 )
 

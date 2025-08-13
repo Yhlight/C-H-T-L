@@ -10617,7 +10617,7 @@ std::vector<std::string> CHTLJSParser::_tokenNames;
 
 CHTLJSParser::Initializer::Initializer() {
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
-		std::string name = _vocabulary.getLiteralName(i);
+		                std::string name = std::string(_vocabulary.getLiteralName(i));
 		if (name.empty()) {
 			name = _vocabulary.getSymbolicName(i);
 		}
@@ -11400,7 +11400,9 @@ CHTLJSParser::Initializer::Initializer() {
 
 
   atn::ATNDeserializer deserializer;
-  _atn = deserializer.deserialize(_serializedATN);
+  auto atn_ptr = deserializer.deserialize(antlr4::atn::SerializedATNView(reinterpret_cast<const int32_t*>(_serializedATN.data()), _serializedATN.size()));
+  // 手动复制ATN数据到静态成员
+  _atn = *atn_ptr;
 
   size_t count = _atn.getNumberOfDecisions();
   _decisionToDFA.reserve(count);

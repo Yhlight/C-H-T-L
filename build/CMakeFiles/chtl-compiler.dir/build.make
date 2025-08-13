@@ -184,174 +184,6 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/src/main.cpp -o CMakeFiles/chtl-compiler.dir/src/main.cpp.s
 
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o: /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o -c /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp > CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o: /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o -c /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp > CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o: /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o -c /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp > CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o: /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o -c /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp > CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o: /workspace/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o -c /workspace/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp > CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o: /workspace/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o -c /workspace/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp > CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o: /workspace/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o -c /workspace/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp > CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o: /workspace/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o -c /workspace/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp > CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o: /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o -c /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp > CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o: /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o -c /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp > CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o: /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o -c /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp > CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.s
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/flags.make
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o: /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o -MF CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o.d -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o -c /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp > CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.i
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp -o CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.s
-
 # Object files for target chtl-compiler
 chtl__compiler_OBJECTS = \
 "CMakeFiles/chtl-compiler.dir/src/scanner/CodeScanner.cpp.o" \
@@ -361,19 +193,7 @@ chtl__compiler_OBJECTS = \
 "CMakeFiles/chtl-compiler.dir/src/css/CSSCompiler.cpp.o" \
 "CMakeFiles/chtl-compiler.dir/src/js/JavaScriptCompiler.cpp.o" \
 "CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/src/main.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o" \
-"CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o"
+"CMakeFiles/chtl-compiler.dir/src/main.cpp.o"
 
 # External object files for target chtl-compiler
 chtl__compiler_EXTERNAL_OBJECTS =
@@ -386,22 +206,10 @@ chtl-compiler: CMakeFiles/chtl-compiler.dir/src/css/CSSCompiler.cpp.o
 chtl-compiler: CMakeFiles/chtl-compiler.dir/src/js/JavaScriptCompiler.cpp.o
 chtl-compiler: CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o
 chtl-compiler: CMakeFiles/chtl-compiler.dir/src/main.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptParser.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptListener.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o
-chtl-compiler: CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o
 chtl-compiler: CMakeFiles/chtl-compiler.dir/build.make
 chtl-compiler: CMakeFiles/chtl-compiler.dir/compiler_depend.ts
 chtl-compiler: CMakeFiles/chtl-compiler.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX executable chtl-compiler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable chtl-compiler"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/chtl-compiler.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

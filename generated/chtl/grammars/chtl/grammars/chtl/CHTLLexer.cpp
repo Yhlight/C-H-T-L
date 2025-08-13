@@ -40,8 +40,8 @@ dfa::Vocabulary& CHTLLexer::getVocabulary() const {
   return _vocabulary;
 }
 
-const std::vector<uint16_t> CHTLLexer::getSerializedATN() const {
-  return _serializedATN;
+antlr4::atn::SerializedATNView CHTLLexer::getSerializedATN() const {
+  return antlr4::atn::SerializedATNView(reinterpret_cast<const int32_t*>(_serializedATN.data()), _serializedATN.size());
 }
 
 const atn::ATN& CHTLLexer::getATN() const {
@@ -104,7 +104,7 @@ std::vector<std::string> CHTLLexer::_tokenNames;
 CHTLLexer::Initializer::Initializer() {
   // This code could be in a static initializer lambda, but VS doesn't allow access to private class members from there.
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
-		std::string name = _vocabulary.getLiteralName(i);
+		                std::string name = std::string(_vocabulary.getLiteralName(i));
 		if (name.empty()) {
 			name = _vocabulary.getSymbolicName(i);
 		}
@@ -459,7 +459,9 @@ CHTLLexer::Initializer::Initializer() {
 
 
   atn::ATNDeserializer deserializer;
-  _atn = deserializer.deserialize(_serializedATN);
+  auto atn_ptr = deserializer.deserialize(antlr4::atn::SerializedATNView(reinterpret_cast<const int32_t*>(_serializedATN.data()), _serializedATN.size()));
+  // 手动复制ATN数据到静态成员
+  _atn = *atn_ptr;
 
   size_t count = _atn.getNumberOfDecisions();
   _decisionToDFA.reserve(count);

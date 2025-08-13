@@ -62,7 +62,7 @@ stylesheet: (charset | importStatement | namespace | nestedStatement)*;
 
 charset: '@charset' STRING SEMICOLON;
 importStatement: '@import' importList SEMICOLON;
-importList: (STRING | url) (mediaQueryList | WS)*;
+importList: (STRING | url) (mediaQueryList)?;
 namespace: '@namespace' (prefix)? (STRING | url) SEMICOLON;
 prefix: IDENTIFIER;
 
@@ -177,6 +177,6 @@ featureType: ATKEYWORD;
 ATKEYWORD: '@' IDENTIFIER;
 featureValueDefinition: IDENTIFIER COLON NUMBER+ SEMICOLON;
 
-atRule: ATKEYWORD (ruleset | declarationList | mediaQueryList | mediaQuery | keyframesName | keyframesBlocks | fontFamilyNameList | featureValueBlock | supportsCondition | supportsConditionInParens | supportsDeclarationCondition | supportsFeatureType | supportsFeature | supportsFeatureName | supportsFeatureValue | documentFunction | url | urlPrefix | domain | regexp | expression | subexpression | LPAREN | RPAREN | LBRACE | RBRACE | LBRACKET | RBRACKET | SEMICOLON | COLON | COMMA | DOT | HASH | ASTERISK | GREATER | PLUS | TILDE | PIPE | CARET | DOLLAR | EQUALS | EXCLAMATION | PERCENT | SLASH | MINUS | QUESTION | IDENTIFIER | NUMBER | STRING | FUNCTION | PSEUDO_CLASS | PSEUDO_ELEMENT | MEDIA_KEYWORD | VALUE_KEYWORD | COLOR_KEYWORD | UNIT)+;
+atRule: ATKEYWORD (ruleset | declarationList | mediaQueryList | mediaQuery | keyframesName | keyframesBlocks | fontFamilyNameList | featureValueBlock | supportsCondition | supportsConditionInParens | supportsDeclarationCondition | supportsFeatureType | supportsFeature | supportsFeatureName | supportsFeatureValue | documentFunction | url | urlPrefix | domain | regexp | expression | subexpression | LPAREN | RPAREN | LBRACE | RBRACE | LBRACKET | RBRACKET | SEMICOLON | COLON | COMMA | DOT | HASH | ASTERISK | GREATER | PLUS | TILDE | PIPE | CARET | DOLLAR | EQUALS | EXCLAMATION | PERCENT | SLASH | MINUS | QUESTION | IDENTIFIER | NUMBER | STRING | FUNCTION | PSEUDO_CLASS | PSEUDO_ELEMENT | MEDIA_KEYWORD | VALUE_KEYWORD | COLOR_KEYWORD | UNIT)*;
 
 unknownDimension: NUMBER IDENTIFIER;

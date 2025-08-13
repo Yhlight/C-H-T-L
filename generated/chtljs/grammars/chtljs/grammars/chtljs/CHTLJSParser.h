@@ -22,7 +22,7 @@ public:
     NEW = 38, THIS = 39, SUPER = 40, CLASS = 41, EXTENDS = 42, STATIC = 43, 
     ASYNC = 44, AWAIT = 45, YIELD = 46, GET = 47, SET = 48, IMPORT = 49, 
     EXPORT = 50, FROM = 51, AS = 52, OF = 53, IN = 54, INSTANCEOF = 55, 
-    TYPEOF = 56, DELETE = 57, VOID = 58, WITH = 59, DEBUGGER = 60, NULL = 61, 
+    TYPEOF = 56, DELETE = 57, VOID = 58, WITH = 59, DEBUGGER = 60, NULL_TOKEN = 61, 
     TRUE = 62, FALSE = 63, NUMBER = 64, STRING = 65, REGEX = 66, REGEX_BODY = 67, 
     REGEX_FLAGS = 68, IDENTIFIER = 69, LBRACE = 70, RBRACE = 71, LPAREN = 72, 
     RPAREN = 73, LBRACKET = 74, RBRACKET = 75, SEMICOLON = 76, COLON = 77, 
@@ -82,7 +82,7 @@ public:
 
   virtual std::string getGrammarFileName() const override;
   virtual const antlr4::atn::ATN& getATN() const override { return _atn; };
-  virtual const std::vector<std::string>& getTokenNames() const override { return _tokenNames; }; // deprecated: use vocabulary instead.
+  virtual const std::vector<std::string>& getTokenNames() const { return _tokenNames; }; // deprecated: use vocabulary instead.
   virtual const std::vector<std::string>& getRuleNames() const override;
   virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
 

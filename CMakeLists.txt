@@ -38,24 +38,24 @@ set(HEADERS
 add_executable(chtl-compiler ${SOURCES} ${HEADERS})
 
 # 添加ANTLR4生成的源文件
-target_sources(chtl-compiler PRIVATE
-    generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp
-    generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp
-    generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp
-    generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp
-    # generated/css/grammars/css/grammars/css/CSSLexer.cpp
-    # generated/css/grammars/css/grammars/css/CSSParser.cpp
-    # generated/css/grammars/css/grammars/css/CSSListener.cpp
-    # generated/css/grammars/css/grammars/css/CSSBaseListener.cpp
-    generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp
-    generated/js/grammars/js/grammars/js/JavaScriptParser.cpp
-    generated/js/grammars/js/grammars/js/JavaScriptListener.cpp
-    generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp
-    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp
-    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp
-    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp
-    generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp
-)
+# target_sources(chtl-compiler PRIVATE
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp
+#     generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.cpp
+#     # generated/css/grammars/css/grammars/css/CSSLexer.cpp
+#     # generated/css/grammars/css/grammars/css/CSSParser.cpp
+#     # generated/css/grammars/css/grammars/css/CSSListener.cpp
+#     # generated/css/grammars/css/grammars/css/CSSBaseListener.cpp
+#     # generated/js/grammars/js/grammars/js/JavaScriptLexer.cpp
+#     # generated/js/grammars/js/grammars/js/JavaScriptParser.cpp
+#     # generated/js/grammars/js/grammars/js/JavaScriptListener.cpp
+#     # generated/js/grammars/js/grammars/js/JavaScriptBaseListener.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp
+#     generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp
+# )
 
 # 链接ANTLR4库
 target_link_libraries(chtl-compiler antlr4-runtime)

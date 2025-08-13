@@ -1,2 +1,2 @@
 @echo off
-python "%~dp0pack.py" %*
+call "%~dp0scripts\platform\windows\pack.bat" %*

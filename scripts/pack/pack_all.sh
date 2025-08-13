@@ -1,75 +1,95 @@
 #!/bin/bash
-# 统一打包脚本 - 自动检测并打包CMOD和CJMOD
+# CHTL Module Packing Script for Unix
 
-set -e
+# Script directory and root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$ROOT_DIR"
 
-# 颜色定义
+# Default values
+OUTPUT_DIR="output"
+PACK_TYPE="auto"
+PACK_ALL=0
+VERBOSE=0
+BUILD_TYPE="Release"
+MODULES=()
+SUCCESS_COUNT=0
+FAILED_COUNT=0
+FAILED_MODULES=()
+
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# 打印函数
-print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
-
-# 脚本目录
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-
-# 默认参数
-MODULE_PATH=""
-OUTPUT_DIR="${PROJECT_ROOT}/build/modules"
-VERBOSE=false
-BUILD_TYPE="Release"
-
-# 显示帮助
-show_help() {
-    cat << EOF
-统一打包脚本
-
-用法: $0 [选项] <模块路径>
-
-选项:
-    -h, --help              显示此帮助信息
-    -o, --output DIR        输出目录 [默认: ./build/modules]
-    -b, --build-type TYPE   构建类型 (Debug/Release) [默认: Release]
-    -v, --verbose           显示详细信息
-
-示例:
-    $0 module/Chtholly                 # 打包Chtholly模块（自动检测CMOD和CJMOD）
-    $0 -o dist module/MyModule         # 打包到dist目录
-    $0 --verbose module/*              # 打包所有模块
-
-支持的模块结构:
-    1. 纯CMOD模块
-    2. 纯CJMOD模块
-    3. 混合模块（同时包含CMOD和CJMOD）
-
-EOF
+# Print functions
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
 
-# 解析命令行参数
-MODULES=()
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Show help
+show_help() {
+    cat << EOF
+CHTL Module Packing Script for Unix
+
+Usage: $0 [modules...] [options]
+
+Options:
+  --help, -h          Show this help message
+  --output DIR, -o    Output directory [default: output]
+  --type TYPE, -t     Pack type (cmod, cjmod, auto) [default: auto]
+  --all               Pack all modules in the module directory
+  --build-type TYPE   Build type for CJMOD (Debug, Release) [default: Release]
+  --verbose, -v       Enable verbose output
+
+Examples:
+  $0 --all
+  $0 module/Chtholly
+  $0 module/MyModule --type cmod
+  $0 --all -o dist
+
+EOF
+    exit 0
+}
+
+# Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
             show_help
-            exit 0
             ;;
         -o|--output)
             OUTPUT_DIR="$2"
             shift 2
             ;;
-        -b|--build-type)
+        -t|--type)
+            PACK_TYPE="$2"
+            shift 2
+            ;;
+        --all)
+            PACK_ALL=1
+            shift
+            ;;
+        --build-type)
             BUILD_TYPE="$2"
             shift 2
             ;;
         -v|--verbose)
-            VERBOSE=true
+            VERBOSE=1
             shift
             ;;
         *)
@@ -79,170 +99,358 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# 检查参数
-if [ ${#MODULES[@]} -eq 0 ]; then
-    print_error "请指定至少一个模块路径"
+# Check if we have modules to pack
+if [ $PACK_ALL -eq 0 ] && [ ${#MODULES[@]} -eq 0 ]; then
+    print_error "No modules specified. Use --all or specify module paths."
     show_help
+fi
+
+# Create output directory
+mkdir -p "$OUTPUT_DIR"
+
+echo "========================================"
+echo "CHTL Module Packing"
+echo "========================================"
+echo "Output Directory: $OUTPUT_DIR"
+echo "Pack Type: $PACK_TYPE"
+echo "Build Type: $BUILD_TYPE"
+echo "========================================"
+echo
+
+# Check dependencies
+if ! command -v cmake &> /dev/null; then
+    print_error "CMake not found. Required for CJMOD compilation."
     exit 1
 fi
 
-# 检测模块类型
+# Function to detect module type
 detect_module_type() {
     local module_path="$1"
-    local has_cmod=false
-    local has_cjmod=false
     
-    # 检查CMOD
-    if [ -d "$module_path/CMOD" ]; then
-        for dir in "$module_path/CMOD"/*; do
-            if [ -d "$dir/src" ] && [ -d "$dir/info" ]; then
-                has_cmod=true
-                break
+    local has_cmod=0
+    local has_cjmod=0
+    
+    # Check for mixed module structure
+    [ -d "$module_path/CMOD" ] && has_cmod=1
+    [ -d "$module_path/CJMOD" ] && has_cjmod=1
+    
+    # Check for direct module structure
+    if [ $has_cmod -eq 0 ] && [ $has_cjmod -eq 0 ]; then
+        if [ -d "$module_path/src" ] && [ -d "$module_path/info" ]; then
+            # Check file types
+            if find "$module_path/src" -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" | grep -q .; then
+                has_cjmod=1
+            elif find "$module_path/src" -name "*.chtl" | grep -q .; then
+                has_cmod=1
             fi
-        done
-    elif [ -d "$module_path/src" ] && [ -d "$module_path/info" ] && [ -f "$module_path/src/"*.chtl ]; then
-        has_cmod=true
+        fi
     fi
     
-    # 检查CJMOD
-    if [ -d "$module_path/CJMOD" ]; then
-        for dir in "$module_path/CJMOD"/*; do
-            if [ -d "$dir/src" ] && [ -d "$dir/info" ] && [ -f "$dir/src/"*.cpp ]; then
-                has_cjmod=true
-                break
-            fi
-        done
-    elif [ -d "$module_path/src" ] && [ -d "$module_path/info" ] && [ -f "$module_path/src/"*.cpp ]; then
-        has_cjmod=true
-    fi
-    
-    if [ "$has_cmod" = true ] && [ "$has_cjmod" = true ]; then
+    if [ $has_cmod -eq 1 ] && [ $has_cjmod -eq 1 ]; then
         echo "mixed"
-    elif [ "$has_cmod" = true ]; then
+    elif [ $has_cmod -eq 1 ]; then
         echo "cmod"
-    elif [ "$has_cjmod" = true ]; then
+    elif [ $has_cjmod -eq 1 ]; then
         echo "cjmod"
     else
         echo "unknown"
     fi
 }
 
-# 打包单个模块
-pack_module() {
+# Function to get module name
+get_module_name() {
     local module_path="$1"
-    local module_name=$(basename "$module_path")
+    local module_name=""
     
-    print_info "处理模块: $module_name"
-    
-    # 检测模块类型
-    local module_type=$(detect_module_type "$module_path")
-    
-    case $module_type in
-        "mixed")
-            print_info "检测到混合模块（CMOD + CJMOD）"
-            
-            # 打包CMOD部分
-            if [ "$VERBOSE" = true ]; then
-                "$SCRIPT_DIR/pack_cmod.sh" -o "$OUTPUT_DIR" -v "$module_path"
-            else
-                "$SCRIPT_DIR/pack_cmod.sh" -o "$OUTPUT_DIR" "$module_path"
-            fi
-            
-            # 打包CJMOD部分
-            if [ "$VERBOSE" = true ]; then
-                "$SCRIPT_DIR/pack_cjmod.sh" -o "$OUTPUT_DIR" -b "$BUILD_TYPE" -v "$module_path"
-            else
-                "$SCRIPT_DIR/pack_cjmod.sh" -o "$OUTPUT_DIR" -b "$BUILD_TYPE" "$module_path"
-            fi
-            ;;
-        "cmod")
-            print_info "检测到CMOD模块"
-            if [ "$VERBOSE" = true ]; then
-                "$SCRIPT_DIR/pack_cmod.sh" -o "$OUTPUT_DIR" -v "$module_path"
-            else
-                "$SCRIPT_DIR/pack_cmod.sh" -o "$OUTPUT_DIR" "$module_path"
-            fi
-            ;;
-        "cjmod")
-            print_info "检测到CJMOD模块"
-            if [ "$VERBOSE" = true ]; then
-                "$SCRIPT_DIR/pack_cjmod.sh" -o "$OUTPUT_DIR" -b "$BUILD_TYPE" -v "$module_path"
-            else
-                "$SCRIPT_DIR/pack_cjmod.sh" -o "$OUTPUT_DIR" -b "$BUILD_TYPE" "$module_path"
-            fi
-            ;;
-        *)
-            print_warning "无法识别模块类型: $module_name"
-            return 1
-            ;;
-    esac
-    
-    print_success "模块 $module_name 打包完成"
-    echo ""
-}
-
-# 主函数
-main() {
-    print_info "开始统一打包流程"
-    print_info "输出目录: $OUTPUT_DIR"
-    print_info "构建类型: $BUILD_TYPE"
-    echo ""
-    
-    # 创建输出目录
-    mkdir -p "$OUTPUT_DIR"
-    
-    # 统计信息
-    local total_modules=${#MODULES[@]}
-    local success_count=0
-    local failed_count=0
-    local failed_modules=()
-    
-    # 处理每个模块
-    for module in "${MODULES[@]}"; do
-        # 展开通配符
-        for path in $module; do
-            if [ -d "$path" ]; then
-                if pack_module "$path"; then
-                    ((success_count++))
-                else
-                    ((failed_count++))
-                    failed_modules+=("$path")
-                fi
-            else
-                print_warning "跳过非目录: $path"
-            fi
-        done
+    # Try to find from info file
+    for info_file in $(find "$module_path" -path "*/info/*.chtl" 2>/dev/null | head -1); do
+        if [ -f "$info_file" ]; then
+            module_name=$(basename "$info_file" .chtl)
+            break
+        fi
     done
     
-    # 显示统计结果
-    echo ""
-    print_info "=== 打包统计 ==="
-    print_info "总模块数: $total_modules"
-    print_success "成功: $success_count"
-    if [ $failed_count -gt 0 ]; then
-        print_error "失败: $failed_count"
-        print_error "失败的模块:"
-        for module in "${failed_modules[@]}"; do
-            echo "  - $module"
-        done
+    # Fallback to directory name
+    [ -z "$module_name" ] && module_name=$(basename "$module_path")
+    echo "$module_name"
+}
+
+# Function to pack CMOD
+pack_cmod() {
+    local module_path="$1"
+    local module_name=$(get_module_name "$module_path")
+    
+    print_info "Packing CMOD: $module_name"
+    
+    # Find actual CMOD directory
+    local actual_cmod_path=""
+    if [ -d "$module_path/CMOD/$module_name" ]; then
+        actual_cmod_path="$module_path/CMOD/$module_name"
+    elif [ -d "$module_path/src" ] && [ -d "$module_path/info" ]; then
+        actual_cmod_path="$module_path"
     fi
     
-    # 列出生成的文件
-    echo ""
-    print_info "=== 生成的文件 ==="
-    if [ -d "$OUTPUT_DIR" ]; then
-        ls -la "$OUTPUT_DIR"/*.cmod 2>/dev/null || true
-        ls -la "$OUTPUT_DIR"/*.cjmod 2>/dev/null || true
+    if [ -z "$actual_cmod_path" ]; then
+        print_error "No valid CMOD structure found"
+        return 1
     fi
     
-    if [ $failed_count -eq 0 ]; then
-        print_success "所有模块打包完成！"
+    # Create temporary directory
+    local temp_dir=$(mktemp -d)
+    mkdir -p "$temp_dir/$module_name"
+    
+    # Copy module files
+    cp -r "$actual_cmod_path"/* "$temp_dir/$module_name/"
+    
+    # Create metadata
+    cat > "$temp_dir/$module_name/.cmod_metadata" << EOF
+{
+  "module_name": "$module_name",
+  "package_type": "CMOD",
+  "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "platform": "all",
+  "chtl_version": "1.0.0"
+}
+EOF
+    
+    # Create archive
+    local output_file="$OUTPUT_DIR/${module_name}.cmod"
+    rm -f "$output_file"
+    
+    # Create tar.gz archive
+    (cd "$temp_dir" && tar -czf "$output_file" "$module_name")
+    
+    # Cleanup
+    rm -rf "$temp_dir"
+    
+    if [ -f "$output_file" ]; then
+        print_success "Created $output_file"
         return 0
     else
-        print_warning "部分模块打包失败"
+        print_error "Failed to create $output_file"
         return 1
     fi
 }
 
-# 执行主函数
-main
+# Function to pack CJMOD
+pack_cjmod() {
+    local module_path="$1"
+    local module_name=$(get_module_name "$module_path")
+    
+    print_info "Packing CJMOD: $module_name"
+    
+    # Find actual CJMOD directory
+    local actual_cjmod_path=""
+    if [ -d "$module_path/CJMOD/$module_name" ]; then
+        actual_cjmod_path="$module_path/CJMOD/$module_name"
+    elif [ -d "$module_path/src" ]; then
+        # Check for C++ files
+        if find "$module_path/src" -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" | grep -q .; then
+            actual_cjmod_path="$module_path"
+        fi
+    fi
+    
+    if [ -z "$actual_cjmod_path" ]; then
+        print_error "No valid CJMOD structure found"
+        return 1
+    fi
+    
+    # Create build directory
+    local build_dir=$(mktemp -d)
+    
+    # Create CMakeLists.txt
+    cat > "$build_dir/CMakeLists.txt" << EOF
+cmake_minimum_required(VERSION 3.16)
+project($module_name LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+file(GLOB_RECURSE SOURCES "$actual_cjmod_path/src/*.cpp")
+
+add_library($module_name SHARED \${SOURCES})
+
+target_include_directories($module_name PRIVATE
+    "$ROOT_DIR/src"
+    "$actual_cjmod_path/src"
+)
+
+set_target_properties($module_name PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "$module_name"
+)
+
+if(APPLE)
+    set_target_properties($module_name PROPERTIES
+        SUFFIX ".dylib"
+    )
+endif()
+EOF
+    
+    # Configure and build
+    cd "$build_dir"
+    if [ $VERBOSE -eq 1 ]; then
+        cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+        cmake --build . --config $BUILD_TYPE
+    else
+        cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE > /dev/null 2>&1
+        cmake --build . --config $BUILD_TYPE > /dev/null 2>&1
+    fi
+    
+    if [ $? -ne 0 ]; then
+        print_error "Build failed"
+        cd "$ROOT_DIR"
+        rm -rf "$build_dir"
+        return 1
+    fi
+    
+    cd "$ROOT_DIR"
+    
+    # Find the built library
+    local lib_file=""
+    for ext in so dylib dll; do
+        if [ -f "$build_dir/$module_name.$ext" ]; then
+            lib_file="$build_dir/$module_name.$ext"
+            break
+        elif [ -f "$build_dir/lib$module_name.$ext" ]; then
+            lib_file="$build_dir/lib$module_name.$ext"
+            break
+        fi
+    done
+    
+    if [ -z "$lib_file" ]; then
+        print_error "Built library not found"
+        rm -rf "$build_dir"
+        return 1
+    fi
+    
+    # Create temporary directory for packaging
+    local temp_dir=$(mktemp -d)
+    mkdir -p "$temp_dir/$module_name/lib"
+    
+    # Copy files
+    cp "$lib_file" "$temp_dir/$module_name/lib/"
+    [ -d "$actual_cjmod_path/src" ] && cp -r "$actual_cjmod_path/src" "$temp_dir/$module_name/"
+    [ -d "$actual_cjmod_path/info" ] && cp -r "$actual_cjmod_path/info" "$temp_dir/$module_name/"
+    
+    # Create metadata
+    cat > "$temp_dir/$module_name/.cjmod_metadata" << EOF
+{
+  "module_name": "$module_name",
+  "package_type": "CJMOD",
+  "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "platform": "$(uname -s | tr '[:upper:]' '[:lower:]')",
+  "architecture": "$(uname -m)",
+  "chtl_version": "1.0.0"
+}
+EOF
+    
+    # Create archive
+    local output_file="$OUTPUT_DIR/${module_name}.cjmod"
+    rm -f "$output_file"
+    
+    # Create tar.gz archive
+    (cd "$temp_dir" && tar -czf "$output_file" "$module_name")
+    
+    # Cleanup
+    rm -rf "$temp_dir"
+    rm -rf "$build_dir"
+    
+    if [ -f "$output_file" ]; then
+        print_success "Created $output_file"
+        return 0
+    else
+        print_error "Failed to create $output_file"
+        return 1
+    fi
+}
+
+# Function to pack a module
+pack_module() {
+    local module_path="$1"
+    local module_name=$(basename "$module_path")
+    
+    echo "Processing module: $module_name"
+    
+    # Detect module type
+    local module_type=$(detect_module_type "$module_path")
+    echo "Module type: $module_type"
+    
+    if [ "$module_type" = "unknown" ]; then
+        print_error "Unknown module type for $module_name"
+        ((FAILED_COUNT++))
+        FAILED_MODULES+=("$module_name")
+        return 1
+    fi
+    
+    # Pack based on type
+    local pack_success=1
+    
+    if [ "$PACK_TYPE" = "auto" ]; then
+        case "$module_type" in
+            mixed)
+                pack_cmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+                pack_cjmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+                ;;
+            cmod)
+                pack_cmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+                ;;
+            cjmod)
+                pack_cjmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+                ;;
+        esac
+    elif [ "$PACK_TYPE" = "cmod" ]; then
+        pack_cmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+    elif [ "$PACK_TYPE" = "cjmod" ]; then
+        pack_cjmod "$module_path" && ((SUCCESS_COUNT++)) || pack_success=0
+    fi
+    
+    if [ $pack_success -eq 0 ]; then
+        ((FAILED_COUNT++))
+        FAILED_MODULES+=("$module_name")
+    fi
+    
+    echo
+}
+
+# Main execution
+if [ $PACK_ALL -eq 1 ]; then
+    print_info "Packing all modules..."
+    for module_dir in module/*/; do
+        if [ -d "$module_dir" ]; then
+            pack_module "$module_dir"
+        fi
+    done
+else
+    for module in "${MODULES[@]}"; do
+        if [ -d "$module" ]; then
+            pack_module "$module"
+        else
+            print_warning "Module not found: $module"
+            ((FAILED_COUNT++))
+            FAILED_MODULES+=("$module")
+        fi
+    done
+fi
+
+# Show summary
+echo
+echo "========================================"
+echo "Packing Summary"
+echo "========================================"
+echo "Total processed: $((SUCCESS_COUNT + FAILED_COUNT))"
+echo "Success: $SUCCESS_COUNT"
+echo "Failed: $FAILED_COUNT"
+
+if [ ${#FAILED_MODULES[@]} -gt 0 ]; then
+    echo
+    echo "Failed modules:"
+    for module in "${FAILED_MODULES[@]}"; do
+        echo "  - $module"
+    done
+fi
+
+echo "========================================"
+
+[ $FAILED_COUNT -eq 0 ] && exit 0 || exit 1

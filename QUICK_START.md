@@ -13,13 +13,6 @@ cd chtl
 
 ### 2. 构建项目
 
-**方式一：使用 Python（推荐，跨平台）**
-```bash
-python build.py --type Release
-```
-
-**方式二：使用平台特定脚本**
-
 Windows:
 ```cmd
 build.bat --type Release
@@ -67,8 +60,10 @@ html {
 
 ```
 chtl/
-├── build.py          # 🔨 构建脚本（跨平台）
-├── pack.py           # 📦 打包脚本（跨平台）
+├── build.bat         # 🔨 Windows构建脚本
+├── build.sh          # 🔨 Unix构建脚本
+├── pack.bat          # 📦 Windows打包脚本
+├── pack.sh           # 📦 Unix打包脚本
 ├── src/              # 💻 源代码
 ├── module/           # 📚 模块库
 ├── docs/             # 📖 文档
@@ -76,41 +71,73 @@ chtl/
 └── scripts/          # 🛠️ 更多脚本
     ├── build/        # 构建脚本
     ├── pack/         # 打包脚本
-    └── cross-platform/ # 跨平台脚本
+    └── platform/     # 平台特定脚本
 ```
 
 ## 🛠️ 常用命令
 
 ### 构建命令
 
+**Windows:**
+```cmd
+rem Build Release version
+build.bat --type Release
+
+rem Build Debug version  
+build.bat --type Debug
+
+rem Clean and rebuild
+build.bat --clean --type Release
+
+rem Build and run tests
+build.bat --type Release --test
+
+rem Build and install
+build.bat --type Release --install
+```
+
+**Linux/macOS:**
 ```bash
-# 构建 Release 版本
-python build.py --type Release
+# Build Release version
+./build.sh --type Release
 
-# 构建 Debug 版本
-python build.py --type Debug
+# Build Debug version
+./build.sh --type Debug
 
-# 清理并重新构建
-python build.py --clean --type Release
+# Clean and rebuild
+./build.sh --clean --type Release
 
-# 构建并运行测试
-python build.py --type Release --test
+# Build and run tests
+./build.sh --type Release --test
 
-# 构建并安装
-python build.py --type Release --install
+# Build and install
+./build.sh --type Release --install
 ```
 
 ### 打包命令
 
+**Windows:**
+```cmd
+rem Pack all modules
+pack.bat --all
+
+rem Pack specific module
+pack.bat module\Chtholly
+
+rem Specify output directory
+pack.bat --all -o dist
+```
+
+**Linux/macOS:**
 ```bash
-# 打包所有模块
-python pack.py --all
+# Pack all modules
+./pack.sh --all
 
-# 打包特定模块
-python pack.py module/Chtholly
+# Pack specific module
+./pack.sh module/Chtholly
 
-# 指定输出目录
-python pack.py --all -o dist/
+# Specify output directory
+./pack.sh --all -o dist/
 ```
 
 ## 💡 VSCode 开发

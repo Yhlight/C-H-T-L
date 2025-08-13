@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 "$(dirname "$0")/pack.py" "$@"
+exec "$(dirname "$0")/scripts/pack/pack_all.sh" "$@"

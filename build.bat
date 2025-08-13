@@ -1,2 +1,2 @@
 @echo off
-python "%~dp0build.py" %*
+call "%~dp0scripts\platform\windows\build.bat" %*

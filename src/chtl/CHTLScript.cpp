@@ -1,5 +1,6 @@
 #include "CHTLScript.h"
 #include "CHTLGenerator.h"
+#include "CHTLCJMOD.h"
 #include <regex>
 #include <sstream>
 #include <algorithm>
@@ -277,31 +278,40 @@ std::pair<std::string, int> EnhancedSelectorProcessor::parseIndexedSelector(cons
 }
 
 // ScriptProcessor 实现
-void ScriptProcessor::processScriptBlock(const std::string& content, const std::string& currentScope) {
+std::shared_ptr<CHTLContext> ScriptProcessor::getContext() const {
+    return manager.getContext();
+}
+
+std::shared_ptr<ScriptBlock> ScriptProcessor::processScriptBlock(const std::string& content,
+                                                                const std::string& scope) {
+    auto block = std::make_shared<ScriptBlock>(ScriptType::JAVASCRIPT, scope);
+    
     // 检测脚本类型
     ScriptType type = detectScriptType(content);
+    block->type = type;
     
-    // 创建脚本块
-    auto scriptBlock = std::make_shared<ScriptBlock>(content, type);
-    scriptBlock->setScope(currentScope);
+    std::string processedContent = content;
     
-    // 如果包含增强选择器，进行处理
-    if (ScriptHelper::hasEnhancedSelector(content)) {
-        std::vector<EnhancedSelector> selectors;
-        std::string processedContent = processEnhancedSelectors(content, selectors);
-        scriptBlock->setContent(processedContent);
+    // 如果是CHTL JS，处理增强选择器和应用CJMOD扩展
+    if (type == ScriptType::CHTLJS) {
+        // 应用CJMOD扩展（预处理）
+        if (cjmodManager) {
+            processedContent = cjmodManager->preprocessScript(processedContent);
+        }
         
-        for (const auto& sel : selectors) {
-            scriptBlock->addSelector(sel);
+        // 处理增强选择器
+        processedContent = processEnhancedSelectors(processedContent, block->selectors);
+        
+        // 应用CJMOD扩展（转换）
+        if (cjmodManager) {
+            processedContent = cjmodManager->transformScript(processedContent);
         }
     }
     
-    // 添加到管理器
-    if (currentScope.empty()) {
-        manager.addGlobalScript(scriptBlock);
-    } else {
-        manager.addLocalScript(currentScope, scriptBlock);
-    }
+    block->content = processedContent;
+    block->isProcessed = true;
+    
+    return block;
 }
 
 std::string ScriptProcessor::processEnhancedSelectors(const std::string& script, 
@@ -406,12 +416,113 @@ std::string ScriptProcessor::processEnhancedSelectors(const std::string& script,
 ScriptType ScriptProcessor::detectScriptType(const std::string& content) {
     // 如果包含增强选择器，则是CHTL JS
     if (ScriptHelper::hasEnhancedSelector(content)) {
-        return ScriptType::CHTL_JS;
+        return ScriptType::CHTLJS;
     }
     
-    // TODO: 添加更多CHTL JS特性检测
+    // 如果包含->语法，则是CHTL JS
+    if (ScriptHelper::hasArrowSyntax(content)) {
+        return ScriptType::CHTLJS;
+    }
     
+    // 如果包含listen/delegate/animate，则是CHTL JS
+    std::regex chtlMethods(R"(\b(listen|delegate|animate)\s*\()");
+    if (std::regex_search(content, chtlMethods)) {
+        return ScriptType::CHTLJS;
+    }
+    
+    // 检查CJMOD注册的语法模式
+    for (const auto& [pattern, transformer] : syntaxTransformers) {
+        std::regex patternRegex(pattern);
+        if (std::regex_search(content, patternRegex)) {
+            return ScriptType::CHTLJS;
+        }
+    }
+    
+    // 默认为普通JavaScript
     return ScriptType::JAVASCRIPT;
+}
+
+std::string ScriptProcessor::applyCJMODExtensions(const std::string& script) {
+    std::string result = script;
+    
+    // 应用注册的语法转换器
+    for (const auto& [pattern, transformer] : syntaxTransformers) {
+        std::regex patternRegex(pattern);
+        std::smatch match;
+        std::string::const_iterator searchStart(result.cbegin());
+        std::stringstream transformed;
+        size_t lastPos = 0;
+        
+        while (std::regex_search(searchStart, result.cend(), match, patternRegex)) {
+            size_t matchPos = std::distance(result.cbegin(), match[0].first);
+            transformed << result.substr(lastPos, matchPos - lastPos);
+            
+            // 应用转换器
+            std::string matchedText = match[0];
+            transformed << transformer(matchedText);
+            
+            lastPos = matchPos + match[0].length();
+            searchStart = match.suffix().first;
+        }
+        
+        transformed << result.substr(lastPos);
+        result = transformed.str();
+    }
+    
+    // 处理自定义函数调用
+    std::regex funcRegex(R"(\b(\w+)\s*\(([^)]*)\))");
+    std::smatch funcMatch;
+    std::string::const_iterator searchStart(result.cbegin());
+    std::stringstream processed;
+    size_t lastPos = 0;
+    
+    while (std::regex_search(searchStart, result.cend(), funcMatch, funcRegex)) {
+        std::string funcName = funcMatch[1];
+        
+        // 检查是否是自定义函数
+        if (customFunctions.find(funcName) != customFunctions.end()) {
+            size_t matchPos = std::distance(result.cbegin(), funcMatch[0].first);
+            processed << result.substr(lastPos, matchPos - lastPos);
+            
+            // 解析参数
+            std::string argsStr = funcMatch[2];
+            std::vector<std::string> args;
+            
+            // 简单的参数分割（需要更复杂的解析来处理嵌套）
+            std::stringstream argStream(argsStr);
+            std::string arg;
+            while (std::getline(argStream, arg, ',')) {
+                // 去除空格
+                arg.erase(0, arg.find_first_not_of(" \t"));
+                arg.erase(arg.find_last_not_of(" \t") + 1);
+                args.push_back(arg);
+            }
+            
+            // 调用自定义函数
+            std::string replacement = customFunctions[funcName](args);
+            processed << replacement;
+            
+            lastPos = matchPos + funcMatch[0].length();
+        }
+        
+        searchStart = funcMatch.suffix().first;
+    }
+    
+    if (lastPos < result.length()) {
+        processed << result.substr(lastPos);
+    }
+    
+    return processed.str();
+}
+
+void ScriptProcessor::registerFunction(const std::string& name, 
+                                     std::function<std::string(const std::vector<std::string>&)> func) {
+    customFunctions[name] = func;
+}
+
+void ScriptProcessor::registerTransformer(const std::string& pattern,
+                                        std::function<std::string(const std::string&)> transformer) {
+    syntaxTransformers.push_back({pattern, transformer});
 }
 
 // CHTLJSTransformer 实现

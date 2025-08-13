@@ -13,6 +13,7 @@ namespace chtl {
 // 前向声明
 class CHTLGenerator;
 class Scanner;
+class CJMODManager;
 
 // 脚本类型
 enum class ScriptType {
@@ -150,23 +151,45 @@ public:
 class ScriptProcessor {
 private:
     ScriptManager& manager;
-    CHTLGenerator& generator;
+    CJMODManager* cjmodManager = nullptr;
     
 public:
-    ScriptProcessor(ScriptManager& mgr, CHTLGenerator& gen)
-        : manager(mgr), generator(gen) {}
+    ScriptProcessor(ScriptManager& mgr) : manager(mgr) {}
+    
+    // 设置CJMOD管理器
+    void setCJMODManager(CJMODManager* mgr) { cjmodManager = mgr; }
+    
+    // 获取上下文
+    std::shared_ptr<CHTLContext> getContext() const;
     
     // 处理脚本块
-    void processScriptBlock(const std::string& content, const std::string& currentScope);
+    std::shared_ptr<ScriptBlock> processScriptBlock(const std::string& content,
+                                                    const std::string& scope);
     
-    // 提取并处理增强选择器
-    std::string processEnhancedSelectors(const std::string& script, std::vector<EnhancedSelector>& selectors);
+    // 处理增强选择器
+    std::string processEnhancedSelectors(const std::string& script,
+                                        std::vector<EnhancedSelector>& selectors);
     
-    // 判断脚本类型
-    ScriptType detectScriptType(const std::string& content);
+    // 检测脚本类型
+    ScriptType detectScriptType(const std::string& script);
     
-    // 分离JS和CHTL JS代码
-    std::vector<std::pair<std::string, ScriptType>> separateScriptTypes(const std::string& content);
+    // 注册自定义函数（供CJMOD使用）
+    void registerFunction(const std::string& name, 
+                         std::function<std::string(const std::vector<std::string>&)> func);
+    
+    // 注册语法转换器（供CJMOD使用）
+    void registerTransformer(const std::string& pattern,
+                           std::function<std::string(const std::string&)> transformer);
+    
+private:
+    // 自定义函数注册表
+    std::unordered_map<std::string, std::function<std::string(const std::vector<std::string>&)>> customFunctions;
+    
+    // 语法转换器注册表
+    std::vector<std::pair<std::string, std::function<std::string(const std::string&)>>> syntaxTransformers;
+    
+    // 应用CJMOD扩展
+    std::string applyCJMODExtensions(const std::string& script);
 };
 
 // CHTL JS转换器

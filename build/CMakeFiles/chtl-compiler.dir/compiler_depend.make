@@ -3849,6 +3849,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/include/c++/14/algorithm \
+  /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
@@ -3871,6 +3872,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/bits/cxxabi_forced.h \
   /usr/include/c++/14/bits/cxxabi_init_exception.h \
   /usr/include/c++/14/bits/deque.tcc \
+  /usr/include/c++/14/bits/enable_special_members.h \
   /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
   /usr/include/c++/14/bits/exception_defines.h \
@@ -3878,6 +3880,8 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/bits/functexcept.h \
   /usr/include/c++/14/bits/functional_hash.h \
   /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/hashtable.h \
+  /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/ios_base.h \
   /usr/include/c++/14/bits/istream.tcc \
@@ -3935,6 +3939,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/bits/stl_multimap.h \
   /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/stl_queue.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_set.h \
   /usr/include/c++/14/bits/stl_stack.h \
@@ -3948,6 +3953,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/bits/stringfwd.h \
   /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
+  /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
   /usr/include/c++/14/bits/uses_allocator_args.h \
   /usr/include/c++/14/bits/utility.h \
@@ -3957,6 +3963,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/cctype \
   /usr/include/c++/14/cerrno \
   /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
   /usr/include/c++/14/concepts \
   /usr/include/c++/14/cstddef \
   /usr/include/c++/14/cstdio \
@@ -3975,6 +3982,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/ext/numeric_traits.h \
   /usr/include/c++/14/ext/string_conversions.h \
   /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/functional \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
@@ -3989,6 +3997,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/queue \
   /usr/include/c++/14/regex \
   /usr/include/c++/14/set \
   /usr/include/c++/14/sstream \
@@ -4001,6 +4010,7 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o: /workspace/src/chtl/CH
   /usr/include/c++/14/tuple \
   /usr/include/c++/14/type_traits \
   /usr/include/c++/14/typeinfo \
+  /usr/include/c++/14/unordered_map \
   /usr/include/c++/14/vector \
   /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
@@ -4555,6 +4565,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/include/c++/14/algorithm \
+  /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
@@ -4576,6 +4587,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/bits/cxxabi_forced.h \
   /usr/include/c++/14/bits/cxxabi_init_exception.h \
   /usr/include/c++/14/bits/deque.tcc \
+  /usr/include/c++/14/bits/enable_special_members.h \
   /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
   /usr/include/c++/14/bits/exception_defines.h \
@@ -4583,6 +4595,8 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/bits/functexcept.h \
   /usr/include/c++/14/bits/functional_hash.h \
   /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/hashtable.h \
+  /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/ios_base.h \
   /usr/include/c++/14/bits/istream.tcc \
@@ -4610,6 +4624,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/bits/shared_ptr_base.h \
   /usr/include/c++/14/bits/sstream.tcc \
   /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/std_function.h \
   /usr/include/c++/14/bits/stl_algo.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
@@ -4624,6 +4639,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/bits/stl_multimap.h \
   /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/stl_queue.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_set.h \
   /usr/include/c++/14/bits/stl_stack.h \
@@ -4637,6 +4653,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/bits/stringfwd.h \
   /usr/include/c++/14/bits/uniform_int_dist.h \
   /usr/include/c++/14/bits/unique_ptr.h \
+  /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
   /usr/include/c++/14/bits/uses_allocator_args.h \
   /usr/include/c++/14/bits/utility.h \
@@ -4645,6 +4662,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/cctype \
   /usr/include/c++/14/cerrno \
   /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
   /usr/include/c++/14/concepts \
   /usr/include/c++/14/cstddef \
   /usr/include/c++/14/cstdio \
@@ -4662,6 +4680,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/ext/numeric_traits.h \
   /usr/include/c++/14/ext/string_conversions.h \
   /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/functional \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
@@ -4675,6 +4694,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/pstl/glue_algorithm_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/queue \
   /usr/include/c++/14/set \
   /usr/include/c++/14/sstream \
   /usr/include/c++/14/stack \
@@ -4686,6 +4706,7 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o: /workspace/src/com
   /usr/include/c++/14/tuple \
   /usr/include/c++/14/type_traits \
   /usr/include/c++/14/typeinfo \
+  /usr/include/c++/14/unordered_map \
   /usr/include/c++/14/vector \
   /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
@@ -5359,6 +5380,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/include/c++/14/array \
   /usr/include/c++/14/backward/auto_ptr.h \
   /usr/include/c++/14/backward/binders.h \
   /usr/include/c++/14/bit \
@@ -5380,6 +5402,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/bits/cxxabi_forced.h \
   /usr/include/c++/14/bits/cxxabi_init_exception.h \
   /usr/include/c++/14/bits/deque.tcc \
+  /usr/include/c++/14/bits/enable_special_members.h \
   /usr/include/c++/14/bits/erase_if.h \
   /usr/include/c++/14/bits/exception.h \
   /usr/include/c++/14/bits/exception_defines.h \
@@ -5388,6 +5411,8 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/bits/functexcept.h \
   /usr/include/c++/14/bits/functional_hash.h \
   /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/hashtable.h \
+  /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/ios_base.h \
   /usr/include/c++/14/bits/istream.tcc \
@@ -5414,11 +5439,13 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/bits/shared_ptr_atomic.h \
   /usr/include/c++/14/bits/shared_ptr_base.h \
   /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/std_function.h \
   /usr/include/c++/14/bits/stl_algobase.h \
   /usr/include/c++/14/bits/stl_bvector.h \
   /usr/include/c++/14/bits/stl_construct.h \
   /usr/include/c++/14/bits/stl_deque.h \
   /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_heap.h \
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
@@ -5426,6 +5453,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/bits/stl_multimap.h \
   /usr/include/c++/14/bits/stl_multiset.h \
   /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/stl_queue.h \
   /usr/include/c++/14/bits/stl_raw_storage_iter.h \
   /usr/include/c++/14/bits/stl_set.h \
   /usr/include/c++/14/bits/stl_stack.h \
@@ -5438,6 +5466,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/bits/string_view.tcc \
   /usr/include/c++/14/bits/stringfwd.h \
   /usr/include/c++/14/bits/unique_ptr.h \
+  /usr/include/c++/14/bits/unordered_map.h \
   /usr/include/c++/14/bits/uses_allocator.h \
   /usr/include/c++/14/bits/uses_allocator_args.h \
   /usr/include/c++/14/bits/utility.h \
@@ -5446,6 +5475,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/cctype \
   /usr/include/c++/14/cerrno \
   /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
   /usr/include/c++/14/concepts \
   /usr/include/c++/14/cstddef \
   /usr/include/c++/14/cstdio \
@@ -5464,6 +5494,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/ext/string_conversions.h \
   /usr/include/c++/14/ext/type_traits.h \
   /usr/include/c++/14/fstream \
+  /usr/include/c++/14/functional \
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
@@ -5476,6 +5507,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/pstl/execution_defs.h \
   /usr/include/c++/14/pstl/glue_memory_defs.h \
   /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/queue \
   /usr/include/c++/14/set \
   /usr/include/c++/14/stack \
   /usr/include/c++/14/stdexcept \
@@ -5486,6 +5518,7 @@ CMakeFiles/chtl-compiler.dir/src/main.cpp.o: /workspace/src/main.cpp \
   /usr/include/c++/14/tuple \
   /usr/include/c++/14/type_traits \
   /usr/include/c++/14/typeinfo \
+  /usr/include/c++/14/unordered_map \
   /usr/include/c++/14/vector \
   /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
   /usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h \
@@ -5848,11 +5881,15 @@ CMakeFiles/chtl-compiler.dir/src/compiler/MainCompiler.cpp.o:
 
 CMakeFiles/chtl-compiler.dir/src/compiler/Compiler.cpp.o:
 
+CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o:
+
+CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o:
+
+CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h:
-
-CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLParser.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
 
@@ -6020,8 +6057,6 @@ CMakeFiles/chtl-compiler.dir/src/scanner/CodeScanner.cpp.o:
 
 /usr/include/c++/14/bits/unordered_set.h:
 
-/workspace/src/compiler/MainCompiler.cpp:
-
 /usr/include/antlr4-runtime/tree/ParseTreeListener.h:
 
 /usr/include/antlr4-runtime/TokenStreamRewriter.h:
@@ -6152,8 +6187,6 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o:
 
 /usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
 
-/usr/include/locale.h:
-
 /usr/include/antlr4-runtime/tree/xpath/XPathLexer.h:
 
 /usr/include/antlr4-runtime/atn/ATNState.h:
@@ -6178,8 +6211,6 @@ CMakeFiles/chtl-compiler.dir/src/chtl/CHTLCompiler.cpp.o:
 
 /usr/include/c++/14/system_error:
 
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.cpp.o:
-
 /usr/include/antlr4-runtime/atn/ATNConfigSet.h:
 
 /usr/include/c++/14/bits/functional_hash.h:
@@ -6195,6 +6226,10 @@ CMakeFiles/chtl-compiler.dir/src/js/JavaScriptCompiler.cpp.o:
 /usr/include/c++/14/bits/char_traits.h:
 
 /usr/include/antlr4-runtime/atn/PredictionContextMergeCacheOptions.h:
+
+CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o:
+
+/usr/include/antlr4-runtime/atn/ATNDeserializationOptions.h:
 
 /usr/include/c++/14/debug/assertions.h:
 
@@ -6334,6 +6369,8 @@ CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o:
 
 /usr/include/c++/14/bits/regex_executor.h:
 
+/usr/include/c++/14/compare:
+
 /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
 
 /usr/include/antlr4-runtime/atn/LexerIndexedCustomAction.h:
@@ -6355,6 +6392,8 @@ CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o:
 /usr/include/c++/14/streambuf:
 
 /workspace/src/css/CSSCompiler.cpp:
+
+/usr/include/c++/14/array:
 
 /usr/include/antlr4-runtime/atn/AmbiguityInfo.h:
 
@@ -6415,8 +6454,6 @@ CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o:
 /usr/include/assert.h:
 
 /usr/include/antlr4-runtime/atn/PredicateTransition.h:
-
-/usr/include/c++/14/bits/version.h:
 
 /usr/include/antlr4-runtime/atn/PredictionContextCache.h:
 
@@ -6539,8 +6576,6 @@ CMakeFiles/chtl-compiler.dir/src/chtljs/CHTLJSCompiler.cpp.o:
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSListener.cpp.o:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
@@ -6782,10 +6817,6 @@ CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexe
 
 /usr/include/c++/14/stack:
 
-/usr/include/antlr4-runtime/atn/ATNDeserializationOptions.h:
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSParser.cpp.o:
-
 /usr/include/x86_64-linux-gnu/bits/select.h:
 
 /usr/include/c++/14/stdexcept:
@@ -6858,6 +6889,10 @@ CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CH
 
 /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLBaseListener.h:
 
+/usr/include/locale.h:
+
+/usr/include/c++/14/queue:
+
 /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLLexer.cpp:
 
 /usr/include/antlr4-runtime/tree/xpath/XPathRuleElement.h:
@@ -6869,6 +6904,10 @@ CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CH
 /workspace/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp:
 
 /workspace/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSBaseListener.h:
+
+CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o:
+
+/usr/include/c++/14/bits/locale_facets_nonio.h:
 
 /usr/include/c++/14/bits/basic_ios.tcc:
 
@@ -6891,6 +6930,14 @@ CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CH
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++io.h:
 
 /usr/include/c++/14/bits/regex_error.h:
+
+/usr/include/c++/14/bits/version.h:
+
+/usr/include/c++/14/bits/stl_queue.h:
+
+/workspace/src/compiler/MainCompiler.cpp:
+
+/usr/include/c++/14/functional:
 
 /usr/include/c++/14/bits/istream.tcc:
 
@@ -6935,7 +6982,3 @@ CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLBase
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
 CMakeFiles/chtl-compiler.dir/generated/chtl/grammars/chtl/grammars/chtl/CHTLListener.cpp.o:
-
-/usr/include/c++/14/bits/locale_facets_nonio.h:
-
-CMakeFiles/chtl-compiler.dir/generated/chtljs/grammars/chtljs/grammars/chtljs/CHTLJSLexer.cpp.o:

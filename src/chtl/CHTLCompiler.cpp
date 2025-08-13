@@ -12,24 +12,24 @@ CHTLCompiler::CHTLCompiler() {
     // 初始化HTML元素映射
     initializeHTMLElements();
     
+    // 初始化状态转换表
+    initializeStateTransitions();
+    
+    // 初始化上下文推导规则
+    initializeContextRules();
+    
     // 初始化状态机
     currentState_ = CompilerState::INITIAL;
     
-    // 初始化上下文栈
-    contextStack_.push(ElementContext());
+    // 创建根上下文
+    auto rootContext = createContext(ContextType::ROOT, "root");
+    pushContext(rootContext);
 }
 
 bool CHTLCompiler::compile(const std::string& sourceCode) {
     try {
         // 重置状态
-        currentState_ = CompilerState::INITIAL;
-        currentLineNumber_ = 0;
-        htmlOutput_.clear();
-        cssOutput_.clear();
-        jsOutput_.clear();
-        
-        // 初始化HTML元素支持
-        initializeHTMLElements();
+        reset();
         
         // 解析CHTL代码
         parseCHTL(sourceCode);
@@ -120,10 +120,149 @@ void CHTLCompiler::initializeHTMLElements() {
     };
 }
 
+void CHTLCompiler::initializeStateTransitions() {
+    // 初始化状态转换表
+    // 从初始状态到根状态
+    stateTransitions_.emplace_back(
+        CompilerState::INITIAL, "start", CompilerState::ROOT,
+        [this](const std::string&) { /* 初始化根上下文 */ }
+    );
+    
+    // 从根状态到元素声明状态
+    stateTransitions_.emplace_back(
+        CompilerState::ROOT, "element", CompilerState::ELEMENT_DECL,
+        [this](const std::string& line) { processElement(line); }
+    );
+    
+    // 从元素声明状态到元素打开状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_DECL, "{", CompilerState::ELEMENT_OPEN,
+        [this](const std::string&) { /* 打开元素 */ }
+    );
+    
+    // 从元素打开状态到属性列表状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_OPEN, "attribute", CompilerState::ATTRIBUTE_LIST,
+        [this](const std::string& line) { processAttribute(line); }
+    );
+    
+    // 从元素打开状态到样式块状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_OPEN, "style", CompilerState::STYLE_BLOCK,
+        [this](const std::string& line) { processStyleBlock(line); }
+    );
+    
+    // 从元素打开状态到文本块状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_OPEN, "text", CompilerState::TEXT_BLOCK,
+        [this](const std::string& line) { processTextBlock(line); }
+    );
+    
+    // 从元素打开状态到脚本块状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_OPEN, "script", CompilerState::SCRIPT_BLOCK,
+        [this](const std::string& line) { processScriptBlock(line); }
+    );
+    
+    // 从各种块状态回到元素内容状态
+    stateTransitions_.emplace_back(
+        CompilerState::STYLE_BLOCK, "}", CompilerState::ELEMENT_CONTENT,
+        [this](const std::string&) { /* 结束样式块 */ }
+    );
+    
+    stateTransitions_.emplace_back(
+        CompilerState::TEXT_BLOCK, "}", CompilerState::ELEMENT_CONTENT,
+        [this](const std::string&) { /* 结束文本块 */ }
+    );
+    
+    stateTransitions_.emplace_back(
+        CompilerState::SCRIPT_BLOCK, "}", CompilerState::ELEMENT_CONTENT,
+        [this](const std::string&) { /* 结束脚本块 */ }
+    );
+    
+    // 从元素内容状态到元素关闭状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_CONTENT, "}", CompilerState::ELEMENT_CLOSE,
+        [this](const std::string&) { /* 关闭元素 */ }
+    );
+    
+    // 从元素关闭状态回到根状态
+    stateTransitions_.emplace_back(
+        CompilerState::ELEMENT_CLOSE, "end", CompilerState::ROOT,
+        [this](const std::string&) { /* 回到根状态 */ }
+    );
+}
+
+void CHTLCompiler::initializeContextRules() {
+    // 初始化上下文推导规则
+    
+    // 规则1: & 上下文推导 - 最高优先级
+    contextRules_.emplace_back(
+        "&",
+        [](const CompilerContext& context, const std::string& input) -> std::string {
+            if (input == "&") {
+                return "." + context.generatedClasses.back();
+            }
+            if (input.find("&") == 0) {
+                return "." + context.generatedClasses.back() + input.substr(1);
+            }
+            return input;
+        },
+        100
+    );
+    
+    // 规则2: 类选择器自动生成
+    contextRules_.emplace_back(
+        "\\.[a-zA-Z_][a-zA-Z0-9_]*",
+        [](const CompilerContext& context, const std::string& input) -> std::string {
+            if (input.front() == '.') {
+                std::string className = input.substr(1);
+                // 自动为元素添加类名
+                return input;
+            }
+            return input;
+        },
+        90
+    );
+    
+    // 规则3: ID选择器自动生成
+    contextRules_.emplace_back(
+        "#[a-zA-Z_][a-zA-Z0-9_]*",
+        [](const CompilerContext& context, const std::string& input) -> std::string {
+            if (input.front() == '#') {
+                std::string idName = input.substr(1);
+                // 自动为元素添加ID
+                return input;
+            }
+            return input;
+        },
+        90
+    );
+    
+    // 规则4: 嵌套选择器
+    contextRules_.emplace_back(
+        "\\s+[.#][a-zA-Z_][a-zA-Z0-9_]*",
+        [](const CompilerContext& context, const std::string& input) -> std::string {
+            // 处理嵌套选择器
+            return input;
+        },
+        80
+    );
+    
+    // 按优先级排序
+    std::sort(contextRules_.begin(), contextRules_.end(), 
+              [](const ContextRule& a, const ContextRule& b) {
+                  return a.priority > b.priority;
+              });
+}
+
 void CHTLCompiler::parseCHTL(const std::string& sourceCode) {
     std::istringstream iss(sourceCode);
     std::string line;
     size_t lineNumber = 0;
+    
+    // 启动状态机
+    transitionState("start");
     
     while (std::getline(iss, line)) {
         lineNumber++;
@@ -131,8 +270,8 @@ void CHTLCompiler::parseCHTL(const std::string& sourceCode) {
         parseLine(line, lineNumber);
     }
     
-    // 处理未关闭的元素
-    processUnclosedElements();
+    // 结束状态机
+    transitionState("end");
 }
 
 void CHTLCompiler::parseLine(const std::string& line, size_t lineNumber) {
@@ -143,238 +282,313 @@ void CHTLCompiler::parseLine(const std::string& line, size_t lineNumber) {
         return;
     }
     
-    // 根据当前状态处理行
+    // 调试信息 - 将状态转换为字符串
+    std::string stateStr;
     switch (currentState_) {
-        case CompilerState::INITIAL:
-            handleInitialState(trimmed, lineNumber);
+        case CompilerState::INITIAL: stateStr = "INITIAL"; break;
+        case CompilerState::ROOT: stateStr = "ROOT"; break;
+        case CompilerState::ELEMENT_DECL: stateStr = "ELEMENT_DECL"; break;
+        case CompilerState::ELEMENT_OPEN: stateStr = "ELEMENT_OPEN"; break;
+        case CompilerState::ELEMENT_CONTENT: stateStr = "ELEMENT_CONTENT"; break;
+        case CompilerState::ELEMENT_CLOSE: stateStr = "ELEMENT_CLOSE"; break;
+        case CompilerState::ATTRIBUTE_LIST: stateStr = "ATTRIBUTE_LIST"; break;
+        case CompilerState::ATTRIBUTE_PAIR: stateStr = "ATTRIBUTE_PAIR"; break;
+        case CompilerState::STYLE_BLOCK: stateStr = "STYLE_BLOCK"; break;
+        case CompilerState::STYLE_RULE: stateStr = "STYLE_RULE"; break;
+        case CompilerState::STYLE_PROPERTY: stateStr = "STYLE_PROPERTY"; break;
+        case CompilerState::TEXT_BLOCK: stateStr = "TEXT_BLOCK"; break;
+        case CompilerState::SCRIPT_BLOCK: stateStr = "SCRIPT_BLOCK"; break;
+        case CompilerState::TEMPLATE_DECL: stateStr = "TEMPLATE_DECL"; break;
+        case CompilerState::TEMPLATE_CONTENT: stateStr = "TEMPLATE_CONTENT"; break;
+        case CompilerState::CUSTOM_DECL: stateStr = "CUSTOM_DECL"; break;
+        case CompilerState::CUSTOM_CONTENT: stateStr = "CUSTOM_CONTENT"; break;
+        case CompilerState::IMPORT_DECL: stateStr = "IMPORT_DECL"; break;
+        case CompilerState::NAMESPACE_DECL: stateStr = "NAMESPACE_DECL"; break;
+        case CompilerState::CONFIG_DECL: stateStr = "CONFIG_DECL"; break;
+        case CompilerState::ORIGIN_BLOCK: stateStr = "ORIGIN_BLOCK"; break;
+        case CompilerState::COMMENT_BLOCK: stateStr = "COMMENT_BLOCK"; break;
+        default: stateStr = "UNKNOWN"; break;
+    }
+    
+    std::cout << "Line " << lineNumber << " [" << stateStr << "]: " << trimmed << std::endl;
+    
+    // 更新当前上下文
+    updateContext(trimmed);
+    
+    // 处理状态
+    handleState(trimmed, lineNumber);
+}
+
+bool CHTLCompiler::transitionState(const std::string& trigger) {
+    // 查找匹配的状态转换
+    for (const auto& transition : stateTransitions_) {
+        if (transition.from == currentState_ && transition.trigger == trigger) {
+            // 执行转换动作
+            if (transition.action) {
+                transition.action(trigger);
+            }
+            
+            // 更新状态
+            currentState_ = transition.to;
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void CHTLCompiler::executeStateAction(const std::string& trigger) {
+    // 执行状态动作
+    for (const auto& transition : stateTransitions_) {
+        if (transition.from == currentState_ && transition.trigger == trigger) {
+            if (transition.action) {
+                transition.action(trigger);
+            }
             break;
-        case CompilerState::ELEMENT:
-            handleElementState(trimmed, lineNumber);
+        }
+    }
+}
+
+void CHTLCompiler::handleState(const std::string& line, size_t lineNumber) {
+    // 基于当前状态和上下文处理行
+    switch (currentState_) {
+        case CompilerState::ROOT:
+            if (line.find("element") == 0) {
+                std::cout << "  -> Transitioning to ELEMENT_DECL" << std::endl;
+                transitionState("element");
+            }
             break;
-        case CompilerState::ATTRIBUTES:
-            handleAttributesState(trimmed, lineNumber);
+            
+        case CompilerState::ELEMENT_DECL:
+            if (line.find("{") != std::string::npos) {
+                std::cout << "  -> Transitioning to ELEMENT_OPEN" << std::endl;
+                transitionState("{");
+            }
             break;
-        case CompilerState::CONTENT:
-            handleContentState(trimmed, lineNumber);
+            
+        case CompilerState::ELEMENT_OPEN:
+            if (line.find("class:") != std::string::npos || line.find("class=") != std::string::npos) {
+                std::cout << "  -> Processing attribute" << std::endl;
+                processAttribute(line);
+            } else if (line.find("style:") == 0 || line.find("style=") == 0) {
+                std::cout << "  -> Transitioning to STYLE_BLOCK" << std::endl;
+                currentState_ = CompilerState::STYLE_BLOCK;
+            } else if (line.find("text:") == 0 || line.find("text=") == 0) {
+                std::cout << "  -> Transitioning to TEXT_BLOCK" << std::endl;
+                currentState_ = CompilerState::TEXT_BLOCK;
+            } else if (line.find("script:") == 0 || line.find("script=") == 0) {
+                std::cout << "  -> Transitioning to SCRIPT_BLOCK" << std::endl;
+                currentState_ = CompilerState::SCRIPT_BLOCK;
+            } else if (line.find("element") == 0) {
+                // 嵌套元素 - 应该创建新的元素上下文
+                std::cout << "  -> Nested element, creating new context" << std::endl;
+                currentState_ = CompilerState::ELEMENT_DECL;
+            } else if (line.find("}") != std::string::npos) {
+                // 检查是否是当前元素的结束
+                std::cout << "  -> Element content ended, transitioning to ELEMENT_CONTENT" << std::endl;
+                currentState_ = CompilerState::ELEMENT_CONTENT;
+            }
             break;
+            
         case CompilerState::STYLE_BLOCK:
-            handleStyleBlockState(trimmed, lineNumber);
+            if (line.find("}") != std::string::npos) {
+                std::cout << "  -> Ending style block, back to ELEMENT_OPEN" << std::endl;
+                currentState_ = CompilerState::ELEMENT_OPEN;
+            } else {
+                processStyleBlock(line);
+            }
             break;
+            
         case CompilerState::TEXT_BLOCK:
-            handleTextBlockState(trimmed, lineNumber);
+            if (line.find("}") != std::string::npos) {
+                std::cout << "  -> Ending text block, back to ELEMENT_OPEN" << std::endl;
+                currentState_ = CompilerState::ELEMENT_OPEN;
+            } else {
+                processTextBlock(line);
+            }
             break;
+            
         case CompilerState::SCRIPT_BLOCK:
-            handleScriptBlockState(trimmed, lineNumber);
+            if (line.find("}") != std::string::npos) {
+                std::cout << "  -> Ending script block, back to ELEMENT_OPEN" << std::endl;
+                currentState_ = CompilerState::ELEMENT_OPEN;
+            } else {
+                processScriptBlock(line);
+            }
             break;
-        case CompilerState::TEMPLATE:
-            handleTemplateState(trimmed, lineNumber);
+            
+        case CompilerState::ELEMENT_CONTENT:
+            if (line.find("}") != std::string::npos) {
+                std::cout << "  -> Closing element" << std::endl;
+                currentState_ = CompilerState::ELEMENT_CLOSE;
+            } else if (line.find("element") == 0) {
+                std::cout << "  -> Nested element in content" << std::endl;
+                currentState_ = CompilerState::ELEMENT_DECL;
+            } else if (line.find("class:") != std::string::npos || line.find("class=") != std::string::npos) {
+                std::cout << "  -> Processing attribute in content" << std::endl;
+                processAttribute(line);
+            } else if (line.find("style:") == 0 || line.find("style=") == 0) {
+                std::cout << "  -> Style block in content" << std::endl;
+                currentState_ = CompilerState::STYLE_BLOCK;
+            } else if (line.find("text:") == 0 || line.find("text=") == 0) {
+                std::cout << "  -> Text block in content" << std::endl;
+                currentState_ = CompilerState::TEXT_BLOCK;
+            } else if (line.find("script:") == 0 || line.find("script=") == 0) {
+                std::cout << "  -> Script block in content" << std::endl;
+                currentState_ = CompilerState::SCRIPT_BLOCK;
+            }
             break;
-        case CompilerState::CUSTOM:
-            handleCustomState(trimmed, lineNumber);
+            
+        case CompilerState::ELEMENT_CLOSE:
+            std::cout << "  -> Element closed, back to ROOT" << std::endl;
+            currentState_ = CompilerState::ROOT;
+            break;
+            
+        default:
+            std::cout << "  -> Unknown state: " << static_cast<int>(currentState_) << std::endl;
             break;
     }
 }
 
-void CHTLCompiler::handleInitialState(const std::string& line, size_t lineNumber) {
-    // 检查是否是特殊指令
-    if (line.find("[Template]") == 0) {
-        currentState_ = CompilerState::TEMPLATE;
-        parseTemplate(line);
-        return;
-    }
+std::shared_ptr<CompilerContext> CHTLCompiler::createContext(ContextType type, const std::string& name) {
+    auto context = std::make_shared<CompilerContext>();
+    context->type = type;
+    context->name = name;
+    context->lineNumber = currentLineNumber_;
+    context->depth = contextStack_.size();
     
-    if (line.find("[Custom]") == 0) {
-        currentState_ = CompilerState::CUSTOM;
-        parseCustom(line);
-        return;
-    }
+    // 生成唯一标识符
+    std::string uniqueId = context->generateUniqueId();
+    context->generatedIds.push_back(uniqueId);
     
-    if (line.find("[Import]") == 0) {
-        parseImport(line);
-        return;
-    }
+    // 注册上下文
+    contextRegistry_[uniqueId] = context;
     
-    if (line.find("[Namespace]") == 0) {
-        parseNamespace(line);
-        return;
-    }
-    
-    if (line.find("[Configuration]") == 0) {
-        parseConfiguration(line);
-        return;
-    }
-    
-    if (line.find("[Origin]") == 0) {
-        parseOrigin(line);
-        return;
-    }
-    
-    // 检查是否是元素开始
-    if (line.find("{") != std::string::npos) {
-        std::string elementName = extractElementName(line);
-        if (!elementName.empty()) {
-            startElement(elementName, line);
-            currentState_ = CompilerState::ELEMENT;
-        }
-    }
+    return context;
 }
 
-void CHTLCompiler::handleElementState(const std::string& line, size_t lineNumber) {
-    // 检查是否是属性
-    if (line.find(":") != std::string::npos || line.find("=") != std::string::npos) {
-        parseAttribute(line);
-        return;
-    }
-    
-    // 检查是否是样式块开始
-    if (line.find("style") == 0 && line.find("{") != std::string::npos) {
-        startStyleBlock();
-        currentState_ = CompilerState::STYLE_BLOCK;
-        return;
-    }
-    
-    // 检查是否是文本块开始
-    if (line.find("text") == 0 && line.find("{") != std::string::npos) {
-        startTextBlock();
-        currentState_ = CompilerState::TEXT_BLOCK;
-        return;
-    }
-    
-    // 检查是否是脚本块开始
-    if (line.find("script") == 0 && line.find("{") != std::string::npos) {
-        startScriptBlock();
-        currentState_ = CompilerState::SCRIPT_BLOCK;
-        return;
-    }
-    
-    // 检查是否是元素结束
-    if (line.find("}") != std::string::npos) {
-        closeElement();
-        if (contextStack_.size() <= 1) {
-            currentState_ = CompilerState::INITIAL;
-        }
-        return;
-    }
-    
-    // 检查是否是新的元素开始
-    if (line.find("{") != std::string::npos) {
-        std::string elementName = extractElementName(line);
-        if (!elementName.empty()) {
-            startElement(elementName, line);
-        }
-    }
-}
-
-void CHTLCompiler::handleStyleBlockState(const std::string& line, size_t lineNumber) {
-    if (line.find("}") != std::string::npos) {
-        endStyleBlock();
-        currentState_ = CompilerState::ELEMENT;
-        return;
-    }
-    
-    parseCSSRule(line);
-}
-
-void CHTLCompiler::handleTextBlockState(const std::string& line, size_t lineNumber) {
-    if (line.find("}") != std::string::npos) {
-        endTextBlock();
-        currentState_ = CompilerState::ELEMENT;
-        return;
-    }
-    
-    addTextContent(line);
-}
-
-void CHTLCompiler::handleScriptBlockState(const std::string& line, size_t lineNumber) {
-    if (line.find("}") != std::string::npos) {
-        endScriptBlock();
-        currentState_ = CompilerState::ELEMENT;
-        return;
-    }
-    
-    addScriptContent(line);
-}
-
-void CHTLCompiler::handleTemplateState(const std::string& line, size_t lineNumber) {
-    if (line.find("}") != std::string::npos) {
-        endTemplate();
-        currentState_ = CompilerState::INITIAL;
-        return;
-    }
-    
-    parseTemplateContent(line);
-}
-
-void CHTLCompiler::handleCustomState(const std::string& line, size_t lineNumber) {
-    if (line.find("}") != std::string::npos) {
-        endCustom();
-        currentState_ = CompilerState::INITIAL;
-        return;
-    }
-    
-    parseCustomContent(line);
-}
-
-void CHTLCompiler::handleAttributesState(const std::string& line, size_t lineNumber) {
-    // 处理属性状态
-    if (line.find("}") != std::string::npos) {
-        currentState_ = CompilerState::ELEMENT;
-        return;
-    }
-    
-    parseAttribute(line);
-}
-
-void CHTLCompiler::handleContentState(const std::string& line, size_t lineNumber) {
-    // 处理内容状态
-    if (line.find("}") != std::string::npos) {
-        currentState_ = CompilerState::ELEMENT;
-        return;
-    }
-    
-    // 处理内容
+void CHTLCompiler::pushContext(std::shared_ptr<CompilerContext> context) {
     if (!contextStack_.empty()) {
-        ElementContext& context = contextStack_.top();
-        // 这里可以添加内容处理逻辑
+        auto parent = contextStack_.top();
+        context->parentSelector = parent->getFullSelector();
+        context->depth = parent->depth + 1;
     }
-}
-
-void CHTLCompiler::startElement(const std::string& elementName, const std::string& line) {
-    ElementContext context;
-    context.elementName = elementName;
-    context.lineNumber = currentLineNumber_;
-    
-    // 生成唯一的类名和ID
-    static size_t elementCounter = 0;
-    elementCounter++;
-    context.generatedClass = "chtl-element-" + std::to_string(elementCounter);
     
     contextStack_.push(context);
-    
-    // 开始HTML元素
-    openElement();
 }
 
-void CHTLCompiler::openElement() {
-    if (contextStack_.empty()) return;
+std::shared_ptr<CompilerContext> CHTLCompiler::popContext() {
+    if (contextStack_.empty()) {
+        return nullptr;
+    }
     
-    ElementContext& context = contextStack_.top();
-    std::string elementName = context.elementName;
+    auto context = contextStack_.top();
+    contextStack_.pop();
+    return context;
+}
+
+std::shared_ptr<CompilerContext> CHTLCompiler::getCurrentContext() {
+    if (contextStack_.empty()) {
+        return nullptr;
+    }
+    return contextStack_.top();
+}
+
+void CHTLCompiler::updateContext(const std::string& line) {
+    auto context = getCurrentContext();
+    if (!context) return;
+    
+    // 更新上下文内容
+    context->content.push_back(line);
+    
+    // 检查是否是元素声明
+    if (line.find("element") == 0) {
+        std::string elementName = extractElementName(line);
+        if (!elementName.empty()) {
+            // 创建新的元素上下文
+            auto elementContext = createContext(ContextType::ELEMENT, elementName);
+            elementContext->currentSelector = elementName;
+            
+            // 生成类名
+            std::string className = "chtl-" + elementName + "-" + std::to_string(elementContext->depth);
+            elementContext->generatedClasses.push_back(className);
+            
+            pushContext(elementContext);
+        }
+    }
+    
+    // 检查是否是文本内容
+    if (line.find("text:") == 0 || line.find("text=") == 0) {
+        // 提取文本内容
+        std::regex textPattern(R"(text\s*[:=]\s*["']?([^"']+)["']?)");
+        std::smatch match;
+        if (std::regex_search(line, match, textPattern)) {
+            std::string textContent = match[1];
+            // 将文本内容添加到当前上下文的HTML输出
+            htmlOutput_ += textContent + "\n";
+        }
+    }
+}
+
+std::string CHTLCompiler::deriveContext(const std::string& input) {
+    return applyContextRules(input);
+}
+
+std::string CHTLCompiler::applyContextRules(const std::string& input) {
+    std::string result = input;
+    
+    for (const auto& rule : contextRules_) {
+        std::regex pattern(rule.pattern);
+        if (std::regex_search(result, pattern)) {
+            auto context = getCurrentContext();
+            if (context) {
+                result = rule.transform(*context, result);
+            }
+        }
+    }
+    
+    return result;
+}
+
+std::string CHTLCompiler::generateSelector(const std::shared_ptr<CompilerContext>& context) {
+    if (!context) return "";
+    
+    std::string selector;
+    
+    // 优先使用ID
+    if (!context->generatedIds.empty()) {
+        selector = "#" + context->generatedIds.back();
+    }
+    // 其次使用类名
+    else if (!context->generatedClasses.empty()) {
+        selector = "." + context->generatedClasses.back();
+    }
+    // 最后使用元素名
+    else {
+        selector = context->name;
+    }
+    
+    return selector;
+}
+
+void CHTLCompiler::processElement(const std::string& line) {
+    std::string elementName = extractElementName(line);
+    if (elementName.empty()) return;
+    
+    // 创建元素上下文
+    auto elementContext = createContext(ContextType::ELEMENT, elementName);
+    elementContext->currentSelector = elementName;
+    
+    // 生成类名
+    std::string className = "chtl-" + elementName + "-" + std::to_string(elementContext->depth);
+    elementContext->generatedClasses.push_back(className);
+    
+    pushContext(elementContext);
     
     // 生成HTML开始标签
     htmlOutput_ += "<" + elementName;
+    htmlOutput_ += " class=\"" + className + "\"";
     
-    // 添加属性
-    if (!context.attributes.empty()) {
-        for (const auto& attr : context.attributes) {
-            htmlOutput_ += " " + attr.first + "=\"" + attr.second + "\"";
-        }
-    }
-    
-    // 添加生成的类名
-    htmlOutput_ += " class=\"" + context.generatedClass + "\"";
-    
-    // 检查是否是单标签元素
     if (isSingleTagElement(elementName)) {
         htmlOutput_ += " />\n";
     } else {
@@ -382,94 +596,9 @@ void CHTLCompiler::openElement() {
     }
 }
 
-void CHTLCompiler::closeElement() {
-    if (contextStack_.empty()) return;
-    
-    ElementContext& context = contextStack_.top();
-    std::string elementName = context.elementName;
-    
-    // 检查是否是单标签元素
-    if (!isSingleTagElement(elementName)) {
-        htmlOutput_ += "</" + elementName + ">\n";
-    }
-    
-    contextStack_.pop();
-}
-
-void CHTLCompiler::startTextBlock() {
-    // 开始文本块
-    currentStyleBlock_.clear();
-}
-
-void CHTLCompiler::endTextBlock() {
-    // 结束文本块，将文本内容添加到HTML输出
-    if (!contextStack_.empty()) {
-        ElementContext& context = contextStack_.top();
-        htmlOutput_ += currentStyleBlock_;
-    }
-    currentStyleBlock_.clear();
-}
-
-void CHTLCompiler::addTextContent(const std::string& line) {
-    // 添加文本内容
-    currentStyleBlock_ += line + "\n";
-}
-
-void CHTLCompiler::startStyleBlock() {
-    // 开始样式块
-    currentStyleBlock_.clear();
-}
-
-void CHTLCompiler::endStyleBlock() {
-    // 结束样式块，处理样式内容
-    processStyleBlockWithContext();
-    currentStyleBlock_.clear();
-}
-
-void CHTLCompiler::parseCSSRule(const std::string& line) {
-    // 解析CSS规则
-    currentStyleBlock_ += line + "\n";
-}
-
-void CHTLCompiler::processStyleBlockWithContext() {
-    if (contextStack_.empty()) return;
-    
-    ElementContext& context = contextStack_.top();
-    
-    // 处理样式块，支持上下文推导
-    std::vector<std::string> selectors = parseSelectors(currentStyleBlock_);
-    
-    for (const std::string& selector : selectors) {
-        std::string processedSelector = processSelectorWithContext(selector);
-        std::string cssProperties = extractCSSProperties(currentStyleBlock_);
-        
-        // 生成CSS规则
-        cssOutput_ += processedSelector + " {\n";
-        cssOutput_ += cssProperties + "\n";
-        cssOutput_ += "}\n\n";
-    }
-}
-
-void CHTLCompiler::startScriptBlock() {
-    // 开始脚本块
-    currentScriptBlock_.clear();
-}
-
-void CHTLCompiler::endScriptBlock() {
-    // 结束脚本块，将脚本内容添加到JavaScript输出
-    jsOutput_ += currentScriptBlock_;
-    currentScriptBlock_.clear();
-}
-
-void CHTLCompiler::addScriptContent(const std::string& line) {
-    // 添加脚本内容
-    currentScriptBlock_ += line + "\n";
-}
-
-void CHTLCompiler::parseAttribute(const std::string& line) {
-    if (contextStack_.empty()) return;
-    
-    ElementContext& context = contextStack_.top();
+void CHTLCompiler::processAttribute(const std::string& line) {
+    auto context = getCurrentContext();
+    if (!context) return;
     
     // 解析属性，支持 : 和 = 等价
     std::regex attrPattern(R"((\w+)\s*[:=]\s*([^;]+);?)");
@@ -485,168 +614,100 @@ void CHTLCompiler::parseAttribute(const std::string& line) {
             attrValue = attrValue.substr(1, attrValue.length() - 2);
         }
         
-        context.attributes[attrName] = attrValue;
-        context.hasAttributes = true;
+        context->attributes[attrName] = attrValue;
+        
+        // 更新HTML标签
+        htmlOutput_ += " " + attrName + "=\"" + attrValue + "\"";
     }
 }
 
-void CHTLCompiler::parseTemplate(const std::string& line) {
-    // 解析模板定义
-    std::regex templatePattern(R"(\[Template\]\s*@(\w+)\s+(\w+))");
-    std::smatch match;
+void CHTLCompiler::processStyleBlock(const std::string& line) {
+    if (line.find("}") != std::string::npos) {
+        // 结束样式块
+        return;
+    }
     
-    if (std::regex_search(line, match, templatePattern)) {
-        TemplateInfo info;
-        info.type = match[1];
-        info.name = match[2];
-        templates_[info.name] = info;
+    currentStyleBlock_ += line + "\n";
+}
+
+void CHTLCompiler::processTextBlock(const std::string& line) {
+    if (line.find("}") != std::string::npos) {
+        // 结束文本块
+        return;
+    }
+    
+    // 处理文本块内容
+    if (line.find("text:") == 0 || line.find("text=") == 0) {
+        // 提取文本内容
+        std::regex textPattern(R"(text\s*[:=]\s*["']?([^"']+)["']?)");
+        std::smatch match;
+        if (std::regex_search(line, match, textPattern)) {
+            std::string textContent = match[1];
+            // 将文本内容添加到HTML输出
+            htmlOutput_ += textContent + "\n";
+        }
+    } else {
+        // 直接添加文本内容
+        htmlOutput_ += line + "\n";
     }
 }
 
-void CHTLCompiler::parseTemplateContent(const std::string& line) {
-    // 解析模板内容
-    if (!templates_.empty()) {
-        auto& lastTemplate = templates_.rbegin()->second;
-        lastTemplate.content += line + "\n";
+void CHTLCompiler::processScriptBlock(const std::string& line) {
+    if (line.find("}") != std::string::npos) {
+        // 结束脚本块
+        return;
     }
+    
+    currentScriptBlock_ += line + "\n";
 }
 
-void CHTLCompiler::endTemplate() {
-    // 结束模板定义
+void CHTLCompiler::processTemplate(const std::string& line) {
+    // 处理模板定义
     // 这里可以添加模板处理逻辑
 }
 
-void CHTLCompiler::parseCustom(const std::string& line) {
-    // 解析自定义定义
-    std::regex customPattern(R"(\[Custom\]\s*@(\w+)\s+(\w+))");
-    std::smatch match;
-    
-    if (std::regex_search(line, match, customPattern)) {
-        CustomInfo info;
-        info.type = match[1];
-        info.name = match[2];
-        customs_[info.name] = info;
-    }
-}
-
-void CHTLCompiler::parseCustomContent(const std::string& line) {
-    // 解析自定义内容
-    if (!customs_.empty()) {
-        auto& lastCustom = customs_.rbegin()->second;
-        lastCustom.content += line + "\n";
-    }
-}
-
-void CHTLCompiler::endCustom() {
-    // 结束自定义定义
+void CHTLCompiler::processCustom(const std::string& line) {
+    // 处理自定义定义
     // 这里可以添加自定义处理逻辑
 }
 
-void CHTLCompiler::parseImport(const std::string& line) {
-    // 解析导入语句
+void CHTLCompiler::processImport(const std::string& line) {
+    // 处理导入语句
     // 这里可以添加导入处理逻辑
 }
 
-void CHTLCompiler::parseNamespace(const std::string& line) {
-    // 解析命名空间
+void CHTLCompiler::processNamespace(const std::string& line) {
+    // 处理命名空间
     // 这里可以添加命名空间处理逻辑
 }
 
-void CHTLCompiler::parseConfiguration(const std::string& line) {
-    // 解析配置
+void CHTLCompiler::processConfiguration(const std::string& line) {
+    // 处理配置
     // 这里可以添加配置处理逻辑
 }
 
-void CHTLCompiler::parseOrigin(const std::string& line) {
-    // 解析原始嵌入
+void CHTLCompiler::processOrigin(const std::string& line) {
+    // 处理原始嵌入
     // 这里可以添加原始嵌入处理逻辑
 }
 
-std::vector<std::string> CHTLCompiler::parseSelectors(const std::string& cssRule) {
-    std::vector<std::string> selectors;
-    
-    // 简单的选择器解析
-    std::regex selectorPattern(R"(([.#]?\w+))");
-    std::sregex_iterator iter(cssRule.begin(), cssRule.end(), selectorPattern);
-    std::sregex_iterator end;
-    
-    for (; iter != end; ++iter) {
-        selectors.push_back(iter->str());
+void CHTLCompiler::generateHTML() {
+    // HTML已经在解析过程中生成
+}
+
+void CHTLCompiler::generateCSS() {
+    // 生成CSS输出
+    if (!currentStyleBlock_.empty()) {
+        cssOutput_ += "/* 自动生成的CSS */\n";
+        cssOutput_ += currentStyleBlock_;
     }
-    
-    return selectors;
 }
 
-std::string CHTLCompiler::processSelectorWithContext(const std::string& selector) {
-    if (contextStack_.empty()) return selector;
-    
-    ElementContext& context = contextStack_.top();
-    
-    // 处理上下文推导
-    if (selector == "&") {
-        return "." + context.generatedClass;
-    }
-    
-    if (selector.find("&") == 0) {
-        return "." + context.generatedClass + selector.substr(1);
-    }
-    
-    return selector;
-}
-
-std::string CHTLCompiler::extractCSSProperties(const std::string& cssRule) {
-    // 提取CSS属性
-    std::string properties;
-    
-    // 简单的属性提取
-    std::regex propertyPattern(R"((\w+)\s*:\s*([^;]+);?)");
-    std::sregex_iterator iter(cssRule.begin(), cssRule.end(), propertyPattern);
-    std::sregex_iterator end;
-    
-    for (; iter != end; ++iter) {
-        properties += "  " + iter->str(1) + ": " + iter->str(2) + ";\n";
-    }
-    
-    return properties;
-}
-
-std::string CHTLCompiler::getCurrentElementSelector() {
-    if (contextStack_.empty()) return "";
-    
-    ElementContext& context = contextStack_.top();
-    return "." + context.generatedClass;
-}
-
-std::string CHTLCompiler::extractElementName(const std::string& line) {
-    // 提取元素名称
-    std::regex elementPattern(R"((\w+)\s*\{)");
-    std::smatch match;
-    
-    if (std::regex_search(line, match, elementPattern)) {
-        return match[1];
-    }
-    
-    return "";
-}
-
-std::vector<std::string> CHTLCompiler::getAllHTMLElements() {
-    std::vector<std::string> allElements;
-    
-    allElements.insert(allElements.end(), singleTagElements_.begin(), singleTagElements_.end());
-    allElements.insert(allElements.end(), blockElements_.begin(), blockElements_.end());
-    allElements.insert(allElements.end(), inlineElements_.begin(), inlineElements_.end());
-    
-    return allElements;
-}
-
-bool CHTLCompiler::isSingleTagElement(const std::string& elementName) {
-    return singleTagElements_.find(elementName) != singleTagElements_.end();
-}
-
-void CHTLCompiler::processUnclosedElements() {
-    // 处理未关闭的元素
-    while (contextStack_.size() > 1) {
-        closeElement();
+void CHTLCompiler::generateJavaScript() {
+    // 生成JavaScript输出
+    if (!currentScriptBlock_.empty()) {
+        jsOutput_ += "// 自动生成的JavaScript\n";
+        jsOutput_ += currentScriptBlock_;
     }
 }
 
@@ -685,21 +746,6 @@ void CHTLCompiler::processConstraints() {
     // 这里可以添加约束处理逻辑
 }
 
-void CHTLCompiler::generateHTML() {
-    // 生成HTML输出
-    // HTML已经在解析过程中生成
-}
-
-void CHTLCompiler::generateCSS() {
-    // 生成CSS输出
-    // CSS已经在解析过程中生成
-}
-
-void CHTLCompiler::generateJavaScript() {
-    // 生成JavaScript输出
-    // JavaScript已经在解析过程中生成
-}
-
 void CHTLCompiler::reset() {
     currentState_ = CompilerState::INITIAL;
     currentLineNumber_ = 0;
@@ -711,14 +757,16 @@ void CHTLCompiler::reset() {
         contextStack_.pop();
     }
     
-    contextStack_.push(ElementContext());
-    
+    contextRegistry_.clear();
     templates_.clear();
     customs_.clear();
     
-    currentCSSRule_.clear();
     currentStyleBlock_.clear();
     currentScriptBlock_.clear();
+    
+    // 重新创建根上下文
+    auto rootContext = createContext(ContextType::ROOT, "root");
+    pushContext(rootContext);
 }
 
 std::string CHTLCompiler::trim(const std::string& str) {
@@ -733,6 +781,32 @@ bool CHTLCompiler::isComment(const std::string& line) {
     std::string trimmed = trim(line);
     return trimmed.find("//") == 0 || 
            (trimmed.find("/*") == 0 && trimmed.find("*/") != std::string::npos);
+}
+
+std::string CHTLCompiler::extractElementName(const std::string& line) {
+    // 提取元素名称
+    std::regex elementPattern(R"((\w+)\s*\{)");
+    std::smatch match;
+    
+    if (std::regex_search(line, match, elementPattern)) {
+        return match[1];
+    }
+    
+    return "";
+}
+
+bool CHTLCompiler::isSingleTagElement(const std::string& elementName) {
+    return singleTagElements_.find(elementName) != singleTagElements_.end();
+}
+
+std::vector<std::string> CHTLCompiler::getAllHTMLElements() {
+    std::vector<std::string> allElements;
+    
+    allElements.insert(allElements.end(), singleTagElements_.begin(), singleTagElements_.end());
+    allElements.insert(allElements.end(), blockElements_.begin(), blockElements_.end());
+    allElements.insert(allElements.end(), inlineElements_.begin(), inlineElements_.end());
+    
+    return allElements;
 }
 
 } // namespace chtl
